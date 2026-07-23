@@ -14,6 +14,7 @@ using LCMIS.Server.Model;
 using PdfSharp.Pdf;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
 using College_ERP.Models.MailService;
+using College_ERP.Models.Login;
 
 namespace College_ERP.Models.HomeServices
 {
@@ -35,7 +36,7 @@ namespace College_ERP.Models.HomeServices
                 cmd.Parameters.AddWithValue("@action", "selectUserID");
                 cmd.Parameters.AddWithValue("@username", username);
                 con.Open();
-            var res = cmd.ExecuteReader();
+                var res = cmd.ExecuteReader();
                 if (res.HasRows)
                 {
                     while (res.Read())
@@ -45,31 +46,168 @@ namespace College_ERP.Models.HomeServices
                 }
                 return userId;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
             finally
             {
                 if (con.State == System.Data.ConnectionState.Open)
+                {
                     con.Close();
-                cmd.Dispose();
+                    cmd.Dispose();
+                }
 
             }
         }
+
+        #region jwt token
+
+        public bool SaveRefreshToken(int userId, string refreshToken, DateTime expiryDate)
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand("sp_loginmanager", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@action", "saverefreshtoken");
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                cmd.Parameters.AddWithValue("@RefreshToken", refreshToken);
+                cmd.Parameters.AddWithValue("@ExpiryDate", expiryDate);
+                if (con.State == ConnectionState.Closed)
+                {
+                    con.Open();
+                }
+                return cmd.ExecuteNonQuery() > 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+
+
+        public RefreshTokenModel GetRefreshToken(string refreshToken)
+        {
+            RefreshTokenModel model = null;
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand("sp_loginmanager", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@Action", "GetByToken");
+                cmd.Parameters.AddWithValue("@RefreshToken", refreshToken);
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    model = new RefreshTokenModel
+                    {
+                        Id = Convert.ToInt32(dr["Id"]),
+                        UserId = Convert.ToInt32(dr["UserId"]),
+                        RefreshToken = dr["RefreshToken"].ToString(),
+                        ExpiryDate = Convert.ToDateTime(dr["ExpiryDate"]),
+                        IsRevoked = Convert.ToBoolean(dr["IsRevoked"])
+                    };
+                }
+
+                return model;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+
+        public bool UpdateRefreshToken(int userId, string refreshToken, DateTime expiryDate)
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand("sp_loginmanager", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@Action", "Update");
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                cmd.Parameters.AddWithValue("@RefreshToken", refreshToken);
+                cmd.Parameters.AddWithValue("@ExpiryDate", expiryDate);
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+
+                return cmd.ExecuteNonQuery() > 0;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+        public string GetRoleByUserId(int userId)
+        {
+            try
+            {
+                string role = null;
+
+                SqlCommand cmd = new SqlCommand("sp_loginmanager", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@Action", "GetRoleByUserid");
+                cmd.Parameters.AddWithValue("@UserId", userId);
+
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    role = dr["role"].ToString();
+                }
+
+                dr.Close();
+
+                return role;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+
+
+
+        #endregion
         public byte[] PDFConverter(string htmlContent)
         {
             // Generate  the PDF document from HTML
             PdfDocument pdf = PdfGenerator.GeneratePdf(htmlContent, PdfSharp.PageSize.A4);
             MemoryStream ms = new MemoryStream();
-           
-                // Save the PDF to the MemoryStream
-                pdf.Save(ms);
-              //  ms.Position = 0;  // Reset stream position to the beginning
 
-                // Return the PDF file to the client for download
-                return ms.ToArray();
-            
+            // Save the PDF to the MemoryStream
+            pdf.Save(ms);
+            //  ms.Position = 0;  // Reset stream position to the beginning
+
+            // Return the PDF file to the client for download
+            return ms.ToArray();
+
         }
 
         public ResetPasswordResponse GetUserResetDetailsByUsername(string username)
@@ -77,13 +215,13 @@ namespace College_ERP.Models.HomeServices
             var result = new ResetPasswordResponse();
 
 
-                     SqlCommand cmd = new SqlCommand("sp_ResetPasswordByUsername", con);
-                
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Username", username);
+            SqlCommand cmd = new SqlCommand("sp_ResetPasswordByUsername", con);
 
-                    con.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Username", username);
+
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
             if (reader.Read())
             {
                 result.Status = reader["Status"] != DBNull.Value && Convert.ToBoolean(reader["Status"]);
@@ -147,7 +285,7 @@ namespace College_ERP.Models.HomeServices
                 return -1;
             }
         }
-        public bool UpdateUserPassword(string username, string newPassword,out string message)
+        public bool UpdateUserPassword(string username, string newPassword, out string message)
         {
             try
             {
@@ -183,12 +321,12 @@ namespace College_ERP.Models.HomeServices
                 if (!emailResult.status)
                 {
                     message = "Password updated, but failed to send email.";
-                    return true; 
+                    return true;
                 }
                 message = "Password updated and email sent successfully.";
                 return rows > 0;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 message = ex.Message;
                 return false;
