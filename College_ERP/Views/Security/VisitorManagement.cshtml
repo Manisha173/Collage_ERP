@@ -1,0 +1,1173 @@
+﻿
+@{
+    ViewBag.Title = "VisitorManagement";
+    Layout = "~/Views/Shared/_securityLayout.cshtml";
+    var data = ViewData["visitorsList"] as List<College_ERP.Models.Security.main.VisitorModel>;
+    var roles = ViewData["roles"] as List<string>;
+    var rooms = ViewData["rooms"] as List<College_ERP.Models.Security.main.RoomModel>;
+}
+
+
+<div class="content-page">
+    <div class="content py-0 pt-2 my-0">
+        @*<div class="container-fluid">
+            <nav class="mt-1" aria-label="breadcrumb"
+                  style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/security/VisitorManagement">Add Visitor</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/security/VisitorManagement">Add Visitor</a>
+                    </li>
+                </ol>
+            </nav>
+        </div>*@
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header mb-2 py-0 text-end border-bottom-0">
+
+                    <button type="button" class="btn btn-primary rounded-0" data-bs-toggle="modal" data-bs-target="#addVisitorModal">
+                        Add Visitor
+                    </button>
+                </div>
+                <div class="card-body py-0 my-0" id="visitorlogincard">
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between border-bottom-0 pb-0">
+                        <h4>All Visitors List</h4>
+                        <div class="w-25 pb-1">
+                            <input type="text" name="searchFilter" id="searchFilter" class="form-control" placeholder="Search By Name or Mobile" />
+                        </div>
+                    </div>
+                    <div class="card-body py-0 my-0">
+                        <table id="datatable2" class="table table-bordered dt-responsive nowrap w-100">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Name</th>
+                                    <th>Mobile</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
+                                    <th>Photo</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="visitorTableBody">
+                                @if (data != null)
+                                {
+                                    int count = 1;
+                                    foreach (var item in data)
+                                    {
+                                        <tr>
+                                            <td>@count</td>
+                                            <td>@item.name</td>
+                                            <td>@item.mobile</td>
+                                            <td>@item.email</td>
+                                            <td>@item.address</td>
+                                            <td><a href="@item.imageName" target="_blank" title="Show Photo">Show</a></td>
+                                            <td class="text-center">
+                                                @*<a href="#" class="btn btn-sm deletemat" data-id="@item.id" title="Delete"><i data-feather="trash-2" class="text-danger ms-2"></i></a>*@
+                                                <a role="button" title="Login Visitor" data-id="@item.id" class="btn text-success loginVisitor">Login</a>
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal to Add Visitor-->
+<div class="modal fade" tabindex="-1" id="addVisitorModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0 bg-primary text-light">
+                <h5 class="modal-title">Add Visitor</h5>
+                <button type="button" id="visiterModalClosebtn" class="btn-close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="addVisitorForm">
+                    <div class="row">
+                        <div class="col-sm-4 mb-2">
+                            <label for="userTypeSelect" class="form-label">Select Type</label>
+                            <select class="form-select uuserTypeSelect" name="userType" id="userTypeSelect">
+                                <option value="student" selected>Student</option>
+                                <option value="staff">Staff</option>
+                            </select>
+                        </div>
+                        <!-- Radio buttons will show when student is selected -->
+                        <div id="radioContainer" class="col-sm-8 pt-4 mt-1 ps-4">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input modeOption" type="radio" name="mode" id="classMode" value="class" checked>
+                                <label class="form-check-label" for="classMode">Class/Section</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input modeOption" type="radio" name="mode" id="roomMode" value="room">
+                                <label class="form-check-label" for="roomMode">Room No</label>
+                            </div>
+                        </div>
+
+                        <div id="staffDropdown" class="col-sm-4 mb-2" style="display: none;">
+                            <label for="staffRole" class="form-label">Select Role</label>
+                            <select class="form-select staffRoledr" data-action="add" name="role" id="staffRole">
+                                <option value="" selected>--Select Role--</option>
+                                @if (roles != null)
+                                {
+                                    foreach (var role in roles)
+                                    {
+                                        <option value="@role">@role</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div id="personDropdown" class="col-sm-4 mb-2" style="display: none;">
+                            <label for="personId" class="form-label">Select Person</label>
+                            <select class="form-select" name="personId" data-action="add" id="personId">
+                                <option value="" selected>--Select Person--</option>
+                            </select>
+                        </div>
+                        <div id="clsDropdown" class="col-sm-4 mb-2">
+                            <label for="personId" class="form-label">Class</label>
+                            <select type="text" id="class" name="classId" class="form-control classbind" required>
+                                <option disabled selected>--Select Class--</option>
+                                @if (ViewBag.ClassList != null)
+                                {
+                                    foreach (var item in ViewBag.ClassList)
+                                    {
+                                        <option value="@item.ClassId">@item.ClassName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div id="secDropdown" class="col-sm-4 mb-2">
+                            <label for="personId" class="form-label">Section</label>
+                            <select type="text" id="section" name="sectionId" class="form-control bindsection" required>
+                                <option disabled selected>--Select Section--</option>
+                            </select>
+                        </div>
+                        <div id="roomDropdown" class="col-sm-4 mb-2" style="display: none;">
+                            <label for="roomNo" class="form-label">Room No</label>
+                            <select class="form-select" name="roomNo" id="roomNo">
+                                <option value="" disabled selected>--Select Room No--</option>
+                               @if (rooms != null)
+            {
+                foreach(var room in rooms)
+                {
+                    <option value="@room.RoomId">@room.RoomNo</option>
+                }
+            }
+                            </select>
+                        </div>
+                        <div id="stdDropdown" class="col-sm-4 mb-2">
+                            <label for="personId" class="form-label">Student</label>
+                            <select class="form-select bindStudent" name="studentId" id="estudentId">
+                                <option value="" disabled selected>--Select Student--</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-4 mb-2">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" name="name" id="name" required placeholder="Enter Visitor Name" />
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="mobile" class="form-label">Mobile</label>
+                            <input type="number" class="form-control mobileval" name="mobile" id="mobile" required placeholder="Enter Visitor Mobile Number" />
+                            <span class="text-danger mobileError" style="font-size: 0.9em;"></span>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" id="email" required placeholder="Enter Visitor Email" />
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="reason" class="form-label">Reason</label>
+                            <input type="text" class="form-control" name="reason" id="reason" required placeholder="Enter Visitor Reason" />
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="remark" class="form-label">Remark</label>
+                            <input type="text" class="form-control" name="remark" id="remark" required placeholder="Enter Visitor Remark" />
+                        </div>
+                        @*Trigger*@
+                        <div class="col-sm-4 mb-2">
+                            <label class="form-label">Capture Photo</label>
+                            <div class="input-group">
+                                <a href="#" title="Click here to open camera" id="cameraPlaceholder" class="form-control text-start">
+                                    <span id="placeholderText" class="text-muted">Capture Photo</span>
+                                </a>
+                                <a class="text-input-group">
+                                    <span class="btn btn-primary text-light px-1 border-start-0" id="previewButton">Preview</span>
+                                </a>
+                            </div>
+                            <input type="hidden" name="capturedImage" id="capturedImage" />
+                        </div>
+                        @*Bootstrap Modal*@
+                        <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="cameraModalLabel">Take Photo</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeCamera()"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <div id="my_camera" style="width: 100%; background: #000;"></div>
+                                        <button type="button" id="takePhoto" class="btn btn-success mt-2">Capture</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*Captured Image Modal*@
+                        <div class="modal fade" id="ImageModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header border-bottom-0">
+                                        <h5 class="modal-title" id="cameraModalLabel">Captured Photo</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h3 id="imagenotCAp" class="text-center">Please Capture Photo</h3>
+                                        <div class="container-sm">
+                                            <img src="" class="img-fluid" id="previewImage" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 mb-2">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" name="address" id="address" placeholder="Enter Address"></textarea>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal for Login Visitor-->
+<div class="modal fade" tabindex="-1" id="loginVisitorModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0 bg-primary text-light">
+                <h5 class="modal-title">Login Visitor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="addVisitorForm">
+                    <input type="hidden" id="vid" name="vid" />
+                    <div class="row">
+                        <div class="col-sm-4 mb-2">
+                            <label for="userTypeSelect" class="form-label">Select Type</label>
+                            <select class="form-select uuserTypeSelect" name="userType" id="lguserTypeSelect">
+                                <option value="student">Student</option>
+                                <option value="staff">Staff</option>
+                            </select>
+                        </div>
+                        <div id="lgstudentOptions" class="col-sm-8 pt-4 mt-1 ps-4">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="inputType" id="lgclassSectionOption" value="class" checked>
+                                <label class="form-check-label" for="lgclassSectionOption">Class/Section</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="inputType" id="lgroomOption" value="room">
+                                <label class="form-check-label" for="lgroomOption">Room No</label>
+                            </div>
+                        </div>
+
+                        <div id="lgstaffDropdown" class="col-sm-4 mb-2" style="display: none;">
+                            <label for="staffRole" class="form-label">Select Role</label>
+                            <select class="form-select staffRoledr" data-action="update" name="role" id="lgstaffRole">
+                                <option value="" selected disabled>--Select Role--</option>
+                                @if (roles != null)
+                                {
+                                    foreach (var role in roles)
+                                    {
+                                        <option value="@role">@role</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div id="lgpersonDropdown" class="col-sm-4 mb-2" style="display: none;">
+                            <label for="personId" class="form-label">Select Person</label>
+                            <select class="form-select" name="personId" id="lgpersonId">
+                                <option value="" selected>--Select Person--</option>
+                            </select>
+                        </div>
+                        <div id="lgclsDropdown" class="col-sm-4 mb-2">
+                            <label for="personId" class="form-label">Class</label>
+                            <select type="text" id="lgclass" name="classId" class="form-control classbind" required>
+                                <option disabled selected>--Select Class--</option>
+                                @if (ViewBag.ClassList != null)
+                                {
+                                    foreach (var item in ViewBag.ClassList)
+                                    {
+                                        <option value="@item.ClassId">@item.ClassName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div id="lgsecDropdown" class="col-sm-4 mb-2">
+                            <label for="personId" class="form-label">Section</label>
+                            <select type="text" id="lgsection" name="sectionId" class="form-control bindsection" required>
+                                <option disabled selected>--Select Section--</option>
+                            </select>
+                        </div>
+                        <div id="lgroomDropdown" class="col-sm-4 mb-2" style="display: none;">
+                            <label for="roomNo" class="form-label">Room No</label>
+                            <select class="form-select" name="roomNo" id="lgroomNo">
+                                <option value="" selected disabled>--Select Room--</option>
+                                @if (rooms != null)
+                                {
+                                    foreach (var room in rooms)
+                                    {
+                                        <option value="@room.RoomId">@room.RoomNo</option>
+                                    }
+                                }
+                                <!-- Add more rooms dynamically if needed -->
+                            </select>
+                        </div>
+
+                        <div id="lgstdDropdown" class="col-sm-4 mb-2">
+                            <label for="personId" class="form-label">Select Student</label>
+                            <select class="form-select bindStudent" name="studentId" id="studentId">
+                                <option disabled selected>--Select Student--</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="reason" class="form-label">Reason</label>
+                            <input type="text" class="form-control" name="reason" id="lgreason" placeholder="Enter Visitor Reason" />
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="remark" class="form-label">Remark</label>
+                            <input type="text" class="form-control" name="remark" id="lgremark" placeholder="Enter Visitor Remark" />
+                        </div>
+                        @*Trigger*@
+                        <div class="col-sm-4 mb-2">
+                            <label class="form-label">Capture Photo</label>
+                            <div class="input-group">
+                                <a href="#" title="Click here to open camera" id="v2_cameraPlaceholder" class="form-control text-start">
+                                    <span id="v2_placeholderText" class="text-muted">Capture Photo</span>
+                                </a>
+                                <a class="text-input-group">
+                                    <span class="btn btn-primary text-light px-1 border-start-0" id="v2_previewButton">Preview</span>
+                                </a>
+                            </div>
+                            <input type="hidden" name="capturedImage" id="v2_capturedImage" />
+                        </div>
+
+                        @*Bootstrap Modal*@
+                        <div class="modal fade" id="v2_cameraModal" tabindex="-1" aria-labelledby="v2_cameraModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="v2_cameraModalLabel">Take Photo</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="v2_closeCamera()"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <div id="v2_my_camera" style="width: 100%; background: #000;"></div>
+                                        <button type="button" id="v2_takePhoto" class="btn btn-success mt-2">Capture</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @*Captured Image Modal*@
+                        <div class="modal fade" id="v2_ImageModal" tabindex="-1" aria-labelledby="v2_cameraModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header border-bottom-0">
+                                        <h5 class="modal-title" id="v2_cameraModalLabel">Captured Photo</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h3 id="v2_imagenotCAp" class="text-center">Please Capture Photo</h3>
+                                        <div class="container-sm">
+                                            <img src="" class="img-fluid" id="v2_previewImage" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://cdn.rawgit.com/jhuckaby/webcamjs/master/webcam.min.js"></script>
+
+<script>
+
+
+    $(document).ready(function () {
+        // By default, show student-specific fields
+        $('#staffDropdown, #personDropdown').hide();
+        $('#radioContainer').show();
+
+        // Show fields based on default selected radio (class)
+        if ($('#classMode').is(':checked')) {
+            $('#clsDropdown, #secDropdown').show();
+            $('#roomDropdown').hide();
+        } else {
+            $('#clsDropdown, #secDropdown').hide();
+            $('#roomDropdown').show();
+        }
+
+        $('#stdDropdown').show();
+    });
+
+    // Already existing code: on change of dropdown and radio buttons
+    $('.uuserTypeSelect').on('change', function () {
+        debugger
+        if ($(this).val() === 'staff') {
+            $('#staffDropdown, #personDropdown').show();
+            $('#clsDropdown, #secDropdown, #stdDropdown, #roomDropdown, #radioContainer').hide();
+            $('#lgstaffDropdown, #lgpersonDropdown').show();
+            $('#lgstudentOptions, #lgclsDropdown, #lgsecDropdown, #lgstdDropdown').hide();
+        } else if ($(this).val() === 'student') {
+            $('#staffDropdown, #personDropdown').hide();
+            $('#radioContainer').show();
+            $('input[name="mode"][value="class"]').prop('checked', true);
+            $('#clsDropdown, #secDropdown, #stdDropdown').show();
+            $('#roomDropdown').hide();
+            $('#lgstaffDropdown, #lgpersonDropdown').hide();
+            $('#lgstudentOptions, #lgclsDropdown, #lgsecDropdown, #lgstdDropdown').show();
+        }
+    });
+
+    $(document).on('change', 'input[name="inputType"]', function () {
+        debugger
+        if ($(this).val() === 'class') {
+            $('#clsDropdown, #secDropdown').show();
+            $('#lgclsDropdown, #lgsecDropdown').show();
+            $('#roomDropdown').hide();
+            $('#lgroomDropdown').hide();
+        } else if($(this).val() === 'room') {
+            $('#clsDropdown, #secDropdown').hide();
+            $('#lgclsDropdown, #lgsecDropdown').hide();
+            $('#roomDropdown').show();
+            $('#lgroomDropdown').show();
+        }
+        $('#stdDropdown').show();
+    });
+    $(document).on('change', 'input[name="mode"]', function () {
+        debugger
+        if ($(this).val() === 'class') {
+            $('#clsDropdown, #secDropdown').show();
+            $('#lgclsDropdown, #lgsecDropdown').show();
+            $('#roomDropdown').hide();
+            $('#lgroomDropdown').hide();
+        } else if($(this).val() === 'room') {
+            $('#clsDropdown, #secDropdown').hide();
+            $('#lgclsDropdown, #lgsecDropdown').hide();
+            $('#roomDropdown').show();
+            $('#lgroomDropdown').show();
+        }
+        $('#stdDropdown').show();
+    });
+</script>
+
+
+<script>
+    $(function () {
+        $('.mobileval').on('input', function () {
+            let m = $(this).val().replace(/\D/g, '').slice(0, 10);
+            $(this).val(m);
+            $('.mobileError').text(
+                m.length < 10 ? 'Mobile number must be 10 digits.' :
+                    !/^[6-9]/.test(m) ? 'Mobile number must start with 6, 7, 8, or 9.' : ''
+            );
+        });
+    });
+    $(function () {
+        $('.adharval').on('input', function () {
+            let a = $(this).val().replace(/\D/g, '').slice(0, 12);
+            $(this).val(a);
+            $('.adharError').text(
+                a.length < 12 ? 'Aadhaar number must be 12 digits.' : ''
+            );
+        });
+    });
+</script>
+
+<script>
+    $(document).on('change', '#roomNo', function () {
+        debugger
+        let id = $(this).val();
+        fetchStudentsByRoomNo(id);
+    });
+    $(document).on('change', '#lgroomNo', function () {
+        debugger
+        let id = $(this).val();
+        fetchStudentsByRoomNo(id);
+    });
+    function fetchStudentsByRoomNo(roomNo) {
+        $.ajax({
+            url: '/security/GetStudentsByRoomNo',
+            type: 'get',
+            data: { roomNo: roomNo },
+            success: function (response) {
+                if (response.length > 0) {
+                    let options = '<option value="">--Select Student--</option>';
+                    response.forEach(student => {
+                        options += `<option value="${student.studentid}">${student.userName}</option>`;
+
+
+                    });
+                    $('.bindStudent').html(options);
+                } else {
+                    $('.bindStudent').empty();
+                    $('.bindStudent').html('<option value="">--No Student Available--</option>');
+                }
+            },
+            error: function () {
+                Swal.fire('Error', 'Unable to fetch students for this Room No', 'error');
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#datatable1").DataTable();
+    });
+    $(document).on("change", "#class", function () {
+        debugger
+        $('.bindStudent').html(`<option selected disabled>--Select Student--</option>`);
+        $("#section").html(`<option selected disabled>--Select Section--</option>`);
+        let id = $(this).val();
+        Swal.fire({
+            title: 'Please wait!',
+            text: 'Loading Section...',
+            outsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        $.ajax({
+            url: '/security/GetSectionByClassId',
+            type: 'get',
+            data: { id: id },
+            success: function (response) {
+                if (response && response.length > 0) {
+                    $.each(response, function (index, item) {
+                        $("#section").append(`<option value='${item.SectionId}'>${item.SectionName}</option>`);
+                    });
+                    Swal.close();
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'error',
+                    text: 'Something went wrong with the request'
+                });
+            }
+        });
+    });
+    $(document).ready(function () {
+
+        //Bind Student Starts
+
+        $("#lgclass").on("change", function () {
+            $('.bindStudent').html(`<option selected disabled>--Select Student--</option>`);
+            $("#lgsection").html(`<option selected disabled>--Select Section--</option>`);
+            let id = $(this).val();
+            Swal.fire({
+                title: 'Please wait!',
+                text: 'Loading Section...',
+                outsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            $.ajax({
+                url: '/security/GetSectionByClassId',
+                type: 'get',
+                data: { id: id },
+                success: function (response) {
+                    if (response && response.length > 0) {
+                        $.each(response, function (index, item) {
+                            $("#lgsection").append(`<option value='${item.SectionId}'>${item.SectionName}</option>`);
+                        });
+                        Swal.close();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'error',
+                        text: 'Something went wrong with the request'
+                    });
+                }
+            });
+        });
+
+        $('#section').change(async function () {
+            debugger
+            let classid = $('#class').val();
+            let sectionid = $(this).val();
+            await bindstudentonclassandsection(classid, sectionid);
+        });
+        $('#lgsection').change(async function () {
+            debugger
+            let classid = $('#lgclass').val();
+            let sectionid = $(this).val();
+            await bindstudentonclassandsection(classid, sectionid);
+        });
+
+        async function bindstudentonclassandsection(classid, sectionid) {
+            debugger
+            Swal.fire({
+                title: 'Please wait!',
+                text: 'Loading Student...',
+                outsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            await $.ajax({
+                url: '/security/GetStudentsByClassAndSection',
+                type: 'GET',
+                data: { classId: classid, sectionId: sectionid },
+                success: function (data) {
+                    Swal.close()
+                    $('.bindStudent').empty();
+
+                    let tableBody = '<option selected disabled value="">--select student--</option>';
+                    data.forEach(student => {
+                        tableBody += `
+    <option value="${student.StudentId}">${student.StudentName}</option>`;
+                    });
+                    $('.bindStudent').html(tableBody);
+
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire("error", "Failed to load student", "error");
+                    $('.bindStudent').html('<option selected disabled>--No student--</option>');
+                }
+            });
+        }
+        //Bind Student Ends
+        async function getpersonbytype(type, action) {
+            await $.ajax({
+                url: '/security/GetStaffList',
+                type: 'get',
+                data: { type: type },
+                success: function (res) {
+                    console.log(res)
+                    if (res) {
+                        let persontag = action === "add" ? $('#personId') : $('#lgpersonId');
+                        let tags = `<option disabled selected>--Select ${type}--</option>`
+                        $.each(res, function (index, item) {
+                            tags += `<option value="${item.staffId}">${item.staffName} (${item.staffmobile})</option>`;
+                        });
+                        persontag.html(tags);
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            });
+        }
+        $('.staffRoledr').on('change', async function () {
+            debugger
+            let type = $(this).val();
+            let action = $(this).attr("data-action")
+            await getpersonbytype(type, action);
+        });
+
+        $('#closeUpdateModal').on('click', function () {
+            debugger
+            $('#addVisitorForm')[0].reset();
+            $('#updateSecurityModal').modal('hide');
+            $('#upgateNoContainer').css('display', 'none');
+        });
+
+        $('.addVisitorForm').submit(function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            let data = new FormData(this);
+
+            // Check for base64 image (from webcam)
+            let base64Image = $('#capturedImage').val();
+            if (base64Image) {
+                let blob = dataURItoBlob(base64Image); // Convert base64 to blob
+                data.append("image", blob, "visitor_photo.jpg"); // Append to form data
+            }
+            // Check for base64 image (from webcam)
+            let base64Image1 = $('#v2_capturedImage').val();
+            if (base64Image1) {
+                let blob = dataURItoBlob(base64Image1); // Convert base64 to blob
+                data.append("image", blob, "visitor_photo.jpg"); // Append to form data
+            }
+            $.ajax({
+                type: 'Post',
+                url: '/security/AddVistor',
+                data: data,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+        // Helper function to convert base64 to Blob
+        function dataURItoBlob(dataURI) {
+            let byteString = atob(dataURI.split(',')[1]);
+            let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+            let ab = new ArrayBuffer(byteString.length);
+            let ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+
+            return new Blob([ab], { type: mimeString });
+        }
+
+        $(document).on('click', '.logoutVisitor', function () {
+            debugger
+            let id = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to logout this visitor?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'LogOut',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                customClass: {
+                    confirmButton: 'mx-2 btn btn-danger',
+                    cancelButton: 'mx-2 btn btn-light'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing Your Request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/security/LogoutVisitor',
+                        type: 'get',
+                        data: { Id: id },
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: res.message,
+                                    icon: 'success',
+                                    didClose: () => {
+                                        location.reload(true);
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: res.message,
+                                    icon: 'warning'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Server Error. Try Again Later!',
+                                icon: 'error'
+                            });
+                            console.log(xhr);
+                        }
+                    });
+                } else {
+                    Swal.fire('Cancelled');
+                }
+            });
+        });
+
+        $(document).on('click', ".loginVisitor", function () {
+            Swal.fire({
+                title: 'Please wait!',
+                text: 'Loading student...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            })
+            debugger
+            let id = $(this).data('id')
+            $.ajax({
+                url: '/security/GetVisitorPreviousMeeting', type: 'get', data: { id, id },
+                success: function (res) {
+                    if (!res || !res.length) return;
+
+                    let data = res[0];
+
+                    $('#vid').val(data.vid);
+                    $('#lgreason').val(data.reason);
+                    $('#lgremark').val(data.remark);
+
+                    $('#lguserTypeSelect').val(data.userType).trigger('change');
+
+                    if (data.userType === 'staff') {
+                        $('#lgroomDropdown, #lgclsDropdown, #lgsecDropdown, #lgstdDropdown, #lgstudentOptions').hide();
+                        $('#lgstaffDropdown, #lgpersonDropdown').show();
+
+                        $('#lgstaffRole').val(data.staffRole);
+                        getpersonbytype(data.staffRole, "update").then(() => {
+                            $('#lgpersonId').val(data.personId);
+                        });
+                    } else if (data.userType === 'student') {
+                        $('#lgstaffDropdown, #lgpersonDropdown').hide();
+                        $('#lgstudentOptions, #lgclsDropdown, #lgsecDropdown, #lgstdDropdown').show();
+
+                        $('#lgclassSectionOption').prop('checked', true);
+                        $('#lgclass').val(data.classid).trigger('change');
+
+                        setTimeout(() => {
+                            $('#lgsection').val(data.sectionid);
+                        }, 500);
+
+                        bindstudentonclassandsection(data.classid, data.sectionid).then(() => {
+                            $('#studentId').val(data.personId);
+                        });
+
+                        if (data.inputType === 'room') {
+                            $('#lgroomOption').prop('checked', true).trigger('change');
+                            $('#lgroomNo').val(data.roomNo);
+                        } else {
+                            $('#lgclassSectionOption').prop('checked', true).trigger('change');
+                        }
+                    }
+
+                    Swal.close();
+                    $('#loginVisitorModal').modal('show');
+                }
+,
+                error: function (xhr) {
+
+                }
+            });
+        });
+    });
+</script>
+<!-- Include SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    let webcamActive = false;
+
+    document.getElementById('cameraPlaceholder').addEventListener('click', function () {
+        if (!webcamActive) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+
+                    const modal = new bootstrap.Modal(document.getElementById('cameraModal'));
+                    modal.show();
+
+                    Webcam.set({
+                        width: 450, // or just omit width
+                        height: 340,
+                        image_format: 'jpeg',
+                        jpeg_quality: 90
+                    });
+
+                    Webcam.attach('#my_camera');
+                    webcamActive = true;
+                })
+                .catch(function () {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Camera Not Detected',
+                        text: 'Please connect a webcam to take a photo.',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        }
+    });
+
+    document.getElementById('takePhoto').addEventListener('click', function () {
+        Webcam.snap(function (data_uri) {
+            document.getElementById('capturedImage').value = data_uri;
+            if (data_uri != null) {
+                $('#previewImage').attr('src', data_uri);
+                $('#imagenotCAp').hide();
+            }
+            document.getElementById('placeholderText').textContent = 'visitor_photo.jpg';
+
+            Webcam.reset();
+            webcamActive = false;
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('cameraModal'));
+            modal.hide();
+        });
+    });
+
+
+    function closeCamera() {
+        if (webcamActive) {
+            Webcam.reset();
+            webcamActive = false;
+        }
+    }
+    $('#previewButton').on('click', function () {
+        $('#ImageModal').modal('show');
+    });
+
+    $('#visiterModalClosebtn').on('click', function () {
+        $('.addVisitorForm')[0].reset();
+        $('#capturedImage').val();
+        $('#addVisitorModal').modal('hide');
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+
+        let debounceTimer;
+
+        $('#searchFilter').on('input', function () {
+            clearTimeout(debounceTimer); // Clear any existing timer
+
+            debounceTimer = setTimeout(function () {
+                let inputdata = $('#searchFilter').val();
+
+                $.ajax({
+                    url: '/security/GetAllVisitorByFilter',
+                    type: 'get',
+                    data: { filt: inputdata },
+                    success: function (res) {
+                        if (res && res.length > 0) {
+                            $('#visitorTableBody').empty();
+                            let html = '';
+                            res.forEach(function (visitor, index) {
+                                html += `<tr>
+                                    <td>${index + 1}</td>
+                                    <td>${visitor.name}</td>
+                                    <td>${visitor.mobile}</td>
+                                    <td>${visitor.email}</td>
+                                    <td>${visitor.address}</td>
+                                    <td>${
+                                    visitor.imageName && visitor.imageName != ""
+                                    ? `<a href="${visitor.imageName}" target="_blank" title="Show Photo">Show</a>`
+                                        : "Not Uploaded"
+}</td>
+                                    <td><a href="#" title="Login Visitor" data-id="${visitor.id}" class="btn text-success loginVisitor">Login</a></td>
+                                </tr>`;
+                            });
+                            $('#visitorTableBody').html(html);
+                            
+                        } else {
+                            $('#visitorTableBody').empty();
+                            $('#visitorTableBody').html(`<tr><td colspan="7" class="text-center text-danger">No Data Found</td></tr>`);
+
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log(xhr);
+                    }
+                });
+            }, 500); // Wait 500ms after typing stops
+        });
+    });
+</script>
+
+<script>
+    function loadVisitors() {
+        debugger
+        $.ajax({
+            url: '/security/GetLoginVisitor',
+            type: 'GET',
+            success: function (res) {
+                if (res && res.length > 0) {
+                    let cardHtml = `
+                    <h4 class="card-title">Active Visitors List</h4>
+                    <table id="datatable3" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Name</th>
+                                <th>Mobile</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Photo</th>
+                                <th>Login Time</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            `;
+
+                    let count = 1;
+                    res.forEach(function (item) {
+                        console.log(item);
+                        if (item.loginStatus) {
+                            cardHtml += `
+                        <tr>
+                            <td>${count}</td>
+                            <td>${item.name}</td>
+                            <td>${item.mobile}</td>
+                            <td>${item.email}</td>
+                            <td>${item.address}</td>
+                           
+                            <td>${
+                                item.imageName && item.imageName !=""
+                                    ? `<a href="${item.imageName}" target="_blank" title="Show Photo">Show</a>`
+                                    : "Not Uploaded"
+    }</td>
+                            <td>${item.loginTime}</td>
+                            <td class="text-center">
+                                <a role="button" title="Logout" data-id="${item.meetid}" class="btn logoutVisitor text-danger">Logout</a>
+                            </td>
+                        </tr>
+                            `;
+                        }
+                        count++;
+                    });
+
+                    cardHtml += `
+                            </tbody>
+                        </table>
+
+                    `;
+
+                    $('#visitorlogincard').html(cardHtml);
+                    let $table = $('#datatable3');
+
+                    if ($.fn.DataTable.isDataTable($table)) {
+                        $table.DataTable().destroy();
+                    }
+
+                    $table.DataTable();
+                }
+            },
+            error: function (xhr) {
+                console.log(xhr);
+                Swal.fire('Error', 'Failed to fetch data', 'error');
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        loadVisitors();
+    });
+
+
+</script>
+
+<script>
+    let v2_webcamActive = false;
+
+    document.getElementById('v2_cameraPlaceholder').addEventListener('click', function () {
+        if (!v2_webcamActive) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+
+                    const modal = new bootstrap.Modal(document.getElementById('v2_cameraModal'));
+                    modal.show();
+
+                    Webcam.set({
+                        width: 450,
+                        height: 340,
+                        image_format: 'jpeg',
+                        jpeg_quality: 90
+                    });
+
+                    Webcam.attach('#v2_my_camera');
+                    v2_webcamActive = true;
+                })
+                .catch(function () {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Camera Not Detected',
+                        text: 'Please connect a webcam to take a photo.',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        }
+    });
+
+    document.getElementById('v2_takePhoto').addEventListener('click', function () {
+        Webcam.snap(function (data_uri) {
+            document.getElementById('v2_capturedImage').value = data_uri;
+            if (data_uri != null) {
+                $('#v2_previewImage').attr('src', data_uri);
+                $('#v2_imagenotCAp').hide();
+            }
+            document.getElementById('v2_placeholderText').textContent = 'visitor_photo.jpg';
+
+            Webcam.reset();
+            v2_webcamActive = false;
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('v2_cameraModal'));
+            modal.hide();
+        });
+    });
+
+    function v2_closeCamera() {
+        if (v2_webcamActive) {
+            Webcam.reset();
+            v2_webcamActive = false;
+        }
+    }
+
+    $('#v2_previewButton').on('click', function () {
+        $('#v2_ImageModal').modal('show');
+    });
+
+    $('#v2_visiterModalClosebtn').on('click', function () {
+        $('.v2_addVisitorForm')[0].reset();
+        $('#v2_capturedImage').val();
+        $('#v2_addVisitorModal').modal('hide');
+    });
+</script>

@@ -1,0 +1,120 @@
+﻿
+@{
+    ViewBag.Title = "StudentFeesTransactionHistory";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title mb-3 d-flex justify-content-between">
+                                <span>Transaction History</span> <!-- Button trigger modal -->
+                            </h4>
+                            <table id="datatablefeestatement" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Student</th>
+                                        <th>Class</th>
+                                        <th>Section</th>
+                                        <th>Billing Month</th>
+                                        <th>Fee Amount</th>
+                                        <th>Payment Date</th>
+                                        <th>Fee Slip</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ 
+                                        int sr = 1;
+                                    }
+
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@sr</td>
+                                            <td>@item.studentName</td>
+                                            <td>@item.className</td>
+                                            <td>@item.sectionName</td>
+                                            <td>@item.billingMonth</td>
+                                            <td>₹ @item.feeAmount.ToString("N2")</td>
+                                            <td>@(string.IsNullOrEmpty(item.paymentDated) ? "N/A" : item.paymentDated)</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(item.feeSlip))
+                                                {
+                                                    <a href="@item.feeSlip" target="_blank">View Slip</a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">No Slip</span>
+                                                }
+                                            </td>
+                                           
+                                        </tr>
+                                        sr++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="~/assets/libs/jquery/jquery.min.js"></script>
+ <script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+   <script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+      <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+       <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+      <script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+                <script>
+                    function initializeDataTable() {
+                        debugger
+                        let table = $('#datatablefeestatement').DataTable({
+                            ordering: false,
+                            autoWidth: false,
+                            pageLength: 10,
+                            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+                            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+                            buttons: [
+                                {
+                                    extend: 'excel',
+                                    text: 'Export Excel',
+                                    exportOptions: {
+                                        columns: function (idx, data, node) {
+                                            return ![8, 9].includes(idx);
+                                        } // exclude last column
+                                    }
+                                },
+                                {
+                                    extend: 'pdfHtml5',
+                                    text: 'Export PDF',
+                                    orientation: 'landscape',
+                                    pageSize: 'A4',
+                                    exportOptions: {
+                                        columns: function (idx, data, node) {
+                                            return ![8, 9].includes(idx);
+                                        } // exclude last column
+                                    },
+                                    customize: function (doc) {
+                                        doc.defaultStyle.fontSize = 6;
+                                        doc.styles.tableHeader.fontSize = 7;
+                                        doc.content[1].table.widths =
+                                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                                    }
+                                }
+                            ]
+                        });
+                        return table;
+                    }
+                    $(document).ready(function () {
+                        initializeDataTable();
+                    });
+                </script>
+

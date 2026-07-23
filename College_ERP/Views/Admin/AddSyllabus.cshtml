@@ -1,0 +1,548 @@
+﻿
+@{
+    ViewBag.Title = "AddSyllabus";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var classList = ViewData["classList"] as List<College_ERP.Models.Admin.ClassModel>;
+    var data = ViewData["syllabusList"] as List<College_ERP.Models.Admin.AddSyllabusMoedel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/addclass">Add Class </a>
+                    </li>
+                    <li class="breadcrumb-item "><a class="text-decoration-none text-primary" href="/admin/addsection">Add Section</a></li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addsubject">Add Subject</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Syllabus
+                    </li>
+                </ol>
+            </nav>
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="py-0 card-header border-bottom-0 d-flex justify-content-between">
+                            <h4 class="card-title mb-0">Syllabus List</h4>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddSyllabusModal">
+                                Add Syllabus
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Class</th>
+                                        <th>Stream</th>
+                                        <th>Subject</th>
+                                        <th>Academic Year</th>
+                                        <th>View</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td>@item.className</td>
+                                                <td>@(!string.IsNullOrEmpty(item.classstream) ? item.classstream : "N/A")</td>
+                                                <td>@item.subjectName</td>
+                                                <td>@item.academicYear</td>
+                                                <td class="text-center"><a href="@item.attachmentName" target="_blank" title="Show Attachment">View</a></td>
+                                                <td class="text-center">
+                                                    <a role="button" title="Update Syllabus" data-id="@item.id" class="btn btn-sm updateSyllabus p-0"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                                    <a role="button" class="btn btn-sm deleteSyllabus p-0" data-id="@item.id" title="Delete Syllabus"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                                </td>
+                                            </tr>
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Task Modal-->
+<div class="modal fade" id="AddSyllabusModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="AddSyllabusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="AddSyllabusModalLabel">Add Syllabus</h1>
+                <button type="button" class="btn-close" id="CloseModalAddSyllabus"></button>
+            </div>
+            <div class="modal-body">
+                <form class="AddSyllabusForm" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <!-- Institution Type -->
+                        <div class="col-sm-4">
+                            <label for="institutionType" class="form-label">Institution Type</label>
+                            <select name="institutionType" id="institutionType" class="form-select">
+                                <option selected disabled>--Select Institution Type--</option>
+                                <option value="school">School</option>
+                                <option value="college">College</option>
+                            </select>
+                        </div>
+                        <!-- Education Level -->
+                        <div class="col-sm-4">
+                            <label for="educationLevel" class="form-label">Education Level</label>
+                            <select name="educationLevel" id="educationLevel" class="form-select">
+                                <option selected disabled>--Select Education Level--</option>
+                            </select>
+                        </div>
+                        <!--class-->
+                        <div class="col-sm-4 mb-2">
+                            <label for="classId" class="form-label">Class</label>
+                            <select id="classId" class="form-select" name="classId" required>
+                                <option value="">--Select Class--</option>
+                             
+                            </select>
+                        </div>
+                        <!--Stream-->
+                        <div class="col-sm-4 mb-2" id="streamWrapper" style="display:none;">
+                            <label for="streamInput" class="form-label">Stream</label>
+                            <select id="streamInput" name="classStreamId" placeholder="Select Stream" class="form-select">
+                                <option value="">--Select Stream--</option>
+                            </select>
+                        </div>
+                        <!--subject-->
+                        <div class="col-sm-4 mb-2">
+                            <label for="subjectId" class="form-label">Subject</label>
+                            <select id="subjectId" class="form-select subject-dropdown" name="subjectId" required>
+                                <option value="">--Select Subject--</option>
+                            </select>
+                        </div>
+                        <!--academic year-->
+                        <div class="col-sm-4 mb-2">
+                            <label class="form-label">Academic year</label>
+                            <select name="academicYear" class="form-control" id="academicYear" required>
+                                <option selected disabled value="">--Select Academic Year--</option>
+                                @{
+                                    for (int i = 0; i <= 10; i++)
+                                    {
+                                        <option @(Request.QueryString["year"] == (DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year) ? "selected" : "") value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <!--attachment-->
+                        <div class="col-sm-4 mb-2">
+                            <label for="attachment" class="form-label">Attachment</label>
+                            <input type="file" name="attachment" id="attachment" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Update Task Modal-->
+<div class="modal fade" id="UpdateSyllabusModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="UpdateSyllabusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="UpdateSyllabusModalLabel">Update Syllabus</h1>
+                <button type="button" class="btn-close" id="CloseModalUpdateSyllabus"></button>
+            </div>
+            <div class="modal-body">
+                <form class="AddSyllabusForm">
+                    <input type="hidden" name="id" id="id" />
+                    <div class="row">
+                        <!-- Institution Type -->
+                        <!--<div class="col-sm-4 mb-2">
+                            <label for="institutionType" class="form-label">Institution Type</label>
+                            <select name="institutionType" id="upinstitutionType" class="form-select">
+                                <option selected disabled>--Select Institution Type--</option>
+                                <option value="school">School</option>
+                                <option value="college">College</option>
+                            </select>
+                        </div>-->
+                        <!-- Education Level -->
+                        <!--<div class="col-sm-4 mb-2">
+                            <label for="educationLevel" class="form-label">Education Level</label>
+                            <select name="educationLevel" id="upeducationLevel" class="form-select">
+                                <option selected disabled>--Select Education Level--</option>
+                            </select>
+                        </div>-->
+                        <!--class-->
+                        <!--<div class="col-sm-4 mb-2">
+                            <input type="hidden" id="setclassid" name="classId" />
+                            <label for="upclassId" class="form-label">Class</label>
+                            <select id="upclassId" class="form-select" disabled>
+                                <option value="">Select Class</option>
+                                
+                                
+                            </select>
+                        </div>-->
+                        <!--Stream-->
+                        <!--<div class="col-sm-4 mb-2" id="streamWrapper" style="display:none;">
+                            <label for="streamInput" class="form-label">Stream</label>
+                            <select id="streamInput" name="classStreamId" placeholder="Select Stream" class="form-select">
+                                <option value="">--Select Stream--</option>
+                            </select>
+                        </div>-->
+                        <div class="col-sm-4 mb-2">
+                            <label for="upsubjectId" class="form-label">Subject</label>
+                            <select id="upsubjectId" class="form-select subject-dropdown" name="subjectId" required readonly>
+                                <option value="">--Select Subject--</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-4 mb-2">
+                            <input type="hidden" id="setacademiyear" name="academicYear" />
+                            <label class="form-label" for="upacademicYear">Academic year</label>
+                            <select class="form-control" id="upacademicYear" disabled>
+                                <option selected disabled value="">--Select Academic Year--</option>
+                                @{
+                                    for (int i = 0; i <= 10; i++)
+                                    {
+                                        <option @(Request.QueryString["year"] == (DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year) ? "selected" : "") value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="upattachment" class="form-label">Attachment</label>
+                            <input type="file" id="upattachment" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function (){
+        const educationOptions = {
+            school: [
+                { value: "secondary", text: "Secondary (Class Nursery – 10)" },
+                { value: "senior_secondary", text: "Senior Secondary (Class 11 – 12)" }
+            ],
+            college: [
+                { value: "diploma", text: "Diploma" },
+                { value: "ug", text: "Undergraduate (UG)" },
+                { value: "pg", text: "Postgraduate (PG)" },
+                { value: "phd", text: "Doctorate (Ph.D.)" }
+            ]
+        };
+        $('#institutionType').on('change', function () {
+            $('#streamWrapper').hide();
+            $('#optsubject').hide();
+            const selectedType = $(this).val();
+            const $educationLevel = $('#educationLevel');
+            $educationLevel.empty();
+            $.get('/Admin/GetEducationLevelByInstitution?institution=' + selectedType, function (data) {
+                if (data && data.length > 0) {
+                    $.each(data, function (index, item) {
+                        $educationLevel.append($('<option>', {
+                            value: item,
+                            text: item
+                        }));
+                    });
+                }
+            });
+            $educationLevel.empty().append('<option selected disabled>--Select Education Level--</option>');
+
+            //if (educationOptions[selectedType]) {
+            //    $.each(educationOptions[selectedType], function (index, item) {
+            //        $educationLevel.append($('<option>', {
+            //            value: item.value,
+            //            text: item.text
+            //        }));
+            //    });
+            //}
+            if (selectedType === "college") {
+                $('#streamWrapper').show();
+            }
+        });
+        let streamFlag = false;
+
+        $('#educationLevel').on('change', function () {
+            debugger
+            const selectedLevel = $(this).val();
+
+            $('#streamWrapper').hide();
+            $('#optsubject').hide();
+
+            if (selectedLevel !== 'secondary') {
+                $('#streamWrapper').show();
+                $('#optsubject').show();
+                streamFlag = true;
+
+            }
+
+            const $classdropdown = $('#classId');
+            $classdropdown.empty();
+            $classdropdown.html(`<option value="0" disabled selected>-- Select Class --</option>`);
+            $.get('/admin/GetClassByEducationLevel?educationlevel=' + selectedLevel, function (data) {
+                if (data && data.length > 0) {
+                    $.each(data, function (index, item) {
+                        $classdropdown.append($('<option>', {
+                            value: item.ClassId,
+                            text: item.ClassName
+                        }));
+                    });
+                }
+            });
+        });
+        $('#classId').on('change', function () {
+            debugger
+            if (streamFlag) {
+                let id = $(this).val();
+                const $streamdrp = $('#streamInput');
+                $streamdrp.empty();
+                $streamdrp.html(`<option value="0" disabled selected>-- Select Stream --</option>`);
+                $.get('/admin/GetStreamByClassId?classid=' + id, function (data) {
+                    if (data && data.length > 0) {
+                        $.each(data, function (index, item) {
+                            $streamdrp.append($('<option>', {
+                                value: item.Classstreamid,
+                                text: item.ClassStream
+                            }));
+                        });
+                    }
+                });
+            }
+        });
+        $('#closebtnaddmodal').on('click', function () {
+            $('#subjectContainer').empty();
+            $('#exampleModal').modal('hide');
+        });
+    });
+   
+    
+</script>
+<script>
+
+    $(document).ready(function () {
+
+        $('#CloseModalAddSyllabus').on('click', function () {
+            $('.AddSyllabusForm')[0].reset();
+            $('#AddSyllabusModal').modal('hide');
+        });
+        $('#CloseModalUpdateSyllabus').on('click', function () {
+            $('.AddSyllabusForm')[0].reset();
+            $('#UpdateSyllabusModal').modal('hide');
+        });
+        async function setsubjectacctoclass(id) {
+            await $.ajax({
+                url: '/admin/GetSubjectandSectionByClassId', type: 'get', data: { id: id },
+                success: function (res) {
+                    console.log(res.subject);
+                    if (res && res.subject && res.subject.length > 0) {
+                        let $subjectDropdown = $('.subject-dropdown');
+                        $subjectDropdown.empty();
+
+                        $subjectDropdown.append('<option value="">--Select Subject--</option>');
+
+                        $.each(res.subject, function (index, subject) {
+                            $subjectDropdown.append(`<option value="${subject.SubjectId}">${subject.Subject}</option>`);
+                        });
+                    } else {
+                        $('#subjectId').empty().append('<option value="">No subjects available</option>');
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            });
+        }
+        $('#classId').change(async function () {
+            let id = $(this).val();
+            await setsubjectacctoclass(id);
+        });
+
+        $('.AddSyllabusForm').on('submit', function (e) {
+            debugger;
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Please Wait!',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                text: 'Processing your request...',
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            var data = new FormData(this);
+            var fileUpload = document.getElementById("attachment");
+            if (fileUpload.files.length > 0) {
+                for (var i = 0; i < fileUpload.files.length; i++) {
+                    data.append("attachment", fileUpload.files[i]);
+                }
+            }
+
+            var upfileUpload = document.getElementById("upattachment");
+            if (upfileUpload.files.length > 0) {
+                for (var i = 0; i < upfileUpload.files.length; i++) {
+                    data.append("attachment", upfileUpload.files[i]);
+                }
+            }
+            $.ajax({
+                url: '/admin/AddSyllabus',
+                type: 'post',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            didClose: () => { location.reload(true); }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again.'
+                    });
+                }
+            });
+        });
+
+        $(".deleteSyllabus").on('click', function () {
+            let id = $(this).data('id');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to delete this item?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                customClass: {
+                    confirmButton: 'mx-2 btn btn-danger',
+                    cancelButton: 'mx-2 btn btn-light'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing Your Request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/admin/DeleteSyllabus',
+                        type: 'get',
+                        data: { id: id },
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: res.message,
+                                    icon: 'success',
+                                    didClose: () => {
+                                        location.reload(true);
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: res.message,
+                                    icon: 'warning'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Server Error. Try Again Later!',
+                                icon: 'error'
+                            });
+                            console.log(xhr);
+                        }
+                    });
+                } else {
+                    Swal.fire('Cancelled', 'Your item is safe.', 'info');
+                }
+            });
+        });
+
+        $('.updateSyllabus').on('click', function () {
+            debugger
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let id = $(this).data('id');
+
+            $.ajax({
+                url: '/admin/GetSyllabusById',
+                type: 'get',
+                data: { id, id },
+                success: function (res) {
+                    console.log(res);
+                    Swal.close();
+                    if (res) {
+                        $('#id').val(res[0].id)
+                        $('#upclassId').val(res[0].classId)
+                        $('#setclassid').val(res[0].classId)
+                        setsubjectacctoclass(res[0].classId).then(() => {
+                            $('#upsubjectId').val(res[0].subjectId);
+                        });
+                        $('#upacademicYear').val(res[0].academicYear);
+                        $('#setacademiyear').val(res[0].academicYear);
+                        $('#upinstitutionType').val(res[0].institutionType);
+                        $('#upeducationLevel').val(res[0].educationLevel);
+                        $('#UpdateSyllabusModal').modal('show');
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: 'Some error occured', icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+    });
+</script>
+

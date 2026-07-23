@@ -1,0 +1,489 @@
+﻿
+@{
+    ViewBag.Title = "AddTask";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var teachers = ViewData["teachers"] as List<College_ERP.Models.Admin.TeacherModel>;
+    var data = ViewData["taskList"] as List<College_ERP.Models.Admin.AddTaskModel>;
+}
+<style>
+    th {
+        text-align: center !important;
+    }
+
+    td {
+        text-align: center !important;
+    }
+
+    .custom-file-upload {
+        border: 1px solid #1e7644;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        margin-top: 2px;
+        width: 115px;
+        background: #1e7644;
+        color: white;
+    }
+
+
+    .filter-section {
+        background: white;
+        border-radius: 12px;
+        padding: 10px 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .filter-select {
+        padding: 12px 20px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+        min-width: 200px;
+    }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-select:hover {
+            border-color: #667eea;
+        }
+</style>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid mt-2">
+            @*<nav class="my-3" aria-label="breadcrumb"
+             style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+            <ol class="breadcrumb bg-light rounded p-2">
+                <li class="breadcrumb-item active text-dark" aria-current="page">
+                    Task Management
+                </li>
+            </ol>
+        </nav>*@
+
+            <!-- Academic Year Filter -->
+            <div class="filter-section" id="filterCard">
+                <label class="filter-label" for="academicYearSelect">Academic Year:</label>
+
+                <select id="academicYearSelect" class="filter-select">
+                    <option value="">-- Select Academic Year --</option>
+                    <option value="2026-27">2026-27</option>
+                    <option value="2025-26">2025-26</option>
+                    <option value="2024-25">2024-25</option>
+                    <option value="2023-24">2023-24</option>
+                    <option value="2022-23">2022-23</option>
+                    <option value="2021-22">2021-22</option>
+                    <option value="2020-21">2020-21</option>
+                </select>
+            </div>
+            <div class="row mt-0">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="py-0 card-header border-bottom-0 d-flex justify-content-between">
+                            <h4 class="card-title mb-0">Task List</h4>
+
+
+                            <div class="mb-3">
+                                <select id="taskStatusFilter" class="form-select" style="width: 200px;" onchange="filterTasks()">
+                                    <option value="">All</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Submitted">Submitted</option>
+                                </select>
+                            </div>
+
+                            <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#AddTaskModal">
+                                Add Task
+                            </button>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <table id="taskTable" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Title</th>
+                                        <th>Teacher Name</th>
+                                        <th>Completion Date</th>
+                                        <th>Description</th>
+                                        <th>Attachment</th>
+                                        <th>Task Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="BookTableBody">
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr data-status="@item.taskStatus">
+                                                <td>@count</td>
+                                                <td>@item.title</td>
+                                                <td>@item.teacherName</td>
+
+                                                <td>@item.completionDateString</td>
+                                                <td>
+                                                    <a role="button" class="text-center view-description" data-description="@item.description" data-bs-toggle="modal" data-bs-target="#descriptionModal">
+                                                        View
+                                                    </a>
+                                                </td>
+                                                <td class="text-center"><a href="@item.attachmentName" target="_blank" title="Show Attachment">View</a></td>
+
+                                                <td>
+                                                    @if (item.taskStatus == 0)
+                                                    {
+                                                        <span class="badge badge-soft-warning">Pending</span>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge badge-soft-primary ">Submitted</span>
+
+                                                    }
+                                                </td>
+
+
+                                                <td class="text-center">
+                                                    <a role="button" title="Update" data-id="@item.id" class="btn btn-sm updateTask p-0"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+
+                                                </td>
+                                            </tr>
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Description Modal -->
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descriptionModalLabel">Task Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalDescriptionContent">
+                <!-- Content will be injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Task Modal-->
+<div class="modal fade" id="AddTaskModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Task</h1>
+                <button type="button" class="btn-close" id="CloseModalAddTask"></button>
+            </div>
+            <div class="modal-body">
+                <form class="AddTaskForm">
+                    <div class="row">
+                        <div class="col-sm-6 mb-2">
+                            <label for="teacher" class="form-label">Select Teacher</label>
+                            <select id="teacher" class="form-select" name="teacherId" required>
+                                <option value="">--Select Teacher--</option>
+                                @if (teachers != null)
+                                {
+                                    foreach (var teacher in teachers)
+                                    {
+                                        <option value="@teacher.TeacherId">@teacher.TeacherName (@teacher.TeacherEmail)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" placeholder="Enter Title" name="title" id="title" class="form-control" required />
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="attachment" class="form-label">Attachment</label>
+                            <input type="file" name="attachment" id="attachment" class="form-control" />
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="completionDate" class="form-label">Completion Date</label>
+                            <input type="date" name="completionDate" id="completionDate" min="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label class="form-label" for="description">Description</label>
+                            <textarea id="description" class="form-control" name="description"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 text-center">
+                        <button type="submit" class="btn btn-primary addOrderBtn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Update Task Modal-->
+<div class="modal fade" id="UpdateTaskModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Update Task</h1>
+                <button type="button" class="btn-close" id="CloseModalUpdateTask"></button>
+            </div>
+            <div class="modal-body">
+                <form class="AddTaskForm">
+                    <input type="hidden" name="id" id="id" />
+                    <div class="row">
+                        <div class="col-sm-6 mb-2">
+                            <label for="teacherup" class="form-label">Select Teacher</label>
+                            <select id="teacherup" class="form-select" name="teacherId" required>
+                                <option value="">--Select Teacher--</option>
+                                @if (teachers != null)
+                                {
+                                    foreach (var teacher in teachers)
+                                    {
+                                        <option value="@teacher.TeacherId">@teacher.TeacherName (@teacher.TeacherEmail)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="titleup" class="form-label">Title</label>
+                            <input type="text" placeholder="Enter Title" name="title" id="titleup" class="form-control" required />
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="attachmentup" class="form-label">Attachment</label>
+                            <input type="file" name="attachment" id="attachmentup" class="form-control" />
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="completionDateup" class="form-label">Completion Date</label>
+                            <input type="date" name="completionDate" id="completionDateup" min="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label class="form-label" for="description">Description</label>
+                            <textarea id="descriptionup" class="form-control" name="description"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 text-center">
+                        <button type="submit" class="btn btn-primary addOrderBtn">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".view-description").forEach(button => {
+            button.addEventListener("click", function () {
+                const description = this.getAttribute("data-description");
+                document.getElementById("modalDescriptionContent").innerHTML = description;
+            });
+        });
+    });
+    function initializeDataTable() {
+
+        if ($.fn.DataTable.isDataTable("#taskTable")) {
+            $('#taskTable').DataTable().destroy(); // ✅ use lowercase 'destroy'
+        }
+
+
+        debugger
+        let table = $('#taskTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![5, 7].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![5, 7].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+    $(document).ready(function () {
+        initializeDataTable();
+        $('#description').summernote({
+            height: 150,
+            placeholder: 'Enter Description...'
+        });
+        $('#descriptionup').summernote({
+            height: 150,
+            placeholder: 'Enter Description...'
+        });
+
+        $('#CloseModalAddTask').on('click', function () {
+            $('.AddTaskForm')[0].reset();
+            $('#AddTaskModal').modal('hide');
+        });
+        $('#CloseModalUpdateTask').on('click', function () {
+            $('.AddTaskForm')[0].reset();
+            $('#UpdateTaskModal').modal('hide');
+        });
+
+        $('.AddTaskForm').on('submit', function (e) {
+            debugger
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Please Wait!',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                text: 'Processing your request...',
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            var data = new FormData(this);
+
+            $.ajax({
+                url: '/admin/AddTask',
+                type: 'post',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            didClose: () => { location.reload(true); }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again.'
+                    });
+                }
+            });
+        });
+        $('.updateTask').on('click', function () {
+            debugger
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let id = $(this).data('id');
+
+            $.ajax({
+                url: '/admin/GetTaskById',
+                type: 'get',
+                data: { id, id },
+                success: function (res) {
+                    console.log(res);
+                    Swal.close();
+                    if (res) {
+                        $('#teacherup').val(res[0].teacherId);
+                        $('#id').val(res[0].id)
+                        $('#titleup').val(res[0].title)
+                        $('#descriptionup').summernote('code', res[0].description)
+                        $('#completionDateup').val(res[0].completionDateString)
+                        $('#UpdateTaskModal').modal('show');
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: 'Some error occured', icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+    });
+    function filterTasks() {
+        let table = initializeDataTable();
+        var status = document.getElementById('taskStatusFilter').value;
+        var rows = document.querySelectorAll('#BookTableBody tr');
+
+        table.column(6).search(status).draw()
+    }
+
+
+
+
+</script>
+<script>
+    document.getElementById("academicYearSelect").addEventListener("change", function () {
+
+        let academicYear = this.value;
+
+        if (academicYear) {
+            let year = academicYear.split('-')[0]; // 2026
+
+            window.location.href = "/Admin/AddTask?academicYear=" + year;
+        }
+    });
+</script>

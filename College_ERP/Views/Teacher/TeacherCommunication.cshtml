@@ -1,0 +1,357 @@
+﻿
+@{
+    ViewBag.Title = "TeacherCommunication";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+    var clasList = ViewData["ClassList"] as List<College_ERP.Models.Teacher.SubjectAssignModel>;
+    var data = ViewData["teachercomlist"] as List<College_ERP.Models.Teacher.TeacherCommunicationModel>;
+}
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span>Teacher Communication List</span> <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                            Add Communication
+                        </button>
+                    </h4>
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Student Name</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Title</th>
+                                <th>Send To</th>
+                                <th>Description</th>
+                                <th>Attachment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (data != null)
+                            {
+                                int sr = 1;
+                                foreach (var item in data)
+                                {
+                                    <tr>
+                                        <td>@sr</td>
+                                        <td>@item.student</td>
+                                        <td>@item.className</td>
+                                        <td>@item.secitonName</td>
+                                        <td>@item.title</td>
+                                        <td>
+                                            @(item.IsSendTo==1?"Student": item.IsSendTo==2?"Parent": item.IsSendTo==3?"Both":null)
+                                        </td>
+                                        <td>
+                                            <a role="button" class=" btn-sm btn-primary view-description"
+                                                    data-bs-toggle="modal" data-bs-target="#descriptionModal"
+                                                    data-description="@(item.description)">
+                                                View
+                                            </a>
+                                        </td>
+
+                                        <td><a href="@item.attachmentName" title="Show Attachment" target="_blank">View</a></td>
+                                    </tr>
+                                    sr++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--description-->
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descriptionModalLabel">Communication Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="descriptionContent">
+                <!-- Description will be injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--add Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Communication</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="addcommunicationForm">
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <input type="radio" id="student" value="1" checked class="me-2" name="IsSendTo" />
+                            <label for="student">Student</label>
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="radio" id="parent" value="2" class="me-2" name="IsSendTo" />
+                            <label for="parent">Parent</label>
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="radio" id="both" value="3" class="me-2" name="IsSendTo" />
+                            <label for="both">Both</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label required-label">Class</label>
+                                <select id="Class" name="ClassId" class="form-select" required>
+                                    <option selected disabled>--Select Class--</option>
+                                    @if (clasList != null && clasList.Count > 0)
+                                    {
+                                        foreach (var item in clasList)
+                                        {
+                                            <option value="@item.ClassId">@item.ClassName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="academicyear" class="form-label required-label">Select Academic Year</label>
+                                <select name="academicyear" class="form-select" id="academicyear">
+
+                                    @{
+                                        for (int i = 0; i <= 3; i++)
+                                        {
+                                            <option value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label for="section-dropdown" class="form-label required-label">Section Name</label>
+                                <select id="section-dropdown" name="SectionId" class="form-select" required>
+                                    <option selected value="">--Select Section--</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label>
+                                    Student Name
+                                </label>
+                                <select id="StudentName" name="StudentName" class="form-select" required>
+                                    <option selected disabled value="">--select student--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label for="Title" class="form-label required-label">Add Title</label>
+                                <input type="text" id="Title" name="title" class="form-control" required placeholder="Enter Title" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label for="Attachment" class="form-label">Add Attachment</label>
+                                <input type="file" id="Attachment" name="Attachment" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label required-label" for="description">Description</label>
+                                <textarea id="description" class="form-control" name="description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const descriptionButtons = document.querySelectorAll('.view-description');
+
+        descriptionButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const descriptionHtml = this.getAttribute('data-description');
+                document.getElementById('descriptionContent').innerHTML = descriptionHtml;
+            });
+        });
+    });
+
+    document.querySelector('.btn-close').addEventListener('click', function () {
+        document.getElementById('addcommunicationForm').reset();
+        $('#section-dropdown').empty();
+        $('#section-dropdown').append('<option value="">Select Section</option>');
+    });
+
+
+    $(document).ready(function () {
+
+
+
+        $('#description').summernote({
+            height: 150,
+            placeholder: 'Enter Description...'
+        });
+
+        $('#Class').on('change', function () {
+            let classid = $(this).val();
+            $.ajax({
+                url: '/teacher/GetSectionByClass', type: 'get', data: { classid: classid },
+                success: function (res) {
+                    console.log(res);
+                    let $sectionDropdown = $('#section-dropdown');
+                    $sectionDropdown.empty();
+                    if (res && res.length > 0) {
+                        //$sectionDropdown.append('<option value="">Select Section</option>');
+                        res.forEach(function (section) {
+                            $sectionDropdown.append(
+                                `<option value="${section.SectionId}">${section.SectionName}</option>`
+                            );
+                        });
+                    } else {
+                        $sectionDropdown.append('<option value="">No sections available</option>');
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            }).then(() => {
+                $("#section-dropdown").change()
+            });
+        });
+
+        $('#section-dropdown').on('change', function () {
+            let classid = $('#Class').val();
+            let sectionid = $(this).val();
+            $.ajax({
+                url: '/teacher/GetSubjectBySection', type: 'get', data: { classid: classid, sectionid: sectionid },
+                success: function (res) {
+                    console.log(res);
+                    let $subjectDropdown = $('#subject-dropdown');
+                    $subjectDropdown.empty();
+                    if (res && res.length > 0) {
+                        $subjectDropdown.append('<option value="">Select Subject</option>');
+                        res.forEach(function (subject) {
+                            $subjectDropdown.append(
+                                `<option value="${subject.SubjectId}">${subject.SubjectName}</option>`
+                            );
+                        });
+                    } else {
+                        $subjectDropdown.append('<option value="">No subjects available</option>');
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            }).then(() => {
+
+                $('#attendance-filter-form').trigger('submit');
+            })
+        });
+
+        $('#section-dropdown , #academicyear').on('change', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: "Please Wait..!",
+                html: "your request are under process",
+                allowOutSideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            let classId = $("#Class").val();
+            let sectionId = $("#section-dropdown").val();
+            let academic = $("#academicyear").val();
+            let data = {
+                classId: classId,
+                sectionId: sectionId,
+                academicyear: academic
+            }
+            debugger
+            $.ajax({
+                url: '/teacher/GetStudentsForAttendance',
+                type: 'GET',
+                data: data,
+                success: function (data) {
+                    Swal.close()
+
+                    let tableBody = '<option selected disabled value="">--select student--</option>';
+                    data.forEach(student => {
+                        tableBody += `
+                <option value="${student.StudentId}">${student.StudentName} - (${student.MobileNo})</option>`;
+                    });
+                    $('#StudentName').html(tableBody);
+
+                },
+                error: function () {
+                    Swal.fire("error", "Failed to load student", "error");
+                }
+            });
+        });
+
+        $('#addcommunicationForm').on('submit', function (e) {
+            debugger
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Please Wait!',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                text: 'Processing your request...',
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            var data = new FormData(this);
+            var fileUpload = document.getElementById("Attachment");
+            if (fileUpload.files.length > 0) {
+                for (var i = 0; i < fileUpload.files.length; i++) {
+                    data.append("Attachment", fileUpload.files[i]);
+                }
+            }
+            $.ajax({
+                url: '/teacher/AddTeacherCommunication',
+                type: 'post',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            didClose: () => { location.reload(true); }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again.'
+                    });
+                }
+            });
+        });
+    });
+</script>

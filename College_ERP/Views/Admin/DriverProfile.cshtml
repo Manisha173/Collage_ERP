@@ -1,0 +1,1053 @@
+﻿@model List<College_ERP.Models.DriverServices.main.DriverProfileModel>
+
+@{
+    ViewBag.Title = "DriverProfile";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<style>
+    :root {
+  --primary: #0f766e;
+  --secondary: #134e4a;
+  --accent: #115e59;
+  --light: #042f2e;
+  --dark: #042f2e;
+  --success: #0d9488;
+  --teal-50: #f0fdfa;
+  --teal-100: #ccfbf1;
+  --teal-200: #99f6e4;
+  --teal-300: #5eead4;
+  --teal-400: #2dd4bf;
+  --teal-500: #14b8a6;
+  --teal-600: #0d9488;
+  --teal-700: #0f766e;
+  --teal-800: #115e59;
+  --teal-900: #134e4a;
+  --teal-950: #042f2e;
+}
+
+
+
+/* Header Styles */
+.profile-header {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(15, 118, 110, 0.2);
+}
+
+.page-title {
+  font-weight: 700;
+  margin: 0;
+}
+
+.action-buttons .btn {
+  border-radius: 25px;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, var(--teal-400), var(--teal-500));
+  border: none;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(45deg, var(--teal-500), var(--teal-600));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);
+}
+
+.btn-outline-primary {
+  border: 2px solid var(--teal-400);
+  color: var(--teal-400);
+  background: transparent;
+}
+
+.btn-outline-primary:hover {
+  background: var(--teal-400);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Main Profile Card */
+.main-profile-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(15, 118, 110, 0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+.main-profile-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary), var(--teal-400), var(--secondary));
+}
+
+/* Driver Overview */
+.driver-overview {
+  background: linear-gradient(135deg, var(--teal-50), white);
+  padding: 2.5rem;
+  border-bottom: 1px solid var(--teal-100);
+}
+
+.profile-image-container {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.profile-image {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 4px solid var(--teal-200);
+  box-shadow: 0 8px 25px rgba(15, 118, 110, 0.2);
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.profile-image:hover {
+  transform: scale(1.05);
+  border-color: var(--teal-300);
+}
+
+.profile-badge {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  background: var(--primary);
+  color: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3);
+}
+
+.status-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--success);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-indicator.active {
+  background: var(--success);
+}
+
+.driver-basic-info {
+  margin-top: 1rem;
+}
+
+.driver-name {
+  color: var(--secondary);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.employee-id {
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.driver-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.driver-badges .badge {
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+}
+
+.bg-success {
+  background: var(--success) !important;
+}
+
+.bg-primary {
+  background: var(--primary) !important;
+}
+
+/* Quick Stats */
+.quick-stats {
+  margin-top: 1rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 15px rgba(15, 118, 110, 0.1);
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(15, 118, 110, 0.15);
+}
+
+.stat-icon {
+  background: linear-gradient(135deg, var(--teal-100), var(--teal-200));
+  color: var(--primary);
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.stat-info h6 {
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-info p {
+  color: var(--secondary);
+  font-weight: 500;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Profile Sections */
+.profile-sections {
+  padding: 0;
+}
+
+.info-section {
+  border-bottom: 1px solid var(--teal-100);
+}
+
+.info-section:last-child {
+  border-bottom: none;
+}
+
+    .section-header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white !important;
+        padding: 1.5rem 2.5rem;
+        border-bottom: 1px solid var(--teal-100);
+        border-radius:15px;
+    }
+
+.section-header h4 {
+ 
+  font-weight: 700;
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+
+
+.section-content {
+  padding: 2rem 2.5rem;
+}
+
+/* Info Items */
+.info-item {
+  background: var(--teal-50);
+  border-radius: 10px;
+  padding: 1rem;
+  border-left: 4px solid var(--primary);
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.info-item:hover {
+  background: var(--teal-100);
+  transform: translateX(5px);
+  border-left-color: var(--teal-600);
+}
+
+.info-item label {
+  display: block;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.info-item label i {
+  color: var(--primary);
+}
+
+.info-item span {
+  color: var(--secondary);
+  font-weight: 500;
+  font-size: 1rem;
+  display: block;
+}
+
+.info-item .highlight {
+  color: var(--primary);
+  font-weight: 700;
+  background: var(--teal-100);
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+/* Professional Cards */
+.professional-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(15, 118, 110, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.professional-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(15, 118, 110, 0.15);
+}
+
+.professional-card .card-header {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.professional-card .card-header i {
+  font-size: 1.5rem;
+}
+
+.professional-card .card-header h5 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.professional-card .card-content {
+  padding: 1.5rem;
+}
+
+.professional-card .info-item {
+  background: var(--teal-50);
+  margin-bottom: 1rem;
+  border-left: 3px solid var(--teal-300);
+}
+
+.professional-card .info-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Salary Cards */
+.salary-card {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(15, 118, 110, 0.1);
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.salary-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(15, 118, 110, 0.15);
+}
+
+.salary-icon {
+  background: linear-gradient(135deg, var(--teal-100), var(--teal-200));
+  color: var(--primary);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin: 0 auto 1rem;
+}
+
+.salary-info h6 {
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+.salary-info h4 {
+  color: var(--secondary);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.salary-info p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Performance Cards */
+.performance-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(15, 118, 110, 0.1);
+  margin-bottom: 1rem;
+}
+
+.performance-card h6 {
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.performance-meter {
+  position: relative;
+}
+
+.meter-bar {
+  background: var(--teal-100);
+  height: 25px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: 12px;
+  transition: width 1s ease;
+  position: relative;
+}
+
+.meter-fill.excellent {
+  background: linear-gradient(90deg, var(--success), var(--teal-500));
+}
+
+.meter-fill.good {
+  background: linear-gradient(90deg, var(--teal-400), var(--teal-600));
+}
+
+.meter-text {
+  color: var(--secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Achievements */
+.achievements {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(15, 118, 110, 0.1);
+}
+
+.achievements h6 {
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.achievement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.achievement-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--teal-50);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary);
+}
+
+.achievement-item i {
+  font-size: 1.2rem;
+}
+
+.achievement-item span {
+  color: var(--secondary);
+  font-weight: 500;
+}
+
+/* Error States */
+.image-error {
+  background: linear-gradient(135deg, var(--teal-50), var(--teal-100));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  font-size: 3rem;
+  border: 2px dashed var(--teal-200);
+  border-radius: 50%;
+  width: 180px;
+  height: 180px;
+}
+
+/* Responsive Design */
+@@media (max-width: 768px) {
+  .profile-header {
+    padding: 1.5rem;
+  }
+
+  .profile-header .d-flex {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .action-buttons {
+    width: 100%;
+  }
+
+  .action-buttons .btn {
+    width: 48%;
+  }
+
+  .driver-overview {
+    padding: 1.5rem;
+  }
+
+  .section-content {
+    padding: 1.5rem;
+  }
+
+  .profile-image {
+    width: 150px;
+    height: 150px;
+  }
+
+  .stat-card {
+    margin-bottom: 1rem;
+  }
+
+  .professional-card {
+    margin-bottom: 1.5rem;
+  }
+
+  .salary-card {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@@media (max-width: 576px) {
+  .profile-image {
+    width: 120px;
+    height: 120px;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .action-buttons .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .driver-badges {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* Animation */
+@@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.info-section {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.info-section:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.info-section:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.info-section:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.info-section:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+</style>
+    <div class="content-page">
+        <div class="container-fluid py-4">
+            @if (Model.Count > 0)
+            {
+                <!-- Header Section -->
+                <div class="profile-header mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="page-title mb-1">
+                                <i class="fas fa-id-card me-2"></i>
+                                Driver Profile
+                            </h2>
+                            <p class="text-light mb-0">Personal, Professional & Transportation Details</p>
+                        </div>
+                        <div class="action-buttons">
+                            <a href="/admin/AddDriver" class="btn btn-primary me-2">
+                                <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                            </a>
+                            <a href="/admin/AddDriver" class="btn btn-outline-primary">
+                                <i class="bi bi-printer me-1"></i> Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Profile Card -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="main-profile-card">
+                            <!-- Driver Overview Section -->
+                            <div class="driver-overview">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 text-center">
+                                        <div class="profile-image-container">
+                                            <img src="@Model[0].DriverFileName"
+                                                 class="profile-image"
+                                                 alt="Driver Photo"
+                                                 onerror="handleImageError(this)" />
+                                            <div class="profile-badge">
+                                                <i class="fas fa-bus"></i>
+                                            </div>
+                                           
+                                        </div>
+                                        <div class="driver-basic-info mt-0">
+                                            <div class="driver-badges">
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-bus me-1"></i>Bus Driver
+                                                </span>
+                                                <span class="badge bg-primary">
+                                                    <i class="fas fa-certificate me-1"></i>Licensed
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-9">
+                                        <div class="quick-stats">
+                                            <div class="row ms-2">
+                                                <div class="driver-basic-info">
+                                                    <h4 class="driver-name">@Model[0].Name</h4>
+                                                    <p class="employee-id">Employee ID: @Model[0].EmployeeId</p>                                                   
+                                                </div>
+                                            </div>
+                                            <div class="row g-3">
+                                                <div class="col-md-4">
+                                                    <div class="stat-card">
+                                                        <div class="stat-icon">
+                                                            <i class="fas fa-bus"></i>
+                                                        </div>
+                                                        <div class="stat-info">
+                                                            <h6>Bus Number</h6>
+                                                            <p>@(Model[0].BusNo >0 ? Model[0].BusNo:"N/A")</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="stat-card">
+                                                        <div class="stat-icon">
+                                                            <i class="fas fa-id-card"></i>
+                                                        </div>
+                                                        <div class="stat-info">
+                                                            <h6>License No.</h6>
+                                                            <p>@Model[0].DLNo</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="stat-card">
+                                                        <div class="stat-icon">
+                                                            <i class="fas fa-phone"></i>
+                                                        </div>
+                                                        <div class="stat-info">
+                                                            <h6>Contact</h6>
+                                                            <p>@Model[0].ContactNo</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Detailed Information Sections -->
+                            <div class="profile-sections">
+                                <!-- Personal Information -->
+                                <div class="info-section">
+                                    <div class="section-header">
+                                        <h4><i class="fas fa-user me-2"></i>Personal Information</h4>
+                                    </div>
+                                    <div class="section-content">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="info-item">
+                                                    <label><i class="fas fa-user me-2"></i>Full Name</label>
+                                                    <span>@Model[0].Name</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="info-item">
+                                                    <label><i class="fas fa-male me-2"></i>Father's Name</label>
+                                                    <span>@Model[0].FatherName</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="info-item">
+                                                    <label><i class="fas fa-envelope me-2"></i>Email Address</label>
+                                                    <span>@Model[0].Email</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="info-item">
+                                                    <label><i class="fas fa-phone me-2"></i>Mobile Number</label>
+                                                    <span>@Model[0].ContactNo</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="info-item">
+                                                    <label><i class="fas fa-id-card me-2"></i>Aadhar Number</label>
+                                                    <span>@Model[0].AdharCardNo</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="info-item">
+                                                    <label><i class="fas fa-credit-card me-2"></i>Employee ID</label>
+                                                    <span>@Model[0].EmployeeId</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="info-item">
+                                                    <label><i class="fas fa-home me-2"></i>Address</label>
+                                                    <span>@Model[0].Address</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <!-- Salary & Benefits -->
+                                <div class="info-section">
+                                    <div class="section-header">
+                                        <h4><i class="fas fa-money-bill-wave me-2"></i>Salary & Benefits</h4>
+                                    </div>
+                                    <div class="section-content">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="salary-card">
+                                                    <div class="salary-icon">
+                                                        <i class="fas  fa-indian-rupee-sign"></i>
+                                                    </div>
+                                                    <div class="salary-info">
+                                                        <h6>Monthly Salary</h6>
+                                                        <h4>₹ @(Model[0].Salary>0? Model[0].Salary:0)</h4>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="salary-card">
+                                                    <div class="salary-icon">
+                                                        <i class="fa-solid fa-file-contract"></i>
+                                                    </div>
+                                                    <div class="salary-info">
+                                                        <h6>License</h6>
+                                                        @*<h4>Covered</h4>*@
+                                                        @if (!string.IsNullOrEmpty(Model[0].DLFileName))
+                                                        {
+                                                            <a href="@Url.Content(Model[0].DLFileName)" target="_blank">
+                                                                <p class="text-info">
+                                                                    <i class="fas fa-check me-1"></i>
+                                                                    License File
+                                                                </p>
+                                                            </a>
+                                                        }
+else
+                {
+                    <span>N/A</span>
+                }
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Documents -->
+                                <div class="info-section">
+                                    <div class="section-header">
+                                        <h4><i class="fas fa-address-card me-2"></i>Documents</h4>
+                                    </div>
+                                    <div class="section-content">
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <div class="salary-card">
+                                                    <div class="salary-icon">
+                                                        <i class="fas fa-address-card"></i>
+                                                    </div>
+                                                    <div class="salary-info">
+                                                        <h6>Aadhar</h6>
+                                                        <p>
+                                                            @if (string.IsNullOrEmpty(Model[0].AdharCardFileName))
+                                                            {
+                                                                <span>N/A</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a class="btn btn-sm btn-primary" href="@Url.Content( Model[0].AdharCardFileName)" target="_blank">
+                                                                    View Document
+                                                                </a>
+                                                            }
+                                                        </p>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="salary-card">
+                                                    <div class="salary-icon">
+                                                        <i class="fa-solid fa-file-contract"></i>
+                                                    </div>
+                                                    <div class="salary-info">
+                                                        <h6>License</h6>
+                                                        <p>
+                                                            @if (!string.IsNullOrEmpty(Model[0].DLFileName))
+                                                            {
+                                                                <a class="btn btn-sm btn-primary" href="@Url.Content(Model[0].DLFileName)" target="_blank">
+                                                                    View Document
+                                                                </a>
+                                                            }
+else
+                {
+                    <span>N/A</span>
+                }
+                                                        </p>
+                                                        
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="salary-card">
+                                                    <div class="salary-icon">
+                                                        <i class="fas fa-bus"></i>
+                                                    </div>
+                                                    <div class="salary-info">
+                                                        <h6>Bus Image</h6>
+                                                        <p>
+                                                            @if (!string.IsNullOrEmpty(Model[0].BusImage))
+                                                            {
+                                                                <a class="btn btn-sm btn-primary" href="@Url.Content(Model[0].BusImage)" target="_blank">
+                                                                    View Document
+                                                                </a>
+                                                            }
+else
+                {
+                    <span>N/A</span>
+                }
+                                                        </p>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="w-100 text-center">
+                    <h1>Failed to load details...</h1>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script>
+    // Handle image error
+function handleImageError(img) {
+  img.style.display = "none"
+
+  const placeholder = document.createElement("div")
+  placeholder.className = "profile-image image-error"
+  placeholder.innerHTML = '<i class="fas fa-user"></i>'
+
+  img.parentNode.insertBefore(placeholder, img.nextSibling)
+}
+
+// Add interactive effects
+document.addEventListener("DOMContentLoaded", () => {
+  // Animate performance bars
+  const performanceBars = document.querySelectorAll(".meter-fill")
+  performanceBars.forEach((bar) => {
+    const width = bar.style.width
+    bar.style.width = "0%"
+    setTimeout(() => {
+      bar.style.width = width
+    }, 500)
+  })
+
+  // Add hover effects to cards
+  const cards = document.querySelectorAll(".stat-card, .professional-card, .salary-card, .performance-card")
+  cards.forEach((card) => {
+    card.addEventListener("mouseenter", function () {
+      this.style.transform = "translateY(-8px)"
+    })
+
+    card.addEventListener("mouseleave", function () {
+      this.style.transform = "translateY(0)"
+    })
+  })
+
+  // Add click effects to buttons
+  const buttons = document.querySelectorAll(".btn")
+  buttons.forEach((button) => {
+    button.addEventListener("click", function (e) {
+      // Create ripple effect
+      const ripple = document.createElement("span")
+      const rect = this.getBoundingClientRect()
+      const size = Math.max(rect.width, rect.height)
+      const x = e.clientX - rect.left - size / 2
+      const y = e.clientY - rect.top - size / 2
+
+      ripple.style.width = ripple.style.height = size + "px"
+      ripple.style.left = x + "px"
+      ripple.style.top = y + "px"
+      ripple.style.position = "absolute"
+      ripple.style.borderRadius = "50%"
+      ripple.style.background = "rgba(255, 255, 255, 0.3)"
+      ripple.style.transform = "scale(0)"
+      ripple.style.animation = "ripple 0.6s linear"
+      ripple.style.pointerEvents = "none"
+
+      this.style.position = "relative"
+      this.style.overflow = "hidden"
+      this.appendChild(ripple)
+
+      setTimeout(() => {
+        ripple.remove()
+      }, 600)
+    })
+  })
+
+  // Add loading animation to main card
+  const mainCard = document.querySelector(".main-profile-card")
+  mainCard.style.opacity = "0"
+  mainCard.style.transform = "translateY(50px)"
+
+  setTimeout(() => {
+    mainCard.style.transition = "all 0.8s ease"
+    mainCard.style.opacity = "1"
+    mainCard.style.transform = "translateY(0)"
+  }, 200)
+
+  // Status indicator animation
+  const statusIndicator = document.querySelector(".status-indicator")
+  if (statusIndicator) {
+    setInterval(() => {
+      statusIndicator.style.transform = "scale(1.1)"
+      setTimeout(() => {
+        statusIndicator.style.transform = "scale(1)"
+      }, 200)
+    }, 3000)
+  }
+
+  // Achievement items hover effect
+  const achievementItems = document.querySelectorAll(".achievement-item")
+  achievementItems.forEach((item) => {
+    item.addEventListener("mouseenter", function () {
+      this.style.transform = "translateX(10px)"
+      this.style.background = "var(--teal-100)"
+    })
+
+    item.addEventListener("mouseleave", function () {
+      this.style.transform = "translateX(0)"
+      this.style.background = "var(--teal-50)"
+    })
+  })
+})
+
+// Add CSS for ripple animation
+const style = document.createElement("style")
+style.textContent = `
+  @@keyframes ripple {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+`
+document.head.appendChild(style)
+
+// Print functionality
+function printProfile() {
+  window.print()
+}
+
+// Edit functionality placeholder
+function editProfile() {
+  alert("Edit functionality would be implemented here")
+}
+
+    </script>
+

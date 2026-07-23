@@ -1,0 +1,553 @@
+﻿
+@{
+    ViewBag.Title = "AddRoomNumber";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+<style>
+    .select2-container {
+        z-index: 9999 !important;
+    }
+
+    .select2 {
+        width: 100% !important;
+    }
+</style>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/HostelBlockOverview"> Hostel Block Overview </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addblock">Add Block </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addwarden"> Add Warden</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Room
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addStudentInHostel"> Add Student In Hostel </a>
+                    </li>
+
+                </ol>
+            </nav>
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Room</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="addRoomNoForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" id="RoomId" name="RoomId" value="0" />
+
+                                <div class="mb-3">
+                                    <label class="form-label">Block Name</label>
+                                    <select id="BlockName" name="BlockName" class="form-select blockdropdown" required>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Room Facilitate</label>
+                                    <select id="RoomFacilitate" name="RoomFacilitate" class="form-control" multiple>
+                                        <option disabled>Select Room Facilitate</option>
+                                        <option value="Air Conditioner">Air Conditioner (AC)</option>
+                                        <option value="Attached Bathroom">Attached Bathroom</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Fees (Per Person)</label>
+                                    <input type="number" id="EditFeesPerPerson" name="FeesPerPerson" class="form-control" placeholder="Enter Fees (Per Person)" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+
+                                <div class="mb-3">
+                                    <label class="form-label">Floor</label>
+                                    <select id="floor" name="floor" class="form-select floordropdown" required>
+                                        <option selected disabled>--Select Floor--</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Room Number</label>
+                                    <input type="number" id="RoomNumber" name="RoomNumber" class="form-control" placeholder="Enter Room Number" required />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">No Of Bed</label>
+                                    <input type="number" id="BedCount" name="BedCount" class="form-control" placeholder="Enter Room Bed" required />
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Add Room</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit   Room Number  Modal -->
+    <div class="modal fade" id="editRoomNumberModal" tabindex="-1" aria-labelledby="editRoomNumberModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="editRoomNumberForm" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editRoomNumberModalLabel">Edit Room Number</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="EditRoomId" name="RoomId" />
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="EditRoomNumber" class="form-label">Room Number</label>
+                                    <input type="text" id="EditRoomNumber" name="RoomNumber" class="form-control" placeholder="Enter Room Number" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Select Block</label>
+                                    <select name="BlockName" id="EditBlockName" class="form-select blockdropdown" required>
+                                        <option value="0" disabled selected>Select Block</option>
+                                        @foreach (var item in ViewBag.BlockList)
+                                        {
+                                            <option value="@item.HostelId">@item.BlockName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Floor</label>
+                                    <select id="EditFloor" name="floor" class="form-select floordropdown" required>
+                                        <option selected disabled>--Select Floor--</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">No Of Bed</label>
+                                    <input type="number" id="EditBedCount" name="BedCount" class="form-control" placeholder="Enter No of Bed" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Room Facilitate</label>
+                                    <select id="EditRoomFacilitate" name="RoomFacilitate" class="form-control" multiple>
+                                        <option disabled>Select Room Facilitate</option>
+                                        <option value="Air Conditioner">Air Conditioner (AC)</option>
+                                        <option value="Attached Bathroom">Attached Bathroom</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Fees (Per Person)</label>
+                                    <input type="number" id="EditFeePerPerson" name="FeesPerPerson" class="form-control" placeholder="Enter Fees (Per Person)" required />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mb-3">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--end modal-->
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span>Room  List</span><!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                            Add Room
+                        </button>
+                    </h4>
+                    <table id="roomTable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Room Number</th>
+                                <th>Block Name</th>
+                                <th>No Of Bed</th>
+                                <th>Room Facilitate</th>
+                                <th>Floor</th>
+                                <th>Fees (Per Person)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int sr = 1;
+                            }
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@sr</td>
+                                    <td>@item.RoomNumber</td>
+                                    <td>@item.BlockName</td>
+                                    <td>@item.BedCount</td>
+                                    <td>@item.RoomFacilitate</td>
+                                    <td>@(item.floor==0?"Ground": item.floor)</td>
+                                    <td>₹ @item.FeesPerPerson.ToString("N0")</td>
+
+
+
+                                    <td>
+                                        <button class="btn btn-sm p-0 ms-1" onclick="editRoomNumber(@item.RoomId)">
+                                            <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i>
+                                        </button>
+                                        <button class="btn btn-sm p-0" onclick="deleteRoomNumber(@item.RoomId)">
+                                            <i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i>
+                                        </button>
+
+
+
+
+                                    </td>
+                                </tr>
+                                sr++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+    function initializeDataTable() {
+        debugger
+        let table = $('#roomTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![6].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![6].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+
+    $(document).ready(function () {
+        initializeDataTable();
+    var data =  @Html.Raw(Json.Encode(ViewData["roomTypes"]));
+    console.log(data);
+            var dropdown = $('#RoomTypes');
+    dropdown.empty();
+    dropdown.append('<option value="">Select RoomType</option>');
+
+            $.each(data, function (i, roomTypes) {
+        dropdown.append('<option value="' + roomTypes.RoomId + '">' + roomTypes.RoomTypes + '</option>');
+    });
+});
+
+        $(document).ready(function () {
+    var data =  @Html.Raw(Json.Encode(ViewData["blocks"]));
+    console.log(data);
+            var dropdown = $('#BlockName');
+    dropdown.empty();
+    dropdown.append('<option value="">Select Block</option>');
+
+            $.each(data, function (i, blocks) {
+                dropdown.append('<option value="' + blocks.HostelId + '">' + blocks.BlockName + ' </option>');
+            });
+
+});
+
+    $('#btnSubmit').on('click', function (e) {
+        e.preventDefault();
+        debugger
+        var formData = new FormData($('#addRoomNoForm')[0]);
+        //var formData = $('#addRoomNoForm').serializeArray();
+
+        var selectedOptions = $('#RoomFacilitate').val();
+
+        if (selectedOptions && selectedOptions.length > 0) {
+            var selectedOptionsString = selectedOptions.join(',');
+            formData.set('RoomFacilitate', selectedOptionsString); // 'set' is safer
+        }
+        
+        // 🔄 Show loader while request is in progress
+        Swal.fire({
+            title: 'Submitting...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/AddRoomNumber',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                Swal.close(); // Hide loader
+
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Room Number Added Successfully!',
+                        text: res.message,
+                        didClose: () => {
+                            location.href = '/admin/AddRoomNumber';
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: res.message
+                    });
+                }
+            },
+            error: function (xhr) {
+                Swal.close(); // Hide loader
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong: ' + xhr.responseText
+                });
+            }
+        });
+    });
+
+
+    function deleteRoomNumber(RoomId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the room record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 🔄 Show loader before AJAX call
+                Swal.fire({
+                    title: 'Deleting...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '/Admin/DeleteRoomNumber',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ RoomId: RoomId }),
+                    success: function (response) {
+                        Swal.close(); 
+
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.close(); 
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+
+
+    //GetById
+    function editRoomNumber(id) {
+        $.get('/Admin/GetRoomNumberById?id=' + id, function (data) {
+            console.log(data);
+            console.log(data.FeesPerPerson);
+            if (data) {
+                $("#EditRoomId").val(data.RoomId);
+                $("#EditBedCount").val(data.BedCount);
+                // Split the comma-separated string into an array
+                let arr = data.RoomFacilitate.split(',').map(item => item.trim());
+
+                // Set the value in select2
+                $("#EditRoomFacilitate").val(arr).trigger('change');
+                $(".blockdropdown").val(data.BlockId).trigger('change');
+                setTimeout(() => {
+                    $('#EditFloor').val(data.floor);
+                }, 1000);
+                $("#EditFeePerPerson").val(data.FeesPerPerson);
+                $("#EditRoomNumber").val(data.RoomNumber);
+
+                $('#editRoomNumberModal').modal('show');
+            }
+        });
+    }
+
+    $('#editRoomNumberForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+        var selectedOptionsedit = $('#EditRoomFacilitate').val();
+
+        if (selectedOptionsedit && selectedOptionsedit.length > 0) {
+            var selectedOptionsStringedit = selectedOptionsedit.join(',');
+            formData.set('RoomFacilitate', selectedOptionsStringedit); // 'set' is safer
+        }
+
+        // 🔄 Show SweetAlert loader
+        Swal.fire({
+            title: 'Updating...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/UpdateRoomNumber',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                Swal.close(); // ✅ Close loader
+
+                if (res.success) {
+                    $('#editRoomNumberModal').modal('hide');
+                    Swal.fire('Updated!', 'Room Number updated successfully.', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', 'Something went wrong.', 'error');
+                }
+            },
+            error: function () {
+                Swal.close(); // ✅ Close loader
+                Swal.fire('Error', 'Something went wrong while updating.', 'error');
+            }
+        });
+    });
+
+
+</script>
+
+
+<script>
+    $(document).ready(function () {
+
+        $('#RoomFacilitate').select2({
+            placeholder:'--Select RoomFacilitate--'
+        });
+        $('#EditRoomFacilitate').select2({
+            placeholder: '--Select RoomFacilitate--'
+        });
+
+        $('.blockdropdown').change(async function () {
+            Swal.fire({
+                title: 'Please wait!',
+                text: 'Floor Loading...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let id = $(this).val();
+            let res = await fetch(`/admin/GetFloorByBlock?id=${id}`);
+            if (res.ok) {
+                let data = await res.json();
+
+                let floorDropdown = $('.floordropdown');
+                floorDropdown.empty();
+                floorDropdown.append('<option selected disabled>--Select floor--</option>');
+                console.log(data);
+                let floor = parseInt(data);
+                debugger
+                for (let i = 0; i <= floor; i++) {
+                    floorDropdown.append(`<option value="${i}">${i==0?"Ground":i}</option>`);
+                };
+                Swal.close();
+            } else {
+                console.error(`HTTP error! Status: ${response.status}`);
+            }
+
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+

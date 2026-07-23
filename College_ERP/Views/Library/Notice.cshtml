@@ -1,0 +1,93 @@
+﻿
+@{
+    ViewBag.Title = "Notice";
+    Layout = "~/Views/Shared/_libraryLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Notice</h4>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Title</th>
+                                    <th>Created On</th>
+                                    <th>Description</th>
+                                    <th>Attachment</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int sr = 1;
+                                }
+
+                                @foreach (var notice in Model)
+                                {
+                                    <tr>
+                                        <td>@sr</td>
+                                        <td>@notice.Title</td>
+                                        <td>@notice.CreatedOn.ToString("dd-MMM-yyyy")</td>
+                                        <td><a role="button" class="showDesc" data-descr=@notice.NoticeId title="Show Description">View</a></td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(notice.Attachments))
+                                            {
+                                                <a href="@Url.Content(notice.Attachments)" target="_blank">View</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                    sr++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Modal of description-->
+<div class="modal fade" id="descModal" tabindex="-1" aria-labelledby="descModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-bg-primary">
+                <h5 class="modal-title" id="descModalLabel">Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="descModalBody">
+                <!--Description here-->
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.showDesc').on('click', function () {
+            let id = $(this).data('descr');
+            $.ajax({
+                url: '/library/NoticeDescById',
+                type: 'get',
+                data: { id: id },
+                success: function (res) {
+                    if (res) {
+                        $('#descModalBody').html(res);
+                    }
+                    $('#descModal').modal('show');
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            });
+
+
+        });
+    });
+</script>

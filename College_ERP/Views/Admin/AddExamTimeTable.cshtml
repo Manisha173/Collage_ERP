@@ -1,0 +1,438 @@
+﻿
+@{
+    ViewBag.Title = "AddExamTimeTable";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var classList = ViewData["classList"] as List<College_ERP.Models.Admin.ClassModel>;
+    var data = ViewData["examList"] as List<College_ERP.Models.Admin.AddExamTimeTableModel>;
+    var examnames = ViewData["scexamslist"] as List<College_ERP.Models.Admin.ExamModel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/admin/addtimetable">Add TimeTable</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Exam TimeTable
+                    </li>
+                </ol>
+            </nav>
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="py-0 card-header border-bottom-0 d-flex justify-content-between">
+                            <h4 class="card-title mb-0">Exam TimeTable List</h4>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddExamTimeTableModal">
+                                Add Exam TimeTable
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>SR</th>
+                                            <th>Class</th>
+                                            <th>Exam Name</th>
+                                            <th>Academic Year</th>
+                                            <th>Description</th>
+                                            <th>Attachment</th>
+                                            <th class="text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (data != null)
+                                        {
+                                            int count = 1;
+                                            foreach (var item in data)
+                                            {
+                                                <tr>
+                                                    <td>@count</td>
+                                                    <td>@item.className</td>
+                                                    <td>@item.examName</td>
+                                                    <td>@item.academicYear</td>
+                                                    <td>
+                                                        <a role="button" class="text-primary  view-description-btn"
+                                                           data-description="@(item.description)"
+                                                           data-bs-toggle="modal"
+                                                           data-bs-target="#descriptionModal">
+                                                            View
+                                                        </a>
+                                                    </td>
+                                                    <td><a href="@item.attachmentName" target="_blank" title="Show Attachment">View</a></td>
+                                                    <td>
+                                                        <a href="#" title="Update Syllabus" data-id="@item.id" class="btn btn-sm updateSyllabus"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                                        <a href="#" class="btn btn-sm deleteSyllabus" data-id="@item.id" title="Delete Syllabus"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                                    </td>
+                                                </tr>
+                                                count++;
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Task Modal-->
+<div class="modal fade" id="AddExamTimeTableModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="AddExamTimeTableModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="AddExamTimeTableModalLabel">Add Exam TimeTable</h1>
+                <button type="button" class="btn-close" id="CloseModalAddExamTimeTable"></button>
+            </div>
+            <div class="modal-body">
+                <form class="AddExamTimetableForm">
+                    <div class="row">
+                        <div class="col-sm-4 mb-2">
+                            <label for="examName" class="form-label">Exam Name</label>
+                            <select id="examName" class="form-select" name="examName">
+                                <option selected disabled>--Select Exam--</option>
+                                @if (examnames != null)
+                                {
+                                    foreach (var item in examnames)
+                                    {
+                                        <option value="@item.ExamId">@item.ExamName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="classId" class="form-label">Class</label>
+                            <select id="classId" class="form-select" name="classId" required>
+                                <option value="">--Select Class--</option>
+                                @if (classList != null)
+                                {
+                                    foreach (var cs in classList)
+                                    {
+                                        <option value="@cs.ClassId">@cs.ClassName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-sm-4 mb-2">
+                            <label class="form-label">Academic year</label>
+                            <select name="academicYear" class="form-control readonly-select" id="academicYear"  required>
+                                @{
+                                    for (int i = 0; i <= 10; i++)
+                                    {
+                                        <option @(Request.QueryString["year"] == (DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year) ? "selected" : "") value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="attachment" class="form-label">Attachment</label>
+                            <input type="file" name="attachment" id="attachment" class="form-control" required />
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea name="description" id="description" class="form-control" rows="1" placeholder="Enter Description..."></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Update Task Modal-->
+<div class="modal fade" id="UpdateExamTimeTableModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="UpdateExamTimeTableModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="UpdateExamTimeTableModalLabel">Update Exam TimeTable</h1>
+                <button type="button" class="btn-close" id="CloseModalUpdateExamTimeTable"></button>
+            </div>
+            <div class="modal-body">
+                <form class="AddExamTimetableForm">
+                    <input type="hidden" id="id" name="id" />
+                    <div class="row">
+                        <div class="col-sm-4 mb-2">
+                            <label for="upexamName" class="form-label">Exam Name</label>
+                            <select id="upexamName" class="form-control" name="examName">
+                                <option selected disabled>--Select Exam--</option>
+                                @if (examnames != null)
+                                {
+                                    foreach (var item in examnames)
+                                    {
+                                        <option value="@item.ExamId">@item.ExamName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <input type="hidden" id="setclassid" name="classId" />
+                            <label for="upclassId" class="form-label">Class</label>
+                            <select id="upclassId" class="form-select" disabled>
+                                <option disabled>--Select Class--</option>
+                                @if (classList != null)
+                                {
+                                    foreach (var cs in classList)
+                                    {
+                                        <option value="@cs.ClassId">@cs.ClassName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-sm-4 mb-2">
+                            <input type="hidden" id="setacademiyear" name="academicYear" />
+                            <label class="form-label">Academic year</label>
+                            <select class="form-control" id="upacademicYear" disabled>
+                                <option selected disabled value="">--Select Academic Year--</option>
+                                @{
+                                    for (int i = 0; i <= 10; i++)
+                                    {
+                                        <option @(Request.QueryString["year"] == (DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year) ? "selected" : "") value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="upattachment" class="form-label">Attachment</label>
+                            <input type="file" id="upattachment" class="form-control" />
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="updescription" class="form-label">Description</label>
+                            <textarea name="description" id="updescription" class="form-control" rows="1" placeholder="Enter Description..."></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--description-->
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descriptionModalLabel">Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalDescriptionBody">
+                <!-- Content will be injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".view-description-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                const descHtml = this.getAttribute("data-description");
+                document.getElementById("modalDescriptionBody").innerHTML = descHtml;
+            });
+        });
+    });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+
+        $('#CloseModalAddExamTimeTable').on('click', function () {
+            $('.AddExamTimetableForm')[0].reset();
+            $('#AddExamTimeTableModal').modal('hide');
+        });
+        $('#CloseModalUpdateExamTimeTable').on('click', function () {
+            $('.AddExamTimetableForm')[0].reset();
+            $('#UpdateExamTimeTableModal').modal('hide');
+        });
+
+        $('.AddExamTimetableForm').on('submit', function (e) {
+            debugger
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Please Wait!',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                text: 'Processing your request...',
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            var data = new FormData(this);
+            var fileUpload = document.getElementById("attachment");
+            if (fileUpload.files.length > 0) {
+                for (var i = 0; i < fileUpload.files.length; i++) {
+                    data.append("attachment", fileUpload.files[i]);
+                }
+            }
+
+            var upfileUpload = document.getElementById("upattachment");
+            if (upfileUpload.files.length > 0) {
+                for (var i = 0; i < upfileUpload.files.length; i++) {
+                    data.append("attachment", upfileUpload.files[i]);
+                }
+            }
+            $.ajax({
+                url: '/admin/AddExamTimeTable',
+                type: 'post',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            didClose: () => { location.reload(true); }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again.'
+                    });
+                }
+            });
+        });
+
+        $(".deleteSyllabus").on('click', function () {
+            let id = $(this).data('id');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to delete this item?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                customClass: {
+                    confirmButton: 'mx-2 btn btn-danger',
+                    cancelButton: 'mx-2 btn btn-light'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing Your Request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/admin/DeleteExamTimeTable',
+                        type: 'get',
+                        data: { id: id },
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: res.message,
+                                    icon: 'success',
+                                    didClose: () => {
+                                        location.reload(true);
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: res.message,
+                                    icon: 'warning'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Server Error. Try Again Later!',
+                                icon: 'error'
+                            });
+                            console.log(xhr);
+                        }
+                    });
+                } else {
+                    Swal.fire('Cancelled', 'Your item is safe.', 'info');
+                }
+            });
+        });
+
+        $('.updateSyllabus').on('click', function () {
+            debugger
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let id = $(this).data('id');
+
+            $.ajax({
+                url: '/admin/GetExamTimeTableById',
+                type: 'get',
+                data: { id: id },
+                success: function (res) {
+                    console.log(res);
+                    Swal.close();
+                    if (res) {
+                        $('#id').val(res[0].id)
+                        $('#upclassId').val(res[0].classId)
+                        $('#setclassid').val(res[0].classId)
+                        $('#upacademicYear').val(res[0].academicYear);
+                        $('#setacademiyear').val(res[0].academicYear);
+                        $('#updescription').text(res[0].description);
+                        $('#upexamName').val(res[0].examName);
+                        $('#UpdateExamTimeTableModal').modal('show');
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: 'Some error occured', icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('.readonly-select').on('mousedown keydown', function (e) {
+            e.preventDefault(); // Prevent interaction
+        });
+    });
+</script>

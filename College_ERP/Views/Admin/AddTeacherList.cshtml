@@ -1,0 +1,65 @@
+﻿
+@{
+    ViewBag.Title = "AddTeacherList";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<div class="content-page">
+   
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Assigning Subjects To Teacher </h4>
+                    <table id="teacherTable" class="table table-bordered dt-responsive table-responsive nowrap">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Reg no.</th>
+                                <th>Teacher Name</th>
+                                <th>Email</th>
+                                <th>Mobile No.</th>
+                                <th>Experience</th>
+                                <th>Expertise In</th>
+                                <th>Joining Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Count > 0)
+                            {
+                                int srNo = 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@srNo</td>
+                                        <td>@item.RegistrationNo</td>
+                                        <td><a href="/admin/teacherProfile?id=@item.TeacherId" target="_blank">@item.TeacherName</a></td>
+                                        <td>@item.TeacherEmail</td>
+                                        <td>@item.TeacherMobile</td>
+                                        <td>@item.Experience Year</td>
+                                        <td>@(item.Subject ?? "N/A")</td>
+                                        <td>@(Convert.ToDateTime(item.JoinDate).ToString("dd-MMM-yyyy") ?? "N/A")</td>
+                                        <td>
+
+                                            <a class="btn btn-sm btn-warning" href="/admin/SubjectAssign?id=@item.TeacherId" target="_blank"> Subject Assign</a>
+                                        </td>
+                                    </tr>
+                                    srNo++;
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center">No data available</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+

@@ -1,0 +1,227 @@
+﻿
+@{
+    ViewBag.Title = "ClassManagement";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+    ViewBag.Title = "Assigned Classes";
+    var assignments = ViewBag.AssignedSubjects as List<College_ERP.Models.Teacher.SubjectAssignModel>;
+    var distinctClasses = assignments?
+      .GroupBy(a => new { a.ClassId, a.ClassName,a.SectionName,a.SectionId })
+      .Select(g => g.Key)
+      .ToList();
+
+} 
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Class Management</h4>
+                    <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Subject</th>
+                                <th>Total Students</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var assignment in Model)
+                            {
+                                <tr>
+                                    <td>@(Model.IndexOf(assignment) + 1)</td>
+                                    <td>@assignment.ClassName</td>
+                                    <td>@assignment.SectionName</td>
+                                    <td>@assignment.SubjectName</td>
+                                    <td>
+                                        <a target="_blank" href="/teacher/StudentDetails?classId=@assignment.ClassId&sectionId=@assignment.SectionId"
+                                           class="view-students">
+                                            @assignment.StudentCount
+                                        </a>
+                                    </td>
+                                    
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+      
+
+        <div id="timetable-container" class="border p-3 rounded shadow-sm bg-light">
+            <div id="class-buttons" class="mb-2 d-flex justify-content-between align-items-center">
+                <div>
+                    @if (distinctClasses != null)
+                    {
+                        foreach (var cls in distinctClasses)
+                        {
+                            <button type="button" class="btn btn-outline-primary me-2 mb-2 class-btn" data-class="@cls.ClassId" data-section="@cls.SectionId">
+                                @cls.ClassName - @cls.SectionName
+                            </button>
+                        }
+                    }
+                </div>
+                <p id="activeTimetable" class="fw-bold"></p>
+                <button class="btn btn-sm btn-danger mb-1 ms-1 mt-1" id="downloadPdfBtn" type="button">Download PDF</button>
+            </div>
+            <div id="pdfContent">
+                <div class="table-responsive">
+                    <table border="1" cellpadding="7" style="border-collapse: collapse;" class="table table-bordered text-center align-middle">
+                        <thead class="table-light">
+                            <tr id="day-row">
+                                <th>Select Class To See Timetable</th>
+                            </tr>
+                        </thead>
+                        <tbody id="timetable-body">
+                            <!-- Repeat rows as needed -->
+                            <!-- Add more time slots as needed -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+  
+        <script>
+            $(document).ready(function () {
+                $('.class-btn').on('click', function () {
+                    let classId = $(this).attr("data-class").trim();
+                    let sectionId = $(this).attr("data-section").trim();
+                    $("#activeTimetable").text($(this).text())
+                        Swal.fire({
+                            title: 'Please Wait!',
+                            text: 'Processing Your Request...',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => { Swal.showLoading(); }
+                        });
+
+                        $.ajax({
+                            url: '/teacher/GetTimeTableByClassAndSection',
+                            type: 'get',
+                            data: { classid: classId, sectionid: sectionId },
+                            success: function (res) {
+                                console.log(res)
+                                if (res) {
+                                    setTimeTable(res);
+                                    Swal.close();
+                                }
+                            },
+                            error: function (xhr) {
+                               Swal.fire("error",xhr.responseText,"error")
+                            }
+                        });
+                });
+
+                function parseTimeRange(range) {
+                    const [from] = range.split("-");
+                    return parseTime(from);
+                }
+
+                function parseTime(timeStr) {
+                    const [time, modifier] = timeStr.split(" ");
+                    let [hours, minutes] = time.split(":").map(Number);
+
+                    if (modifier === "PM" && hours !== 12) hours += 12;
+                    if (modifier === "AM" && hours === 12) hours = 0;
+
+                    return hours * 60 + minutes; // Total minutes since midnight
+                }
+
+
+                function setTimeTable(data) {
+                    debugger
+                    const timetable = data;
+
+                    // Step 1: Extract all unique times
+                    const timeSlots = [...new Set(
+                        timetable.flatMap(day => day.ttdata.map(entry => `${entry.from}-${entry.to}`))
+                    )]
+                        .sort((a, b) => parseTimeRange(a) - parseTimeRange(b));
+
+                        // Step 2: Extract all unique days
+                        const days = timetable.map(d => d.day);
+
+                        // Step 3: Build a lookup map: { [time][day] = "Subject (Teacher)" }
+                        const lookup = {};
+                        timetable.forEach(entry => {
+                            const day = entry.day;
+                            entry.ttdata.forEach(slot => {
+                                if (!lookup[`${slot.from}-${slot.to}`]) lookup[`${slot.from}-${slot.to}`] = {};
+                                lookup[`${slot.from}-${slot.to}`][day] = `<span class="updateTimeTable" data-id="${slot.tid}">${slot.subjectName} </span>`;
+                                console.log(slot)
+                            });
+                        });
+
+                        // Step 4: Build the header row (days)
+                        const dayRow = document.getElementById("day-row");
+                        $("#day-row").empty()
+                        const th = document.createElement("th");
+                        th.textContent = "Day/Time";
+                        dayRow.appendChild(th);
+                        days.forEach(day => {
+                            const th = document.createElement("th");
+                            th.textContent = day;
+                            dayRow.appendChild(th);
+                        });
+
+                        // Step 5: Build the body rows (time slots)
+                        const tbody = document.getElementById("timetable-body");
+                        $("#timetable-body").empty()
+                        timeSlots.forEach(time => {
+
+                            const tr = document.createElement("tr");
+                            const timeCell = document.createElement("td");
+                            timeCell.textContent = time;
+                            tr.appendChild(timeCell);
+
+                            days.forEach(day => {
+                                console.log(time, "time")
+                                const cell = document.createElement("td");
+                                cell.innerHTML = lookup[time]?.[day] || "--";
+                                tr.appendChild(cell);
+                            });
+
+                            tbody.appendChild(tr);
+                        });
+                    
+                }
+            });
+
+            $('#downloadPdfBtn').click(function () {
+                var content = $('#pdfContent').html();
+
+                $.ajax({
+                    url: '/admin/GeneratePdf',
+                    type: 'POST',
+                    data: JSON.stringify({ html: content }),
+                    contentType: 'application/json; charset=utf-8',
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    success: function (data, status, xhr) {
+                        var blob = new Blob([data], { type: 'application/pdf' });
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = "timetable.pdf";
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        window.URL.revokeObjectURL(url);
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'PDF generation failed.', icon: 'error'
+                        });
+                    }
+                });
+            });
+
+        </script>
+    
+</div>
+    </div>
+

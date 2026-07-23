@@ -1,0 +1,243 @@
+﻿
+@{
+    ViewBag.Title = "AddRoomTypes";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <h4 class="mt-3">Add Room Types </h4>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <form method="post" id="addRoomTypesForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" id="RoomId" name="RoomId" value="0" />
+
+                                <div class="mb-3">
+                                    <label class="form-label">Room Types</label>
+                                    <input type="text" id="RoomTypes" class="form-control" name="RoomTypes" placeholder="Enter Room Types" />
+
+                                </div>
+
+                            </div>
+                            <div class="col-md-2 mt-2">
+                                <div class="text-center mt-3">
+                                    <button type="submit" id="btnSubmit" class="btn btn-primary">Add RoomType</button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit   Room Types Fee Modal -->
+    <div class="modal fade" id="editRoomTypesModal" tabindex="-1" aria-labelledby="editRoomTypesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="editRoomTypesForm" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editRoomTypesModalLabel">Edit Room Types</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="EditRoomId" name="RoomId" />
+                        <div class="row">
+                          
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="EditRoomTypes" class="form-label">Room Types</label>
+                                    <input type="text" id="EditRoomTypes" name="RoomTypes" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--end modal-->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Add RoomType List</h4>
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SRNo</th>
+                                <th>Room Type </th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int sr = 1;
+                            }
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@sr</td>
+                                    <td>@item.RoomTypes</td>
+
+
+                                    <td>
+                                        <button class="btn btn-sm" onclick="editRoomTypes(@item.RoomId)"><i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>
+                                        <button class="btn btn-sm" onclick="deleteRoomTypes(@item.RoomId)"><i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+
+                                    </td>
+                                </tr>
+                                sr++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script>
+
+    $('#btnSubmit').on('click', function (e) {
+     e.preventDefault();
+
+        var formData = new FormData($('#addRoomTypesForm')[0]);
+
+     $.ajax({
+         url: '/Admin/AddRoomTypes',
+         type: 'POST',
+         data: formData,
+         contentType: false,
+         processData: false,
+         success: function (res) {
+
+             if (res.success) {
+
+                 Swal.fire({
+                     icon: 'success',
+                     title: 'Success',
+                     text: res.message, didClose: () => {
+                         location.href ='/admin/AddRoomTypes'
+                     }
+                 });
+             } else {
+
+                 Swal.fire({
+                     icon: 'error',
+                     title: 'Error',
+                     text: res.message
+                 });
+             }
+         },
+         error: function (xhr) {
+
+             Swal.fire({
+                 icon: 'error',
+                 title: 'Error',
+                 text: 'Something went wrong: ' + xhr.responseText
+             });
+         }
+     });
+ });
+
+    function deleteRoomTypes(RoomId) {
+     Swal.fire({
+         title: 'Are you sure?',
+         text: 'This will permanently delete the room record.',
+         icon: 'warning',
+         showCancelButton: true,
+         confirmButtonText: 'Yes, delete it!',
+         cancelButtonText: 'Cancel'
+     }).then((result) => {
+         if (result.isConfirmed) {
+             $.ajax({
+                 url: '/Admin/DeleteRoomTypes',
+                 type: 'POST',
+                 contentType: 'application/json; charset=utf-8',
+                 data: JSON.stringify({ RoomId: RoomId }),
+                 success: function (response) {
+                     if (response.success) {
+                         Swal.fire('Deleted!', response.message, 'success')
+                             .then(() => location.reload());
+                     } else {
+                         Swal.fire('Error', response.message, 'error');
+                     }
+                 },
+                 error: function () {
+                     Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                 }
+             });
+
+         }
+     });
+ }
+
+ //GetById
+
+    function editRoomTypes(id) {
+        $.get('/Admin/GetRoomTypesById?id=' + id, function (data) {
+            if (data) {
+                $("#EditRoomId").val(data.RoomId);
+                $("#EditRoomTypes").val(data.RoomTypes);
+
+
+                $('#editRoomTypesModal').modal('show');
+            }
+        });
+    }
+
+    $('#editRoomTypesForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: '/Admin/UpdateRoomTypes',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                if (res.success) {
+                    $('#editRoomTypesModal').modal('hide');
+                    Swal.fire('Updated!', 'Room Types updated successfully.', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', 'Something went wrong.', 'error');
+                }
+            }
+        });
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

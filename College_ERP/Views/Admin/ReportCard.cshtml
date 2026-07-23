@@ -1,0 +1,250 @@
+﻿@model List<College_ERP.Models.Admin.ReportCardModel>
+@{
+    ViewBag.Title = "ReportCard";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var student = ViewBag.StudentInfo;
+    var company = ViewBag.CompanyInfo;
+    var reportData = ViewBag.ReportData;
+
+    int subjectCount = 0;
+
+    int totalGainedMarks = 0;
+    int totalMaxMarks = 0;
+
+    if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            totalGainedMarks += (item.TheoryMarks ?? 0) + (item.PracticalMarks ?? 0);
+            totalMaxMarks += (item.TotalTheoryMarks ?? 0) + (item.TotalPracticalMarks ?? 0);
+        }
+    }
+
+
+
+
+    decimal percentage = totalMaxMarks > 0 ? ((decimal)totalGainedMarks / totalMaxMarks) * 100 : 0;
+    string overallGrade = percentage >= 90 ? "A+" :
+                  percentage >= 80 ? "A" :
+                  percentage >= 70 ? "B+" :
+                  percentage >= 60 ? "B" :
+                  percentage >= 50 ? "C" :
+                  percentage >= 40 ? "D" : "E";
+
+    string overallRemarks = "";
+
+    switch (overallGrade)
+    {
+        case "A+":
+            overallRemarks = "* Outstanding performance! The student has shown excellent grasp over the subjects.\n* Consistent and commendable work throughout the exam.\n * Keep up the great work and continue the dedication.";
+            break;
+        case "A":
+            overallRemarks = "* Very good performance.\n * Shows strong understanding of key concepts.\n* Can aim for A+ with continued effort.";
+            break;
+        case "B+":
+            overallRemarks = "* Good performance.\n* Needs a bit more consistency to reach top scores.\n* Regular revision and practice are recommended.";
+            break;
+        case "B":
+            overallRemarks = "* Satisfactory performance.\n* Shows potential for improvement.\n* Focus on weaker subjects and manage time effectively.";
+            break;
+        case "C":
+            overallRemarks = "* Average performance.\n* Needs better focus on studies.\n* Encouraged to revise regularly and seek help when needed.";
+            break;
+        case "D":
+            overallRemarks = "* Below average.\n* Student must work harder to pass confidently.\n* Frequent assessments and parental support suggested.";
+            break;
+        case "E":
+            overallRemarks = "* Failed to meet the minimum requirements.\n * Immediate attention and improvement is necessary.\n * Parental guidance and remedial measures required.";
+            break;
+    }
+
+    overallRemarks = overallRemarks.Replace("\n", "<br/>");
+}
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    .report-card {
+        max-width: 1000px;
+        margin: 20px auto;
+        background: white;
+        padding: 30px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    .school-header {
+        text-align: center;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+    .school-logo {
+        width: 80px;
+        height: auto;
+    }
+
+    .student-photo {
+        width: 120px;
+        height: 150px;
+        object-fit: cover;
+        border: 1px solid #ddd;
+    }
+
+    .grades-table th {
+        background-color: #f8f9fa;
+    }
+
+    .signature-section {
+        margin-top: 30px;
+        border-top: 1px solid #ddd;
+        padding-top: 20px;
+    }
+
+    .signature {
+        border-top: 1px solid #000;
+        display: inline-block;
+        padding-top: 5px;
+        margin: 0 20px;
+    }
+</style>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <div class="container report-card">
+                <div class="school-header">
+                    <div class="row align-items-center">
+                        <div class="col-2">
+                            <img src="@company.School_Logo"  class="school-logo" alt="School Logo" style="width: 80px; height: 80px;">
+
+
+                        </div>
+                        <div class="col-8">
+                            <h2 class="mb-0">@company.SchoolName</h2>
+                            <p class="mb-0">@company.School_Address,@company.City_Name, @company.stateName India</p>
+                            <small>Phone No.: @company.MobileNo, Email: @company.EmailId</small>
+                        </div>
+                        <div class="col-2">
+                            <img src="@company.School_Logo" class="school-logo" alt="School Logo" style="width: 80px; height: 80px;">
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="text-center mb-4">
+                    @(Model?.FirstOrDefault()?.ExamName ?? "N/A")<br>
+                    <small>ACADEMIC SESSION : @(student?.AcademicYear ?? "N/A")</small>
+                </h4>
+
+
+                <div class="row mb-4">
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Admission No.:</strong> @student.AdmissionNo</p>
+                                <p><strong>Student's Name:</strong> @student.StudentName</p>
+                                <p><strong>Father's Name:</strong> @student.FatherName</p>
+                                <p><strong>Class:</strong> @student.ClassName</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Date of Birth:</strong> @Convert.ToDateTime(student.DOB).ToString("dd/MM/yyyy")</p>
+                                <p><strong>Mother's Name:</strong> @student.MotherName</p>
+                                <p><strong>School Name:</strong> @company.SchoolName</p>
+                                <p><strong>Section:</strong> @student.SectionName</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        @if (!string.IsNullOrEmpty(student.StudentPhotos))
+                        {
+                            <img src="@student.StudentPhotos" class="student-photo" alt="Student Photo" />
+                        }
+                        else
+                        {
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='150'%3E%3Crect width='120' height='150' fill='%23f0f0f0'/%3E%3Ctext x='60' y='75' text-anchor='middle' font-family='Arial' font-size='12'%3EStudent Photo%3C/text%3E%3C/svg%3E" class="student-photo" alt="Student Photo">
+                        }
+                    </div>
+
+                </div>
+
+                <table class="table table-bordered grades-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Total Theory Marks</th>
+                            <th>Gained Theory Marks</th>
+                            <th>Total Practical Marks</th>
+                            <th>Gained Practical Marks</th>
+                            <th>Total Gained Marks</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var obtainedMarks = (item.TheoryMarks) + (item.PracticalMarks);
+                            var maxMarks = (item.TotalTheoryMarks) + (item.TotalPracticalMarks);
+                            var subjectPercentage = maxMarks > 0 ? ((decimal)obtainedMarks / maxMarks) * 100 : 0;
+
+                            subjectCount++;                        
+
+                            <tr>
+                                <td>@item.Subject</td>
+                                <td>@item.TotalTheoryMarks</td>
+                                <td>@item.TheoryMarks</td>
+                                <td>@item.TotalPracticalMarks</td>
+                                <td>@item.PracticalMarks</td>
+                                <td>@item.TotalObtainedMarks</td>
+                                <td>@item.Grade</td>
+                                @*<td>@obtainedMarks</td>*@
+                                @*<td>@grade</td>*@
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <p><strong>Overall Marks:</strong> @totalGainedMarks / @totalMaxMarks</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Percentage:</strong> @percentage.ToString("F2")%</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Overall Grade:</strong> @overallGrade</p>
+                    </div>
+                </div>
+
+
+
+                <div class="mt-4">
+                    <p>
+                        <strong>Remarks:</strong> <br />
+                        @Html.Raw(overallRemarks)
+                    </p>
+                </div>
+
+                <div class="signature-section text-center">
+
+                </div>
+
+                <div class="mt-2">
+                    <h5>Instructions</h5>
+                    <p class="small">Grading Scale: A+ (100% - 90%), A (90% - 80%), B+ (80% - 70%), B (70% - 60%), C (60% - 50%), D (50% - 40%), E (40% - 0%)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

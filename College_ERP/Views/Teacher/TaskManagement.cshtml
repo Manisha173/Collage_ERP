@@ -1,0 +1,165 @@
+﻿
+@{
+    ViewBag.Title = "TaskManagement";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+}
+<div class="content-page">
+    <div class="content" style="padding-top: 0px;">
+        <div class="container-fluid" style="padding-top: 0px; margin-top: 0px;">
+            <div class="d-flex align-items-sm-center flex-sm-row flex-column" style="margin-top: 0; padding-top: 0;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fs-18 fw-semibold my-0">Task Management</h4>
+
+                    <div class="col-sm-1">
+                        <select class="form-select" id="taskStatus" onchange="filterTasks()" style="width: 200px;">
+                            <option value="all">All Tasks</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body mt-0">
+                            <!-- Table for Task List -->
+                            <div class="table-responsive table-card">
+                                <table id="datatable" class="table table-borderless table-centered align-middle table-nowrap text-nowrap mb-0">
+                                    <thead class="text-muted table-light">
+                                        <tr>
+                                            <th>SR</th>
+                                            <th>Title</th>
+                                            <th>Completion Date</th>
+                                            <th>Description</th>
+                                            <th>Attachment</th>
+                                            <th> Task Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="taskTableBody">
+                                        @if (Model != null && Model.Count > 0)
+                                        {
+                                            int count = 1;
+                                            foreach (var item in Model)
+                                            {
+                                                <tr data-status="@item.taskStatus">
+                                                    <td>@count</td>
+                                                    <td>@item.title</td>
+
+                                                    <td>@item.completionDateString</td>
+                                                    <td>
+                                                        <a href="javascript:void(0);" class="view-description" data-description="@Html.Raw(item.description.Replace("\"", "'"))">
+                                                            View Description
+                                                        </a>
+                                                    </td>
+                                                    <td class="">
+                                                        <a href="@item.attachmentName" target="_blank">View Attachment</a>
+                                                    </td>
+                                                    <td>
+                                                        @if (item.taskStatus == 0)
+                                                        {
+                                                           
+                                                            <a href="#" class="mark-complete  btn btn-sm btn-danger" data-task-id="@item.id" title="Mark as Completed" style="margin-left: 4px;">
+                                                                Change Status
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-success">Completed</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                count++;
+                                            }
+                                        }
+                                       
+                                    </tbody>
+
+                                </table>
+                                <!-- Modal -->
+                                <div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="descriptionModalLabel">Task Description</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body" id="modalDescriptionContent">
+                                                <!-- Description will be injected here -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+        <script>     
+            $(document).on('click', '.view-description', function () {
+                var description = $(this).data('description');
+                $('#modalDescriptionContent').html(description);
+                $('#descriptionModal').modal('show');
+            });
+            // Function to filter tasks based on status
+            function filterTasks() {
+                var status = document.getElementById('taskStatus').value;
+                var rows = document.querySelectorAll('#taskTableBody tr');
+
+                rows.forEach(row => {
+                    if (status === 'all') {
+                        row.style.display = '';
+                    } else if (status === 'completed' && row.getAttribute('data-status') === '1') {
+                        row.style.display = '';
+                    } else if (status === 'pending' && row.getAttribute('data-status') === '0') {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            // Handle mark complete click
+            $(document).on('click', '.mark-complete', function (e) {
+                e.preventDefault();
+                var taskId = $(this).data('task-id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to mark this task as submitted?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, complete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/teacher/UpdateTaskStatus',
+                            type: 'POST',
+                            data: { id: taskId },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire('Updated!', 'The task has been marked as submitted.', 'success')
+                                        .then(() => location.reload());
+                                } else {
+                                    Swal.fire('Error!', 'Failed to update the task.', 'error');
+                                }
+                            },
+                            error: function () {
+                                Swal.fire('Error!', 'Something went wrong.', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+
+        </script>
+
+

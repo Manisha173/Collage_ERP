@@ -1,0 +1,598 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+}
+<style>
+    .event-badge {
+        top: -7px;
+        right: -4px;
+        background: linear-gradient(135deg, #00c6ff, #0072ff);
+        padding: 0.25rem 0.75rem;
+        font-size: 0.85rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+
+    .custom-border {
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        margin-top: 10px;
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 15px;
+        margin-bottom: 40px;
+    }
+
+        .cards-grid .card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid;
+        }
+
+            .cards-grid .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            }
+
+            .cards-grid .card.revenue {
+                border-left-color: #4CAF50;
+            }
+
+            .cards-grid .card.users {
+                border-left-color: #2196F3;
+            }
+
+            .cards-grid .card.orders {
+                border-left-color: #FF9800;
+            }
+
+            .cards-grid .card.conversion {
+                border-left-color: #9C27B0;
+            }
+
+            .cards-grid .card.traffic {
+                border-left-color: #F44336;
+            }
+
+            .cards-grid .card.bounce {
+                border-left-color: #607D8B;
+            }
+
+            .cards-grid .card.sessions {
+                border-left-color: #795548;
+            }
+
+            .cards-grid .card.growth {
+                border-left-color: #009688;
+            }
+
+        .cards-grid .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cards-grid .card-title {
+            font-size: 0.8rem;
+            padding: 0px;
+            margin: 0px;
+            gap: 0;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+        }
+
+        .cards-grid .card-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .cards-grid .card.revenue .card-icon {
+            background: #4CAF50;
+        }
+
+        .cards-grid .card.users .card-icon {
+            background: #2196F3;
+        }
+
+        .cards-grid .card.orders .card-icon {
+            background: #FF9800;
+        }
+
+        .cards-grid .card.conversion .card-icon {
+            background: #9C27B0;
+        }
+
+        .cards-grid .card.traffic .card-icon {
+            background: #F44336;
+        }
+
+        .cards-grid .card.bounce .card-icon {
+            background: #607D8B;
+        }
+
+        .cards-grid .card.sessions .card-icon {
+            background: #795748;
+        }
+
+        .cards-grid .card.growth .card-icon {
+            background: #009688;
+        }
+
+        .cards-grid .card-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .cards-grid .card {
+            height: 130px;
+        }
+
+
+        .cards-grid .card-change {
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+            .cards-grid .card-change.positive {
+                color: #4CAF50;
+            }
+
+            .cards-grid .card-change.negative {
+                color: #F44336;
+            }
+</style>
+
+
+
+<div class="content-page">
+    <div class="content pt-2">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <!-- Cards Section -->
+            <div class="cards-grid">
+                <a href="/teacher/ClassManagement">
+                    <div class="card revenue">
+                        <div class="card-header">
+                            <div class="card-title">Assigned Subjects</div>
+                            <div class="card-icon">🧑‍🏫</div>
+                        </div>
+                        <div class="card-value ps-3" id="assignedclass"></div>
+
+                    </div>
+                </a>
+                <a href="/teacher/TaskManagement">
+                    <div class="card users">
+                        <div class="card-header">
+                            <div class="card-title">Total Tasks</div>
+                            <div class="card-icon">📝</div>
+
+                        </div>
+                        <div class="card-value ps-3" id="assignedtask"></div>
+
+                    </div>
+                </a>
+                <a href="/teacher/bookorders">
+                    <div class="card orders">
+                        <div class="card-header">
+                            <div class="card-title">Borrowed Books</div>
+                            <div class="card-icon">📖</div>
+                        </div>
+                        <div class="card-value ps-3" id="borrowedbooks"></div>
+
+                    </div>
+                </a>
+                <a href="/teacher/teachercommunication">
+                    <div class="card conversion">
+                        <div class="card-header">
+                            <div class="card-title">Communication</div>
+                            <div class="card-icon">💬</div>
+                        </div>
+                        <div class="card-value ps-3" id="communication"></div>
+
+                    </div>
+                </a>
+                <a href="/teacher/Circulars">
+                    <div class="card traffic">
+                        <div class="card-header">
+                            <div class="card-title">Circular</div>
+                            <div class="card-icon">📰</div>
+                        </div>
+                        <div class="card-value ps-3" id="circular"></div>
+
+                    </div>
+                </a>
+                <a href="/teacher/Assignments">
+                    <div class="card bounce">
+                        <div class="card-header">
+                            <div class="card-title"> Assignments</div>
+                            <div class="card-icon">📚</div>
+                        </div>
+                        <div class="card-value ps-3" id="assignments"></div>
+
+                    </div>
+                </a>
+                <a href="/teacher/notice">
+                    <div class="card sessions">
+                        <div class="card-header">
+                            <div class="card-title">View Notice</div>
+                            <div class="card-icon ps-3">📝</div>
+                        </div>
+                        <div class="card-value ps-3"  id="notice"></div>
+
+                    </div>
+                </a>
+                <a href="/teacher/Attendance">
+                    <div class="card growth">
+                        <div class="card-header">
+                            <div class="card-title">Attendance</div>
+                            <div class="card-icon ps-3">📋</div>
+                        </div>
+
+                    </div>
+                </a>
+            </div>
+
+
+
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card overflow-hidden">
+
+                        <div class="card-header">
+                            <div class="d-flex align-items-center">
+                                <h5 class="card-title text-black mb-0">Today Schedule</h5>
+                            </div>
+                        </div>
+
+                        <div class="card-body mt-0">
+                            <div class="table-responsive table-card mt-0">
+                                <table class="table table-borderless table-centered align-middle text-center table-nowrap text-nowrap mb-0">
+                                    <thead class="text-muted table-light">
+                                        <tr>
+
+                                            <th scope="col" class="cursor-pointer">Time / Period</th>
+                                            <th scope="col" class="cursor-pointer">Subject</th>
+                                            <th scope="col" class="cursor-pointer">Class</th>
+                                            <th scope="col" class="cursor-pointer">Section</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody id="todayScheduleBody">
+                                    </tbody><!-- end tbody -->
+                                </table><!-- end table -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-xl-6">
+                    <div class="card overflow-hidden">
+
+                        <div class="card-header">
+                            <div class="d-flex align-items-center">
+                                <h5 class="card-title text-black mb-0">Pending Tasks</h5>
+                            </div>
+                        </div>
+
+                        <div class="card-body mt-0">
+                            <div class="table-responsive table-card mt-0">
+                                <table class="table table-borderless table-centered align-middle text-center table-nowrap text-nowrap mb-0" id="pendingTasksTable">
+                                    <thead class="text-muted table-light">
+                                        <tr>
+
+                                            <th scope="col" class="cursor-pointer">Task Title</th>
+                                            <th scope="col" class="cursor-pointer">Completion Date</th>
+                                            <th scope="col" class="cursor-pointer">Status</th>
+                                            <th scope="col" class="cursor-pointer">Action</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pendingTasksBody">
+                                    </tbody><!-- end tbody -->
+                                </table><!-- end table -->
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Upcoming Events</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul id="eventList" class="list-unstyled mb-0">
+                                <!-- Event items will be appended here via AJAX -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- container-fluid -->
+    </div> <!-- content -->
+
+
+</div>
+<style>
+    .swal2-popup .swal-pro-loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .loader span {
+            width: 15px;
+            height: 15px;
+            background: #3498db;
+            border-radius: 50%;
+            animation: bounce 0.6s infinite alternate;
+        }
+
+            .loader span:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            .loader span:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+
+    @@keyframes bounce {
+        to {
+            opacity: 0.3;
+            transform: translateY(-16px) scale(0.8);
+        }
+    }
+
+    .loader-text {
+        margin-top: 20px;
+        color: #444;
+        font-size: 15px;
+        font-weight: 500;
+        font-family: 'Segoe UI', sans-serif;
+        animation: fadein 1s ease-in-out infinite;
+    }
+
+    @@keyframes fadein {
+        0%, 100% {
+            opacity: 0.2;
+        }
+
+        50% {
+            opacity: 1;
+        }
+    }
+</style>
+<script>
+    function showAdvancedSwalLoader() {
+        Swal.fire({
+            title: 'Loading Data',
+            html: `
+                <div class="swal-pro-loader">
+                    <div class="loader">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="loader-text">Please wait...</div>
+                </div>
+            `,
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            backdrop: `rgba(0, 0, 0, 0.6)`
+        });
+    }
+</script>
+<script>
+    //dashboard count
+    function loadTeacherDashboardCounts() {
+        showAdvancedSwalLoader();
+        $.ajax({
+            url: '/Teacher/GetTeacherDashboardCounts',
+            type: 'GET',
+            success: function (data) {
+                if (data) {
+                    $('#assignedclass').text(data.assignedclass);
+                    $('#assignedtask').text(data.assignedtask);
+                    $('#communication').text(data.communication);
+                    $('#circular').text(data.circular);
+                    $('#assignments').text(data.assignments);
+                    $('#borrowedbooks').text(data.borrowedbooks);
+                    $('#notice').text(data.notice);
+                }
+                Swal.close();
+            },
+            error: function (err) {
+                console.error("Error loading teacher dashboard counts:", err);
+            }
+        });
+    }
+
+
+    $(document).ready(function () {
+        loadTeacherDashboardCounts();
+    });
+
+    //pending tasks
+    function loadTeacherPendingTasks() {
+        $.ajax({
+            url: '/teacher/GetTeacherPendingTasks',
+            type: 'GET',
+            success: function (data) {
+                let tbody = '';
+                data.forEach(task => {
+                    let status = task.TaskStatus === 0
+                        ? '<span class="badge bg-danger-subtle text-danger fw-semibold">Pending</span>'
+                        : '<span class="badge bg-success-subtle text-success fw-semibold">Completed</span>';
+
+                    tbody += `
+                    <tr>
+                        <td>${task.TaskTitle}</td>
+                        <td>${task.CompletionDate || '-'}</td>
+                        <td>${status}</td>
+                        <td>
+                            <a href="/teacher/TaskManagement" class="btn btn-sm btn-success">View</a>
+                        </td>
+                    </tr>`;
+                });
+
+                $('#pendingTasksBody').html(tbody);
+            },
+            error: function () {
+                console.error("Failed to load teacher pending tasks.");
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        loadTeacherPendingTasks();
+    });
+
+    //today schedule
+    function loadTodaySchedule() {
+        $.ajax({
+            url: '/teacher/GetTodaySchedule',
+            type: 'GET',
+            success: function (data) {
+                let tbody = '';
+                if (data.length === 0) {
+                    tbody = `<tr><td colspan="4">No schedule for today</td></tr>`;
+                } else {
+                    data.forEach(row => {
+                        tbody += `
+                            <tr>
+                                <td>${row.combineTime}</td>
+                                <td>${row.subjectName}</td>
+                                <td>${row.className}</td>
+                                <td>${row.sectionName}</td>
+                            </tr>`;
+                    });
+                }
+                $('#todayScheduleBody').html(tbody);
+            },
+            error: function () {
+                console.error("Failed to load today's schedule.");
+                $('#todayScheduleBody').html(`<tr><td colspan="4">Error loading schedule</td></tr>`);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        loadTodaySchedule();
+        loadTeacherPendingTasks();
+    });
+
+    //upcoming events
+    $.ajax({
+        url: '/Teacher/GetUpcomingEvents',
+        type: 'GET',
+        success: function (data) {
+            let list = '';
+
+            data.forEach(e => {
+                // Use combineDate sent from the server directly
+                let dateDisplay = e.combineDate;
+
+                list += `
+         <li class="mb-3">
+  <div class="border rounded p-3 position-relative d-flex justify-content-between align-items-center">
+    <span class="event-badge badge position-absolute">Event</span>
+    <div>
+      <h4 class="mb-0 text-primary">${e.CategoryName}</h4>
+      <p class="text-muted mb-0">${e.CategoryDescription || ''}</p>
+    </div>
+    <small class="text-secondary mt-2"><i class="bi bi-calendar-event"></i> ${dateDisplay}</small>
+  </div>
+</li>
+
+            `;
+            });
+
+            $('#eventList').html(list || `<li>No upcoming events.</li>`);
+        },
+        error: function () {
+            $('#eventList').html(`<li class="text-danger">Failed to load events.</li>`);
+        }
+    });
+
+
+</script>
+
+
+

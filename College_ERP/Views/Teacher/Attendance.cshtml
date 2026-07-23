@@ -1,0 +1,451 @@
+﻿@{
+    ViewBag.Title = "Attendance";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+    var classList = ViewData["classList"] as List<College_ERP.Models.Teacher.SubjectAssignModel>;
+}
+<style>
+    .status-icon::before {
+        content: "";
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        margin-left: 5px;
+        border-radius: 50%;
+        vertical-align: middle;
+    }
+
+    .present .status-icon::before {
+        background-color: green;
+    }
+
+    .absent .status-icon::before {
+        background-color: red;
+    }
+</style>
+
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Attendance</h4>
+                    <form id="attendance-filter-form">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="fw-bold">Class</label>
+                                <select id="class-dropdown" name="ClassId" class="form-select" required>
+                                    @if (classList != null && classList.Count > 0)
+                                    {
+                                        foreach (var item in classList)
+                                        {
+                                            <option value="@item.ClassId">@item.ClassName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="fw-bold">Section</label>
+                                <select id="section-dropdown" name="SectionId" class="form-select" required>
+                                    <option value="">--Select Section--</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="fw-bold">Subject</label>
+                                <select id="subject-dropdown" name="SubjectId" class="form-select" required>
+                                    <option value="">--Select Subject--</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="fw-bold">Date</label>
+                                <input type="date" id="current-date" name="attendanceDate" value="@(DateTime.Now.ToString("yyyy-MM-dd"))" class="form-control" max="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                            </div>
+                            <div class="col-md-3 mt-3">
+
+                                <!--academic year-->
+                                <select name="academicyear" class="form-select " id="academicyear">
+                                    <option selected disabled value="">--select academic year--</option>
+                                    @{
+                                        for (int i = 0; i <= 10; i++)
+                                        {
+                                            <option @(DateTime.Now.Year == DateTime.Now.AddYears(-i).Year ? "selected" : "") value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            @*<div class="col-md-3">
+                                    <input type="button" id="getStudent" class="form-control btn btn-primary mt-3" value="Get Student" />
+                                </div>*@
+                        </div>
+                    </form>
+
+                    <div class="row mt-3 mb-3">
+                        <div class="col-md-2">
+                            <label><input type="checkbox" id="mark-all-present" /> <b>All Present</b></label>
+                        </div>
+                        <div class="col-md-2">
+                            <label><input type="checkbox" id="mark-all-absent" /> <b>All Absent</b></label>
+                        </div>
+                        <div class="col-md-8 d-flex justify-content-end">
+                            <button type="button" id="submit-attendance" class="btn btn-primary">Submit Attendance</button>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered" id="student-attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Present</th>
+                                <th>Student Name</th>
+                                <th>Father's Name</th>
+                                <th>Mobile No</th>
+                                <th>Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Address Modal -->
+<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addressModalLabel">Student Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="addressModalBody">
+                <!-- Address will go here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function toggleStudentCheckboxes(enabled) {
+        $('.student-check')
+            .prop('disabled', !enabled)
+            .prop('checked', false);
+
+        $('.status-icon')
+            .removeClass('text-success text-danger')
+            .text('');
+    }
+
+    // ===============================
+    // Load Students
+    // ===============================
+    function loadStudents(formData) {
+
+        Swal.fire({
+            title: "Please Wait..!",
+            html: "Your request is under process",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        $.ajax({
+            url: '/Teacher/GetStudentsForAttendance',
+            type: 'GET',
+            data: formData,
+            success: function (data) {
+
+                Swal.close();
+
+                if ($.fn.DataTable.isDataTable("#student-attendance-table")) {
+                    $("#student-attendance-table").DataTable().destroy();
+                }
+
+                let rows = '';
+
+                data.forEach(student => {
+                    rows += `
+<tr>
+    <td>
+        <input type="checkbox" class="student-check" data-studentid="${student.StudentId}" />
+        <span class="status-icon ms-1"></span>
+    </td>
+    <td>${student.StudentName}</td>
+    <td>${student.FatherName}</td>
+    <td>${student.MobileNo}</td>
+    <td><a href="#" class="view-address" data-address="${student.Address}">View</a></td>
+</tr>`;
+                });
+
+                $('#student-attendance-table tbody').html(rows);
+
+                toggleStudentCheckboxes(false);
+
+                $("#student-attendance-table").DataTable({ destroy: true });
+            },
+            error: function () {
+                Swal.fire("Error", "Failed to load students", "error");
+            }
+        });
+    }
+
+    $(document).ready(function () {
+
+        const $form = $('#attendance-filter-form');
+        const $class = $('#class-dropdown');
+        const $section = $('#section-dropdown');
+        const $subject = $('#subject-dropdown');
+        const $academicYear = $('#academicyear');
+
+        // ===============================
+        // View Address Modal
+        // ===============================
+        $(document).on('click', '.view-address', function (e) {
+            e.preventDefault();
+            $('#addressModalBody').text($(this).data('address'));
+            $('#addressModal').modal('show');
+        });
+
+        // ===============================
+        // Form Submit
+        // ===============================
+        $form.on('submit', function (e) {
+            e.preventDefault();
+            loadStudents($(this).serialize());
+        });
+
+        $academicYear.on('change', function () {
+            $form.submit();
+        });
+
+        // ===============================
+        // Load Sections
+        // ===============================
+        $class.on('change', function () {
+
+            $.get('/teacher/GetSectionByClass',
+                { classid: $(this).val() },
+                function (res) {
+
+                    $section.empty();
+
+                    if (res && res.length > 0) {
+
+                        res.forEach(section =>
+                            $section.append(`<option value="${section.SectionId}">${section.SectionName}</option>`)
+                        );
+
+                        // ✅ Auto select first section
+                        $section.val(res[0].SectionId);
+
+                    } else {
+                        $section.append('<option value="">No sections available</option>');
+                    }
+                }
+            ).then(() => $section.change());
+        });
+
+        // ===============================
+        // Load Subjects
+        // ===============================
+        $section.on('change', function () {
+
+            $.get('/teacher/GetSubjectBySection',
+                {
+                    classid: $class.val(),
+                    sectionid: $(this).val()
+                },
+                function (res) {
+
+                    $subject.empty();
+
+                    if (res && res.length > 0) {
+
+                        res.forEach(subject =>
+                            $subject.append(`<option value="${subject.SubjectId}">${subject.SubjectName}</option>`)
+                        );
+
+                        // ✅ Auto select first subject
+                        $subject.val(res[0].SubjectId);
+
+                    } else {
+                        $subject.append('<option value="">No subjects available</option>');
+                    }
+                }
+            ).then(() => $form.submit());
+        });
+
+        // ===============================
+        // Mark All Present
+        // ===============================
+        $('#mark-all-present').on('change', function () {
+
+            if ($(this).is(':checked')) {
+
+                $('#mark-all-absent').prop('checked', false);
+                toggleStudentCheckboxes(true);
+
+                $('.student-check').prop('checked', true);
+                $('.status-icon')
+                    .removeClass('text-danger')
+                    .addClass('text-success')
+                    .text('✔');
+            } else {
+                toggleStudentCheckboxes(false);
+            }
+        });
+
+        // ===============================
+        // Mark All Absent
+        // ===============================
+        $('#mark-all-absent').on('change', function () {
+
+            if ($(this).is(':checked')) {
+
+                $('#mark-all-present').prop('checked', false);
+                toggleStudentCheckboxes(true);
+
+                $('.student-check').prop('checked', true);
+                $('.status-icon')
+                    .removeClass('text-success')
+                    .addClass('text-danger')
+                    .text('✘');
+            } else {
+                toggleStudentCheckboxes(false);
+            }
+        });
+
+        // ===============================
+        // Individual Student Change
+        // ===============================
+        $(document).on('change', '.student-check', function () {
+
+            const icon = $(this).siblings('.status-icon');
+
+            if ($(this).is(':checked')) {
+
+                if ($('#mark-all-present').is(':checked')) {
+                    icon.removeClass('text-danger').addClass('text-success').text('✔');
+                }
+                else if ($('#mark-all-absent').is(':checked')) {
+                    icon.removeClass('text-success').addClass('text-danger').text('✘');
+                }
+
+            } else {
+                icon.removeClass('text-success text-danger').text('');
+            }
+        });
+
+        // ===============================
+        // ✅ SUBMIT ATTENDANCE
+        // 🔴 YOUR ORIGINAL LOGIC (NOT MODIFIED)
+        // ===============================
+        $('#submit-attendance').on('click', function () {
+
+            const classid = document.getElementById("class-dropdown").value;
+            const sectionid = document.getElementById("section-dropdown").value;
+            const subjectid = document.getElementById("subject-dropdown").value;
+            const attendancedate = document.getElementById("current-date").value;
+            const academicyear = document.getElementById("academicyear").value;
+
+            if (!classid) {
+                Swal.fire("Missing Field", "Please select a class.", "warning");
+                return;
+            }
+
+            if (!sectionid) {
+                Swal.fire("Missing Field", "Please select a section.", "warning");
+                return;
+            }
+
+            if (!subjectid) {
+                Swal.fire("Missing Field", "Please select a subject.", "warning");
+                return;
+            }
+
+            if (!attendancedate) {
+                Swal.fire("Missing Field", "Please select a date.", "warning");
+                return;
+            }
+
+            if (!academicyear) {
+                Swal.fire("Missing Field", "Please select an academic year.", "warning");
+                return;
+            }
+
+            const classId = $('#class-dropdown').val();
+            const sectionId = $('#section-dropdown').val();
+            const subjectId = $('#subject-dropdown').val();
+            const attendanceDate = $('#current-date').val();
+
+            const allPresent = $("#mark-all-present").prop("checked");
+            const allAbsent = $("#mark-all-absent").prop("checked");
+
+            if (!allPresent && !allAbsent) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Attention!',
+                    text: "Please select either 'All Present' or 'All Absent' before submitting.",
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            let attendanceData = [];
+            let IsPresent = $("#mark-all-present").is(":checked");
+            let IsAbsent = $("#mark-all-absent").is(":checked");
+
+            $('#student-attendance-table tbody tr').each(function () {
+
+                const checkbox = $(this).find('.student-check');
+                const studentId = checkbox.data('studentid');
+                let isChecked = checkbox.prop("checked");
+
+                if (IsPresent && isChecked) {
+                    isChecked = true
+                } else if (IsAbsent && isChecked) {
+                    isChecked = false;
+                } else if (IsAbsent && !isChecked) {
+                    isChecked = true;
+                }
+
+                attendanceData.push({
+                    StudentId: studentId,
+                    AttendanceStatus: isChecked
+                });
+            });
+
+            $.ajax({
+                url: '/Teacher/SubmitAttendance',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    ClassId: classId,
+                    SectionId: sectionId,
+                    SubjectId: subjectId,
+                    attendanceDate: attendanceDate,
+                    AttendanceList: attendanceData
+                }),
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire("Success", res.message, "success");
+                    } else {
+                        Swal.fire("Error", res.message, "error");
+                    }
+                    $('#mark-all-present, #mark-all-absent').prop('checked', false);
+                    toggleStudentCheckboxes(false);
+                },
+                error: function () {
+                    Swal.fire("error", 'Failed to submit attendance.', "error");
+                }
+            });
+        });
+
+        // Initial trigger
+        $class.change();
+
+    });
+
+</script>
+
+
+

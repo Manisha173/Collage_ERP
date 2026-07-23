@@ -1,0 +1,214 @@
+﻿
+@{
+    ViewBag.Title = "FestivalHoliday";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <h4 class="mt-3">Add Festival Holiday </h4>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <form method="post" id="festivalForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" id="FestivalId" name="FestivalId" value="0" />
+
+                                <div class="mb-3">
+                                    <label>Festival Name</label>
+                                    <input type="text" id="FestivalName" name="FestivalName" class="form-control" required placeholder="Enter Festival Name" />
+                                </div>
+                                <div class="mb-3">
+                                    <label>Start Date</label>
+                                    <input type="date" id="StartDate" name="StartDate" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label>Day</label>
+                                    <select id="Day" name="Day" class="form-select">
+                                        <option selected disabled>--Select Day--</option>
+                                        <option value="Sunday">Sunday</option>
+                                        <option value="Monday">Monday</option>
+                                        <option value="Tuesday">Tuesday</option>
+                                        <option value="Wednesday">Wednesday</option>
+                                        <option value="Thrusday">Thrusday</option>
+                                        <option value="Friday">Friday</option>
+                                        <option value="Saturday">Saturday</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label>End Date</label>
+                                    <input type="date" id="EndDate" name="EndDate" class="form-control" required />
+                                </div>
+                            </div>
+                            </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Add Festival Holiday</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Festival Holiday List</h4>
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SRNo</th>
+                                <th>Festival Name</th>
+                                <th>Day</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int sr = 1;
+                            }
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@sr</td>
+                                    <td>@item.FestivalName</td>
+                                    <td>@item.Day</td>
+                                    <td>@item.StartDate</td>
+                                    <td>@item.EndDate</td>
+                                    <td>
+                                        <a href="/admin/FestivalHoliday?festId=@item.FestivalId" title="Update" class="btn btn-sm"> <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></a>
+                                        <button class="btn btn-sm" onclick="deleteFestival(@item.FestivalId)"><i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+                                    </td>
+                                </tr>
+                                sr++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script>
+    //insert class
+    $(document).ready(function () {
+        $('#festivalForm').submit(function (e) {
+            e.preventDefault();
+
+            var formData = {
+                FestivalId: $('#FestivalId').val(),
+                FestivalName: $('#FestivalName').val(),
+                Day: $('#Day').val(),
+                StartDate: $('#StartDate').val(),
+                EndDate: $('#EndDate').val(),
+            };
+
+            $.ajax({
+                url: '/Admin/FestivalHoliday',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire('Success!', response.message, 'success');
+                        $('#festivalForm')[0].reset();
+                        $('#btnSubmit').val('Add Festival Holiday');
+                        $('#FestivalId').val(0);
+                        resetForm();
+
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function () {
+                    Swal.fire('Error', 'Server error occurred.', 'error');
+                }
+            });
+        });
+
+    });
+
+    function resetForm() {
+        $('#festivalForm')[0].reset();
+        $('#FestivalId').val('');
+        $('#btnSubmit').text('Add Festival Holiday');
+    }
+
+    //delete class
+    function deleteFestival(FestivalId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This class will be deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('/admin/deleteFestivalHoliday', { FestivalId: FestivalId }, function (res) {
+                    if (res.success) {
+                        Swal.fire('Deleted!', res.message, 'success').then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', res.message, 'error');
+                    }
+                });
+            }
+        });
+    }
+
+  // GetById
+$(document).ready(function () {
+    var data = @Html.Raw(Json.Encode(ViewData["dataById"]));
+    console.log(data);
+    if (data != null) {
+        $("#FestivalId").val(data[0].FestivalId);
+        $("#FestivalName").val(data[0].FestivalName);
+        $("#Day").val(data[0].Day);
+
+        // Convert StartDate
+        if (data[0].StartDate) {
+            var startTimestamp = parseInt(data[0].StartDate.replace(/\/Date\((\d+)\)\//, '$1'));
+            var startDateObj = new Date(startTimestamp);
+            var startDateFormatted = startDateObj.getFullYear() + '-' +
+                ('0' + (startDateObj.getMonth() + 1)).slice(-2) + '-' +
+                ('0' + startDateObj.getDate()).slice(-2);
+
+            $("#StartDate").val(startDateFormatted);
+        }
+
+        // Convert EndDate
+        if (data[0].EndDate) {
+            var endTimestamp = parseInt(data[0].EndDate.replace(/\/Date\((\d+)\)\//, '$1'));
+            var endDateObj = new Date(endTimestamp);
+            var endDateFormatted = endDateObj.getFullYear() + '-' +
+                ('0' + (endDateObj.getMonth() + 1)).slice(-2) + '-' +
+                ('0' + endDateObj.getDate()).slice(-2);
+
+            $("#EndDate").val(endDateFormatted);
+        }
+
+        $("#btnSubmit").text("Update Festival Holiday");
+    }
+});
+
+
+
+</script>
+
+
+
+
+

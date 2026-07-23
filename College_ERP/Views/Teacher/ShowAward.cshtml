@@ -1,0 +1,63 @@
+﻿
+@{
+    ViewBag.Title = "ShowAward";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+    var data = ViewData["awardlist"] as List<College_ERP.Models.Admin.TeacherAwardModel>;
+}
+<style>
+    .award-badge {
+        top: -4px;
+        right: -4px;
+        background: linear-gradient(135deg, #00c6ff, #0072ff);
+        padding: 0.25rem 0.75rem;
+        font-size: 0.85rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+
+</style>
+<div class="content-page">
+    <div class="container-fluid mt-4">
+        @if (data != null && data.Count > 0)
+        {
+            foreach (var item in data)
+            {
+                <div class="card w-100 shadow-lg rounded-2 position-relative">
+                    <!-- Gradient Badge with class -->
+                    <span class="award-badge text-light rounded position-absolute">
+                        Award Type: @item.awardType
+                    </span>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <h4 class="card-title text-primary pt-1">@item.awardTitle</h4>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    Awarded on: <span class="text-dark">@item.awardDate.ToString("MMMM - dd , yyyy")</span>
+                                </h6>
+                                <p class="card-text mt-2">
+                                   @item.awardDesc
+                                </p>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                <a href="@item.awardcertificate" target="_blank" class="btn btn-outline-primary">View Certificate</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-sm-10 py-3">
+                    <div class="d-flex justify-content-center align-content-center align-items-center" style="height:900%">
+                        <h1 class="text-center">No Award here</h1>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+

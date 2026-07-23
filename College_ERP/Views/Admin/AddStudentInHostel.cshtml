@@ -1,0 +1,1115 @@
+﻿
+@{
+    ViewBag.Title = "AddStudentInHostel";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var clasList = ViewData["ClassList"] as List<College_ERP.Models.Admin.ClassModel>;
+}
+
+<style>
+    .bg-teal {
+        background-color: #008080 !important;
+    }
+
+    .text-teal {
+        color: #008080 !important;
+    }
+
+    #studentInfoBody p {
+        margin-bottom: 8px;
+    }
+
+    #studentInfoBody strong {
+        color: #333;
+    }
+</style>
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <nav class="my-1" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/HostelBlockOverview"> Hostel Block Overview </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addwarden"> Add Warden</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addblock">Add Block </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addroomnumber">Add Room</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Student In Hostel
+                    </li>
+
+                </ol>
+            </nav>
+
+        </div>
+    </div>
+
+    <!--add Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Student In Hostel</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="roomInfo" class="row align-items-center" style="display: none;">
+
+                        <div class="col-12 d-flex flex-wrap gap-4 mb-2">
+                            <strong style="color:black;">Room Details:</strong>
+
+                            <p class="mb-0"><b style="color:seagreen">Total Beds:</b> <span id="totalBeds">0</span></p>
+                            <p class="mb-0"><b style="color:seagreen">Occupied Beds:</b> <span id="occupiedBeds">0</span></p>
+                            <p class="mb-0"><b style="color:seagreen">Available Beds:</b> <span id="availableBeds">0</span></p>
+                            <p class="mb-0"><b style="color:seagreen">Facilities:</b> <span id="roomFacilities">N/A</span></p>
+                            <p class="mb-0"><b style="color:seagreen">Total Fees:</b> <span id="totalFees">N/A</span></p>
+                        </div>
+                    </div>
+                    <form method="post" id="addstudentForm">
+                        <div class="row">
+                            <input type="hidden" id="HostelId" name="HostelId" value="0" />
+
+                            <div class="mb-3 col-sm-6">
+                                <label class="form-label required-label">Class</label>
+                                <select id="Class" name="ClassId" class="form-select" required>
+                                    <option selected disabled>Select Class</option>
+                                    @if (clasList != null && clasList.Count > 0)
+                                    {
+                                        foreach (var item in clasList)
+                                        {
+                                            <option value="@item.ClassId">@item.ClassName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3 col-sm-6">
+                                <label for="Section" class="form-label required-label">Section Name</label>
+                                <select id="Section" name="SectionId" class="form-select" required>
+                                    <option selected disabled>Select Section</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 col-sm-6">
+                                <label for="academicyear" class="form-label required-label">Select Academic Year</label>
+                                <select name="academicyear" class="form-select" id="academicyear">
+                                    @{
+                                        for (int i = 0; i <= 3; i++)
+                                        {
+                                            <option value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">
+                                                @(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3 col-sm-6">
+                                <label class="form-label">Student Name</label>
+                                <select id="StudentName" name="StudentName" class="form-select Student-dd" required>
+                                    <option selected disabled value="">Select Student</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 col-sm-6">
+                                <label>Block In Building</label>
+                                <select id="Block" name="Block" class="form-select blockdropdown" required>
+                                    <option value="">Select Block</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 col-sm-6">
+                                <label class="form-label">Floor</label>
+                                <select id="floor" name="floor" class="form-select floordropdown" required>
+                                    <option selected disabled>--Select Floor--</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 col-sm-6">
+                                <label>Room Number</label>
+                                <select id="RoomNumber" name="RoomNumber" class="form-select" required>
+                                    <option selected value="">Select Room Number</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 col-sm-6">
+                                <label>Fee Type</label>
+                                <select id="FeeType" name="FeeType" class="form-select paymentmode" required>
+                                    <option selected disabled>Select Fee Type</option>
+                                    <option value="Online">Online</option>
+                                    <option value="Offline">Offline</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 col-sm-6 transactid d-none">
+                                <label>Transaction Id</label>
+                                <input type="text" id="transactionid" name="transactionid" class="form-control" placeholder="Transaction Id" />
+                            </div>
+                            <div class="mb-3 col-sm-6">
+                                <label>Fee Paid</label>
+                                <input type="number" class="form-control" id="FeesSubmitted" name="FeesSubmitted" placeholder="Enter Fees Submitted" />
+                            </div>
+
+                            <div class="mb-3 col-sm-6">
+                                <label>Remaining Fees</label>
+                                <input type="number" class="form-control" id="RemainingFees" name="RemainingFees" placeholder="Remaining Fee" readonly />
+                            </div>
+
+                            <div class="mb-3 col-sm-6">
+                                <label>
+                                    Fee Slip
+                                    <a id="viewFeeSlip" href="#" target="_blank" style="display: none; background: none; border: none; padding-left: 8px;">
+                                        <i data-feather="eye" style="width: 16px; height: 16px; color: teal;"></i>
+                                    </a>
+                                </label>
+                                <input type="file" class="form-control" id="FeeSlips" name="FeeSlips" />
+                            </div>
+
+                            <div class="mb-3 col-sm-6" id="duedateFormInput">
+                                <label>Due Date</label>
+                                <input type="date" class="form-control" id="DueDate" name="DueDate" min="" />
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Add Student</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="roomBedModal" tabindex="-1" aria-labelledby="roomBedModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select Bed in Room</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="roomBedContainer">
+                    <div class="row" id="roomBlockArea">
+                        <!-- dynamic room + beds -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span>Student In Hostel</span> <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                            Add Student In Hostel
+                        </button>
+                    </h4>
+                    <table id="studentHostelTable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Student Name</th>
+                                <th>Room No.</th>
+                                <th>Remaining Fee</th>
+                                <th>Submitted Fee</th>
+                                <th>Total Fee</th>
+                                <th>Last Payment Date</th>
+                                <th>Transaction History</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int sr = 1;
+                            }
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@sr</td>
+                                    <td>@item.StudentName</td>
+                                    <td>@item.RoomNumber</td>
+                                    <td>₹ @String.Format("{0:N2}", item.RemainingFee)</td>
+                                    <td>₹ @String.Format("{0:N2}", item.TotalFeeSubmitted)</td>
+                                    <td>₹ @String.Format("{0:N2}", item.TotalFee)</td>
+                                    <td>@item.LastPaymentDate.ToString("dd-MMM-yyyy")</td>
+                                    <td>
+                                        @*<button class="btn btn-sm p-0">
+                                                <i class="savefee text-warning cursor-pointer" data-id="@item.id" data-feather="edit"></i>
+                                            </button>*@
+                                        <a role="button" data-stid="@item.studentHostelid" class="btn btn-sm btn-warning showHistory">Show History</a>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm updateBtn p-0" onclick="editStudentInHostel(@item.studentHostelid)"><i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>
+                                        <button class="btn btn-sm p-0" onclick="deleteStudentInHostel(@item.studentHostelid)"><i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+
+                                    </td>
+                                </tr>
+                                sr++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--History Modal-->
+<div class="modal fade" data-bs-backdrop="static" id="showHistoryModal" tabindex="-1" aria-labelledby="showHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title" id="showHistoryModalLabel">Transaction History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Student Name</th>
+                                <th>Remaining Fee</th>
+                                <th>Total Fee</th>
+                                <th>Fees Submitted</th>
+                                <th>Transaction Id</th>
+                                <th>Due Date</th>
+                                <th>Fees Slip</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feeHistoryBody">
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--History Modal-->
+<!-- Edit   Student In Hostel Modal -->
+<div class="modal fade" id="editStudentInHostelModal" tabindex="-1" aria-labelledby="editStudentInHostelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="editStudentInHostelForm" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editStudentInHostelModalLabel">Edit Student In Hostel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="EditHostelId" name="HostelId" />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label>Select Block</label>
+                                <select name="Block" id="EditBlock" class="form-select" disabled>
+                                    <option value="0" disabled selected>Select Block</option>
+                                    @foreach (var item in ViewBag.BlockList)
+                                    {
+                                        <option value="@item.HostelId" selected>@item.BlockName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+
+                            <div class="mb-3">
+                                <label>Select Student</label>
+                                <select name="StudentName" id="EditStudentName" class="form-select Student-dd" disabled>
+                                    <option value="0" disabled selected>Select Student</option>
+                                    @foreach (var item in ViewBag.StudentList)
+                                    {
+                                        <option value="@item.StudentId">@item.StudentName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label>Room Number</label>
+                                <input type="text" name="RoomNumber" id="EditRoomNumber" class="form-control" readonly />
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label>Fee Type</label>
+                                <select id="EditFeeType" name="FeeType" class="form-select paymentmode" required>
+                                    <option selected disabled>--Select Fee Type--</option>
+                                    <option value="Online">Online</option>
+                                    <option value="Offline">Offline</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 col-sm-6 transactid d-none">
+                            <label>Transaction Id</label>
+                            <input type="text" id="eidttransactionid" name="transactionid" class="form-control" placeholder="Transaction Id" />
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="EditFeeSlips" class="form-label">Fee Slip</label>
+                                <input type="file" id="EditFeeSlips" name="FeeSlips" class="form-control" accept="image/*" />
+
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="FeesSubmitted" class="form-label">
+                                    Fees Submitted
+                                </label>
+                                <input type="number" class="form-control" id="EditFeesSubmitted" name="FeesSubmitted" placeholder="Enter Fees Submitted" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="RemainingFees">
+                                    Remaining Fees
+                                </label>
+                                <input type="number" class="form-control" id="EditRemainingFees" name="RemainingFees" readonly />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="editDueDateContainer">
+                                <label class="form-label" for="DueDate">Due Date</label>
+                                <input type="date" class="form-control" id="EditDueDate" name="DueDate" min="" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center my-3">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--end modal-->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+
+<script>
+
+    function initializeDataTable() {
+        debugger
+        let table = $('#studentHostelTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8,9].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8,9].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+    let subFee;
+    let remFee;
+    //calculate remaining fees
+    $(document).ready(function () {
+        initializeDataTable();
+
+        $('.paymentmode').change(function () {
+            debugger
+            if ($(this).val() == "Online") {
+                $('.transactid').removeClass('d-none');
+            } else if ($(this).val() == 'Offline') {
+                $('.transactid').addClass('d-none');
+            }
+        });
+
+        $('#Class').on('change', function () {
+    var classId = $(this).val();
+    var sectionDropdown = $('#Section');
+    sectionDropdown.empty().append('<option value="">Loading.......</option>');
+
+    if (classId !== "") {
+        $.ajax({
+        url: '@Url.Action("GetSectionsByClass", "Admin")',
+            type: 'GET',
+            data: { classId: classId },
+            success: function (sections) {
+                sectionDropdown.empty().append('<option value="">Select Section</option>');
+                $.each(sections, function (i, section) {
+
+                    sectionDropdown.append(`<option value="${section.SectionId}" >${section.SectionName} </option>`);
+                });
+            },
+            error: function () {
+                alert('Error fetching sections.');
+                sectionDropdown.empty().append('<option value="">Select Section</option>');
+            }
+        });
+    } else {
+        sectionDropdown.empty().append('<option value="">Select Section</option>');
+    }
+        });
+
+        $('#Section , #academicyear').on('change', function (e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: "Please Wait..!",
+                html: "Your request is under process",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            debugger
+            let classId = $("#Class").val();
+            let sectionId = $("#Section").val();
+            let academic = $("#academicyear").val();
+
+            $.ajax({
+                url: '/Admin/GetStudentsForBlock',
+                type: 'GET',
+                data: {
+                    classId: classId,
+                    sectionId: sectionId,
+                    academicYear: academic
+                },
+                success: function (data) {
+                    Swal.close();
+
+                    let options = '<option selected disabled value="">Select Student</option>';
+                    data.forEach(student => {
+                        options += `<option value="${student.StudentId}" data-gender="${student.Gender}">${student.StudentName} - (${student.MobileNo})</option>`;
+                    });
+
+                    $('#StudentName').html(options);
+                },
+                error: function () {
+                    Swal.fire("Error", "Failed to load students", "error");
+                }
+            });
+
+        });
+
+        $('#FeesSubmitted').on('input', function () {
+            let totalFees = parseFloat($('#totalFees').text()) || 0;
+            let feesSubmitted = parseFloat($(this).val()) || 0;
+
+            let remainingFees = totalFees - feesSubmitted;
+            if (remainingFees < 0) remainingFees = 0;
+
+            $('#RemainingFees').val(remainingFees);
+        });
+
+
+        $('#EditFeesSubmitted').on('input', function () {
+            debugger
+            let totalFees = parseFloat(subFee) + parseFloat(remFee);
+            let feesSubmitted = parseFloat($(this).val()) || 0;
+            debugger
+            if (totalFees < feesSubmitted) {
+                $(this).val(subFee)
+                $('#EditRemainingFees').val(remFee);
+                return
+            }
+            let remainingFees = totalFees - feesSubmitted;
+            if (remainingFees < 0) remainingFees = 0;
+            if (remainingFees == 0) {
+                $("#editDueDateContainer").hide();
+            } else {
+                $("#editDueDateContainer").show();
+                $("#EditDueDate").attr("required",true);
+            }
+            $('#EditRemainingFees').val(remainingFees);
+        });
+        //duedate functionality
+        $(document).ready(function () {
+
+
+        var today = new Date();
+        today.setDate(today.getDate() + 1);
+        var minDate = today.toISOString().split('T')[0];
+        $('#DueDate').attr('min', minDate);
+
+
+        $('#FeesSubmitted').on('input', function () {
+            var totalFees = parseFloat($('#totalFees').text()) || 0;
+            var feesSubmitted = parseFloat($(this).val()) || 0;
+
+            if (feesSubmitted > totalFees) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invalid Amount',
+                    text: 'Fees Submitted cannot be more than Total Fees (' + totalFees + ').',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    $('#FeesSubmitted').val(totalFees).trigger('input');
+                });
+                return;
+            }
+
+            var remainingFees = totalFees - feesSubmitted;
+            if (remainingFees < 0) remainingFees = 0;
+
+            $('#RemainingFees').val(remainingFees);
+
+
+            if (remainingFees === 0) {
+                $('#DueDate').prop('disabled', true).val('');
+                $("#duedateFormInput").addClass("d-none")
+                $("#duedateFormInput").attr("required",false)
+            } else {
+                $("#duedateFormInput").removeClass("d-none")
+                $("#duedateFormInput").attr("required", true)
+
+                $('#DueDate').prop('disabled', false);
+            }
+        });
+
+
+        $('#FeesSubmitted').trigger('input');
+        });
+
+    });
+
+    $(document).ready(function () {
+        var data =  @Html.Raw(Json.Encode(ViewData["roomTypes"]));
+        console.log(data);
+        var roomTypeDropdown = $('#RoomTypes');
+        roomTypeDropdown.empty();
+        roomTypeDropdown.append('<option value="">Select RoomType</option>');
+
+        $.each(data, function (i, roomTypes) {
+            roomTypeDropdown.append('<option value="' + roomTypes.RoomId + '">' + roomTypes.RoomTypes + '</option>');
+        });
+
+        async function BindBlockViaStudentGender(type) {
+            await $.ajax({
+                url: '/admin/GetBlockByStudentGender', type: 'get', data: { gendertype: type },
+                success: function (res) {
+                    console.log('Blockss',res);
+                    if (data != null) {
+                        var blockDropdown = $('#Block');
+                        blockDropdown.empty();
+                        blockDropdown.append('<option value="">Select Block</option>');
+
+                        $.each(res, function (i, blocks) {
+                            blockDropdown.append('<option value="' + blocks.HostelId + '">' + blocks.BlockName + '</option>');
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+        $.each(filteredRooms, function (i, room) {
+            roomNumberDropdown.append('<option value="' + room.RoomId + '">' + room.RoomNumber + '</option>');
+        });
+    }
+});
+
+            $('#RoomNumber').on('change', function () {
+
+                const roomId = $(this).val();
+
+                if (roomId) {
+                    $.ajax({
+                        url: '/Admin/GetRoomDetails',
+                        type: 'GET',
+                        data: { roomId: roomId },
+                        success: function (data) {
+                            console.log(data,"room detail")
+                            if (data) {
+                                $('#totalBeds').text(data.TotalBeds);
+                                $('#occupiedBeds').text(data.OccupiedBeds);
+                                $('#availableBeds').text(data.AvailableBeds);
+                                $('#roomFacilities').text(data.RoomFacilitate || 'N/A');
+                                $('#totalFees').text(data.TotalFees || 'N/A');
+                                $('#roomInfo').show();
+
+                                if (data.AvailableBeds === 0) {
+                                    $('#roomInfo').addClass('alert-danger').removeClass('alert-info');
+                                    //$('#btnSubmit').prop('disabled', true);
+                                } else {
+                                    $('#roomInfo').addClass('alert-info').removeClass('alert-danger');
+                                    $('#btnSubmit').prop('disabled', false);
+                                }
+                            } else {
+                                $('#roomInfo').hide();
+                            }
+                        },
+                        error: function (xhr) {
+                            console.log(xhr)
+                            $('#roomInfo').hide();
+
+                        }
+                    });
+                } else {
+                    $('#roomInfo').hide();
+                }
+            });
+        }
+
+        $('.Student-dd').on('change', async function () {
+            debugger
+            let gendertype = $(this).find(':selected').data('gender');
+            await BindBlockViaStudentGender(gendertype)
+        });
+
+        var allRoomNumbers = @Html.Raw(Json.Encode(ViewData["roomno"]));
+        console.log("All Room Numbers:", allRoomNumbers);
+        $('.floordropdown').on('change', function () {
+            debugger
+            var selectedBlockId = $('#Block').val();
+            let selectedfloor = $(this).val();
+            var roomNumberDropdown = $('#RoomNumber');
+            
+            //$('#roomBedModal').modal('show')
+            // ❗ Clear previous options
+            roomNumberDropdown.empty();
+            roomNumberDropdown.append('<option value="">Select Room Number</option>');
+
+            if (selectedBlockId) {
+                var filteredRooms = allRoomNumbers.filter(function (room) {
+                    return room.BlockId == parseInt(selectedBlockId) && room.floor == parseInt(selectedfloor);;
+                });
+
+                console.log("Filtered Rooms:", filteredRooms);
+
+                $.each(filteredRooms, function (i, room) {
+
+                    roomNumberDropdown.append(
+                        '<option id="roomOpt_' + room.RoomId + '" value="' + room.RoomId + '">' +
+                        room.RoomNumber + ' - (' + room.RoomFacilitate + ') - Loading beds...' +
+                        '</option>'
+                    );
+
+
+                    $.ajax({
+                        url: '/Admin/GetRoomDetails',
+                        type: 'GET',
+                        data: { roomId: room.RoomId },
+                        success: function (data) {
+                            if (data) {
+                                $('#roomOpt_' + room.RoomId).text(
+                                    room.RoomNumber + ' - (' + room.RoomFacilitate + ') - (Available Beds: ' + data.AvailableBeds + ")"
+                                );
+                            }
+                        },
+                        error: function () {
+                            $('#roomOpt_' + room.RoomId).text(
+                                room.RoomNumber + ' - (' + room.RoomFacilitate + ') - Failed to load beds'
+                            );
+                        }
+                    });
+                });
+            }
+        });
+
+
+
+
+
+
+        $('#RoomNumber').on('change', function () {
+
+            const roomId = $(this).val();
+
+            if (roomId) {
+                $.ajax({
+                    url: '/Admin/GetRoomDetails',
+                    type: 'GET',
+                    data: { roomId: roomId },
+                    success: function (data) {
+                        console.log(data,"room detail")
+                        if (data) {
+                            $('#totalBeds').text(data.TotalBeds);
+                            $('#occupiedBeds').text(data.OccupiedBeds);
+                            $('#availableBeds').text(data.AvailableBeds);
+                            $('#roomFacilities').text(data.RoomFacilitate || 'N/A');
+                            $('#totalFees').text(data.TotalFees || 'N/A');
+                            $('#roomInfo').show();
+
+                            if (data.AvailableBeds === 0) {
+                                $('#roomInfo').addClass('alert-danger').removeClass('alert-info');
+                                //$('#btnSubmit').prop('disabled', true);
+                            } else {
+                                $('#roomInfo').addClass('alert-info').removeClass('alert-danger');
+                                $('#btnSubmit').prop('disabled', false);
+                            }
+                        } else {
+                            $('#roomInfo').hide();
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log(xhr)
+                        $('#roomInfo').hide();
+
+                    }
+                });
+            } else {
+                $('#roomInfo').hide();
+            }
+        });
+
+
+
+        @*var data =  @Html.Raw(Json.Encode(ViewData["studentName"]));
+        var dropdown = $('#StudentName');
+        dropdown.empty();
+        dropdown.append('<option value="">----Select Student Name----</option>');
+                console.log(data);
+        $.each(data, function (i, studentName) {
+            dropdown.append('<option value="' + studentName.StudentId + '">' + studentName.StudentName + '</option>');
+        });*@
+
+        // Show eye icon only when student is selected
+
+        $('#StudentName').on('change', function () {
+            const studentId = $(this).val();
+
+            if (studentId) {
+
+                $('#viewStudentInfo').show();
+
+                $('#viewStudentInfo').data('student-id', studentId);
+            } else {
+                $('#viewStudentInfo').hide();
+            }
+        });
+
+        $('#viewStudentInfo').on('click', function () {
+            const studentId = $(this).data('student-id');
+
+            if (studentId) {
+
+                getallstudent(studentId);
+            }
+        });
+
+
+
+        function getallstudent(studentId) {
+            $.ajax({
+                url: '/Admin/GetStudentById',
+                type: 'GET',
+                data: { studentId: studentId },
+                success: function (data) {
+
+                    if (data) {
+                        let html = `
+                <p><strong>Name:</strong> ${data.StudentName}</p>
+                <p><strong>Class:</strong> ${data.Class}</p>
+                <p><strong>Section:</strong> ${data.Section}</p>
+                <p><strong>Father's Name:</strong> ${data.FatherName}</p>
+                <p><strong>Mother's Name:</strong> ${data.MotherName}</p>
+                <p><strong>Address:</strong> ${data.Address}</p>
+                <p><strong>MobileNo:</strong> ${data.MobileNo}</p>
+                <p><strong>AdmissionNo:</strong> ${data.AdmissionNo}</p>
+                <p><strong>Gender:</strong> ${data.Gender}</p>
+            `;
+                        $('#studentInfoBody').html(html);
+                    } else {
+                        $('#studentInfoBody').html("<p>No data found for this student.</p>");
+                    }
+                },
+                error: function () {
+                    $('#studentInfoBody').html("<p>Error fetching student info.</p>");
+                }
+            });
+        }
+
+
+        //insert
+        $('#btnSubmit').on('click', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing your request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            var formData = new FormData($('#addstudentForm')[0]);
+
+            $.ajax({
+                url: '/Admin/AddStudentInHostel',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+
+                    if (res.success) {
+                        Swal.close();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: res.message, didClose: () => {
+                                location.href = '/admin/AddStudentInHostel'
+                            }
+                        });
+                    } else {
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: res.message
+                        });
+                    }
+                },
+                error: function (xhr) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong: ' + xhr.responseText
+                    });
+                }
+            });
+        });
+
+    });
+
+    function deleteStudentInHostel(HostelId) {
+
+         Swal.fire({
+             title: 'Are you sure?',
+             text: 'This will permanently delete the block record.',
+             icon: 'warning',
+             showCancelButton: true,
+             confirmButtonText: 'Yes, delete it!',
+             cancelButtonText: 'Cancel',
+         }).then((result) => {
+             if (result.isConfirmed) {
+                 $.ajax({
+                     url: '/Admin/DeleteStudentInHostel',
+                     type: 'POST',
+                     contentType: 'application/json; charset=utf-8',
+                     data: JSON.stringify({ HostelId: HostelId }),
+                     success: function (response) {
+                         if (response.success) {
+                             Swal.fire('Deleted!', response.message, 'success')
+                                 .then(() => location.reload());
+                         } else {
+                             Swal.fire('Error', response.message, 'error');
+                         }
+                     },
+                     error: function () {
+                         Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                     }
+                 });
+             }
+         });
+    }
+
+    function editStudentInHostel(id) {
+        $.get('/Admin/GetStudentById?studentId=' + id, function (data) {
+            console.log("Student Data:", data);
+            if (data) {
+                $('#EditHostelId').val(data.HostelId);
+                $('#EditBlock').val(data.BlockId || data.HostelId);
+                $('#EditStudentName').val(data.StudentId);
+                console.log('fee Type = ',data.FeeType);
+
+                $('#EditFeeType').val(data.FeeType);
+                if (data.FeeType?.trim() == "Online") {
+                    $('#eidttransactionid').val(data.transactionid);
+                    $('.transactid').removeClass('d-none');
+                }
+                $('#EditRemainingFees').val(data.RemainingFees);
+                $('#EditFeesSubmitted').val(data.FeesSubmitted);
+                debugger
+                subFee = data.FeesSubmitted
+                remFee = data.RemainingFees
+
+                if (data.FeeSlipPath) {
+                    $('#existingCertificate').html(`<a href="/Upload/${data.FeeSlip}" target="_blank">View Slip</a>`);
+                } else {
+                    $('#existingCertificate').html("No slip uploaded");
+                }
+
+                if (data.DueDate != null) {
+                    $('#EditDueDate').val(data.DueDate);
+                } else {
+                    $('#EditDueDate').val('');
+                }
+
+                $('#editStudentInHostelModal').modal('show');
+            }
+        });
+    }
+
+    $('#editStudentInHostelForm').on('submit', function (e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Please Wait!',
+            text: 'Processing your request...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: '/Admin/UpdateStudentInHostel',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                if (res.success) {
+                    Swal.close();
+                    $('#editStudentInHostelModal').modal('hide');
+                    Swal.fire('Updated!', 'Student updated successfully.', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', 'Something went wrong.', 'error');
+                }
+            }
+        });
+
+    });
+    $('.updateBtn').on('click', function () {
+
+
+        let row = $(this).closest('tr');
+
+        let tds = row.find('td');
+        let roomNo = $(tds[2]).text().trim();
+        console.log('roomno:', roomNo)
+        $('#EditRoomNumber').val(roomNo);
+
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $('.blockdropdown').change(async function () {
+            debugger
+            Swal.fire({
+                title: 'Please wait!',
+                text: 'Floor Loading...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let id = $(this).val();
+            let res = await fetch(`/admin/GetFloorByBlockForAddStudent?id=${id}`);
+            if (res.ok) {
+                let data = await res.json();
+
+                let floorDropdown = $('.floordropdown');
+                floorDropdown.empty();
+                floorDropdown.append('<option selected disabled>--Select floor--</option>');
+                console.log(data);
+                let floor = parseInt(data);
+                debugger
+                $.each(data, function (index, item) {
+                    floorDropdown.append(`<option value="${item}">${item == 0 ? "Ground" : item}</option>`);
+                });
+                Swal.close();
+            } else {
+                console.error(`HTTP error! Status: ${res}`);
+            }
+
+        });
+
+        $('.showHistory').on('click', async function () {
+            Swal.fire({
+                title: 'Please wait!',
+                text: 'Processing your request...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let id = $(this).data('stid');
+
+            try {
+                const response = await fetch(`/warden/StudentFeeHistory?studentidhostelid=${id}`);
+                const data = await response.json();
+
+                let tbody = $('#feeHistoryBody'); // <-- Directly using tbody ID
+                tbody.empty();
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach((item, index) => {
+                        let slipLink = item.FeeSlipPath
+                            ? `<a href="${item.FeeSlipPath}"  target="_blank">View Slip</a>`
+                            : 'N/A';
+
+                        let row = `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${item.StudentName || ''}</td>
+               <td>${item.RemainingFee ? '₹ ' + Number(item.RemainingFee).toLocaleString('en-IN') : 'N/A'}</td>
+                <td>${item.TotalFee ? '₹ ' + Number(item.TotalFee).toLocaleString('en-IN') : ''}</td>
+                <td>${item.FeesSubmitted ? '₹ ' + Number(item.FeesSubmitted).toLocaleString('en-IN') : ''}</td>
+                <td>${item.transactionid || 'N/A'}</td>
+                <td>${item.DueDateString || 'N/A'}</td>
+                <td>${slipLink}</td>
+            </tr>
+        `;
+                        tbody.append(row);
+                    });
+                    
+                    $('#showHistoryModal').modal('show');
+                } else {
+                    tbody.append(`<tr><td colspan="9">No fee history found.</td></tr>`);
+                }
+
+            } catch (error) {
+                console.error('Error fetching fee history:', error);
+                Swal.fire('Error', 'Something went wrong while fetching data.', 'error');
+            } finally {
+                Swal.close();
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+

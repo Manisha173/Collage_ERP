@@ -1,0 +1,799 @@
+﻿
+@{
+    ViewBag.Title = "Student Registration";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var clasList = ViewData["ClassList"] as List<College_ERP.Models.Admin.ClassModel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/AdmissionManagement">Admission Management</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Admit Student
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/studentRegistrationlist">Student List</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/admittedstudent"> Promote Student</a>
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="d-flex align-items-sm-center flex-sm-row flex-column">
+                <div class="flex-grow-1">
+                    <h4 class="fs-18 fw-semibold m-0">Student Registration</h4>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="studentForm" enctype="multipart/form-data" method="post">
+                                <div class="row">
+                                    <h4 class="mt-1 border-bottom">Personal Information</h4>
+                                    <input type="hidden" id="StudentId" name="StudentId" value="@Model.StudentId" />
+                                    <div class="row">
+                                        <!--Student Name-->
+                                        <div class="col-md-4 mb-3">
+                                            <label for="StudentName" class="form-label required-label">Student Name</label>
+                                            <input type="text" class="form-control" id="StudentName" name="StudentName" required placeholder="Enter Student Name" value="@Model.StudentName" />
+                                        </div>
+                                        @if (!Model.IsUpdate)
+                                        {
+                                            <!-- Institution Type -->
+                                            <div class="col-sm-4 mb-3">
+                                                <label for="institutionType" class="form-label required-label">Institution Type</label>
+                                                <select name="institutionType" id="institutionType" class="form-select" required>
+                                                    <option selected disabled>--Select Institution Type--</option>
+                                                    <option value="school">School</option>
+                                                    <option value="college">College</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- Education Level -->
+                                            <div class="col-sm-4 mb-3">
+                                                <label for="educationLevel" class="form-label required-label">Education Level</label>
+                                                <select name="educationLevel" id="educationLevel" class="form-select" required>
+                                                    <option selected disabled>--Select Education Level--</option>
+                                                </select>
+                                            </div>
+
+                                        <!--class-->
+                                        <div class="col-sm-4 mb-3">
+                                            <label for="Class" class="form-label required-label">Class</label>
+                                            <select id="Class" class="form-select" name="ClassId" required>
+                                                <option value="">--Select Class--</option>
+
+                                            </select>
+                                        </div>
+                                        <!--Stream-->
+                                        <div class="col-sm-4 mb-3" id="streamWrapper" style="display:none;">
+                                            <label for="streamInput" class="form-label required-label">Stream</label>
+                                            <select id="streamInput" name="classStreamId" placeholder="Select Stream" class="form-select">
+                                                <option value="">--Select Stream--</option>
+                                            </select>
+                                        </div>
+                                        }
+                                        @if (!Model.IsUpdate)
+                                        {
+                                            <!--Optional Subject-->
+                                            <div class="col-sm-4 mb-3" id="optionalsubWrapper" style="display:none;">
+                                                <label for="optsubject" class="form-label">Optional Subject</label>
+                                                <select id="optsubject" name="OptionalSubjectIds" placeholder="Select Optional Subject" class="form-select" multiple>
+                                                    <option value="">--Select Optional Subject--</option>
+                                                </select>
+                                            </div>
+
+                                            <!--SectionId-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="Section" class="form-label required-label">Section Name</label>
+                                                <select id="Section" name="SectionId" class="form-select" required>
+                                                    <option selected disabled>--Select Section--</option>
+                                                </select>
+                                            </div>
+                                        }
+                                            <!--DOB-->
+                                            @{
+                                                var maxDob = new DateTime(2007, 12, 31).ToString("yyyy-MM-dd");
+                                            }
+
+                                            <div class="col-md-4 mb-3">
+                                                <label for="DOB" class="form-label required-label">Date of Birth</label>
+                                                <input type="date" class="form-control" id="DOB" name="DOB"
+                                                       max="@maxDob"
+                                                       required
+                                                       value="@(Model.DOB != DateTime.MinValue ? Model.DOB.ToString("yyyy-MM-dd") : "")" />
+                                            </div>
+
+
+                                            <!-- Gender -->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="Gender" class="form-label required-label">Gender</label>
+                                                <select id="Gender" name="Gender" class="form-select" required>
+                                                    <option disabled @(Model?.Gender == null ? "selected" : "")>--Select Gender--</option>
+                                                    <option value="Male" @(Model?.Gender == "Male" ? "selected" : "")>Male</option>
+                                                    <option value="Female" @(Model?.Gender == "Female" ? "selected" : "")>Female</option>
+                                                    <option value="Other" @(Model?.Gender == "Other" ? "selected" : "")>Other</option>
+                                                </select>
+                                            </div>
+
+                                            <!--Blood group-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="BloodGroup" class="form-label">Blood Group</label>
+                                                <select id="BloodGroup" name="BloodGroup" required class="form-select">
+                                                    <option value="" disabled @(Model?.BloodGroup == null ? "selected" : "")>-- Select Blood Group --</option>
+                                                    <option value="A+" @(Model?.BloodGroup == "A+" ? "selected" : "")>A+</option>
+                                                    <option value="A-" @(Model?.BloodGroup == "A-" ? "selected" : "")>A-</option>
+                                                    <option value="B+" @(Model?.BloodGroup == "B+" ? "selected" : "")>B+</option>
+                                                    <option value="B-" @(Model?.BloodGroup == "B-" ? "selected" : "")>B-</option>
+                                                    <option value="AB+" @(Model?.BloodGroup == "AB+" ? "selected" : "")>AB+</option>
+                                                    <option value="AB-" @(Model?.BloodGroup == "AB-" ? "selected" : "")>AB-</option>
+                                                    <option value="O+" @(Model?.BloodGroup == "O+" ? "selected" : "")>O+</option>
+                                                    <option value="O-" @(Model?.BloodGroup == "O-" ? "selected" : "")>O-</option>
+                                                    <option value="Rh+" @(Model?.BloodGroup == "Rh+" ? "selected" : "")>Rh+</option>
+                                                    <option value="Rh-" @(Model?.BloodGroup == "Rh-" ? "selected" : "")>Rh-</option>
+                                                    <option value="Prefer not to say" @(Model?.BloodGroup == "Prefer not to say" ? "selected" : "")>Prefer not to say</option>
+                                                </select>
+                                            </div>
+                                            <!--religion-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="Religion" class="form-label required-label">Religion</label>
+                                                @{
+                                                    var selectedReligion = Model?.Religion as string;
+                                                }
+
+                                                <select id="religion" name="Religion" required class="form-select">
+                                                    <option value="" disabled @(string.IsNullOrEmpty(selectedReligion) ? "selected" : "")>-- Select Religion --</option>
+                                                    <option value="Hinduism" @(selectedReligion == "Hinduism" ? "selected" : "")>Hinduism</option>
+                                                    <option value="Islam" @(selectedReligion == "Islam" ? "selected" : "")>Islam</option>
+                                                    <option value="Christianity" @(selectedReligion == "Christianity" ? "selected" : "")>Christianity</option>
+                                                    <option value="Sikhism" @(selectedReligion == "Sikhism" ? "selected" : "")>Sikhism</option>
+                                                    <option value="Buddhism" @(selectedReligion == "Buddhism" ? "selected" : "")>Buddhism</option>
+                                                    <option value="Jainism" @(selectedReligion == "Jainism" ? "selected" : "")>Jainism</option>
+                                                    <option value="Zoroastrianism" @(selectedReligion == "Zoroastrianism" ? "selected" : "")>Zoroastrianism (Parsi)</option>
+                                                    <option value="Judaism" @(selectedReligion == "Judaism" ? "selected" : "")>Judaism</option>
+                                                    <option value="Other" @(selectedReligion == "Other" ? "selected" : "")>Other</option>
+                                                    <option value="Prefer not to say" @(selectedReligion == "Prefer not to say" ? "selected" : "")>Prefer not to say</option>
+                                                </select>
+                                            </div>
+                                            <!--Nationality-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="Nationality" class="form-label required-label">Nationality</label>
+
+                                                <select class="form-select" required name="Nationality" id="Nationality">
+                                                    <option value="" disabled @(Model?.Nationality == null ? "selected" : "")>-- Select Nationality --</option>
+                                                    <option value="Indian" @(Model?.Nationality == "Indian" ? "selected" : "")>Indian</option>
+                                                    <option value="Afghan" @(Model?.Nationality == "Afghan" ? "selected" : "")>Afghan</option>
+                                                    <option value="American" @(Model?.Nationality == "American" ? "selected" : "")>American</option>
+                                                    <option value="Australian" @(Model?.Nationality == "Australian" ? "selected" : "")>Australian</option>
+                                                    <option value="Bangladeshi" @(Model?.Nationality == "Bangladeshi" ? "selected" : "")>Bangladeshi</option>
+                                                    <option value="Bhutanese" @(Model?.Nationality == "Bhutanese" ? "selected" : "")>Bhutanese</option>
+                                                    <option value="British" @(Model?.Nationality == "British" ? "selected" : "")>British</option>
+                                                    <option value="Canadian" @(Model?.Nationality == "Canadian" ? "selected" : "")>Canadian</option>
+                                                    <option value="Chinese" @(Model?.Nationality == "Chinese" ? "selected" : "")>Chinese</option>
+                                                    <option value="French" @(Model?.Nationality == "French" ? "selected" : "")>French</option>
+                                                    <option value="German" @(Model?.Nationality == "German" ? "selected" : "")>German</option>
+                                                    <option value="Indonesian" @(Model?.Nationality == "Indonesian" ? "selected" : "")>Indonesian</option>
+                                                    <option value="Iranian" @(Model?.Nationality == "Iranian" ? "selected" : "")>Iranian</option>
+                                                    <option value="Iraqi" @(Model?.Nationality == "Iraqi" ? "selected" : "")>Iraqi</option>
+                                                    <option value="Italian" @(Model?.Nationality == "Italian" ? "selected" : "")>Italian</option>
+                                                    <option value="Japanese" @(Model?.Nationality == "Japanese" ? "selected" : "")>Japanese</option>
+                                                    <option value="Malaysian" @(Model?.Nationality == "Malaysian" ? "selected" : "")>Malaysian</option>
+                                                    <option value="Maldivian" @(Model?.Nationality == "Maldivian" ? "selected" : "")>Maldivian</option>
+                                                    <option value="Nepali" @(Model?.Nationality == "Nepali" ? "selected" : "")>Nepali</option>
+                                                    <option value="Pakistani" @(Model?.Nationality == "Pakistani" ? "selected" : "")>Pakistani</option>
+                                                    <option value="Russian" @(Model?.Nationality == "Russian" ? "selected" : "")>Russian</option>
+                                                    <option value="Singaporean" @(Model?.Nationality == "Singaporean" ? "selected" : "")>Singaporean</option>
+                                                    <option value="South African" @(Model?.Nationality == "South African" ? "selected" : "")>South African</option>
+                                                    <option value="Sri Lankan" @(Model?.Nationality == "Sri Lankan" ? "selected" : "")>Sri Lankan</option>
+                                                    <option value="Swiss" @(Model?.Nationality == "Swiss" ? "selected" : "")>Swiss</option>
+                                                    <option value="Thai" @(Model?.Nationality == "Thai" ? "selected" : "")>Thai</option>
+                                                    <option value="UAE" @(Model?.Nationality == "UAE" ? "selected" : "")>Emirati (UAE)</option>
+                                                    <option value="Vietnamese" @(Model?.Nationality == "Vietnamese" ? "selected" : "")>Vietnamese</option>
+                                                    <option value="Other" @(Model?.Nationality == "Other" ? "selected" : "")>Other</option>
+                                                </select>
+
+                                            </div>
+                                            <!--mother tongue-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="MotherTongue" class="form-label required-label">Mother Tongue</label>
+                                                <select id="mothertongue" name="mothertongue" required class="form-select">
+                                                    <option value="" disabled @(Model?.MotherTongue == null ? "selected" : "")>-- Select Language --</option>
+                                                    <option value="Assamese" @(Model?.MotherTongue == "Assamese" ? "selected" : "")>Assamese</option>
+                                                    <option value="Bengali" @(Model?.MotherTongue == "Bengali" ? "selected" : "")>Bengali</option>
+                                                    <option value="Bodo" @(Model?.MotherTongue == "Bodo" ? "selected" : "")>Bodo</option>
+                                                    <option value="Dogri" @(Model?.MotherTongue == "Dogri" ? "selected" : "")>Dogri</option>
+                                                    <option value="Gujarati" @(Model?.MotherTongue == "Gujarati" ? "selected" : "")>Gujarati</option>
+                                                    <option value="Hindi" @(Model?.MotherTongue == "Hindi" ? "selected" : "")>Hindi</option>
+                                                    <option value="Kannada" @(Model?.MotherTongue == "Kannada" ? "selected" : "")>Kannada</option>
+                                                    <option value="Kashmiri" @(Model?.MotherTongue == "Kashmiri" ? "selected" : "")>Kashmiri</option>
+                                                    <option value="Konkani" @(Model?.MotherTongue == "Konkani" ? "selected" : "")>Konkani</option>
+                                                    <option value="Maithili" @(Model?.MotherTongue == "Maithili" ? "selected" : "")>Maithili</option>
+                                                    <option value="Malayalam" @(Model?.MotherTongue == "Malayalam" ? "selected" : "")>Malayalam</option>
+                                                    <option value="Manipuri" @(Model?.MotherTongue == "Manipuri" ? "selected" : "")>Manipuri</option>
+                                                    <option value="Marathi" @(Model?.MotherTongue == "Marathi" ? "selected" : "")>Marathi</option>
+                                                    <option value="Nepali" @(Model?.MotherTongue == "Nepali" ? "selected" : "")>Nepali</option>
+                                                    <option value="Odia" @(Model?.MotherTongue == "Odia" ? "selected" : "")>Odia</option>
+                                                    <option value="Punjabi" @(Model?.MotherTongue == "Punjabi" ? "selected" : "")>Punjabi</option>
+                                                    <option value="Sanskrit" @(Model?.MotherTongue == "Sanskrit" ? "selected" : "")>Sanskrit</option>
+                                                    <option value="Santali" @(Model?.MotherTongue == "Santali" ? "selected" : "")>Santali</option>
+                                                    <option value="Sindhi" @(Model?.MotherTongue == "Sindhi" ? "selected" : "")>Sindhi</option>
+                                                    <option value="Tamil" @(Model?.MotherTongue == "Tamil" ? "selected" : "")>Tamil</option>
+                                                    <option value="Telugu" @(Model?.MotherTongue == "Telugu" ? "selected" : "")>Telugu</option>
+                                                    <option value="Urdu" @(Model?.MotherTongue == "Urdu" ? "selected" : "")>Urdu</option>
+                                                </select>
+                                            </div>
+                                            <!--Caste-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="Caste" class="form-label required-label">Caste</label>
+                                                @{
+                                                    var selectedCaste = Model?.Caste as string;
+                                                }
+
+                                                <select id="caste" required class="form-select" name="Caste">
+                                                    <option value="" disabled @(string.IsNullOrEmpty(selectedCaste) ? "selected" : "")>-- Select Caste --</option>
+                                                    <option value="General" @(selectedCaste == "General" ? "selected" : "")>General</option>
+                                                    <option value="OBC" @(selectedCaste == "OBC" ? "selected" : "")>OBC (Other Backward Class)</option>
+                                                    <option value="SC" @(selectedCaste == "SC" ? "selected" : "")>SC (Scheduled Caste)</option>
+                                                    <option value="ST" @(selectedCaste == "ST" ? "selected" : "")>ST (Scheduled Tribe)</option>
+                                                    <option value="EWS" @(selectedCaste == "EWS" ? "selected" : "")>EWS (Economically Weaker Section)</option>
+                                                </select>
+                                            </div>
+                                            <!--AadharNo-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="AadharNo" class="form-label required-label">Aadhar Number</label>
+                                                <input type="text" class="form-control" id="AadharNo" name="AadharNo" maxlength="12" required placeholder="Enter Aadhar Number" value="@Model.AadharNo" />
+                                            </div>
+                                            <!--PlaceOfBirth-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="PlaceOfBirth" class="form-label required-label">Place of Birth</label>
+                                                <input type="text" class="form-control" id="PlaceOfBirth" name="PlaceOfBirth" required placeholder="Enter Place Of Birth" value="@Model.PlaceOfBirth" />
+                                            </div>
+                                            <!--StateId-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="StateId" class="form-label required-label">State</label>
+                                                <select id="StateId" name="StateId" class="form-select" required>
+                                                    <option disabled selected>--Select State--</option>
+                                                    @if (ViewBag.state != null)
+                                                    {
+                                                        foreach (var item in ViewBag.state)
+                                                        {
+                                                            <option @(Model?.StateId == item.st_Id ? "selected" : "") value="@item.st_Id">@item.stateName</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                            <!--CityId-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="CityId" class="form-label required-label">City</label>
+                                                <select id="CityId" name="CityId" class="form-select">
+                                                    <option value="" selected>--Select City--</option>
+                                                    <!-- Populate dynamically -->
+                                                </select>
+                                            </div>
+                                            <!--StudentEmail-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="StudentEmail" class="form-label required-label">Email</label>
+                                                <input type="email" class="form-control" id="StudentEmail" name="StudentEmail" required placeholder="Enter Student Email" value="@Model.StudentEmail" />
+                                            </div>
+                                            <!--MobileNo-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="MobileNo" class="form-label required-label">Mobile Number</label>
+                                                <input type="tel" class="form-control" id="MobileNo" name="MobileNo" maxlength="10" required placeholder="Enter Mobile Number" value="@Model.MobileNo" />
+                                            </div>
+                                            <!--academic year-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="academicyear" class="form-label required-label">Select Academic Year</label>
+
+                                                <select @(Model?.AdmissionStage == "admitted" ? "disabled" : "") name="academicyear" class="form-select" id="academicyear">
+                                                    <option>--select academic year--</option>
+                                                    @{
+                                                        for (int i = 0; i <= 3; i++)
+                                                        {
+                                                            var yearValue = DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears(-i + 1).Year;
+                                                            var selected = (i == 0 && Model == null) ? "selected" :
+                                                                           (Model?.AcademicYear == yearValue ? "selected" : "");
+                                                            <option @selected value="@yearValue">@yearValue</option>
+                                                        }
+                                                    }
+                                                </select>
+
+                                                @* Preserve selected academic year if disabled *@
+                                                @if (Model?.AdmissionStage == "admitted")
+                                                {
+                                                    <input type="hidden" name="academicyear" value="@Model.AcademicYear" />
+                                                }
+                                            </div>
+
+                                            <!--Admission Stage-->
+                                            <div class="col-md-4 mb-3">
+                                                <label for="admissionStage" class="form-label required-label">Select Admission Stage</label>
+
+                                                <select @(Model?.AdmissionStage == "admitted" ? "disabled" : "")
+                                                        required
+                                                        name="AdmissionStage"
+                                                        class="form-select"
+                                                        id="admissionStage">
+                                                    <option selected disabled value="">--select admission stage--</option>
+                                                    <option @(Model?.AdmissionStage == "enquiry" ? "selected" : "") value="enquiry">Enquiry</option>
+                                                    <option @(Model?.AdmissionStage == "formIssued" ? "selected" : "") value="formIssued">Application for Issued</option>
+                                                    <option @(Model?.AdmissionStage == "interview" ? "selected" : "") value="interview">Interview</option>
+                                                    <option @(Model?.AdmissionStage == "exam" ? "selected" : "") value="exam">Exam</option>
+                                                    <option @(Model?.AdmissionStage == "shortList" ? "selected" : "") value="shortList">Short List</option>
+                                                    <option @(Model?.AdmissionStage == "admitted" ? "selected" : "") value="admitted">Admitted</option>
+                                                </select>
+
+                                                @if (Model?.AdmissionStage == "admitted")
+                                                {
+                                                    <input type="hidden" name="AdmissionStage" value="admitted" />
+                                                }
+                                            </div>
+
+                                            <!--Address-->
+                                            <div class="col-md-6 mb-3">
+                                                <label for="Address" class="form-label required-label">Address</label>
+                                                <textarea class="form-control" id="Address" name="Address" required placeholder="Enter Address">@Model.Address</textarea>
+                                            </div>
+                                            <!-- CurrentAddress -->
+                                            <div class="col-md-6 mb-3">
+                                                <label for="CurrentAddress" class="form-label required-label">Current Address</label>
+                                                <textarea class="form-control" id="CurrentAddress" name="CurrentAddress" required placeholder="Enter Current Address">@Model.CurrentAddress</textarea>
+                                            </div>
+
+                                            <h4 class="mt-1">Academic Information</h4>
+                                            <div class="row">
+                                                <!-- DateOfAdmission -->
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="AdmissionDate" class="form-label ">Admission Date</label>
+                                                    <input type="date" class="form-control" id="AdmissionDate" name="DateOfAdmission" max="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                                           value="@(Model.DateOfAdmission != null ? Model.DateOfAdmission.ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd"))" required />
+                                                </div>
+
+                                                <!--LastSchoolAttended-->
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="LastSchoolName" class="form-label ">Last School Name</label>
+                                                    <input type="text" class="form-control" id="LastSchoolAttended" name="LastSchoolAttended" placeholder="Enter Last School Name" value="@Model.LastSchoolAttended" />
+                                                </div>
+                                                <!--YearOfPassing-->
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="LastPassingYear" class="form-label ">Passing Year</label>
+                                                    <input type="text" class="form-control" id="YearOfPassing" name="YearOfPassing" maxlength="4" placeholder="Enter Last Passing Year" value="@Model.YearOfPassing" />
+                                                </div>
+                                                <!--ObtainedMarks-->
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="MarksObtained" class="form-label ">Marks Obtained</label>
+                                                    <input type="text" class="form-control" id="ObtainedMarks" name="ObtainedMarks" placeholder="Enter Marks Obtained" value="@Model.ObtainedMarks" />
+                                                </div>
+                                                <!--TotalMarks-->
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="TotalMarks" class="form-label ">Total Marks</label>
+                                                    <input type="text" class="form-control" id="TotalMarks" name="TotalMarks" placeholder="Enter Total Marks" value="@Model.TotalMarks" />
+                                                </div>
+                                                <!--Percentage-->
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="Percentage" class="form-label ">Percentage</label>
+                                                    <input type="text" class="form-control" id="Percentage" name="Percentage" placeholder="Enter Percentage" value="@Model.Percentage" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <h4 class="mt-1">Parent Information</h4>
+                                <div class="row">
+                                    <!-- Father's Information -->
+                                    <!--FatherName-->
+                                    <div class="col-md-4 mb-3">
+                                        <label for="FatherName" class="form-label required-label">Father's Name</label>
+                                        <input type="text" class="form-control" id="FatherName" name="FatherName" value="@Model.FatherName" required placeholder="Enter Father's Name" />
+                                    </div>
+                                    <!--FatherOccupation-->
+                                    <div class="col-md-4 mb-3">
+                                        <label for="FatherOccupation" class="form-label required-label">Father's Occupation</label>
+                                        <input type="text" class="form-control" id="FatherOccupation" name="FatherOccupation" placeholder="Enter Father Occupation" value="@Model.FatherOccupation" required />
+                                    </div>
+                                    <!--FatherQualification-->
+                                    <div class="col-md-4 mb-3">
+                                        <label for="FatherQualification" class="form-label ">Father's Qualification</label>
+                                        <input type="text" class="form-control" id="FatherQualification" name="FatherQualification" value="@Model.FatherQualification" placeholder="Enter Father Qualification" />
+                                    </div>
+
+                                    <!--FatherOfficeMobileNo-->
+                                    <div class="col-md-4 mb-3">
+                                        <label for="FatherPhoneNumber" class="form-label required-label">Father's Phone Number</label>
+                                        <input type="text" class="form-control" id="FatherOfficeMobileNo" name="FatherOfficeMobileNo" maxlength="10" value="@Model.FatherOfficeMobileNo" placeholder="Enter Father Phone Number" required />
+                                    </div>
+
+                                    <!-- Mother's Information -->
+                                    <!--MotherName-->
+                                    <div class="col-md-4 mb-3">
+                                        <label for="MotherName" class="form-label required-label">Mother's Name</label>
+                                        <input type="text" class="form-control" id="MotherName" name="MotherName" value="@Model.MotherName" required placeholder="Enter Mother's Name'" />
+                                    </div>
+                                    <!--MotherOccupation-->
+                                    <div class="col-md-4 mb-3">
+                                        <label for="MotherOccupation" class="form-label required-label">Mother's Occupation</label>
+                                        <input type="text" class="form-control" id="MotherOccupation" name="MotherOccupation" required value="@Model.MotherOccupation" placeholder="Enter Mother's Occupation" />
+                                    </div>
+                                    <!--MotherQualification-->
+                                    <div class="col-md-4 mb-3">
+                                        <label for="MotherQualification" class="form-label">Mother's Qualification</label>
+                                        <input type="text" class="form-control" value="@Model.MotherQualification" id="MotherQualification" name="MotherQualification" placeholder="Enter Mother's Qualification" />
+                                    </div>
+                                    <!--MotherOfficeMobileNo-->
+                                    <div class="col-md-4 mb-3">
+                                        <label for="MotherPhoneNumber" class="form-label required-label">Mother's Phone Number</label>
+                                        <input type="text" class="form-control" value="@Model.MotherOfficeMobileNo" id="MotherPhoneNumber" name="MotherOfficeMobileNo" maxlength="10" required placeholder="Enter Mother Phone Number" />
+                                    </div>
+                                    <!--FatherOfficeMobileNo-->
+                                    <div class="col-md-4 mb-3">
+                                        <label for="parentEmail" class="form-label required-label">Parent Email</label>
+                                        <input type="email" class="form-control" id="parentEmail" name="parentEmail" value="@Model.parentEmail" placeholder="Enter Father Email" required />
+                                    </div>
+                                    <!-- Office Details -->
+                                    <!--FatherOfficeAddress-->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="FatherOfficeAddress" class="form-label">Father's Office Address</label>
+                                        <textarea class="form-control" id="FatherOfficeAddress" name="FatherOfficeAddress" rows="2" placeholder="Enter Father Office Address">@Model.FatherOfficeAddress</textarea>
+                                    </div>
+                                    <!--MotherOfficeAddress-->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="MotherOfficeAddress" class="form-label">Mother's Office Address</label>
+                                        <textarea class="form-control" id="MotherOfficeAddress" name="MotherOfficeAddress" rows="2" placeholder="Enter Mother Office Address">@Model.MotherOfficeAddress</textarea>
+                                    </div>
+                                </div>
+                                <h4 class="mt-1">Uploads</h4>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="StudentPhoto" class="form-label ">Student Photo</label>
+                                        <input type="file" class="form-control" id="StudentPhoto" name="StudentPhoto" accept=".jpg,.jpeg,.png" />
+                                        <input type="hidden" name="ExistingStudentPhoto" value="@(Model?.StudentPhotos)" />
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="StudentDocumentFile" class="form-label">Student Document</label>
+                                        <input type="file" class="form-control" id="StudentDocumentFile" name="StudentAadharPhoto" accept=".pdf,.jpg,.jpeg,.png" />
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="FatherDocumentFile" class="form-label ">Father's Photo</label>
+                                        <input type="file" class="form-control" id="FatherDocumentFile" name="FatherPhoto" accept=".pdf,.jpg,.jpeg,.png" />
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="MotherDocumentFile" class="form-label ">Mother's Photo</label>
+                                        <input type="file" class="form-control" id="MotherDocumentFile" name="MotherPhoto" accept=".pdf,.jpg,.jpeg,.png" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 text-center">
+
+                                        @{
+                                            string buttonLabel = Model != null && Model.StudentId > 0 ? "Update Student" : "Add Student";
+                                        }
+                                        <button type="submit" id="btnSubmit" class="btn btn-primary  ">@buttonLabel</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div> <!-- card-body -->
+                    </div> <!-- card -->
+                </div> <!-- col-12 -->
+            </div> <!-- row -->
+        </div> <!-- container-fluid -->
+    </div> <!-- content -->
+</div> <!-- content-page -->
+<script>
+    $(document).ready(function () {
+        debugger;
+     const edulevel = @Html.Raw(Json.Encode(Model.educationLevel ?? ""));
+
+$('#institutionType').on('change', function () {
+    $('#streamWrapper').hide();
+    $('#optionalsubWrapper').hide();
+
+    const selectedType = $(this).val();
+    const $educationLevel = $('#educationLevel');
+
+    $educationLevel.empty().append('<option value="0">--Select Education Level--</option>');
+
+    $.get('/Admin/GetEducationLevelByInstitution?institution=' + selectedType, function (data) {
+        if (data && data.length > 0) {
+            $.each(data, function (index, item) {
+                const $option = $('<option>', {
+                    value: item,
+                    text: item
+                });
+
+                if (edulevel && item.toLowerCase() === edulevel.toLowerCase()) {
+                    $option.prop('selected', true);
+                }
+
+                $educationLevel.append($option);
+            });
+        }
+    });
+
+    if (selectedType === "college") {
+        $('#streamWrapper').show();
+        $('#optionalsubWrapper').show();
+    }
+});
+
+
+
+            //if (educationOptions[selectedType]) {
+            //    $.each(educationOptions[selectedType], function (index, item) {
+            //        $educationLevel.append($('<option>', {
+            //            value: item.value,
+            //            text: item.text
+            //        }));
+            //    });
+            //}
+
+    });
+        let streamFlag = false;
+       const selectedClassId = '@(Model?.ClassModel?.ClassId ?? 0)';
+
+$('#educationLevel').on('change', function () {
+    const selectedLevel = $(this).val();
+
+    $('#streamWrapper').hide();
+    $('#optionalsubWrapper').hide();
+
+    if (selectedLevel !== 'secondary') {
+        $('#streamWrapper').show();
+        $('#optionalsubWrapper').show();
+        streamFlag = true;
+    }
+
+    const $classdropdown = $('#Class');
+    $classdropdown.empty();
+    $classdropdown.html(`<option value="0" disabled selected>-- Select Class --</option>`);
+
+    $.get('/admin/GetClassByEducationLevel?educationlevel=' + selectedLevel, function (data) {
+        if (data && data.length > 0) {
+            $.each(data, function (index, item) {
+                let selected = item.ClassId == selectedClassId ? 'selected' : '';
+                $classdropdown.append(`<option value="${item.ClassId}" ${selected}>${item.ClassName}</option>`);
+            });
+        }
+    });
+});
+
+        $('#Class').on('change', function () {
+            debugger
+            if (streamFlag) {
+                let id = $(this).val();
+                const $streamdrp = $('#streamInput');
+                $streamdrp.empty();
+                $streamdrp.html(`<option value="0" disabled selected>-- Select Stream --</option>`);
+                $.get('/admin/GetStreamByClassId?classid=' + id, function (data) {
+                    if (data && data.length > 0) {
+                        $.each(data, function (index, item) {
+                            $streamdrp.append($('<option>', {
+                                value: item.Classstreamid,
+                                text: item.ClassStream
+                            }));
+                        });
+                    }
+                });
+            }
+        });
+
+    $(document).ready(function () {
+        $('#optsubject').select2({
+            placeholder: "---Select Optional Subject(s)---",
+            allowClear: true,
+            width: '100%'
+        });
+
+        $('#streamInput').on('change', function () {
+            let id = $(this).val();
+            const $optsubject = $('#optsubject');
+
+            // Clear previous options
+            $optsubject.empty();
+
+            // Fetch new optional subjects
+            $.get('/admin/GetOptionalSubjectByStreamId?streamId=' + id, function (data) {
+                if (data && data.length > 0) {
+                    $.each(data, function (index, item) {
+                        $optsubject.append($('<option>', {
+                            value: item.SubjectId,
+                            text: item.Subject
+                        }));
+                    });
+
+                    // Trigger Select2 refresh
+                    $optsubject.trigger('change');
+                }
+            });
+        });
+    });
+
+
+        $('#closebtnaddmodal').on('click', function () {
+            $('#subjectContainer').empty();
+            $('#exampleModal').modal('hide');
+        });
+
+
+
+</script>
+<script>
+
+
+    $(document).ready(function () {
+
+        $('#Class').on('change', function () {
+            let classIds = "@(Model != null ? Model.SectionId : 0)";
+        var classId = $(this).val();
+        var sectionDropdown = $('#Section');
+        sectionDropdown.empty().append('<option value="">----Loading----</option>');
+
+        if (classId !== "") {
+            $.ajax({
+            url: '@Url.Action("GetSectionsByClass", "Admin")',
+                type: 'GET',
+                data: { classId: classId },
+                success: function (sections) {
+                    sectionDropdown.empty().append('<option value="">----Select Section----</option>');
+                    $.each(sections, function (i, section) {
+                        let selectedEle = section.SectionId == classIds ? 'selected' : ""
+                        sectionDropdown.append(`<option value="${section.SectionId}" ${selectedEle}>${section.SectionName} </option>`);
+                    });
+                },
+                error: function () {
+                    alert('Error fetching sections.');
+                    sectionDropdown.empty().append('<option value="">----Select Section----</option>');
+                }
+            });
+        } else {
+            sectionDropdown.empty().append('<option value="">----Select Section----</option>');
+        }
+    });
+    //City Binding
+
+    let selectedCityId = "@(Model != null ? Model.CityId.ToString() : "0")";
+
+    $("#StateId").on("change", function () {
+        $("#CityId").html(`<option selected value="">--select city--</option>`);
+        let id = $(this).val();
+
+        if (id !== "") {
+            $.ajax({
+                url: '/Admin/GetCityById',
+                type: 'get',
+                data: { id: id },
+                success: function (response) {
+                    if (response && response.length > 0) {
+                        $.each(response, function (index, item) {
+                            let selected = item.city_Id == selectedCityId ? 'selected' : '';
+                            $("#CityId").append(`<option value='${item.city_Id}' ${selected}>${item.City_Name}</option>`);
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong while fetching cities'
+                    });
+                }
+            });
+        }
+    });
+});
+
+    // Auto calculate percentage
+    function calculatePercentage() {
+        var obtained = parseFloat($('#ObtainedMarks').val());
+        var total = parseFloat($('#TotalMarks').val());
+
+        console.log('Marks Obtained:', obtained);
+        console.log('Total Marks:', total);
+
+        if (!isNaN(obtained) && !isNaN(total) && total > 0) {
+            var percentage = (obtained / total) * 100;
+            $('#Percentage').val(percentage.toFixed(2));
+            console.log('Calculated Percentage:', percentage.toFixed(2));
+        } else {
+            $('#Percentage').val('');
+            console.log('Invalid data for percentage calculation.');
+        }
+    }
+
+    $(document).ready(function () {
+        // Trigger calculation when page loads if values are pre-filled
+        calculatePercentage();
+
+        $('#ObtainedMarks, #TotalMarks').on('input', function () {
+            calculatePercentage();
+        });
+    });
+
+
+
+    $(document).ready(function () {
+        $('#MarksObtained, #TotalMarks').on('input', function () {
+            calculatePercentage();
+        });
+    });
+
+    //insert
+    $('#studentForm').on('submit', function (e) {
+        e.preventDefault();
+        Swal.fire({
+            title: "Please Wait!",
+            html: "We are processing your request",
+            allowOutsideClick:false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        })
+        var formData = new FormData($('#studentForm')[0]);
+
+
+        var studentId = $('#StudentId').val();
+        console.log(studentId)
+        var isUpdate = studentId && parseInt(studentId) > 0;
+
+        $.ajax({
+            url: isUpdate ? '/Admin/UpdateStudent' : '/Admin/StudentRegistration',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: res.message,
+                        didClose: () => {
+
+                            location.href = '/admin/StudentRegistrationList';
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: res.message
+                    });
+                }
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong: ' + xhr.responseText
+                });
+            }
+        });
+    });
+
+
+
+
+      // GetById
+
+
+
+</script>
+
+@if (Model != null && Model.ClassId > 0)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#Class").change();
+            $("#StateId").change();
+        });
+        $
+
+    </script>
+}

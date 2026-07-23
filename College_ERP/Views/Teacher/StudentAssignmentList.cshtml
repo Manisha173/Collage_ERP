@@ -1,0 +1,171 @@
+﻿@model List<College_ERP.Models.Teacher.StudentModel>
+
+@{
+    ViewBag.Title = "StudentAssignmentList";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex mb-3 justify-content-between align-items-center">
+                        <span class="fs-5 fw-bold">Assignment List</span>
+                    </div>
+
+                    <!-- Only the table is wrapped in .table-responsive -->
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-bordered w-100">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Student Name</th>
+                                    <th>Student Email</th>
+                                    <th>Father's Name</th>
+                                    <th>Status</th>
+                                    <th>Document</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assignmentTableBody">
+                                @for (int i = 0; i < Model.Count; i++)
+                                {
+                                    <tr>
+                                        <td>@(i + 1)</td>
+                                        <td>@Model[i].StudentName</td>
+                                        <td>@Model[i].StudentEmail</td>
+                                        <td>@Model[i].FatherName</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(Model[i].assigmentattachment))
+                                            {
+                                                <span class="badge bg-primary">Submitted</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning">Not Submitted</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(Model[i].assigmentattachment))
+                                            {
+                                                <a href="@Model[i].assigmentattachment" title="View Assignment" target="_blank">View</a>
+                                            }
+                                            else
+                                            {
+                                                <span>Not Submitted</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(Model[i].assigmentattachment))
+                                            {
+                                                <a href="#" data-stdid="@Model[i].StudentId" data-assid="@Model[i].assid" title="Grade Student" class="gradeStudent"><i class="fa-solid fa-square-poll-horizontal text-primary" style="font-size:20px;"></i></a>
+                                            }
+                                            else
+                                            {
+                                                <span>Not Submitted</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div> <!-- End .table-responsive -->
+
+                </div> <!-- End .card-body -->
+            </div> <!-- End .card -->
+        </div>
+    </div>
+</div>
+
+<!--add/update Modal -->
+<div class="modal fade" id="gradeStudentModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="gradeStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="gradeStudentModalLabel"><span class="modalAction">Grade</span> </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="submitGradeForm">
+                    <input type="hidden" name="studentId" value="0" id="studentid" />
+                    <input type="hidden" name="assignmentId" value="0" id="assignmentid" />
+                   <div class="row">
+                       <div class="col-sm-6">
+                           <label class="form-label">Grade</label>
+                           <select id="grade" name="grade" class="form-select" required>
+                               <option disabled selected>-- Select Grade --</option>
+                               <option value="A">A (Excellent)</option>
+                               <option value="B">B (Good)</option>
+                               <option value="C">C (Average)</option>
+                               <option value="D">D (Below Average)</option>
+                               <option value="F">F (Fail)</option>
+                           </select>
+                       </div>
+                       <div class="col-sm-6">
+                           <label class="form-label">Remark</label>
+                           <input type="text" id="remark" name="remark" class="form-control" placeholder="Enter Remark" />
+                       </div>
+                   </div>
+                    <div class="text-center my-2 mt-3">
+                        <input type="submit" value="Submit" class="btn btn-sm p-2 btn-primary" />
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $(document).on('click','.gradeStudent',function () {
+            debugger
+            let assid = $(this).data('assid');
+            let stdid = $(this).data('stdid');
+            $('#assignmentid').val(assid)
+            $('#studentid').val(stdid)
+            if (assid && stdid) {
+                $('#gradeStudentModal').modal('show')
+            } else {
+                Swal.fire('Error', 'Something went wrong', 'error');
+            }
+        });
+
+        $('#submitGradeForm').on('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let data = new FormData(this);
+            $.ajax({
+                type: 'Post',
+                url: '/teacher/SubmitGradeOfStudent',
+                data: data,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+    });
+</script>
+

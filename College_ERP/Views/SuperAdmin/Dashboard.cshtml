@@ -1,0 +1,116 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+
+
+<style>
+    .custom-border {
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        margin-top: 10px;
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+</style>
+<div class="content-page">
+    <div class="content">
+        <!-- Start Content-->
+        <div class="container-fluid">
+            <!-- start row -->
+            <div class="row mt-2">
+                <div class="col-md-12 ">
+                    <div class="card">
+
+                        <div class="col-12 ">
+                            <div class="row g-3">
+
+                                <div class="col-md-6">
+                                    <div class="card mb-0 custom-border">
+                                        <div class="card-body">
+                                            <a href="/SuperAdmin/CompanyList">
+                                                <div class="widget-first">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                            <div class="bg-primary rounded-circle widget-size text-center">
+                                                                <i data-feather="user" class="text-light"></i>
+                                                            </div>
+                                                        </div>
+                                                        <p class="mb-0 text-dark fs-15">Total Company</p>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h3 class="mb-0 fs-22 text-black me-3  ps-4 ms-4">
+                                                            @if (Model != null)
+                                                            {
+                                                                @Model.totalcompanys
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>No data</span>
+                                                            }
+                                                        </h3>
+                                                        <div class="text-center">
+                                                            <span class="text-dark fs-13 mb-0">View More</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6">
+                                    <div class="card mb-0 custom-border">
+                                        <div class="card-body">
+                                            <a href="/SuperAdmin/CreateAdmin">
+                                                <div class="widget-first">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                            <div class="bg-success rounded-circle widget-size text-center">
+                                                                <i data-feather="user-check" class="text-light"></i>
+                                                            </div>
+                                                        </div>
+                                                        <p class="mb-0 text-dark fs-15">Total Admins</p>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h3 class="mb-0 fs-22 text-black me-3 ps-4 ms-4">
+                                                            @if (Model != null)
+                                                            {
+                                                                @Model.totaladmins
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>No data</span>
+                                                            }
+                                                        </h3>
+                                                        <div class="text-center">
+                                                            <span class="text-dark fs-13 mb-0">View More</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+        <!-- end start -->
+
+
+    </div> <!-- container-fluid -->
+</div> <!-- content -->

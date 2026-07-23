@@ -1,0 +1,83 @@
+﻿
+@{
+    ViewBag.Title = "AttendanceHistoryReport";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <h4> Attendance History </h4>
+            <!-- Optional Date Range Filter -->
+            <form id="dateFilter" method="get">
+                @*<input type="hidden" name="department" value="@ViewBag.DepartmentName" />
+                <input type="hidden" name="empcode" value="@ViewBag.EmployeeCode" />*@
+
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control"
+                               name="startDate" value="@ViewBag.StartDate" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control"
+                               name="endDate" value="@ViewBag.EndDate" />
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-primary">Filter</button>
+                    </div>
+
+                </div>
+            </form>
+
+            <table id="historyTable"
+                   class="table table-bordered table-striped mt-3">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Sr</th>
+                        <th>Department Name</th>
+                        <th>Employee Code</th>
+                        <th>Employee Name</th>
+                        <th>Date</th>
+                        <th>In Time</th>
+                        <th>Out Time</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int sr = 1;
+                    }
+                    @{foreach (var h in Model)
+                        {
+                            <tr>
+                                <td>@sr</td>
+                                <td>@h.DepartmentName</td>
+                                <td>@h.EmployeeCode</td>
+                                <td>@h.EmployeeName</td>
+                                <td>@h.AttendanceDate.ToString("dd-MM-yyyy")</td>
+                                <td>@h.InTime</td>
+                                <td>@h.OutTime</td>
+
+                            </tr>
+                            sr++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+    <script>
+        $(function () {
+            $('#historyTable').DataTable({
+                responsive: true,
+                order: [[1, 'asc']]
+            });
+        });
+    </script>
+
+

@@ -1,0 +1,537 @@
+﻿
+@{
+    ViewBag.Title = "Assignments";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+    var classList = ViewData["classList"] as List<College_ERP.Models.Teacher.SubjectAssignModel>;
+}
+
+<style>
+    .status-icon::before {
+        content: "";
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        margin-left: 5px;
+        border-radius: 50%;
+        vertical-align: middle;
+    }
+
+    .present .status-icon::before {
+        background-color: green;
+    }
+
+    .absent .status-icon::before {
+        background-color: red;
+    }
+    .modal-content {
+        overflow-x: hidden; /* Hide horizontal scroll */
+        word-wrap: break-word; /* Break long words */
+    }
+</style>
+
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex my-2 justify-content-between">
+                        <span class="fs-5 fw-bold">
+                            Assignment List
+                        </span>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Add Assignment
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="student-attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Title</th>
+                                    <th>Class</th>
+                                    <th>Subject</th>
+                                    <th>Assign date</th>
+                                    <th>Completion date</th>
+                                    <th>Academic year</th>
+                                    <th>Description</th>
+                                    <th>Attachment</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    int count = 0;
+                                    foreach (var item in Model as List<College_ERP.Models.Teacher.Assignment>)
+                                    {
+                                        count++;
+                                        <tr>
+                                            <td>@count</td>
+                                            <td id="title_@item.Id">@item.Title</td>
+
+
+                                            <td id="classsection_@item.Id" data-class="@item.ClassId" data-section="@item.SectionId">@item.classname - @item.sectionname</td>
+
+                                            <td id="subject_@item.Id" data-id="@item.SubjectId">@item.subjectname</td>
+                                            <td>@(item.AssignDate?.ToString("dd-MMM-yyyy"))</td>
+                                            <td data-date="@(item.CompletionDate?.ToString("yyyy-MM-dd"))" id="completion_@item.Id">@(item.CompletionDate?.ToString("dd-MMM-yyyy"))</td>
+                                            <td id="year_@item.Id" data-year="@item.AcademicYear">@item.AcademicYear</td>
+                                            <td id="desc_@item.Id"><a role="button" data-desc="@item.Description" class="showDescription">View</a></td>
+                                            <td>
+                                                @if (string.IsNullOrEmpty(item.AttachmentUrl))
+                                                {
+                                                    <span>Not Uploaded</span>
+                                                }
+                                                else
+                                                {
+                                                    <a target="_blank" href="@item.AttachmentUrl">View</a>
+                                                }
+                                            </td>
+                                            <td>
+                                                <i role="button" data-id="@item.Id" id="editAssignment" class="fa-solid fs-5 text-warning fa-pen-to-square"></i>&nbsp;
+                                                <a target="_blank" href="/teacher/StudentAssignmentList?classid=@item.ClassId&sectionid=@item.SectionId&assid=@item.Id">
+                                                    <i role="button" id="studentList" data-id="@item.Id" class="fa-solid fs-5 text-info fa-users-rectangle"></i>
+                                                </a>
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--add/update Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel"><span class="modalAction">Add</span> Assignment</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="attendance-filter-form">
+                    <input type="hidden" name="Id" value="0" id="upId" />
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="fw-bold required-label">Class</label>
+                            <select id="class-dropdown" name="ClassId" class="form-select" required>
+                                <option value="" selected disabled>--Select Class--</option>
+                                @if (classList != null && classList.Count > 0)
+                                {
+                                    foreach (var item in classList)
+                                    {
+                                        <option value="@item.ClassId">@item.ClassName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="fw-bold required-label">Section</label>
+                            <select id="section-dropdown" name="SectionId" class="form-select" required>
+                                <option selected disabled>--Select Section--</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="fw-bold required-label">Subject</label>
+                            <select id="subject-dropdown" name="SubjectId" class="form-select" required>
+                                <option selected disabled>--Select Subject--</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mt-3">
+                            <label class="fw-bold required-label">Title</label>
+                            <input type="text" id="title" required name="title" placeholder="Enter Title" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="fw-bold">Completion Date</label>
+                            <input type="date" id="completion" name="CompletionDate" required class="form-control"
+                                   min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="col-md-6 mt-3">
+                            <label class="fw-bold">Attachment</label>
+                            <input type="file" id="attachment" name="Attachment" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="fw-bold required-label">Academic Year</label>
+                            <!--academic year-->
+                            <select name="academicyear" required class="form-select " id="academicyear">
+                                <option selected disabled value="">--select academic year--</option>
+                                @{
+                                    for (int i = 0; i <= 10; i++)
+                                    {
+                                        <option @(DateTime.Now.Year == DateTime.Now.AddYears(-i).Year ? "selected" : "") value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-12 mt-3">
+                            <label class="fw-bold required-label">Description</label>
+                            <textarea name="description" id="description" required class="form-control" placeholder="Write here.." rows="3"></textarea>
+                        </div>
+                        <div class="col-sm-12 mt-3 text-center">
+                            <button class="btn btn-primary" type="submit"><span class="modalAction">Add</span> Assignment</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Address Modal -->
+<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addressModalLabel">Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="addressModalBody">
+                <!-- Address will go here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--end modal-->
+<script>
+    $(document).ready(function () {
+        $("#student-attendance-table").DataTable();
+    })
+
+    document.getElementById('completion').addEventListener('change', function () {
+        const selectedDate = new Date(this.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);  
+
+        if (selectedDate < today) {
+            alert("Completion date cannot be in the past.");
+            this.value = "";  
+        }
+    });
+
+    function toggleStudentCheckboxes(enabled) {
+        $('.student-check').prop('disabled', !enabled).prop('checked', false);
+        $('.status-icon').text('');
+    }
+
+    $(document).ready(function () {
+
+        $(document).on("click", ".showDescription", function () {
+            $("#addressModal").modal("show")
+            let desc = $(this).data("desc")
+            $("#addressModalBody").text(desc)
+        })
+
+        $("#exampleModal").on("hide.bs.modal", function () {
+            $(".modalAction").text("Add")
+            $('#attendance-filter-form')[0].reset()
+        })
+        $(document).on("click", "#editAssignment", function () {
+            Swal.fire({
+                title: "Please Wait..!",
+                html: "your request are under process",
+                allowOutSideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            })
+            $("#exampleModal").modal("show")
+            $(".modalAction").text("Update")
+            let id = $(this).data("id");
+            //console.log($("#classsection_" + id).attr("data-class"))
+            $("#upId").val(id)
+            $("#class-dropdown").val($("#classsection_" + id).attr("data-class")).change()
+            setTimeout(() => {
+
+            $("#section-dropdown").val($("#classsection_" + id).attr("data-section")).change()
+            },1000)
+            setTimeout(() => {
+                //alert($("#subject_" + id).attr("data-id"))
+                $("#subject-dropdown").val($("#subject_" + id).attr("data-id"))
+                Swal.close()
+            },2000)
+            $("#title").val($("#title_" + id).text())
+            $("#academicyear").val($("#year_" + id).text())
+            $("#completion").val($("#completion_" + id).data("date"))
+            $("#description").val($("#desc_" + id).children().data("desc"))
+        })
+
+        // Modal for viewing address
+        $(document).on('click', '.view-address', function (e) {
+            e.preventDefault();
+            const address = $(this).data('address');
+            $('#addressModalBody').text(address);
+            $('#addressModal').modal('show');
+        });
+
+        // Load dropdowns and setup form
+        //$.ajax({
+        //    url: '/Teacher/GetAssignedSubjects',
+        //    type: 'GET',
+        //    success: function (data) {
+        //        const today = new Date().toISOString().split('T')[0];
+        //        $('#current-date').attr('max', today).val(today);
+
+        //        const assignments = data.Assignments;
+        //        const classMap = new Map();
+
+        //        assignments.forEach(item => {
+        //            if (!classMap.has(item.ClassId)) {
+        //                classMap.set(item.ClassId, {
+        //                    className: item.ClassName,
+        //                    sections: new Map(),
+        //                    subjects: new Map()
+        //                });
+        //            }
+        //            let entry = classMap.get(item.ClassId);
+        //            entry.sections.set(item.SectionId, item.SectionName);
+        //            entry.subjects.set(item.SubjectId, item.SubjectName);
+        //        });
+
+        //        $('#class-dropdown').on('change', function () {
+        //            const selectedClassId = parseInt($(this).val());
+        //            const selectedData = classMap.get(selectedClassId);
+
+        //            $('#section-dropdown').empty();
+        //            selectedData.sections.forEach((name, id) => {
+        //                $('#section-dropdown').append(`<option value="${id}">${name}</option>`);
+        //            });
+
+        //            $('#subject-dropdown').empty();
+        //            selectedData.subjects.forEach((name, id) => {
+        //                $('#subject-dropdown').append(`<option value="${id}">${name}</option>`);
+        //            });
+        //        });
+
+        //        classMap.forEach((value, classId) => {
+        //            $('#class-dropdown').append(`<option value="${classId}">${value.className}</option>`);
+        //        });
+
+        //        const firstClassId = $('#class-dropdown option:first').val();
+        //        if (firstClassId) {
+        //            $('#class-dropdown').val(firstClassId).trigger('change');
+        //        }
+        //    },
+        //    error: function () {
+        //        Swal.fire("error", "Failed to load assigned subjects.", "error");
+        //    }
+        //});
+
+        // Load student list
+        $('#attendance-filter-form').on('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: "Please Wait..!",
+                html: "your request are under process",
+                allowOutSideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            })
+            let formData = new FormData(this)
+            let attachement = $("#attachment").get(0);
+            if (attachement.files.length > 0) {
+                formData.append("attachement", attachement.files[0])
+            }
+            $.ajax({
+                url: '/Teacher/insertAssignment',
+                type: 'Post',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log(data)
+                    if (data.status) {
+                        Swal.fire({
+                            title: "Success",
+                            text: data.message,
+                            icon: "success"
+                        }).then(() => {
+                            location.reload();
+                        })
+                    } else {
+                        Swal.fire({
+                            title: "error",
+                            text: data.message,
+                            icon: "error"
+                        })
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire("error", xhr.responseText, "error");
+                }
+            });
+        });
+
+        // Mark All Present
+
+
+        // Change individual checkbox
+        $(document).on('change', '.student-check', function () {
+            const icon = $(this).siblings('.status-icon');
+            if ($(this).is(':checked')) {
+                if ($('#mark-all-present').is(':checked')) {
+                    icon.removeClass('text-danger').addClass('text-success').text('✔');
+                } else if ($('#mark-all-absent').is(':checked')) {
+                    icon.removeClass('text-success').addClass('text-danger').text('✘');
+                }
+            } else {
+                icon.removeClass('text-success text-danger').text('');
+            }
+        });
+
+        // Submit Attendance
+        $('#submit-attendance').on('click', function () {
+            const classId = $('#class-dropdown').val();
+            const sectionId = $('#section-dropdown').val();
+            const subjectId = $('#subject-dropdown').val();
+            const attendanceDate = $('#current-date').val();
+
+            const allPresent = $("#mark-all-present").prop("checked");
+            const allAbsent = $("#mark-all-absent").prop("checked");
+
+            if (!allPresent && !allAbsent) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Attention!',
+                    text: "Please select either 'All Present' or 'All Absent' before submitting.",
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: "Please Wait..!",
+                html: "your request are under process",
+                allowOutSideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            })
+
+            let attendanceData = [];
+            let IsPresent = $("#mark-all-present").is(":checked");
+            let IsAbsent = $("#mark-all-absent").is(":checked");
+            $('#student-attendance-table tbody tr').each(function () {
+                const checkbox = $(this).find('.student-check');
+                const studentId = checkbox.data('studentid');
+                let isChecked = checkbox.prop("checked");
+                debugger
+                if (IsPresent && isChecked) {
+                    isChecked = true
+                } else if (IsAbsent && isChecked) {
+                    isChecked = false;
+                } else if (IsAbsent && !isChecked) {
+                    isChecked = true;
+                }
+
+                attendanceData.push({
+                    StudentId: studentId,
+                    AttendanceStatus: isChecked
+                });
+            });
+
+            $.ajax({
+                url: '/Teacher/SubmitAttendance',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    ClassId: classId,
+                    SectionId: sectionId,
+                    SubjectId: subjectId,
+                    attendanceDate: attendanceDate,
+                    AttendanceList: attendanceData
+                }),
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: "Success",
+                            text: res.message,
+                            icon: "success"
+                        })
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            text: res.message,
+                            icon: "error"
+                        })
+                    }
+                    $('#mark-all-present, #mark-all-absent').prop('checked', false);
+                    toggleStudentCheckboxes(false);
+                },
+                error: function () {
+                    Swal.fire("Error",'Failed to submit attendance.',"error");
+                }
+            });
+        });
+
+        $('#class-dropdown').on('change', function () {
+            let classid = $(this).val();
+            $.ajax({
+                url: '/teacher/GetSectionByClass', type: 'get', data: { classid: classid },
+                success: function (res) {
+                    console.log(res);
+                    let $sectionDropdown = $('#section-dropdown');
+                    $sectionDropdown.empty();
+
+                    $sectionDropdown.append('<option value="" selected disabled>--Select Section--</option>');
+                    if (res && res.length > 0) {
+                        res.forEach(function (section) {
+                            $sectionDropdown.append(
+                                `<option value="${section.SectionId}">${section.SectionName}</option>`
+                            );
+                        });
+                    } else {
+                        $sectionDropdown.append('<option value="">No sections available</option>');
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            })
+        });
+
+        $('#section-dropdown').on('change', function () {
+            let classid = $('#class-dropdown').val();
+            let sectionid = $(this).val();
+            $.ajax({
+                url: '/teacher/GetSubjectBySection', type: 'get', data: { classid: classid, sectionid: sectionid },
+                success: function (res) {
+                    console.log(res);
+                    let $subjectDropdown = $('#subject-dropdown');
+                    $subjectDropdown.empty();
+                    if (res && res.length > 0) {
+                        $subjectDropdown.append('<option selected disabled value="">Select Subject</option>');
+                        res.forEach(function (subject) {
+                            $subjectDropdown.append(
+                                `<option value="${subject.SubjectId}">${subject.SubjectName}</option>`
+                            );
+                        });
+                    } else {
+                        $subjectDropdown.append('<option value="">No subjects available</option>');
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            })
+
+
+        });
+    });
+</script>
+
+
+

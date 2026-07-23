@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewBag.Title = "BookOrders";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Book Orders</h4>
+
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Sr</th>
+                                    <th>Order Id</th>
+                                    <th>Book Name</th>
+                                    <th>Order Date</th>
+                                    <th>Return Date</th>
+                                    <th>Lost Fine</th>
+                                    <th>Late Fine/Day</th>
+                                    <th>Damage Fine</th>
+                                    <th>Total Delay</th>
+                                    <th>Status</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int sr = 1;
+                                }
+
+                                @foreach (var notice in Model)
+                                {
+                                    <tr>
+                                        <td>@sr</td>
+                                        <td>@notice.shortorderid</td>
+                                        <td>@notice.bookName</td>
+                                        <td>@notice.orderDate.ToString("dd-MMM-yyyy")</td>
+                                        <td>@notice.returnDate</td>
+                                        <td>₹ @notice.lostFine.ToString("N2")</td>
+
+                                        <td>₹ @notice.lateFine.ToString("N2")</td>
+                                        <td>₹ @notice.damageFine.ToString("N2")</td>
+                                        <td>@notice.totalDelayDaysCount days X ₹ @notice.totalLateFine.ToString("N2")</td>
+                                        <td>
+                                            @if (notice.recieveStatus)
+                                            {
+                                                <span class="badge bg-primary">Received</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Pending</span>
+                                            }
+                                        </td>
+
+
+
+                                    </tr>
+                                    sr++;
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

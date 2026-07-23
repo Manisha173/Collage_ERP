@@ -1,0 +1,550 @@
+﻿
+@{
+    ViewBag.Title = "HostelBlockOverview";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var blocks = ViewData["blocks"] as List<College_ERP.Models.Admin.BlockModel>;
+}
+<style>
+    .custom-border {
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        margin-top: 10px;
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+    }
+    .page-title {
+        font-size: 2.0rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        font-weight: 300;
+    }
+    .container-modern {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    .selection-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        border: none;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .selection-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+    .selection-card {
+        padding: 1.5rem;
+    }
+    .form-select-modern {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+    }
+
+    .form-select-modern:focus
+    {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            background-color: white;
+        }
+    .warden-display {
+        background: linear-gradient(135deg, #287F71 0%, skyblue 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 1.1rem;
+        text-align: center;
+        min-height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 5px 15px rgba(240, 147, 251, 0.3);
+        transition: all 0.3s ease;
+    }
+
+        .warden-display.empty {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            color: #6c757d;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+    .form-label-modern {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+    }
+
+    .page-header {
+        padding: 1.5rem;
+        margin: 1.2rem;
+        color: white;
+        border-radius: 10px;
+        background: #5CA497;
+    }
+
+      
+    
+</style>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <nav class="my-1" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Hostel Block Overview
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addblock">Add Block </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addwarden"> Add Warden</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addroomnumber">Add Room</a>
+                    </li>
+
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddStudentInHostel"> Add Student In Hostel</a>
+                    </li>
+
+                </ol>
+            </nav>
+
+        </div>
+        @*<div class="mt-3 page-header">
+            <h1 class="page-title">Hostel Block Overview</h1>
+        </div>*@
+
+        <div class="container-modern">
+            <div class="card selection-card">
+                <div class="card-body">
+                    <div class="row align-items-end">
+                        <!-- Block Dropdown -->
+                        <div class="col-md-6 mb-3">
+                            <label for="blockDropdown" class="form-label form-label-modern">
+                                <i class="fas fa-building me-2"></i>Select Block
+                            </label>
+                            <select class="form-select form-select-modern" id="blockDropdown" onchange="getWardenByBlock(this.value)">
+                                <option selected disabled>Choose a hostel block...</option>
+                                @if (ViewData["blocks"] != null)
+                                {
+                                    foreach (var clas in blocks)
+                                    {
+                                        <option value="@clas.HostelId">@clas.BlockName - (@clas.GenderType, @clas.blockType)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Warden Name Display -->
+                        <div class="col-md-6 mb-3" style="display:none;" id="wardenSection">
+                            <label class="form-label form-label-modern">
+                                <i class="fas fa-user-tie me-2"></i>Assigned Warden
+                            </label>
+                            <div class="warden-display empty" id="wardenDisplay">
+                                <span id="wardenName">Select a block to view warden</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row g-3 mb-5 mx-2">
+            <div class="col-md-4">
+                <div class="card mb-0 custom-border">
+                    <div class="card-body">
+                        <a href="/admin/addblock">
+                            <div class="widget-first">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                        <div class="bg-primary rounded-circle widget-size text-center">
+                                            <i data-feather="columns" class="text-light"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 text-dark fs-15">Floor</p>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black ps-5 ms-1 me-3" id="floorCount">
+                                        0
+                                        @*@if (Model != null)
+                                        {
+                                            @Model.totalroom
+                                        }
+                                        else
+                                        {
+                                            <span>No data</span>
+                                        }*@
+                                    </h3>
+                                    <div class="text-center">
+                                        <span class="text-dark fs-13 mb-0">View More</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="card mb-0 custom-border">
+                    <div class="card-body">
+                        <a href="/admin/addblock">
+                            <div class="widget-first">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                        <div class="bg-warning rounded-circle widget-size text-center">
+                                            <i data-feather="home" class="text-light"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 text-dark fs-15">Rooms</p>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1" id="roomCount">
+                                        0
+                                        @*@if (Model != null)
+                                        {
+                                            @Model.totalbeds
+                                        }
+                                        else
+                                        {
+                                            <span>No data</span>
+                                        }*@
+                                    </h3>
+                                    <div class="text-center">
+                                        <span class="text-dark fs-13 mb-0">View More</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-0 custom-border">
+                    <div class="card-body">
+                        <a href="/admin/addroomnumber">
+                            <div class="widget-first">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="p-2 border border-secondary border-opacity-10 bg-secondary-subtle rounded-pill me-2">
+                                        <div class="bg-secondary rounded-circle widget-size text-center">
+                                            @*<i data-feather="users" class="text-light"></i>*@
+                                            <i class="fas fa-bed text-light"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 text-dark fs-15">Beds</p>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1" id="bedCount">
+                                        0
+                                        @*@if (Model != null)
+                                        {
+                                            @Model.occupiedbeds
+                                        }
+                                        else
+                                        {
+                                            <span>No data</span>
+                                        }*@
+                                    </h3>
+                                    <div class="text-center">
+                                        <span class="text-dark fs-13 mb-0">View More</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-0 custom-border">
+                    <div class="card-body">
+                        <a href="/admin/addroomnumber">
+                            <div class="widget-first">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="p-2 border border-danger border-opacity-10 bg-danger-subtle rounded-pill me-2">
+                                        <div class="bg-danger rounded-circle widget-size text-center">
+                                            <i data-feather="user-check" class="text-light"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 text-dark fs-15">Occupied Beds</p>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1" id="occupiedBedCount">
+                                        0
+                                        @*@if (Model != null)
+                                        {
+                                            @Model.remainingbeds
+                                        }
+                                        else
+                                        {
+                                            <span>No data</span>
+                                        }*@
+                                    </h3>
+                                    <div class="text-center">
+                                        <span class="text-dark fs-13 mb-0">View More</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-0 custom-border">
+                    <div class="card-body">
+                        <a href="/admin/addroomnumber">
+                            <div class="widget-first">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="p-2 border border-success border-opacity-10 bg-success-subtle rounded-pill me-2">
+                                        <div class="bg-success rounded-circle widget-size text-center">
+                                            <i data-feather="user-x" class="text-light"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 text-dark fs-15">Remaining Beds</p>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1" id="remainingBedCount">
+                                        0
+                                        @*@if (Model != null)
+                                        {
+                                            @Model.acrooms
+                                        }
+                                        else
+                                        {
+                                            <span>No data</span>
+                                        }*@
+                                    </h3>
+                                    <div class="text-center">
+                                        <span class="text-dark fs-13 mb-0">View More</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-0 custom-border">
+                    <div class="card-body">
+                        <a href="/admin/addroomnumber">
+                            <div class="widget-first">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="p-2 border border-warning border-opacity-10 bg-warning-subtle rounded-pill me-2">
+                                        <div class="bg-warning rounded-circle widget-size text-center">
+                                            <i data-feather="wind" class="text-light"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 text-dark fs-15">AC Room + Attached Bathroom</p>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1" id="acAttachedCount">
+                                        0
+                                        @*@if (Model != null)
+                                        {
+                                            @Model.nonacrooms
+                                        }
+                                        else
+                                        {
+                                            <span>No data</span>
+                                        }*@
+                                    </h3>
+                                    <div class="text-center">
+                                        <span class="text-dark fs-13 mb-0">View More</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="card mb-0 custom-border">
+                    <div class="card-body">
+                        <a href="/warden/Communication">
+                            <div class="widget-first">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                        <div class="bg-primary rounded-circle widget-size text-center">
+                                            <i data-feather="wind" class="text-light"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 text-dark fs-15"> AC Room + CommonBathroom</p>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1" id="acCommonCount">
+                                        0
+                                        @*@if (Model != null)
+                                        {
+                                            @Model.communication
+                                        }
+                                        else
+                                        {
+                                            <span>No data</span>
+                                        }*@
+                                    </h3>
+                                    <div class="text-center">
+                                        <span class="text-dark fs-13 mb-0">View More</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-0 custom-border">
+                    <div class="card-body">
+                        <a href="/admin/addroomnumber">
+                            <div class="widget-first">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                        <div class="bg-secondary rounded-circle widget-size text-center">
+                                            <i class="fas fa-fan text-light"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 text-dark fs-15">Non-AC Room + Attached Bathroom</p>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1" id="nonacAttachedCount">
+                                        0
+                                        <!---notice-->
+                                    </h3>
+                                    <div class="text-center">
+                                        <span class="text-dark fs-13 mb-0">View More</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-0 custom-border">
+                    <div class="card-body">
+                        <a href="/admin/addroomnumber">
+                            <div class="widget-first">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                        <div class="bg-danger rounded-circle widget-size text-center">
+                                            <i class="fas fa-fan text-light"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 text-dark fs-15">Non-AC Room + CommonBathroom</p>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1" id="nonacCommonCount">
+                                        0
+                                        <!---notice-->
+                                    </h3>
+
+                                    <div class="text-center">
+                                        <span class="text-dark fs-13 mb-0">View More</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function getWardenByBlock(blockId) {
+        if (!blockId) return;
+
+        const wardenDisplay = document.getElementById('wardenDisplay');
+        const wardenName = document.getElementById('wardenName');
+        const wardenSection = document.getElementById('wardenSection');
+
+        wardenSection.style.display = 'block';
+        // Show loading state
+        wardenDisplay.className = 'warden-display empty';
+        wardenName.innerHTML = 'Loading...';
+
+        $.ajax({
+            type: "GET",
+            url: '/Admin/GetWardenByBlock',
+            data: { blockId: blockId },
+            success: function (response) {
+                if (response.success && response.wardenName) {
+                    wardenDisplay.className = 'warden-display';
+                    wardenName.innerHTML = '<i class="fas fa-user-tie me-2"></i>' + response.wardenName;
+                } else {
+                    wardenDisplay.className = 'warden-display empty';
+                    wardenName.innerHTML = '<i class="fas fa-user-slash me-2"></i>Not Assigned';
+                }
+            },
+            error: function () {
+                wardenDisplay.className = 'warden-display empty';
+                wardenName.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Error retrieving warden';
+            }
+        });
+    }
+
+        $(document).ready(function () {
+            $('#blockDropdown').on('change', function () {
+                const blockId = $(this).val();
+
+                if (blockId) {
+                    $.ajax({
+                        url: '/admin/GetBlockOverviewData',
+                        type: 'GET',
+                        data: { blockId: blockId },
+                        success: function (res) {
+                            $('#floorCount').text(res.totalFloors || '0');
+                            $('#roomCount').text(res.totalRooms || '0');
+                            $('#bedCount').text(res.totalBeds || '0');
+                            $('#occupiedBedCount').text(res.occupiedBeds || '0');
+                            $('#remainingBedCount').text(res.remainingBeds || '0');
+                            $('#nonacCommonCount').text(res.nonACRoomNonAttachedBathroom || '0');
+                            $('#acCommonCount').text(res.ACRoomNonAttachedBathroom || '0');
+                            $('#nonacAttachedCount').text(res.nonACRoomAttachedBathroom || '0');
+                            $('#acAttachedCount').text(res.ACRoomAttachedBathroom || '0');
+                        },
+                        error: function () {
+                            Swal.fire("Error", "Could not fetch block data.", "error");
+                        }
+                    });
+                }
+            });
+        });         
+</script>
+
+
+

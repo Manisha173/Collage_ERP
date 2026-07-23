@@ -1,0 +1,285 @@
+﻿@{
+    ViewBag.Title = "Add Designation";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/teacherregistration"> Register Teacher </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/teacherRegistrationlist"> Teacher List </a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+    Add Teacher Designation
+</li>
+                </ol>
+            </nav>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add Designation</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card-body">
+                                <form method="post" id="designationForm">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <input type="hidden" id="DesignationId" name="DesignationId" />
+                                            <div class="mb-3">
+                                                <label>Designation Name</label>
+                                                <input type="text" id="DesignationName" name="DesignationName" placeholder="Enter Designation" class="form-control" required />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label>Description</label>
+                                                <textarea name="DesignationDescription" id="DesignationDescription" placeholder="Description" class="form-control" rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 text-center">
+                                            <button type="submit" id="btnSubmit" class="btn btn-primary">Add Designation</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3 d-flex justify-content-between"><span>Designation List</span>  <button data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-primary">Add Designation</button></h4>
+
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th style="width:200px !important">Designation Name</th>
+                                    <th>Description</th>
+                                    <th style="width:150px !important">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int sr = 1;
+                                }
+
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@sr</td>
+                                        <td>@item.DesignationName</td>
+                                        <td>
+                                            @if (string.IsNullOrEmpty(item.DesignationDescription))
+                                            {
+
+
+<span>N/A</span>
+}
+else
+                {
+                                        <a role="button" class="text-primary  view-description-btn"
+                                           data-description="@item.DesignationDescription"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#descriptionModal">
+                                            View
+                                        </a>
+                }
+                                            
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm p-0" onclick="editDesignation(@item.DesignationId)"> <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>
+                                            <button class="btn btn-sm p-0" onclick="deleteDesignation(@item.DesignationId)"><i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+                                        </td>
+                                    </tr>
+                                    sr++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Edit Designation Modal -->
+    <div class="modal fade" id="editDesignationModal" tabindex="-1" aria-labelledby="editDesignationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="editDesignationForm" method="post" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editDesignationModalLabel">Edit Designation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body row">
+
+                        <input type="hidden" id="EditDesignationId" name="DesignationId" />
+                        <div class="col-md-6 mb-3">
+                            <label for="EditDesignationName" class="form-label">Designation Name</label>
+                            <input type="text" required id="EditDesignationName" name="DesignationName" class="form-control" />
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label> Description</label>
+                            <textarea type="text" id="EditDescription" name="DesignationDescription" class="form-control"></textarea>
+                        </div>
+
+
+
+                    </div>
+                    <div class="text-center my-2">
+                        <button type="submit" class="btn btn-primary">Update Designation</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--end modal-->
+</div>
+<!--description-->
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descriptionModalLabel">Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalDescriptionBody">
+                <!-- Content will be injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".view-description-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                const descHtml = this.getAttribute("data-description");
+                document.getElementById("modalDescriptionBody").innerHTML = descHtml;
+            });
+        });
+    });
+</script>
+
+<script>
+    //insert class
+    $(document).ready(function () {
+        $('#designationForm').submit(function (e) {
+            e.preventDefault();
+            showLoading(true)
+
+            var formData = {
+                DesignationId: $('#DesignationId').val(),
+                DesignationName: $('#DesignationName').val(),
+                DesignationDescription: $('#DesignationDescription').val()
+            };
+
+            $.ajax({
+                url: '/Admin/AddDesignation',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire('Success!', response.message, 'success');
+                        $('#designationForm')[0].reset();
+                        $('#btnSubmit').val('Add Designation');
+                        $('#DesignationId').val(0);
+                        location.reload();
+
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function () {
+                    Swal.fire('Error', 'Server error occurred.', 'error');
+                }
+            });
+        });
+
+    });
+
+
+
+    //delete class
+    function deleteDesignation(DesignationId) {
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This class will be deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                showLoading(true)
+                $.post('/admin/deleteDesignation', { DesignationId: DesignationId }, function (res) {
+                    if (res.success) {
+                        Swal.close();
+                        Swal.fire('Deleted!', res.message, 'success').then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.close();
+                        Swal.fire('Error', res.message, 'error');
+                    }
+                });
+            }
+        });
+    }
+    function editDesignation(id) {
+        showLoading(true)
+        console.log("Fetching ID: ", id);
+        $.get('/Admin/GetDesignationById?id=' + id, function (data) {
+            console.log(data)
+            if (data) {
+                $('#EditDesignationId').val(data.DesignationId);
+                $('#EditDesignationName').val(data.DesignationName);
+                $('#EditDescription').val(data.DesignationDescription);
+
+                Swal.close();
+                $('#editDesignationModal').modal('show');
+            }
+        });
+    }
+
+    $('#editDesignationForm').on('submit', function (e) {
+        e.preventDefault();
+        showLoading(true)
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: '/Admin/UpdateDesignation',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                if (res.success) {
+                    $('#editDesignationForm').modal('hide');
+                    Swal.fire('Updated!', 'Designation updated successfully.', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', 'Something went wrong.', 'error');
+                }
+            }
+        });
+    });
+</script>

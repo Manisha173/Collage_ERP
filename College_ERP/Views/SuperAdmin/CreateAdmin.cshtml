@@ -1,0 +1,400 @@
+﻿
+@{
+    ViewBag.Title = "CreateAdmin";
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+            <div class=" d-flex align-items-sm-center flex-sm-row flex-column">
+            </div>
+
+            <!-- Teacher Form -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            <h4 class="card-title">Create Admin</h4>
+                        </div>
+                        <div class="card-body">
+                            <form enctype="multipart/form-data" method="Post" id="createAdmin">
+
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <!--Award Date-->
+                                        <div class="mb-2">
+                                            <label for="name3" class="form-label">Name</label>
+                                            <input type="text" id="Name" class="form-control" value="" name="Name" placeholder="Enter Your Name" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label for="email" class="form-label">Email Id</label>
+                                            <input type="email" id="EmailId" class="form-control" value="" name="EmailId" placeholder="Enter Your Email" required>
+                                        </div>
+
+                                        <div class="mb-2">
+                                            <label for="image" class="form-label">Image</label>
+                                            <input type="file" id="Images" class="form-control" value="" name="Images" placeholder="" required>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-lg-6">
+
+                                        <!--Certificate-->
+                                        <div class="mb-2">
+                                            <label for="number" class="form-label">Mobile Number</label>
+                                            <input type="text" id="MobileNo" class="form-control" value="" name="MobileNo" placeholder="Enter Your Mobile No." pattern="^[6-9]\d{9}$" maxlength="10">
+                                        </div>
+                                        <!--Award Type-->
+
+                                        <div class="mb-2">
+                                            <label for="school" class="form-label">Select Company</label>
+                                            <select class="form-select" name="companyId" required>
+                                                <option selected value="">--select company--</option>
+                                                @if (ViewBag.company != null)
+                                                {
+                                                    foreach (var item in ViewBag.company)
+                                                    {
+                                                        <option value="@item.Id">@item.SchoolName - (@item.stateName , @item.City_Name)</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center">
+                                            <button type="submit" data-action=add id="btnSubmit" class="btn btn-md btn-primary">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- container-fluid -->
+
+    </div> <!-- content -->
+
+
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Admin List</h5>
+                </div><!-- end card header -->
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Company Name</th>
+                                    <th>Name</th>
+                                    <th>Mobile Number</th>
+                                    <th>Email</th>
+                                    <th>Username</th>
+                                    <th>Password</th>
+                                    <th>Action</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Count > 0)
+                                {
+                                    int srNo = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@srNo</td>
+                                            <td id="cname_@item.Id" data-cid="@item.CompanyId">@item.CompanyName</td>
+                                            <td id="name_@item.Id"><a id="showAdminDetail" role="button" data-id="@item.Id" class="text-primary">@item.Name</a></td>
+                                            <td id="mobile_@item.Id">@item.MobileNo</td>
+                                            <td id="email_@item.Id">@item.EmailId</td>
+                                            <td>@item.UserName</td>
+                                            <td>@item.Password</td>
+                                            <td>
+                                                <button class="btn btn-sm p-0"> <i data-feather="edit" onclick="editAdmin(@item.Id)" class="text-warning cursor-pointer"></i></button>
+                                                <button class="btn btn-sm p-0"><i data-feather="trash-2" onclick="deleteAdmin(@item.Id)" class="text-danger cursor-pointer"></i></button>
+
+                                            </td>
+                                        </tr>
+                                        srNo++;
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!--edit Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Update Admin</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" method="Post" id="updateAdmin">
+                    <input type="hidden" name="Id" id="updateId" />
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!--Award Date-->
+                            <div class="mb-2">
+                                <label for="upName" class="form-label">Name</label>
+                                <input type="text" id="upName" class="form-control" value="" name="Name" placeholder="Enter Your Name" required>
+                            </div>
+                            <div class="mb-2">
+                                <label for="upEmailId" class="form-label">Email Id</label>
+                                <input type="email" id="upEmailId" class="form-control" value="" name="EmailId" placeholder="Enter Your Email" required>
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="upImages" class="form-label">Image</label>
+                                <input type="file" id="upImages" class="form-control" value="" name="Image" placeholder="" required>
+                            </div>
+
+                        </div>
+
+                        <div class="col-lg-6">
+
+                            <!--Certificate-->
+                            <div class="mb-2">
+                                <label for="upMobileNo" class="form-label">Mobile Number</label>
+                                <input type="text" id="upMobileNo" class="form-control" value="" name="MobileNo" placeholder="Enter Your Mobile No." required maxlength="10" pattern="^[6-9]\d{9}$">
+                            </div>
+                            <!--Award Type-->
+
+                            <div class="mb-2">
+                                <label for="upcompany" class="form-label">Select Company</label>
+                                <select class="form-select" id="upcompany" name="companyId">
+                                    <option selected disabled>--select company--</option>
+                                    @if (ViewBag.company != null)
+                                    {
+                                        foreach (var item in ViewBag.company)
+                                        {
+                                            <option value="@item.Id">@item.SchoolName - (@item.stateName , @item.City_Name)</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12 text-center">
+                                <button type="submit" id="upbtnSubmit" data-action="update" class="btn btn-md btn-primary">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--show admin detail Modal -->
+<div class="modal fade" id="adminexampleModal" tabindex="-1" aria-labelledby="adminexampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="adminexampleModalLabel">Admin Details</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-center">
+                    <div class="col-sm-11">
+                        <div class="row" id="adminDetailContainer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).on("click", "#showAdminDetail", function () {
+        let Id = $(this).attr("data-id")
+        $.ajax({
+            url: '/SuperAdmin/GetAdminById',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({ Id: Id }),
+            success: function (response) {
+                console.log(response)
+                if (response.status) {
+                    let data = response.data
+                    $("#adminexampleModal").modal("show")
+                    $("#adminDetailContainer").html(`
+                    <div class='row'>
+                        <div class="col-sm-3 text-end">
+                        <img height='100' class='rounded-circle' width='100' src='${data.Images}' />
+                        </div>
+                        <div class="col-sm-9 px-4">
+                        <div class='row'>
+                        <div class='col-sm-3 mb-2 text-primary'>Name</div>
+                        <div class='col-sm-1'>:</div>
+                        <div class='col-sm-6 mb-2'>
+                        ${data.Name}
+                        </div>
+ <div class='col-sm-3 mb-2 text-primary'>Email</div>
+                        <div class='col-sm-1'>:</div>
+ <div class='col-sm-6 mb-2'>
+                        ${data.EmailId}
+                        </div>
+ <div class='col-sm-3 mb-2 text-primary'>Mobile</div>
+  <div class='col-sm-1'>:</div>
+ <div class='col-sm-6 mb-2'>
+                        ${data.MobileNo}
+                        </div>
+ <div class='col-sm-3 mb-2 text-primary'>Company</div>
+                        <div class='col-sm-1'>:</div>
+ <div class='col-sm-6 mb-2'>
+                        ${data.CompanyName} - (${data.schoolAddress})
+                        </div>
+                        </div>
+                    `)
+                } else {
+                    Swal.fire('Error', response.message, 'error');
+                }
+            },
+            error: function () {
+                Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+            }
+        });
+    })
+
+    function deleteAdmin(Id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the teacher record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/SuperAdmin/DeleteAdmin',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ Id: Id }),
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+
+            }
+        });
+    }
+
+    function editAdmin(id) {
+        $("#exampleModal").modal("show")
+        $("#updateId").val(id)
+        $("#upName").val($("#name_" + id).text())
+        $("#upEmailId").val($("#email_" + id).text())
+        $("#upMobileNo").val($("#mobile_" + id).text())
+        $("#upcompany").val($("#cname_" + id).attr("data-cid"))
+    }
+
+    $(document).ready(function () {
+
+        $('#btnSubmit , #upbtnSubmit').on('click', function (e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: "Please Wait..!",
+                html: "Your request are under process.",
+                allowOutsideClick:false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            })
+
+            let action = $(this).attr("data-action");
+            debugger
+            var formData = new FormData(action == "add" ? $('#createAdmin')[0] : $('#updateAdmin')[0]);
+            if (action == "add") {
+                if ($("#Images").get(0).files.length > 0) {
+                    formData.append("Image", $("#Images").get(0).files[0]);
+                }
+            } else {
+                if ($("#upImages").get(0).files.length > 0) {
+                    formData.append("Image", $("#upImages").get(0).files[0]);
+                }
+            }
+
+            let url = `/SuperAdmin/` + (action === "add" ? "CreateAdmin" : "updateAdmin");
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (responce) {
+                    if (responce.success || responce.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'success',
+                            text: responce.message, didClose: () => {
+                                location.reload();
+                            }
+                        });
+                    }
+                    else {
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: responce.message
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'error',
+                        text: 'Something went wrong with the request'
+                    });
+                }
+            });
+        });
+    });
+
+    $(document).on("click", "#showAdminDetail", function () {
+        $("#adminexampleModal").modal("show")
+    })
+</script>

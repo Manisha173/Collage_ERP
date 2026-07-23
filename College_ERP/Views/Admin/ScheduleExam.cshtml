@@ -1,0 +1,550 @@
+﻿
+@{
+    ViewBag.Title = "ScheduleExam";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var exams = ViewData["exams"] as List<College_ERP.Models.Admin.ExamModel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Schedule Exam
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/ExamMarkSheet">Exam MarkSheet </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/StudentNumberAllocation"> Student Number Allocation</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/StudentReportCard"> Student Report Card</a>
+                    </li>
+
+                </ol>
+            </nav>
+
+
+        </div>
+    </div>
+
+    <!--add Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Schedule Exam</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="scheduleExamForm">
+                        <div class="row align-items-end">
+                            <!-- Exam Name -->
+                            <div class="col-md-6">
+                                <label class="form-label"><strong>Exam Name</strong></label>
+                                <div class="input-group">
+                                    <select id="examName" name="examName" class="form-select" required>
+                                        <option value="">Select Exam</option>
+
+                                        @if (ViewData["exams"] != null)
+                                        {
+                                            foreach (var exam in exams)
+                                            {
+                                                <option value="@exam.ExamId">@exam.ExamName</option>
+                                            }
+                                        }
+
+                                    </select>
+                                    <button class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#exampleModal2" type="button" id="addExamBtn">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Academic Year -->
+                            <div class="col-md-6">
+                                <label class="form-label"><strong>Academic Year</strong></label>
+                                <select id="academicYear" name="academicYear" class="form-select academicyear readonly-select" required>
+                                    @{
+                                        for (int i = 0; i <= 3; i++)
+                                        {
+                                            var yearValue = DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year;
+                                            <option value="@yearValue">@yearValue</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <!-- Start Exam Date -->
+                            <div class="col-md-6 mt-2">
+                                <label class="form-label"><strong>Start Exam Date</strong></label>
+                                <input type="date" id="startExamDate" name="startExamDate" class="form-control" required />
+                            </div>
+                            <!-- End Exam Date -->
+                            <div class="col-md-6 mt-2">
+                                <label class="form-label"><strong>End Exam Date</strong></label>
+                                <input type="date" id="endExamDate" name="endExamDate" class="form-control" required disabled />
+                            </div>
+                            <!-- Description -->
+                            <div class="col-md-12 mt-2">
+                                <label class="form-label"><strong>Exam Description</strong></label>
+                                <textarea id="description" name="description" class="form-control" placeholder="Exam Description" required></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--table-->
+    <div class="row">
+        <div class="col-12 my-0">
+            <div class="card">
+                <div class="card-body mb-0 pb-0">
+                    <h4 class="card-title mb-1 mt-0 pt-0 d-flex justify-content-between">
+                        <span> Scheduled Exam List </span> <!-- Button trigger modal -->
+                        <span class="w-50">
+                            <select id="academicFilter" class="form-select w-50">
+                                <option disabled selected>--Search By Academic Year--</option>
+                                @if (ViewBag.academicyears != null)
+                                {
+                                    foreach (var ay in ViewBag.academicyears)
+                                    {
+                                        <option value="@ay">@ay</option>
+                                    }
+                                }
+                            </select>
+                        </span>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Schedule Exam
+                        </button>
+                    </h4>
+                    <table id="examTable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Exam Name</th>
+                                <th>Academic Year</th>
+                                <th>Start Exam Date</th>
+                                <th>End Exam Date</th>
+                                <th>Description</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Count > 0)
+                            {
+                                int srNo = 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@srNo</td>
+
+
+                                        <td data-ctid="@item.examId">@item.examName</td>
+                                        <td>@item.academicYear</td>
+                                        <td data-st="@item.startExamDate.ToString("yyyy-MM-dd")">@item.startExamDate.ToString("dd-MMM-yyyy")</td>
+                                        <td data-et="@item.endExamDate.ToString("yyyy-MM-dd")">@item.endExamDate.ToString("dd-MMM-yyyy")</td>
+                                        <td data-desc="@item.description">
+                                            <a role="button"  class="text-primary" onclick="viewAwardDesc('@item.description')"> View </a>
+                                        </td>
+                                        <td class="text-center">
+                                            <a role="button" title="Update" data-id="@item.scheduleId" class="btn btn-sm updateMat p-0"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                            <a role="button" class="btn btn-sm deletemat p-0" data-id="@item.scheduleId" title="Delete"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                        </td>
+                                    </tr>
+                                    srNo++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Description Modal-->
+<div class="modal fade" id="viewDescriptionModal" tabindex="-1" aria-labelledby="viewDescriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewDescriptionModalLabel">Exam Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="awardDescriptionContent" style="white-space: pre-line;"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- content -->
+<!--Modal to Add Exam-->
+<div class="modal fade" tabindex="-1" id="exampleModal2" aria-labelledby="exampleModal2Label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title">Add Exam</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addExamForm">
+                    <label class="form-label">Exam Name</label>
+                    <input type="text" class="form-control" name="ExamName" required placeholder="Add Exam" />
+
+                    <div class="text-center my-3">
+                        <input type="submit" class="btn btn-primary" id="addExam" value="Submit" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal to update Category-->
+<div class="modal fade" tabindex="-1" id="updateModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title">Update Exam</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="scheduleExamForm">
+                    <input type="hidden" value="" id="scheduleId" name="scheduleId" />
+                    <div class="row align-items-end">
+                        <!-- Exam Name -->
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Exam Name</strong></label>
+                            <div class="input-group">
+
+                                <select id="enexamName" name="examName" class="form-select" required>
+                                    <option value="">Select Exam</option>
+                                    @if (ViewData["exams"] != null)
+                                    {
+                                        foreach (var exam in exams)
+                                        {
+                                            <option value="@exam.ExamId">@exam.ExamName</option>
+                                        }
+                                    }
+                                </select>
+                                <button class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#exampleModal2" type="button" id="addExamBtn">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Academic Year -->
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Academic Year</strong></label>
+                            <select id="enacademicYear" name="academicYear" class="form-select academicyear" required>
+                                <option selected value="">Select Academic Year</option>
+                                @{
+                                    for (int i = 0; i <= 3; i++)
+                                    {
+                                        var yearValue = DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year;
+                                        <option value="@yearValue">@yearValue</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <!-- Start Exam Date -->
+                        <div class="col-md-6 mt-2">
+                            <label class="form-label"><strong>Start Exam Date</strong></label>
+                            <input type="date" id="enstartExamDate" name="startExamDate" class="form-control" required />
+                        </div>
+                        <!-- End Exam Date -->
+                        <div class="col-md-6 mt-2">
+                            <label class="form-label"><strong>End Exam Date</strong></label>
+                            <input type="date" id="enendExamDate" name="endExamDate" class="form-control" required />
+                        </div>
+                        <!-- Description -->
+                        <div class="col-md-12 mt-2">
+                            <label class="form-label"><strong>Exam Description</strong></label>
+                            <textarea id="endescription" name="description" class="form-control" placeholder="Exam Description" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <button type="submit" id="btnSubmit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+    function viewAwardDesc(description) {
+        $('#awardDescriptionContent').text(description);
+        $('#viewDescriptionModal').modal('show');
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const startDateInput = document.getElementById("startExamDate");
+        const endDateInput = document.getElementById("endExamDate");
+        const enendDateInput = document.getElementById("enendExamDate");
+
+        startDateInput.addEventListener("change", function () {
+            const startDate = this.value;
+            if (startDate) {
+                endDateInput.disabled = false;
+                enendDateInput.disabled = false;
+                endDateInput.min = startDate;
+                // Optional: Clear end date if it's earlier than the new start date
+                if (endDateInput.value && endDateInput.value < startDate) {
+                    endDateInput.value = "";
+                }
+            } else {
+                endDateInput.disabled = true;
+                endDateInput.value = "";
+                endDateInput.removeAttribute("min");
+            }
+        });
+    });
+
+    function initializeDataTable() {
+        debugger
+        let table = $('#examTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![4].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![4].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    };
+
+    $(document).ready(function () {
+        var table = initializeDataTable();
+        $('#academicFilter').change(function () {
+            let filterval = $(this).val();
+            table.column(2).search(filterval).draw();
+        });
+
+        $("#addExamForm").on('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let formdata = new FormData(this);
+            $.ajax({
+                url: '/admin/AddExam', type: 'post', data: formdata, contentType: false, processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+        $(".scheduleExamForm").on('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let formdata = new FormData(this);
+            $.ajax({
+                url: '/admin/ScheduleExam', type: 'post', data: formdata, contentType: false, processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+        $(".deletemat").on('click', function () {
+            let id = $(this).data('id');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to delete this item?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                customClass: {
+                    confirmButton: 'mx-2 btn btn-danger',
+                    cancelButton: 'mx-2 btn btn-light'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing Your Request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/admin/DeleteScheduledExam',
+                        type: 'get',
+                        data: { id: id },
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: res.message,
+                                    icon: 'success',
+                                    didClose: () => {
+                                        location.reload(true);
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: res.message,
+                                    icon: 'warning'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Server Error. Try Again Later!',
+                                icon: 'error'
+                            });
+                            console.log(xhr);
+                        }
+                    });
+                } else {
+                    Swal.fire('Cancelled', 'Your item is safe.', 'info');
+                }
+            });
+        });
+
+        $(".updateMat").on('click', function () {
+            debugger;
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let row = $(this).closest('tr');
+
+            let tds = row.find('td');
+
+            let id = $(this).data('id');
+            let academicyear = $(tds[2]).text().trim();
+            let startexamdate = $(tds[3]).data('st').trim();
+            //let startexamdate = $(tds[3]).text().trim();
+            console.log(startexamdate);
+            let enexamdate = $(tds[4]).data('et').trim();
+            //let enexamdate = $(tds[4]).text().trim();
+            let endescription = $(tds[5]).data("desc").trim();
+            let catid = $(tds[1]).data('ctid');
+
+            $("#scheduleId").val(id);
+            $("#enacademicYear").val(academicyear);
+            $("#enstartExamDate").val(startexamdate);
+            $("#enendExamDate").val(enexamdate);
+            $("#endescription").val(endescription);
+            $("#enexamName option").each(function () {
+                if ($(this).val() == catid) {
+                    $(this).attr('selected', 'selected');
+                }
+            });
+            Swal.close();
+            $("#updateModal").modal('show');
+        });
+
+        $("#exampleModal2").on("hide.bs.modal", function () {
+            Swal.close();
+            $("#exampleModal").modal("show")
+        })
+
+
+    });
+
+
+
+
+</script>
+<script>
+    $(document).ready(function () {
+        $('.readonly-select').on('mousedown keydown', function (e) {
+            e.preventDefault(); // Prevent interaction
+        });
+    });
+</script>

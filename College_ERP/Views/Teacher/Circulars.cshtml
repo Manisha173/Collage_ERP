@@ -1,0 +1,103 @@
+﻿
+@{
+    ViewBag.Title = "Circulars";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">All Circulars</h4>
+                    <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Circular Title</th>
+                                <th>Circular Date</th>
+                                <th>Upload Attachment</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Count > 0)
+                            {
+                                int srNo = 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@srNo</td>
+
+                                        <td>@item.CircularTitle</td>
+                                        <td>@item.CircularDate.ToString("dd-MMM-yyyy")</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.UploadAttachment))
+                                            {
+                                                <a href="@Url.Content(item.UploadAttachment)" target="_blank">View</a>
+                                            }
+                                            else
+                                            {
+                                                <span>No Certificate Uploaded</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a role="button" class="text-primary" onclick="viewDesc(@item.CircularId)"> View </a>
+
+                                        </td>
+
+
+
+                                    </tr>
+                                    srNo++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Description Modal-->
+<div class="modal fade" id="viewDescriptionModal" tabindex="-1" aria-labelledby="viewDescriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewDescriptionModalLabel">Circular Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="DescriptionContent" style="white-space: pre-line;"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function viewDesc(desc) {
+        Swal.fire({
+            title: 'Please wait!',
+            text: 'Loading...',
+            didOpen: () => { Swal.showLoading(); }
+        });
+        fetch('/teacher/GetTaskDescription?id=' + desc).then(res => res.json()).then(data => {
+            
+            
+            console.log(data);
+            if (data) {
+                $('#DescriptionContent').text(data[0].CircularDescription);
+                $('#viewDescriptionModal').modal('show');
+            } else {
+                $('#DescriptionContent').text('No description found.');
+                $('#viewDescriptionModal').modal('show');
+            }
+
+        }).catch(error => {
+            console.error('Error fetching description:', error);
+            $('#DescriptionContent').text('Failed to load description.');
+            $('#viewDescriptionModal').modal('show');
+        }).finally(() => { Swal.close() }
+        );
+    }
+</script>

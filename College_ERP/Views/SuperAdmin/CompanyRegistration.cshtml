@@ -1,0 +1,297 @@
+﻿@{
+    ViewBag.Title = "CompanyRegistration";
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+    //var company = new List<College_ERP.Models.SuperAdmin.SuperAdminModel>();
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            <h3 class="card-title mb-0">Company Registration</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="companyRegistration" enctype="multipart/form-data" method="Post">
+                                <input type="hidden" name="Id" value="@(ViewBag?.updata?.Id)" />
+                                <div class="row">
+                                    <div class="col-lg-6">
+
+                                        <div class="mb-2">
+                                            <!--Teacher Name-->
+                                            <label for="schoolName" class="form-label">School Name</label>
+
+                                            <input type="text" required placeholder="Enter School Name" id="schoolName" class="form-control" name="SchoolName" value="@(ViewBag?.updata?.SchoolName)">
+                                        </div>
+
+                                        <!--Award Date-->
+
+                                        <div class="mb-2">
+                                            <label for="mobile" class="form-label">Mobile No.</label>
+                                            <input type="text"
+                                                   required
+                                                   id="mobile"
+                                                   class="form-control"
+                                                   value="@(ViewBag?.updata?.MobileNo)"
+                                                   name="MobileNo"
+                                                   placeholder="Enter Mobile Number"
+                                                   maxlength="10"
+                                                   pattern="[6-9][0-9]{9}"
+                                                   title="Please enter a valid 10-digit mobile number starting with 6-9">
+                                        </div>
+
+                                        <div class="mb-2">
+                                            <label for="city" class="form-label">Email Id</label>
+                                            <input type="email" required id="email" class="form-control " value="@(ViewBag?.updata?.EmailId)" name="EmailId" placeholder="Enter Your Email Id">
+                                        </div>
+
+                                        <div class="mb-2">
+                                            <label for="city" class="form-label">City</label>
+                                            <select id="city" required class="form-control " value="" name="City">
+                                                <option selected disabled>--select city--</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label for="logo" class="form-label">School Logo</label>
+                                            <input type="file" id="logo" class="form-control " value="" name="School_Logo1" placeholder="">
+
+                                        </div>
+
+                                        <div class="mb-2">
+                                            <label for="image" class="form-label">Authorized Signature Image</label>
+                                            <input type="file" id="image" class="form-control " value="" name="Authorized_Sign1" placeholder="">
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-lg-6">
+
+                                        <!--Award Title-->
+                                        <div class="mb-2">
+                                            <label for="personName" class="form-label">Authorized Person Name</label>
+                                            <input type="text" required id="personName" class="form-control " value="@(ViewBag?.updata?.AuthorizedPersonName)" name="AuthorizedPersonName" placeholder="Enter Person Name">
+                                        </div>
+
+                                        <!--Certificate-->
+                                        <div class="mb-2">
+                                            <label for="number" class="form-label">Land Line No.</label>
+                                            <input type="text" id="number" class="form-control landline" name="LandLineNo" placeholder="Enter Land Line Number" value="@(ViewBag?.updata?.LandLineNo)">
+                                            <span class="error" style="color: red;"></span>
+                                        </div>
+                                        <!--Award Type-->
+                                        <div class="mb-2">
+                                            <label for="State" class="form-label">State</label>
+                                            <select id="State" required class="form-select" name="State">
+                                                <option selected disabled>--select State--</option>
+                                                @if (ViewBag.state != null)
+                                                {
+                                                    foreach (var item in ViewBag.state)
+                                                    {
+                                                        if (ViewBag?.updata?.State != null)
+                                                        {
+                                                            <option @(ViewBag?.updata.State == item.st_Id ? "selected" : "") value="@item.st_Id">@item.stateName</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@item.st_Id">@item.stateName</option>
+                                                        }
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+
+
+                                        <div class="mb-2">
+                                            <label for="website" class="form-label">Website Url</label>
+                                            <input type="url" id="website" class="form-control " value="@(ViewBag?.updata?.Website)" name="Website" placeholder="Enter Website Url">
+                                        </div>
+                                        <!--<div class="mb-2">-->
+                                            <!--Award Session-->
+                                            <!--<label for="duration" class="form-label">Duration</label>
+                                            <select id="duration" value="@(ViewBag?.updata?.Duration)" name="Duration" class="form-select " aria-label="Default select example">
+                                                <option value="" disabled>--Select Duration--</option>
+                                                <option value="3">3 Month</option>
+                                                <option value="6">6 Month</option>
+                                                <option value="12">12 Month</option>
+                                                <option value="18">18 Month</option>
+                                                <option value="24">24 Month</option>
+
+                                            </select>
+                                        </div>-->
+                                        <div class="mb-2">
+                                            <label for="Address" class="form-label">School Address</label>
+                                            <textarea placeholder="Enter School Address" required id="Address" class="form-control " name="School_Address">@(ViewBag?.updata?.School_Address)</textarea>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="text-center mt-3">
+                                        <button type="submit" id="btnSubmit" class="btn btn-primary">                                              @(ViewBag?.updata?.Id > 0 ?"Update": "Submit")  </button>
+
+                                        </div >
+
+                                        </div >
+
+                                        </form >
+
+
+
+                                        </div >
+
+
+                                        </div >
+
+                                        </div >
+
+                                        </div >
+
+                                        </div >
+
+                                        </div >
+                                        </div >
+
+
+                                        <script src = "https://cdn.jsdelivr.net/npm/sweetalert2@11" ></script >
+                                        <script src = "~/assets/libs/jquery/jquery.min.js" ></script >
+                                        <script>
+                                        $(document).ready(function() {
+                                        $('#companyRegistration').on('submit', function(e) {
+                                        e.preventDefault();
+                                        Swal.fire({
+                                        title: "Please Wait..!",
+                                        html: "Your request are under process.",
+                                        didOpen: () =>
+                                        {
+                                        Swal.showLoading();
+                                        }
+                                        })
+                                        var formData = new FormData($('#companyRegistration')[0]);
+                                        $.ajax({
+                                        url: '/SuperAdmin/CompanyRegistration',
+                                        type: 'POST',
+                                        data: formData,
+                                        contentType: false,
+                                        processData: false,
+                                        success: function(responce) {
+                                        if (responce.success)
+                                        {
+                                        Swal.fire({
+                                        icon: 'success',
+                                        title: 'success',
+                                        text: responce.message, didClose: () =>
+                                        {
+                                        @if (ViewBag?.updata?.Id > 0)
+                                        {
+
+
+                                            @: location.href = "/SuperAdmin/CompanyList";
+                                        }
+                                        else
+                                        {
+
+                                            @:location.href = '/SuperAdmin/CompanyRegistration'
+                                        }
+                                        }
+                                        });
+                                        }
+                                        else
+                                        {
+
+                                        Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: responce.message
+                                        });
+                                        }
+                                        },
+                                        error: function() {
+                                        Swal.fire({
+                                        icon: 'error',
+                                        title: 'error',
+                                        text: 'Something went wrong with the request'
+                                        });
+                                        }
+                                        });
+                                        });
+                                        });
+
+                                        $("#State").on("change", function () {
+                                        $("#city").html(`<option selected disabled>--select city--</option>`)
+                                        let id = $(this).val();
+                                        $.ajax({
+                                        url: '/SuperAdmin/GetCityByState',
+                                        type: 'get',
+                                        data: {id:id},
+                                        success: function (responce) {
+                                        if (responce.status) {
+                                        if (responce.data != null) {
+                                        let updata=@(ViewBag?.updata?.City ?? 0)
+                                        responce.data.forEach(function (d) {
+                                        $("#city").append(`<option ${updata==d.city_Id?"selected":""} value='${d.city_Id}'>${d.City_Name}</option>`)
+                                        })
+                                        }
+                                        }
+                                        },
+                                        error: function () {
+                                        Swal.fire({
+                                        icon: 'error',
+                                        title: 'error',
+                                        text: 'Something went wrong with the request'
+                                        });
+                                        }
+                                        });
+                                        })
+
+                                        @if (@ViewBag.updata?.Id != null)
+                                        {
+                                            @:$("#State").change()
+                                        }
+                                        </script>
+                                        <script>
+                                            document.querySelector('.landline').addEventListener('input', function () {
+                                                let val = this.value;
+
+                                                // Allow only digits and hyphen
+                                                val = val.replace(/[^0-9\-]/g, '');
+
+                                                // Prevent multiple hyphens
+                                                const hyphenCount = (val.match(/-/g) || []).length;
+                                                if (hyphenCount > 1) {
+                                                    val = val.replace(/-+$/, ''); // remove trailing extra hyphens
+                                                }
+
+                                                // Split parts if hyphen is present
+                                                let parts = val.split('-');
+
+                                                // Enforce STD and number lengths
+                                                if (parts.length === 2) {
+                                                    parts[0] = parts[0].substring(0, 5); // STD code max 5 digits
+                                                    parts[1] = parts[1].substring(0, 8); // Number max 8 digits
+                                                    val = parts[0] + '-' + parts[1];
+                                                } else {
+                                                    val = val.substring(0, 13); // fallback hard cap
+                                                }
+
+                                                this.value = val;
+                                            });
+
+                                            document.querySelector('.landline').addEventListener('blur', function () {
+                                                const input = this.value.trim();
+                                                const errorSpan = this.nextElementSibling;
+
+                                                // Format: STD (3–5 digits), hyphen optional, number (6–8 digits)
+                                                const landlineRegex = /^0\d{2,4}-?\d{6,8}$/;
+
+                                                if (input === "") {
+                                                    errorSpan.textContent = "Landline number is required.";
+                                                } else if (!landlineRegex.test(input)) {
+                                                    errorSpan.textContent = "Invalid landline number format.";
+                                                } else {
+                                                    errorSpan.textContent = "";
+                                                }
+                                            });
+                                        </script>

@@ -1,0 +1,555 @@
+﻿
+@{
+    ViewBag.Title = "OrderHistory";
+    Layout = "~/Views/Shared/_libraryLayout.cshtml";
+    var data = ViewData["orderList"] as List<College_ERP.Models.Library.main.ShowOrderHistoryModel>;
+}
+
+<style>
+    #datatable {
+        white-space: nowrap;
+    }
+</style>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Order History
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/library/ordermanagement"> Order Management</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/library/addbook">Add Book </a>
+                    </li>
+                </ol>
+            </nav>
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="py-0 card-header border-bottom-0 d-flex justify-content-between">
+                            <h4 class="card-title mb-0">Order List</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>SR</th>
+                                            <th>Book Name</th>
+                                            <th>Quantity</th>
+                                            <th>Purchased By</th>
+                                            <th>Added By</th>
+                                            <th>Email</th>
+                                            <th>Mobile</th>
+                                            <th>Order Id</th>
+                                            <th>Order Date</th>
+                                            <th>Return Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="BookTableBody">
+                                        @if (data != null)
+                                        {
+                                            int count = 1;
+                                            foreach (var item in data)
+                                            {
+                                                <tr>
+                                                    <td>@count</td>
+                                                    <td>@item.bookName</td>
+                                                    <td>@item.quantity</td>
+                                                    <td>@item.name</td>
+                                                    <td>@item.addedBy</td>
+                                                    <td>@item.email</td>
+                                                    <td>@item.mobile</td>
+                                                    <td>@item.orderId</td>
+                                                    <td>@item.orderDate.ToString("dd-MM-yyyy")</td>
+                                                    <td>@item.returnDate</td>
+                                                    <td class="text-center">
+                                                        @if (!item.recieveStatus)
+                                                        {
+                                                            <a href="#" class="btn btn-sm btn-secondary recieveOrder" data-id="@item.id" data-bs-toggle="modal" title="Recieve Book">Recieve</a>
+                                                            <a href="#" class="btn btn-sm btn-primary recieptdownloadbtn" data-id="@item.id" title="Download Reciept">Reciept</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="btn btn-success btn-sm" style="cursor:default;">Recieved</span>
+                                                            <a href="#" data-id="@item.id" class="btn btn-sm btn-primary recieptdownloadbtn" title="Download Reciept">Reciept</a>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                count++;
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal To Recieve Order-->
+<div class="modal fade" id="RecieveOrderModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Recieve Order</h1>
+                <button type="button" class="btn-close" id="CloseModalRecieveOrder"></button>
+            </div>
+            <div class="modal-body">
+                <div id="userDetailsContainer" class="w-100"></div>
+                <form id="RecieveOrderForm">
+                    <input type="hidden" name="bookId" id="bookId" />
+                    <input type="hidden" name="buyerId" id="buyerId" />
+                    <input type="hidden" name="id" id="id" />
+                    <div class="row">
+                        <div class="col-sm-6 mb-2">
+                            <label class="form-label">Order Id</label>
+                            <input type="text" class="form-control" id="orderId" readonly />
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="totalQuantity" readonly />
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="quantity" class="form-label">Recieve Quantity</label>
+                            <input type="number" class="form-control quantity" name="quantity" id="quantity" placeholder="Enter Recieve Quantity" />
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="extraCharges" class="form-label">Extra Charges (in Rupees)</label>
+                            <input type="number" class="form-control" readonly id="extraCharges" value="0" placeholder="Price" />
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="damageQuantity" class="form-label">Damage Quantity</label>
+                            <input type="number" class="form-control" name="damageQuantity" id="damageQuantity" placeholder="Enter Damage Quantity" />
+                        </div>
+                    </div>
+                    <div class="row my-3">
+                        <div class="col-sm-4 mb-2">
+                            <strong>Lost Fine : </strong>
+                            <span id="lostFineText">0</span>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <strong>Damage Fine : </strong>
+                            <span id="damageFineText">0</span>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <div id="lateFineContainer" style="display:none">
+                                <strong>Late Fine : </strong>
+                                <span id="lateFineText">₹ 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 text-center">
+                        <button type="submit" class="btn btn-primary" id="recieveOrderBtn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .receipt-header {
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 1rem;
+    }
+
+    .receipt-body {
+        font-size: 14px;
+    }
+
+    .receipt-footer {
+        text-align: center;
+        border-top: 1px solid #ddd;
+        margin-top: 1rem;
+        font-size: 12px;
+    }
+</style>
+<!--Modal Of reciept-->
+<div class="modal fade" id="receiptModal" tabindex="-1" aria-labelledby="receiptModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content p-3">
+            <div class="text-end">
+                <button class="btn btn-danger btn-sm mb-2 me-1" id="downloadPdfBtn">Download</button>
+            </div>
+            <div class="modal-body">
+                <div id="receiptContainer">
+                    <div class="container-fluid rounded p-3" style="font-family: 'Courier New', monospace; border: 1px dashed #ccc; box-shadow: 0 0 15px rgba(0,0,0,0.1);">
+                        <div class="text-center mb-4">
+                            <h4 class="fw-bold mb-1">📚 LIBRARY</h4>
+                            <p class="mb-0 text-muted">Library Book Order Receipt</p>
+                            <hr class="my-3" style="border-top: 1px dashed #999;">
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between"><span>Order ID:</span> <span id="orderidrc"></span></div>
+                            <div class="d-flex justify-content-between"><span>User Name:</span> <span id="usernamerc">Jane Doe</span></div>
+                            <div class="d-flex justify-content-between"><span>User Type:</span> <span id="usertyperc">Student</span></div>
+                            <div class="d-flex justify-content-between"><span>Email:</span> <span id="emailrc">jane.doe@email.com</span></div>
+                            <div class="d-flex justify-content-between"><span>Mobile:</span> <span id="mobilerc">9876543210</span></div>
+                        </div>
+                        <hr style="border-top: 1px dashed #999;">
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between"><span>Book:</span> <span id="booktitlerc"></span></div>
+                            <div class="d-flex justify-content-between"><span>Order Date:</span> <span id="orderdaterc">28-May-2025</span></div>
+                            <div class="d-flex justify-content-between"><span>Return Date:</span> <span id="returndaterc">15-Jun-2025</span></div>
+                            <div class="d-flex justify-content-between"><span>Receive Status:</span> <span id="orderstatusrc" class="text-success"> Received</span></div>
+                        </div>
+                        <hr style="border-top: 1px dashed #999;">
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between"><span>Quantity:</span> <span id="quantityrc"></span></div>
+                            <div class="d-flex justify-content-between"><span>Price per Unit:</span> <span id="priceperbookrc">₹</span></div>
+                            <div class="d-flex justify-content-between fw-bold"><span>Total Price:</span> <span id="totalpricerc">₹</span></div>
+                        </div>
+
+                        <hr style="border-top: 1px dashed #999;">
+
+
+
+                        <!-- Fines Section (Always visible) -->
+                        <hr style="border-top: 1px dashed #999;">
+                        <div class="mb-3 text-danger">
+                            <div class="d-flex justify-content-between"><span>Late Fine:</span> <span id="latefinerc">₹50</span></div>
+                            <div class="d-flex justify-content-between"><span>Damage Fine:</span> <span id="damagefinerc">₹20</span></div>
+                            <div class="d-flex justify-content-between"><span>Lost Fine:</span> <span id="lostfinerc">₹0</span></div>
+                            <hr style="border-top: 1px dashed #999;">
+                            <div class="d-flex justify-content-between fw-bold"><span>Total Fine:</span> <span id="totalfinerc">₹70</span></div>
+                        </div>
+
+                        <hr class="my-3" style="border-top: 1px dashed #999;">
+                        <div class="text-center small text-muted">
+                            Thank you for using Our Library!
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#CloseModalRecieveOrder').on('click', function () {
+            $('#RecieveOrderForm')[0].reset();
+            $('#RecieveOrderModal').modal('hide');
+            $('#damageFineText').text('₹ 0');
+            $('#lostFineText').text('₹ 0');
+        });
+        var data;
+        let latefine = 0;
+        let damagefine = 0;
+        let lostfine = 0;
+        $(".recieveOrder").on('click', function () {
+
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            debugger
+            let id = $(this).data('id');
+            $.ajax({
+                url: '/library/GetBookOrderById',
+                type: 'get',
+                data: { id: id },
+                success: function (res) {
+                    console.log(res);
+                    if (res) {
+                        data = res;
+                        Swal.close();
+                        $('#bookId').val(res[0].bookId);
+                        $('#id').val(res[0].id);
+                        $('#orderId').val(res[0].orderId);
+                        $('#totalQuantity').val(res[0].quantity);
+                        const retdate = res[0].returnDate;
+                        const today = new Date();
+                        const formatted = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
+                        console.log(formatted);
+                        console.log(retdate);
+                        if (retdate < formatted) {
+                            $('#lateFineContainer').css('display', 'block');
+                            $('#extraCharges').val(res[0].lateFine);
+                            latefine = res[0].lateFine;
+                            $('#lateFineText').text(`₹ ${res[0].lateFine}`);
+                            $('#buyerId').val(res[0].buyerId);
+                        }
+                        $('#RecieveOrderModal').modal('show');
+                    } else {
+                        Swal.fire('Warning', 'Data Not found', 'warning');
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire('Error', 'Server Issue.Try Again Later!', 'error');
+                }
+            });
+        });
+        $('#quantity').on('input', function () {
+            $('#damageFineText').text('₹ 0');
+            $('#damageQuantity').val(0);
+            let quant = parseInt($(this).val());
+          
+            lostfine = 0;
+            debugger
+            let totalQuant = parseInt($('#totalQuantity').val());
+            if (quant > totalQuant) {
+                $(this).val(totalQuant);
+                $('#lostFineText').text('₹ 0');
+            }
+            else if (quant < totalQuant) {
+                lostfine = (totalQuant - quant) * data[0].lostFine
+                $('#lostFineText').text(`₹ ${(totalQuant - quant) * data[0].lostFine} ( ${totalQuant - quant} x ₹ ${data[0].lostFine})`);
+                //$('#lateFine').val((totalQuant - quant) * data[0].latefine);
+               
+            } else {
+                $('#lostFineText').text('₹ 0');
+            }
+            $('#extraCharges').val(latefine + lostfine + damagefine);
+        });
+        $('#damageQuantity').on('input', function () {
+            let dquant = parseInt($(this).val());
+            let rquant = parseInt($("#quantity").val());
+            damagefine = 0;
+            debugger
+            let totalQuant = parseInt($('#totalQuantity').val());
+
+            if (dquant > rquant) {
+                $(this).val(rquant);
+                dquant = rquant;
+            }
+
+            if (rquant === 0 || isNaN(rquant) || rquant === null || rquant === undefined || rquant === "") {
+                Swal.fire({
+                    title: 'Warning',
+                    text: 'Please enter received quantity first!',
+                    icon: 'warning',
+                    didClose: () => {
+                        $(this).val(0);
+                        $('#damageFineText').text('₹ 0');
+                        $('#extraCharges').val(latefine + lostfine + damagefine);
+                    }
+                });
+            } else if (dquant > 0 && dquant <= rquant) {
+                damagefine = dquant * data[0].damageFine;
+                $('#damageFineText').text(`₹ ${damagefine} ( ${dquant} x ₹ ${data[0].damageFine})`);
+                $('#damageFine').val(damagefine);
+            } else {
+                $('#damageFineText').text('₹ 0');
+                $('#damageFine').val(0);
+            }
+
+            $('#extraCharges').val(latefine + lostfine + damagefine);
+        });
+
+
+        $('#RecieveOrderForm').on('submit', function (e) {
+            debugger
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Please Wait!',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                text: 'Processing your request...',
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            var data = new FormData(this);
+
+            $.ajax({
+                url: '/library/ReturnBookOrder',
+                type: 'post',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            didClose: () => { location.reload(true); }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again.'
+                    });
+                }
+            });
+        });
+        $('.recieptdownloadbtn').on('click', function () {
+            debugger
+            let id = $(this).data('id');
+            $.get("/admin/ShowRecieptOfBookOrder", { id: id }, function (data) {
+                $('#orderidrc').text(data[0].orderId)
+                $('#usernamerc').text(data[0].name)
+                $('#usertyperc').text(data[0].userType)
+                $('#emailrc').text(data[0].email)
+                $('#mobilerc').text(data[0].mobile)
+                $('#booktitlerc').text(data[0].bookName)
+                $('#quantityrc').text(data[0].quantity)
+                $('#priceperbookrc').text("₹" + data[0].pricePerBook)
+                $('#totalpricerc').text("₹" + data[0].price)
+                $('#orderdaterc').text(data[0].orderDateString)
+                $('#returndaterc').text(data[0].returnDate)
+                $('#orderstatusrc').text(`${data[0].recieveStatus ? "Received" : "Not Received"}`);
+                $('#latefinerc').text(`${data[0].totalDelayDaysCount} x ₹${data[0].lateFine}`)
+                $('#damagefinerc').text(`${data[0].damageQuantity} x ₹${data[0].damageFine}`)
+                if (data[0].recieveStatus) {
+                    $('#lostfinerc').text(`${parseInt(data[0].quantity) - parseInt(data[0].receiveQuantity)} x ₹${data[0].lostFine}`)
+                } else {
+                    $('#lostfinerc').text(`0 x ₹${data[0].lostFine}`)
+                }
+                $('#totalfinerc').text(`₹${data[0].totalLateFine}`)
+
+                $('#receiptModal').modal('show');
+            });
+        });
+    });
+</script>
+
+<script>
+    $('#downloadPdfBtn').click(function () {
+        var receiptContent = $('#receiptContainer').html();
+
+        // Full HTML content including Bootstrap CDN and internal styles
+        var fullHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Library Receipt</title>
+
+            <style>
+           body {
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+
+    .receipt-header {
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 1rem;
+        font-size:20px !important;
+    }
+
+    .receipt-body {
+        font-size: 14px;
+    }
+
+    .receipt-footer {
+        text-align: center;
+        border-top: 1px solid #ddd;
+        margin-top: 1rem;
+        font-size: 12px;
+    }
+    #receiptContainer {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+
+
+    .receipt-box {
+      background-color: #fff;
+      border: 1px dashed #ccc;
+      border-radius: 8px;              /* .rounded */
+      padding: 1rem;                   /* .p-3 */
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Text Utilities */
+    .text-center { text-align: center; }
+    .text-muted { color: #6c757d; }
+    .text-danger { color: #dc3545; }
+    .text-success { color: #198754; }
+    .small { font-size: 0.875rem; }
+
+    /* Font weight */
+    .fw-bold { font-weight: bold; }
+
+    /* Margin Utilities */
+    .mb-0 { margin-bottom: 0; }
+    .mb-1 { margin-bottom: 0.25rem; }
+    .mb-3 { margin-bottom: 1rem; }
+    .mb-4 { margin-bottom: 1.5rem; }
+    .my-3 { margin-top: 1rem; margin-bottom: 1rem; }
+
+    /* Flex Utilities */
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px dashed #999;
+      margin: 1rem 0;
+    }
+            </style>
+        </head>
+        <body>
+            ${receiptContent}
+        </body>
+        </html>
+        `;
+
+        $.ajax({
+            url: '/admin/GeneratePdf',
+            type: 'POST',
+            data: JSON.stringify({ html: fullHtml }),
+            contentType: 'application/json; charset=utf-8',
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data, status, xhr) {
+                var blob = new Blob([data], { type: 'application/pdf' });
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = "receipt.pdf";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+            error: function () {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'PDF generation failed.',
+                    icon: 'error'
+                });
+            }
+        });
+    });
+</script>

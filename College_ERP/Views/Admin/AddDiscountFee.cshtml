@@ -1,0 +1,492 @@
+﻿
+@{
+    ViewBag.Title = "AddDiscountFee";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-1" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/registrationfee"> Registration Fee</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addcollegefee">Add College Fee</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Discount on Fee
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/allfeerecords">Fee Statement</a>
+                    </li>
+                </ol>
+            </nav>
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Discount Fee</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="discountfeeForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" id="FeeId" name="FeeId" value="0" />
+
+                                <div class="mb-3">
+                                    <label>Class Name</label>
+                                    <select id="ClassId" name="ClassName" class="form-select">
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Discount (in %)</label>
+                                    <input type="number" id="Discount" name="Discount" class="form-control" placeholder="Discount in %" required />
+                                </div>
+                                <div class="mb-3">
+                                    <label>Discount Start Date</label>
+                                    <input type="date" id="DiscountStartDate" name="DiscountStartDate" class="form-control" required />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+
+
+                                <div class="mb-3">
+                                    <label>Fee</label>
+                                    <input type="number" readonly id="Fee" name="Fee" class="form-control" placeholder="Fee" required />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>After Discount Fee</label>
+                                    <input type="number" id="AfterDiscountFee" name="AfterDiscountFee" class="form-control" placeholder="After Discount Fee" required readonly />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Discount End Date</label>
+                                    <input type="date" id="DiscountEndDate" name="DiscountEndDate" class="form-control" disabled  required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Add Discount Fee</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Discount Fee Modal -->
+    <div class="modal fade" id="editDiscountFeeModal" tabindex="-1" aria-labelledby="editDiscountFeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="editDiscountFeeForm" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editDiscountFeeModalLabel">Edit Discount Fee</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="EditFeeId" name="FeeId" />
+                        <input type="hidden" id="Edithiddenclassid" name="ClassName" />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Select Class</label>
+                                    <select  id="EditClassId" class="form-select" disabled>
+                                        <option value="0" disabled selected>-- Select Class --</option>
+                                        @foreach (var item in ViewBag.ClassList)
+                                        {
+                                            <option value="@item.ClassId">@item.ClassName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="EditDiscount" class="form-label">Discount </label>
+                                    <input type="number" id="EditDiscount" name="Discount" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="EditFee" class="form-label">Fee </label>
+                                    <input type="number" readonly id="EditFee" name="Fee" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="EditAfterDiscountFee" class="form-label">After Discount Fee </label>
+                                    <input type="number" id="EditAfterDiscountFee" name="AfterDiscountFee" class="form-control" readonly />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="EditDiscountStartDate" class="form-label">Discount Start Date </label>
+                                    <input type="date" id="EditDiscountStartDate" name="DiscountStartDate" class="form-control" readonly />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="EditDiscountEndDate" class="form-label">Discount End Date </label>
+                                    <input type="date" id="EditDiscountEndDate" name="DiscountEndDate" class="form-control" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mb-3">
+                        <button type="submit" id="editSubmitBtn" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--end modal-->
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span>Fee Discount</span><!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                          Add Discount
+                        </button>
+                    </h4>
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SRNo</th>
+                                <th>Class Name</th>
+                                <th>Fee</th>
+                                <th>Discount( in %)</th>
+                                <th>After Discount Fee</th>
+                                <th>Discount Start Date</th>
+                                <th>Discount End Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int sr = 1;
+                            }
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@sr</td>
+                                    <td>@item.ClassName</td>
+                                    <td>₹ @item.Fee.ToString("N2")</td>
+                                    <td>@item.Discount</td>
+                                    <td>₹ @item.AfterDiscountFee.ToString("N2")</td>
+                                    <td>@item.DiscountStartDate.ToString("dd-MMM-yyyy")</td>
+                                    <td>@item.DiscountEndDate.ToString("dd-MMM-yyyy")</td>
+
+                                    <td>
+                                        <button class="btn btn-sm p-0" onclick="editDiscountFee(@item.FeeId)"> <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>
+                                        <button class="btn btn-sm p-0" onclick="deleteDiscountFee(@item.FeeId)"><i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+
+                                    </td>
+                                </tr>
+                                sr++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const startDateInput = document.getElementById("DiscountStartDate");
+    const endDateInput = document.getElementById("DiscountEndDate");
+
+    // Set today's date as the minimum for the start date
+    document.addEventListener("DOMContentLoaded", function () {
+        const today = new Date().toISOString().split("T")[0];
+        startDateInput.min = today;
+    });
+
+    startDateInput.addEventListener("change", function () {
+        const startDate = this.value;
+
+        if (startDate) {
+            endDateInput.disabled = false;            // Enable End Date input
+            endDateInput.min = startDate;             // Set min date to start date
+            if (endDateInput.value && endDateInput.value < startDate) {
+                endDateInput.value = "";              // Clear invalid date
+            }
+        } else {
+            endDateInput.disabled = true;             // Disable if no Start Date
+            endDateInput.value = "";                  // Clear value
+        }
+    });
+
+    document.getElementById("EditDiscountStartDate").addEventListener("change", function () {
+        const startDate = this.value;
+        const endDateInput = document.getElementById("EditDiscountEndDate");
+
+        endDateInput.min = startDate;
+
+        if (endDateInput.value && endDateInput.value < startDate) {
+            endDateInput.value = "";
+        }
+    });
+    
+    //discount fee calculation
+    $('#Fee, #Discount').on('input', function () {
+        let fee = parseFloat($('#Fee').val()) || 0;
+        let discount = parseFloat($('#Discount').val()) || 0;
+        let afterDiscount = fee - (fee * discount / 100);
+        $('#AfterDiscountFee').val(afterDiscount.toFixed(2));
+    });
+
+    // Calculate After Discount Fee in Edit Form
+    $('#EditFee, #EditDiscount').on('input', function () {
+        let fee = parseFloat($('#EditFee').val()) || 0;
+        let discount = parseFloat($('#EditDiscount').val()) || 0;
+        let afterDiscount = fee - (fee * discount / 100);
+        $('#EditAfterDiscountFee').val(afterDiscount.toFixed(2));
+    });
+
+    //end
+        $(document).ready(function () {
+    var data =  @Html.Raw(Json.Encode(ViewData["classlist"]));
+    console.log(data);
+    var dropdown = $('#ClassId');
+    dropdown.empty();
+    dropdown.append('<option value="">Select Class</option>');
+
+    $.each(data, function (i, classItem) {
+        dropdown.append('<option value="' + classItem.ClassId + '">' + classItem.ClassName + '</option>');
+    });
+});
+    $('#btnSubmit').on('click', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData($('#discountfeeForm')[0]);
+
+        // Show SweetAlert2 loader
+        Swal.fire({
+            title: 'Please wait...',
+            text: 'Submitting data...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/AddDiscountFee',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                Swal.close(); // Close the loader
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: res.message,
+                        didClose: () => {
+                            location.href = '/admin/AddDiscountFee';
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: res.message
+                    });
+                }
+            },
+            error: function (xhr) {
+                Swal.close(); // Close the loader on error
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong: ' + xhr.responseText
+                });
+            }
+        });
+    });
+
+
+    $("#ClassId").on("change", function () {
+        debugger
+        let id = $(this).val();
+        $.get("/admin/GetTotalFeeByClass", { id: id })
+            .done((res) => {
+                $("#Fee").val(res);
+                $("#AfterDiscountFee").val(res);
+                $("#Discount").val(0);
+                debugger
+                if (res == 0 || res === null || res === undefined) {
+                    debugger
+                    document.getElementById("btnSubmit").setAttribute("disabled", "disabled");
+                } else {
+                    debugger
+                    document.getElementById("btnSubmit").removeAttribute("disabled");
+                }
+            })
+            .fail(() => {
+                Swal.fire("Error", "Something went wrong", "error");
+            });
+    });
+
+    $("#EditClassId").on("change", function () {
+        let id = $(this).val();
+        $.get("/admin/GetTotalFeeByClass", { id: id })
+            .done((res) => {
+                $("#EditFee").val(res);
+                $("#EditDiscount").val(0);
+                $("#EditAfterDiscountFee").val(res);
+                debugger
+                // Disable button if fee is 0, null, or undefined
+                if (!res || parseFloat(res) === 0) {
+                    document.getElementById("editSubmitBtn").setAttribute("disabled", "disabled");
+                } else {
+                    document.getElementById("editSubmitBtn").removeAttribute("disabled");
+                }
+            })
+            .fail(() => {
+                Swal.fire("Error", "Something went wrong", "error");
+            });
+    });
+
+
+    function deleteDiscountFee(FeeId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the discount record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                // Show SweetAlert loader
+                Swal.fire({
+                    title: 'Deleting...',
+                    text: 'Please wait while the record is being deleted.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '/Admin/DeleteDiscountFee',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ FeeId: FeeId }),
+                    success: function (response) {
+                        Swal.close(); // Close the loader
+
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.close(); // Close the loader
+
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+
+
+    function editDiscountFee(id) {
+        $.get('/Admin/GetDiscountFeeById?id=' + id, function (data) {
+            console.log(data)
+            if (data) {
+                $("#EditFeeId").val(data.FeeId);
+                $("#EditClassId").val(data.ClassName);
+                $("#Edithiddenclassid").val(data.ClassName);
+                $("#EditDiscount").val(data.Discount);
+                $("#EditFee").val(data.Fee);
+                $("#EditAfterDiscountFee").val(data.AfterDiscountFee);
+                $("#EditDiscountStartDate").val(new Date(parseInt(data.DiscountStartDate.substr(6))).toISOString().split('T')[0]);
+                $("#EditDiscountEndDate").val(new Date(parseInt(data.DiscountEndDate.substr(6))).toISOString().split('T')[0]);
+
+
+                $('#editDiscountFeeModal').modal('show');
+            }
+        });
+    }
+
+    $('#editDiscountFeeForm').on('submit', function (e) {
+        e.preventDefault();
+
+       
+        var formData = new FormData(this);
+
+        // Show SweetAlert loader
+        Swal.fire({
+            title: 'Updating...',
+            text: 'Please wait while we update the discount fee.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/UpdateDiscountFee',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                Swal.close(); // Close loader
+
+                if (res.success) {
+                    $('#editDiscountFeeModal').modal('hide');
+                    Swal.fire('Updated!', 'Discount Fee updated successfully.', 'success')
+                        .then(() => {
+                            location.reload();
+                        });
+                } else {
+                    Swal.fire('Error', res.message || 'Something went wrong.', 'error');
+                }
+            },
+            error: function () {
+                Swal.close(); // Close loader on error
+
+                Swal.fire('Error', 'Server error occurred. Please try again.', 'error');
+            }
+        });
+    });
+
+
+</script>
+
+
+
+
+
+
+
+
+

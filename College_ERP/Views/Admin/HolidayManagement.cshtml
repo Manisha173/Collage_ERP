@@ -1,0 +1,463 @@
+﻿
+@{
+    ViewBag.Title = "HolidayManagement";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+            <div class="row mt-1">
+                <div class="col-sm-4">
+                    <label for="HolidayTypeFilter" class="form-label">Search By Type</label>
+                    <select id="HolidayTypeFilter" name="HolidayTypeFilter" class="form-select" required>
+                        <option value="">-- Select Type --</option>
+                        <option value="Academic">Academic</option>
+                        <option value="Festival">Festival</option>
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <label for="yearFilter" class="form-label">Search By Year</label>
+                    <select id="yearFilter" name="yearFilter" class="form-select" required>
+                        <option value="">-- Select Year --</option>
+                        @for (int year = DateTime.Now.Year; year >= DateTime.Now.Year - 5; year--)
+                        {
+
+                            int selectedYear;
+                            int.TryParse(Request.QueryString["year"], out selectedYear);
+
+                            <option value="@year" @(year == selectedYear ? "selected" : "")>@year</option>
+
+                        }
+                    </select>
+                </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add Holiday</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="holidayForm" class="" method="post">
+                                <div class="row">
+                                    <!-- Title -->
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="Title" class="form-label">Title</label>
+                                        <input id="Title" placeholder="Enter title" name="Title" class="form-control" required />
+                                    </div>
+
+                                    <!--From Date -->
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="HolidayDate" class="form-label">From</label>
+                                        <input id="HolidayDate" name="HolidayDate" type="date" class="form-control" required />
+                                    </div>
+                                    <!--To Date -->
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="HolidayDate" class="form-label">To</label>
+                                        <input id="HolidayDateTo" name="HolidayDateTo" type="date" class="form-control" required />
+                                    </div>
+
+                                    <!-- Type -->
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="HolidayType" class="form-label">Type</label>
+                                        <select id="HolidayType" name="HolidayType" class="form-select" required>
+                                            <option value="">-- Select Type --</option>
+                                            <option value="Academic">Academic</option>
+                                            <option value="Festival">Festival</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="year" class="form-label">Year</label>
+                                        <select id="year" name="year" class="form-select" required>
+                                            <option value="">-- Select Year --</option>
+                                            @for (int year = DateTime.Now.Year; year >= DateTime.Now.Year - 5; year--)
+                                            {
+                                                <option value="@year">@year</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="Description" class="form-label">Description</label>
+<textarea id="Description" placeholder="write description here" name="Description" rows="1" class="form-control"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="text-center"><button type="submit" class="btn btn-primary">Add Holiday</button></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive mt-4">
+                <h4 class="d-flex justify-content-between">
+                    <span>Holidays List</span> <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Add Holiday
+                    </button>
+                </h4>
+                <table class="table table-bordered" id="holidayTable">
+                    <thead>
+                        <tr>
+                            <th>SR</th>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Description</th>
+                            <th hidden>year</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            int count = 1;
+
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@(count++)</td>
+                                    <td id="title_@item.HolidayId">@item.Title</td>
+                                    <td id="type_@item.HolidayId">@item.HolidayType</td>
+                                    <td id="date_@item.HolidayId">@(item.HolidayDate?.ToString("dd-MM-yyyy"))</td>
+                                    <td id="todate_@item.HolidayId">@(item.HolidayDateTo?.ToString("dd-MM-yyyy"))</td>
+                                    <td id="desc_@item.HolidayId" data-description="@item.Description">
+                                        <a href="#" class="text-primary" onclick="showDescription('@item.Description')">View</a>
+                                    </td>
+
+                                    <td id="year_@item.HolidayId" hidden>@item.year</td>
+                                    <td>
+
+                                        <i class="fa-solid fs-5 text-warning fa-pen-to-square editholiday" data-id="@item.HolidayId" role="button"></i> &nbsp;&nbsp;
+                                        <i class="fa-solid fs-5 text-danger fa-trash deleteholiday" data-id="@item.HolidayId" role="button"></i>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--description-->
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descriptionModalLabel">Holiday Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalDescriptionContent">
+                <!-- Description will be injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="upexampleModal" tabindex="-1" aria-labelledby="upexampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="upexampleModalLabel">Update Holiday</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-0">
+                <form id="updateholidayForm" class="mt-4 " method="post">
+                    <input type="hidden" name="HolidayId" id="holidayId" />
+                    <div class="row">
+                        <!-- Title -->
+                        <div class="col-sm-6 mb-3">
+                            <label for="Title" class="form-label">Title</label>
+                            <input id="updateTitle" placeholder="Enter title" name="Title" class="form-control" required />
+                        </div>
+
+                        <!-- Date -->
+                        <div class="col-sm-6 mb-3">
+                            <label for="HolidayDate" class="form-label">From</label>
+                            <input id="updateDate" name="HolidayDate" type="date" class="form-control" required />
+                        </div>
+                        <!-- Date -->
+                        <div class="col-sm-6 mb-3">
+                            <label for="HolidayDate" class="form-label">To</label>
+                            <input id="updateDateTo" name="HolidayDateTo" type="date" class="form-control" required />
+                        </div>
+
+                        <!-- Type -->
+                        <div class="col-sm-6 mb-3">
+                            <label for="HolidayType" class="form-label">Type</label>
+                            <select id="updateType" name="HolidayType" class="form-select" required>
+                                <option value="">-- Select Type --</option>
+                                <option value="Academic">Academic</option>
+                                <option value="Festival">Festival</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="year" class="form-label">Year</label>
+                            <select id="upyear" name="year" class="form-select" required>
+                                <option value="">-- Select Year --</option>
+                                @for (int year = DateTime.Now.Year; year >= DateTime.Now.Year - 5; year--)
+                                {
+                                    <option value="@year">@year</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label for="Description" class="form-label">Description</label>
+<textarea id="updateDescription" placeholder="write description here" name="Description" class="form-control" rows="1" required></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-3">
+
+                    </div>
+
+
+
+                    <div class="text-center"><button type="submit" class="btn btn-primary">Update Holiday</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (!string.IsNullOrEmpty(ViewBag.error))
+{
+    <script defer>
+           $(document).ready(function () {
+
+               Swal.fire({
+                   title: "error",
+                   text: "@ViewBag.error",
+                   icon: "error"
+               })
+           })
+    </script>
+}
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+    function showDescription(description) {
+        document.getElementById("modalDescriptionContent").innerText = description;
+        var modal = new bootstrap.Modal(document.getElementById('descriptionModal'));
+        modal.show();
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const fromDateInput = document.getElementById("HolidayDate");
+        const toDateInput = document.getElementById("HolidayDateTo");
+
+
+        const today = new Date().toISOString().split("T")[0];
+        fromDateInput.min = today;
+
+
+        fromDateInput.addEventListener("change", function () {
+            toDateInput.min = this.value;
+
+
+            if (toDateInput.value < this.value) {
+                toDateInput.value = "";
+            }
+        });
+    });
+
+    function initializeDataTable() {
+        debugger
+        let table = $('#holidayTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![7].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![7].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+    $(document).ready(function () {
+
+        var table = initializeDataTable();
+        $('#HolidayTypeFilter').change(function () {
+            let type = $(this).val();
+            table.column(2).search(type).draw();
+        });
+        $('#yearFilter').change(function () {
+            let year = $(this).val();
+            location.href = `/admin/HolidayManagement?year=${year}`;
+        });
+    });
+
+    //delete holiday
+    $(document).on("click", ".deleteholiday", function () {
+        let id = $(this).attr("data-id")
+        let currentElement = $(this);
+        Swal.fire({
+            title: "Do you really want to delete?",
+            text: "delete this record permanently",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonText: "yes! Delete it",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Please Wait..!",
+                    html: "Your request are under process.",
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                })
+                $.ajax({
+                    url: '/admin/DeleteHoliday',
+                    type: 'get',
+                    data: { id: id },
+                    success: function (response) {
+                        if (response.status) {
+                            Swal.close();
+                            Swal.fire({
+                                title: "success",
+                                text: response.message,
+                                icon: "success",
+                                didClose: () => {
+                                    currentElement.closest("tr").remove();
+                                }
+                            })
+                        } else {
+                            Swal.fire({
+                                title: "error",
+                                text: response.message,
+                                icon: "error"
+                            })
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            title: "error",
+                            text: xhr.responseText,
+                            icon: "error"
+                        })
+                    }
+                });
+            }
+        })
+    })
+
+    //edit holiday
+    $(document).on("click", ".editholiday", function () {
+        Swal.fire({
+            title: "Please Wait..!",
+            html: "Your request are under process.",
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        let id = $(this).attr("data-id")
+        const [day, month, year] = $("#date_" + id).text().split("-")
+        const [tday, tmonth, tyear] = $("#todate_" + id).text().split("-")
+
+        $("#holidayId").val(id)
+        $("#updateTitle").val($("#title_" + id).text())
+        $("#updateType").val($("#type_" + id).text())
+        $("#updateDescription").val($("#desc_" + id).data('description'))
+        $("#upyear").val($("#year_" + id).text())
+        $("#updateDate").val(`${year}-${month}-${day}`)
+        $("#updateDateTo").val(`${tyear}-${tmonth}-${tday}`)
+        Swal.close();
+        $("#upexampleModal").modal("show")
+    })
+
+    $(document).ready(function () {
+
+        $('#holidayForm, #updateholidayForm').submit(function (e) {
+            e.preventDefault();
+
+            let formData = new FormData(this);
+
+            // Show SweetAlert loader before sending AJAX
+            Swal.fire({
+                title: 'Please wait...',
+                text: 'Submitting holiday...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: '/admin/addHoliday',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Success",
+                            text: response.message,
+                            icon: "success",
+                            didClose: () => {
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: "Error",
+                        text: xhr.responseText,
+                        icon: "error"
+                    });
+                }
+            });
+        });
+
+    });
+</script>
+

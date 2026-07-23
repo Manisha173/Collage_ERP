@@ -1,0 +1,659 @@
+﻿@{
+    ViewBag.Title = "FeeRecords";
+    Layout = "~/Views/Shared/_wardenLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title d-flex justify-content-between">
+                        <span>Fee Statement</span>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reallocateRoomModal">
+                            Add Fee Statement
+                        </button>
+                    </h4>
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Student Name</th>
+                                <th>Room No.</th>
+                                <th>Remaining Fee</th>
+                                <th>Total Fee</th>
+                                <th>Last Payment Date</th>
+                                <th style="width:150px !important;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                int srNo = 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@srNo</td>
+                                        <td>@item.StudentName</td>
+                                        <td>@item.RoomNumber</td>
+                                        <td>₹ @String.Format("{0:N2}", item.RemainingFee)</td>
+                                        <td>₹ @String.Format("{0:N2}", item.TotalFee)</td>
+                                        <td>@item.LastPaymentDate.ToString("dd-MMM-yyyy")</td>
+                                        <td>
+                                            @*<button class="btn btn-sm p-0">
+                <i class="savefee text-warning cursor-pointer" data-id="@item.id" data-feather="edit"></i>
+            </button>*@
+                                            <a role="button" data-stid="@item.studentHostelid" class="btn btn-sm btn-warning showHistory">Show History</a>
+                                        </td>
+                                    </tr>
+                                    srNo++;
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+                    <style>
+                        .custom-alert {
+                            background-color: #ffe6e6; /* very light red */
+                            border-left: 5px solid #ff4d4d; /* bright red border for alert effect */
+                            color: #a94442; /* dark red text */
+                            padding: 12px 16px;
+                            margin: 0 0;
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            border-radius: 4px;
+                            box-shadow: 0 2px 4px rgba(255, 0, 0, 0.1);
+                            position: relative;
+                            max-width: 500px;
+                        }
+                    </style>
+                    <!--start modal-->
+                    <div class="modal fade reallocateRoom" data-bs-backdrop="static" id="reallocateRoomModal" tabindex="-1" aria-labelledby="reallocateRoomModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-light">
+                                    <h5 class="modal-title" id="reallocateRoomModalLabel">Add Fees Statement</h5>
+                                    <button type="button" onclick="location.reload();" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row justify-content-center mt-0 pt-0 mb-2" id="fullypaidcon">
+                                        <div class="custom-alert">
+                                            ⚠️ Fees have already been fully paid for this student.
+                                        </div>
+                                    </div>
+                                    <div id="studentDetails" class="mb-3" style="display:none;">
+                                        <div class="col-md-12 d-flex flex-wrap gap-3">
+                                            <div><strong style="color:seagreen">Name:</strong> <span id="studentName" class="modal-studentName"></span></div>
+                                            <div><strong style="color:seagreen">Email:</strong> <span id="studentEmail" class="modal-studentEmail"></span></div>
+                                            <div><strong style="color:seagreen">Room No:</strong> <span id="studentRoomNo" class="modal-studentRoomNo"></span></div>
+                                            <div><strong style="color:seagreen">Total Fees:</strong> <span id="studentFees" class="modal-studentFees"></span></div>
+                                            <div><strong style="color:seagreen">Remaining Fee:</strong> <span id="studentAddress" class="modal-studentAddress"></span></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <input type="hidden" class="id" id="id" name="id" />
+
+                                        <input type="hidden" id="hiddenHostelId" name="hostelId" class="modal-hiddenHostelId" />
+
+                                        <div class="col-md-3 radiobtn">
+                                            <div class="form-check">
+                                                <input class="form-check-input modal-radioAdmission" type="radio" name="reallocateOption" id="radioAdmission" value="admission" required>
+                                                <label class="form-check-label" for="radioAdmission">Admission No</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 radiobtn">
+                                            <div class="form-check">
+                                                <input class="form-check-input modal-radioRoom" type="radio" name="reallocateOption" id="radioRoom" value="room" required>
+                                                <label class="form-check-label" for="radioRoom">Room No</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mt-0">
+                                            <div id="admissionInputContainer" style="display:none;">
+                                                <input type="text" class="form-control modal-admissionNoInput" id="admissionNoInput" placeholder="Enter Admission No" required>
+                                            </div>
+                                            <div id="roomInputContainer" style="display:none;">
+                                                <input type="text" class="form-control modal-roomNoInput" id="roomNoInput" placeholder="Enter Room No" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+
+                                        <input type="hidden" id="hiddenBlockId" name="BlockId" class="modal-hiddenBlockId" />
+                                        <input type="hidden" id="hiddenStudentId" name="StudentId" class="modal-hiddenStudentId" />
+
+                                        <div class="col-md-6 mb-2" id="studentDropdownWrapper" style="display: none;">
+                                            <label class="form-label modal-roomStudentsLabel" for="roomStudentsDropdown">Select Student</label>
+                                            <select id="roomStudentsDropdown" class="form-select modal-roomStudentsDropdown">
+                                                <option selected disabled>--Select Student--</option>
+                                            </select>
+                                        </div>
+
+
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label" for="FeeType">Fees Type</label>
+                                            <select class="form-select modal-FeeType" id="FeeType" name="FeeType" required>
+                                                <option selected disabled>Select Fee Type</option>
+                                                <option value="Online">Online</option>
+                                                <option value="Offline">Offline</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-2" id="transactionidcon">
+                                            <label class="form-label">Transaction Id</label>
+                                            <input type="text" class="form-control modal-transactionid" id="transactionid" name="transactionid" placeholder="Enter Transaction Id" />
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label" for="RoomNo">Fee Slip (Optional)</label>
+                                            <input type="file" id="FeeSlip" name="FeeSlip" class="form-control modal-FeeSlip" />
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label">Fees Submitted</label>
+                                            <input type="number" class="form-control modal-FeesSubmitted" id="FeesSubmitted" name="FeesSubmitted" placeholder="Enter Fees Submitted" required />
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label">Remaining Fee</label>
+                                            <input type="number" class="form-control modal-FeesSubmitted" id="remainingFee" name="RemainingFee" value="0" readonly />
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label">Payment Date</label>
+                                            <input type="date" class="form-control modal-PaymentDate" id="PaymentDate" name="PaymentDate" required />
+                                        </div>
+                                        <div class="col-md-6 mb-2" id="dueDatecon">
+                                            <label class="form-label">Due Date</label>
+                                            <input type="date" class="form-control modal-dueDate" id="dueDate" name="DueDate" required />
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <button type="button" class="btn btn-primary savefees" id="savefees">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--History Modal-->
+<div class="modal fade" data-bs-backdrop="static" id="showHistoryModal" tabindex="-1" aria-labelledby="showHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title" id="showHistoryModalLabel">Transaction History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Student Name</th>
+                                <th>Remaining Fee</th>
+                                <th>Total Fee</th>
+                                <th>Fees Submitted</th>
+                                <th>Transaction Id</th>
+                                <th>Due Date</th>
+                                <th>Fees Slip</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feeHistoryBody">
+                           
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--History Modal-->
+<script>
+    $(document).ready(function () {
+        const today = new Date().toISOString().split('T')[0];
+        $('.modal-PaymentDate').attr('max', today);
+    });
+
+    function showSwalLoader() {
+        Swal.fire({
+            title: 'Please wait...',
+            text: 'Processing your request',
+            allowOutsideClick: false,
+            allowEscapeKey:false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    }
+
+    function hideSwalLoader() {
+        Swal.close();
+    }
+
+    $(document).ready(function () {
+        $('#fullypaidcon').hide();
+        $('#dueDatecon').hide();
+        $('#transactionidcon').hide();
+        
+
+        // Toggle input fields based on radio selection
+        function toggleInputContainers(value) {
+            $('#studentDetails').hide();
+            $('#hiddenHostelId').val('');
+            $('#hiddenBlockId').val('');
+            $('#hiddenStudentId').val('');
+            if (value === 'admission') {
+                $('#admissionInputContainer').show();
+                $('#roomInputContainer').hide();
+                $('#roomStudentsDropdown').hide();
+                $('#studentDropdownWrapper').hide();
+                $('#roomStudentsDropdown').html('');
+                $('#roomStudentsDropdown').empty();
+                $('#roomNoInput').val('');
+            } else if (value === 'room') {
+                $('#roomInputContainer').show();
+                $('#admissionInputContainer').hide();
+                $('#studentDropdownWrapper').hide(); 
+                $('#admissionNoInput').val('');
+                $('#studentDetails').hide();
+            }
+        }
+
+        // Initial toggle based on checked radio on page load
+        const selectedOption = $('input[name="reallocateOption"]:checked').val();
+        toggleInputContainers(selectedOption);
+
+        // Change handler for radio buttons
+        $(document).on('change', 'input[name="reallocateOption"]', function () {
+            toggleInputContainers($(this).val());
+        });
+
+        // Typing timer for AdmissionNo input
+        let typingTimerAdmission;
+        const doneTypingInterval = 500;
+
+        $('#admissionNoInput').on('input', function () {
+            clearTimeout(typingTimerAdmission);
+            const admissionNo = $(this).val().trim();
+            if (admissionNo.length >= 3) {
+                typingTimerAdmission = setTimeout(() => {
+            showSwalLoader();
+                    fetchAdmissionDetails(admissionNo);
+                }, doneTypingInterval);
+            } else {
+                $('#studentDetails').hide();
+                $('#hiddenHostelId').val('');
+                $('#hiddenBlockId').val('');
+                $('#hiddenStudentId').val('');
+                hideSwalLoader();
+            }
+        });
+        let remainFee = 0;
+        // Fetch student details by Admission No
+        function fetchAdmissionDetails(admissionNo) {
+            $.ajax({
+                url: '/warden/GetUserByAdmissionNo',
+                type: 'POST',
+                data: { userNo: admissionNo, userType: 'student' },
+                success: function (response) {
+                    $('#fullypaidcon').hide();
+                    if (response.length > 0) {
+                        const data = response[0];
+                        $('#studentName').text(data.studentName);
+                        $('#studentEmail').text(data.emailId || '-');
+                        $('#studentRoomNo').text(data.roomNo || '-');
+                        $('#studentFees').text(data.totalFee || '-');
+                        $('#studentAddress').text(data.remainingFee || 'N/A');
+                        if (parseFloat(data.remainingFee) > 0) {
+                            $('#remainingFee').val(data.remainingFee);
+                            remainFee = parseFloat(data.remainingFee);
+                        } else if (parseFloat(data.remainingFee) === 0) {
+                            $('#fullypaidcon').show();
+                            $('#savefees').prop('disabled', true);
+                        }
+
+                        $('#hiddenHostelId').val(data.hostelId);
+                        $('#hiddenBlockId').val(data.blockId);
+                        $('#hiddenStudentId').val(data.studentid);
+                        Swal.close();
+                        $('#studentDetails').show();
+                    } else {
+                        $('#studentDetails').hide();
+                        $('#hiddenHostelId').val('');
+                        $('#hiddenBlockId').val('');
+                        $('#hiddenStudentId').val('');
+                        Swal.close();
+                    }
+                    hideSwalLoader();
+                },
+                error: function () {
+                    Swal.fire('Error', 'Something went wrong while fetching details', 'error');
+                }
+            });
+        }
+        function fetchstudentdetailByStudentid(studentid) {
+            $.ajax({
+                url: '/warden/GetDataForReallocte',
+                type: 'GET',
+                data: { studentid: studentid},
+                success: function (response) {
+                    $('#fullypaidcon').hide();
+                    if (response.length > 0) {
+                        const data = response[0];
+                        $('#studentName').text(data.studentName);
+                        $('#studentEmail').text(data.emailId || '-');
+                        $('#studentRoomNo').text(data.roomnumber || '-');
+                        $('#studentFees').text(data.totalFee || '-');
+                        $('#studentAddress').text(data.remainingFee || 'N/A');
+                        if (parseFloat(data.remainingFee) > 0) {
+                            $('#remainingFee').val(data.remainingFee);
+                            remainFee = parseFloat(data.remainingFee);
+                        } else if (parseFloat(data.remainingFee) === 0) {
+                            $('#fullypaidcon').show();
+                            $('#savefees').prop('disabled', true);
+                        }
+
+                        $('#hiddenHostelId').val(data.hostelId);
+                        $('#hiddenBlockId').val(data.blockId);
+                        $('#hiddenStudentId').val(data.studentid);
+                        Swal.close();
+                        $('#studentDetails').show();
+                    } else {
+                        $('#studentDetails').hide();
+                        $('#hiddenHostelId').val('');
+                        $('#hiddenBlockId').val('');
+                        $('#hiddenStudentId').val('');
+                        Swal.close();
+                    }
+                    hideSwalLoader();
+                },
+                error: function () {
+                    Swal.fire('Error', 'Something went wrong while fetching details', 'error');
+                }
+            });
+        }
+        $('#FeesSubmitted').on('input', function () {
+            debugger
+            let subFee = parseFloat($(this).val());
+            if (remainFee > subFee) {
+                $('#dueDatecon').show();
+                $('#remainingFee').val(remainFee - subFee);
+            } else if (remainFee <= subFee) {
+                $('#remainingFee').val(0);
+                $('#dueDatecon').hide();
+            }
+        });
+        $('#FeeType').change(function () {
+            let ty = $(this).val();
+            if (ty === "Online") {
+                $('#transactionid').attr('required', true);
+                $('#transactionidcon').show();
+            } else if (ty === "Offline") {
+                $('#transactionid').attr('required', false);
+                $('#transactionidcon').hide();
+            }
+
+        })
+        // Typing timer for RoomNo input
+        let typingTimerRoom;
+        $('#roomNoInput').on('input', function () {
+            clearTimeout(typingTimerRoom);
+            const roomNo = $(this).val().trim();
+            if (roomNo.length > 0) {
+                typingTimerRoom = setTimeout(() => {
+                    fetchStudentsByRoomNo(roomNo);
+                }, doneTypingInterval);
+            } else {
+                $('#roomStudentsDropdown').empty().hide();
+                $('#studentDropdownWrapper').hide();
+                $('#RoomNo').empty().append('<option disabled selected>Select Room Number</option>');
+            }
+        });
+
+        // Fetch students by Room No and populate dropdown
+        function fetchStudentsByRoomNo(roomNo) {
+            showSwalLoader();
+            $.ajax({
+                url: '/warden/GetStudentsByRoomNo',
+                type: 'POST',
+                data: { roomNo },
+                success: function (response) {
+                    if (response.length > 0) {
+                        let options = '<option selected disabled>--Select Student--</option>';
+                        response.forEach(student => {
+                            options += `<option value="${student.studentid}" data-blockid="${student.blockId}" data-hostelid="${student.hostelId}">${student.userName} [${student.emailId}]</option>`;
+                        });
+
+
+
+                        $('#roomStudentsDropdown').html(options);
+                        hideSwalLoader();
+                        $('#studentDropdownWrapper').show();
+                        $('#roomStudentsDropdown').show();
+
+                        $('#roomStudentsDropdown').off('change').on('change', function () {
+                            debugger
+                            const selectedOption = $(this).find('option:selected');
+                            $('#hiddenStudentId').val(selectedOption.val());
+                            $('#hiddenBlockId').val(selectedOption.data('blockid'));
+                            $('#hiddenHostelId').val(selectedOption.data('hostelid'));
+                            fetchstudentdetailByStudentid(selectedOption.val());
+                            
+                        });
+
+                    } else {
+                        $('#roomStudentsDropdown').empty();
+                        $('#studentDropdownWrapper').hide(); 
+                        $('#RoomNo').empty().append('<option disabled selected>Select Room Number</option>');
+                    }
+                    hideSwalLoader();
+                },
+                error: function () {
+                    Swal.fire('Error', 'Unable to fetch students for this Room No', 'error');
+                }
+            });
+        }
+
+        // Click handler for Edit button to load fee record details into modal
+        $(document).on('click', '.savefee', function () {
+            debugger
+            $('.radiobtn').hide();
+            $('#admissionNoInput').hide();
+            //showSwalLoader();
+            const feeId = $(this).data('id');
+
+            $.ajax({
+                url: '/warden/GetFeeRecordById',
+                type: 'POST',
+                data: { id: feeId },
+                success: function (response) {
+                    if (response && response.data) {
+                        const data = response.data;
+                        console.log("HostelId from response:", data.hostelId);
+                        $('#reallocateRoomModal').modal('show');
+                        $('#savefees').text('Update');
+
+                        $('.id').val(data.id || 0);
+                        $('.modal-studentName').text(data.StudentName || '-');
+                        $('.modal-studentEmail').text(data.Email || '-');
+                        $('.modal-studentRoomNo').text(data.RoomNumber || '-');
+                        $('.modal-studentFees').text(data.TotalFee || '-');
+                        $('.modal-studentAddress').text(data.RemainingFee || 'N/A');
+
+                        $('.modal-hiddenStudentId').val(data.StudentId || 0);
+                        $('.modal-hiddenHostelId').val(data.hostelId || 0);
+                        $('.modal-hiddenBlockId').val(data.BlockId || 0);
+                        $('#remainingFee').val('');
+                        if (parseFloat(data.remainingFee) > 0) {
+                            $('#remainingFee').val(data.remainingFee);
+                            remainFee = parseFloat(data.remainingFee);
+                        }
+                        subFee = parseFloat(data.FeesSubmitted);
+
+                        $('.modal-FeeType').val(data.FeeType || '');
+                        if (data.FeeType === "Online") {
+                            $('#transactionid').val(data.transactionid);
+                            $('#transactionidcon').show();
+                        }
+                        if (data.DueDateString != null) {
+                            $('#dueDate').val(data.DueDateString);
+                            $('#dueDatecon').show();
+                        }
+                        $('.modal-FeesSubmitted').val(data.FeesSubmitted || '');
+
+                        // Parse /Date(...) format to yyyy-MM-dd
+                        if (data.PaymentDate) {
+                            const ms = parseInt(data.PaymentDate.match(/\d+/)[0], 10);
+                            const dateObj = new Date(ms);
+                            const yyyy = dateObj.getFullYear();
+                            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                            const dd = String(dateObj.getDate()).padStart(2, '0');
+                            $('.modal-PaymentDate').val(`${yyyy}-${mm}-${dd}`);
+                        } else {
+                            $('.modal-PaymentDate').val('');
+                        }
+
+                        $('#studentDetails').show();
+
+                        // Determine which radio option to select based on data
+                        let option = 'admission'; // default fallback
+
+                        if (data.AdmissionNo && data.AdmissionNo.trim() !== '') {
+                            option = 'admission';
+                            $('.modal-admissionNoInput').val(data.AdmissionNo);
+                            $('.modal-roomNoInput').val('');
+                        } else if (data.RoomNo && data.RoomNo.trim() !== '') {
+                            option = 'room';
+                            $('.modal-roomNoInput').val(data.RoomNo);
+                            $('.modal-admissionNoInput').val('');
+                        } else {
+                            $('.modal-admissionNoInput').val('');
+                            $('.modal-roomNoInput').val('');
+                        }
+
+                        $('input[name="reallocateOption"]').prop('checked', false);
+                        $(`input[name="reallocateOption"][value="${option}"]`).prop('checked', true).trigger('change');
+
+                        //// Remove old FeeSlip link and add new one if exists
+                        //$('.modal-FeeSlip').next('a.ms-2').remove();
+                        //if (data.FeeSlipPath) {
+                        //    $('.modal-FeeSlip').after(`<a href='${data.FeeSlipPath}' target='_blank' class='ms-2'>View Uploaded Slip</a>`);
+                        //}
+
+                    } else {
+                        Swal.fire('Error', 'Fee record not found', 'error');
+                    }
+                },
+                error: function () {
+                    Swal.fire('Error', 'Failed to load record', 'error');
+                }
+            });
+        });
+
+        // Save or Update Fee Record
+        $('#savefees').on('click', function () {
+            if (!$('#FeeType').val()) {
+                hideSwalLoader();
+                Swal.fire('Validation', 'Please select a Fee Type', 'warning');
+                return;
+            }
+            if (!$('#FeesSubmitted').val()) {
+                hideSwalLoader();
+                Swal.fire('Validation', 'Please enter Fees Submitted', 'warning');
+                return;
+            }
+            if (!$('#PaymentDate').val()) {
+                hideSwalLoader();
+                Swal.fire('Validation', 'Please select Payment date', 'warning');
+                return;
+            }
+            showSwalLoader();
+            let formData = new FormData();
+            let id = $('.id').val();
+            let isEdit = id && id !== "0";
+            let url = isEdit ? '/warden/UpdateFeeRecord' : '/warden/FeeRecords';
+
+            formData.append('Id', id || 0);
+            formData.append('hostelId', $('#hiddenHostelId').val() || 0);
+            formData.append('FeeType', $('#FeeType').val());
+
+            let feeSlipFile = $('#FeeSlip')[0].files[0];
+            if (feeSlipFile) {
+                formData.append('FeeSlip', feeSlipFile);
+            }
+            formData.append('FeesSubmitted', $('#FeesSubmitted').val());
+            formData.append('PaymentDate', $('#PaymentDate').val());
+            formData.append('transactionid', $('#transactionid').val());
+            formData.append('DueDate', $('#dueDate').val());
+            formData.append('RemainingFee', $('#remainingFee').val());
+            formData.append('StudentId', $('#hiddenStudentId').val());
+            formData.append('Status', 1);
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire('Success', isEdit ? 'Fee record updated successfully' : 'Fee record added successfully', 'success')
+                            .then(() => location.reload());
+                    } else {
+                        Swal.fire('Error', response.message || 'Failed to add record', 'error');
+                    }
+                },
+                error: function () {
+                    hideSwalLoader();
+                    Swal.fire('Error', 'An error occurred during submission', 'error');
+                }
+            });
+        });
+        $('.showHistory').on('click', async function () {
+            showSwalLoader();
+            let id = $(this).data('stid');
+
+            try {
+                const response = await fetch(`/warden/StudentFeeHistory?studentidhostelid=${id}`);
+                const data = await response.json();
+
+                let tbody = $('#feeHistoryBody'); // <-- Directly using tbody ID
+                tbody.empty();
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach((item, index) => {
+                        let slipLink = item.FeeSlipPath
+                            ? `<a href="${item.FeeSlipPath}"  target="_blank">View Slip</a>`
+                            : 'N/A';
+
+                        let row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.StudentName || ''}</td>
+                       <td>${item.RemainingFee ? '₹ ' + Number(item.RemainingFee).toLocaleString('en-IN') : 'N/A'}</td>
+                        <td>${item.TotalFee ? '₹ ' + Number(item.TotalFee).toLocaleString('en-IN') : ''}</td>
+                        <td>${item.FeesSubmitted ? '₹ ' + Number(item.FeesSubmitted).toLocaleString('en-IN') : ''}</td>
+                        <td>${item.transactionid || 'N/A'}</td>
+                        <td>${item.DueDateString || 'N/A'}</td>
+                        <td>${slipLink}</td>
+                    </tr>
+                `;
+                        tbody.append(row);
+                    });
+                    $('#showHistoryModal').modal('show');
+                } else {
+                    tbody.append(`<tr><td colspan="9">No fee history found.</td></tr>`);
+                }
+
+            } catch (error) {
+                console.error('Error fetching fee history:', error);
+                Swal.fire('Error', 'Something went wrong while fetching data.', 'error');
+            } finally {
+                Swal.close();
+            }
+        });
+
+    });
+</script>

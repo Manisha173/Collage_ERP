@@ -1,0 +1,735 @@
+﻿
+@{
+    ViewBag.Title = "StudentAward";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+@{
+    int startYear = DateTime.Now.Year;
+    int numberOfYears = 5; 
+    List<string> sessions = new List<string>();
+
+    for (int i = 0; i < numberOfYears; i++)
+    {
+        string session = $"{startYear - i}-{startYear - i + 1}";
+        sessions.Add(session);
+    }
+}
+
+<style>
+    #datatable {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+        #datatable th, #datatable td {
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+            #datatable td a {
+                word-break: break-word;
+            }
+</style>
+
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <nav class="my-1" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/SchoolAward">School Award</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">Student Award</li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/teacheraward">Teacher Award</a>
+                    </li>
+                </ol>
+            </nav>
+
+
+            <!-- Start Tables-->
+            <!-- end Tables-->
+
+        </div> <!-- container-fluid -->
+
+    </div> <!-- content -->
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Student Award</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Student Form -->
+                    <div class="row">
+                        <div class="col-12">
+
+                            <div class="card-body">
+                                <form enctype="multipart/form-data" method="Post" id="studentawardform">
+
+                                    <div class="row">
+                                        <!-- Institution Type -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="institutionType" class="form-label">Institution Type</label>
+                                            <select name="institutionType" id="institutionType" class="form-select">
+                                                <option selected disabled>--Select Institution Type--</option>
+                                                <option value="school">School</option>
+                                                <option value="college">College</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Education Level -->
+                                        <div class=" col-md-6 mb-3">
+                                            <label for="educationLevel" class="form-label">Education Level</label>
+                                            <select name="educationLevel" id="educationLevel" class="form-select">
+                                                <option selected disabled>--Select Education Level--</option>
+                                            </select>
+                                        </div>
+
+                                        <!--class-->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="class" class="form-label">Class</label>
+                                            <select id="class" class="form-select" name="ClassName" required>
+                                                <option value="">--Select Class--</option>
+
+                                            </select>
+                                        </div>
+
+                                        <!--Stream-->
+                                        <div class="col-md-6 mb-3" id="streamWrapper" style="display:none;">
+                                            <label for="streamInput" class="form-label">Stream</label>
+                                            <select id="streamInput" name="classStreamId" placeholder="Select Stream" class="form-select">
+                                                <option value="">--Select Stream--</option>
+                                            </select>
+                                        </div>
+
+                                        <!--Section-->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="section" class="form-label">Section</label>
+                                            <select id="section" name="SectionName" class="form-select bindsection" required>
+                                                <option selected value="">Select Section</option>
+
+                                            </select>
+                                        </div>
+
+                                        <!--Student Name-->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="studentName" class="form-label">Student Name</label>
+                                            <select id="studentName" name="StudentName" class="form-select bindStudent" aria-label="Default select example" required>
+                                                <option selected value="">Select Students</option>
+
+                                            </select>
+                                        </div>
+
+
+                                        <!--Award Date-->
+                                        <div class=" col-md-6 mb-3">
+                                            <label for="awardDate" class="form-label">Award Date</label>
+                                            <input type="date" id="awardDate" name="AwardDate" class="form-control" value="Award Date" required>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label for="awardSession" class="form-label">Session/Year</label>
+                                            <select id="awardSession" name="Session" class="form-select" aria-label="Default select example" required>
+                                                <option selected value="">Select Session</option>
+                                                @foreach (var session in sessions)
+                                                {
+                                                    <option value="@session">@session</option>
+                                                }
+                                            </select>
+                                        </div>
+
+
+
+
+
+
+
+
+
+                                        <!--Certificate-->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="certificate" class="form-label">Award Certificate</label>
+                                            <input type="file" id="certificate" name="Certificate" class="form-control" value="Award Date">
+                                        </div>
+                                        <!--Award Title-->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="awardTitle" class="form-label">Award Title</label>
+                                            <input type="text" id="awardTitle" name="AwardTitle" class="form-control" placeholder="Award Title" required>
+                                        </div>
+                                        <!--Award Type-->
+                                        <div class="col-md-6 mb-3">
+
+                                            <label for="awardType" class="form-label">Award Type</label>
+                                            <select id="awardType" name="AwardType" class="form-select" aria-label="Default select example" required>
+                                                <option selected>Select Award Type</option>
+                                                <option value="Topper Award">Topper Award</option>
+                                                <option value="Subject Excellence Award">Subject Excellence Award</option>
+                                                <option value="Homework Hero Award">Homework Hero Award</option>
+                                                <option value="Quiz Master Award">Quiz Master Award</option>
+                                                <option value="Leadership Award">Leadership Award</option>
+                                                <option value="Punctuality Award">Punctuality Award</option>
+
+
+                                            </select>
+
+
+                                        </div>
+                                        <!--Award Description-->
+                                            <div class="col-lg-12">
+                                                <div class="">
+                                                    <label for="awardDesc" class="form-label">Award Description</label>
+                                                    <textarea class="form-control" id="awardDesc" name="Description" placeholder="Description" rows="3"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row my-2">
+                                            <div class="col-lg-12 text-center">
+                                                <input type="submit" value="Submit" class="btn btn-md btn-primary" />
+                                            </div>
+                                        </div>
+                                   
+                                </form>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*table*@
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body table-responsive">
+                    <h4 class="card-title d-flex justify-content-between mb-2"><span>Student Award List</span> <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add Student Award</button> </h4>
+                    <table id="datatable" class="table-bordered dt-responsive table-responsive nowrap table">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th style="width:150px !important;">Student Name</th>
+                                <th style="width:200px !important;">Award Title</th>
+                                <th style="width:100px !important;">Class</th>
+                                <th style="width:150px;">Award date</th>
+
+                                <th>Session/Year</th>
+                                <th>Award Type</th>
+                                <th>Certificate</th>
+                                <th>Description</th>
+                                <th style="width:200px !important;">Actions</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Count > 0)
+                            {
+                                int srNo = 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@srNo</td>
+
+
+                                        <td>@item.StudentName</td>
+                                        <td>@item.AwardTitle</td>
+                                        <td>@item.ClassName - @item.SectionName</td>
+                                        <td>@item.AwardDate.ToString("yyyy-MM-dd")</td>
+
+                                        <td>@item.Session</td>
+                                        <td>@item.AwardType</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.CertificatePath))
+                                            {
+                                                <a href="@Url.Content(item.CertificatePath)" target="_blank">View</a>
+                                            }
+                                            else
+                                            {
+                                                <span>No Certificate Uploaded</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a class="btn-md text-primary" onclick="viewAwardDesc('@item.Description')"> View </a>
+                                        </td>
+
+
+
+                                        <td>
+                                            <button class="btn btn-sm p-0" onclick="editAward(@item.AwardId)"> <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>
+                                            <button class="btn btn-sm p-0" onclick="deleteAward(@item.AwardId)"><i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+                                        </td>
+                                    </tr>
+                                    srNo++;
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--Description Modal-->
+<div class="modal fade" id="viewDescriptionModal" tabindex="-1" aria-labelledby="viewDescriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewDescriptionModalLabel">Award Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="awardDescriptionContent" style="white-space: pre-line;"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Award Modal -->
+<div class="modal fade" id="editAwardModal" tabindex="-1" aria-labelledby="editAwardModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <form id="editAwardForm" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editAwardModalLabel">Update Award</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row" style="max-height: 70vh; overflow-y: auto;">
+
+                    <input type="hidden" id="EditAwardId" name="AwardId" />
+
+                    <div class="col-md-6 mb-3">
+                        <label for="EditClass" class="form-label">Class</label>
+                        <select id="EditClass" name="ClassName" class="form-select" required>
+                            <option selected value="">---Select Class---</option>
+                            @foreach (var item in ViewBag.ClassList)
+                            {
+                                <option value="@item.ClassId">@item.ClassName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="EditSection" class="form-label">Section</label>
+                        <select id="EditSection" name="SectionName" class="form-select bindsection" required>
+                            <option selected value="">---Select Section---</option>
+
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="EditStudentName">Student Name</label>
+                        <select id="EditStudentName" name="StudentName" class="form-select bindStudent" aria-label="Default select example" required>
+                            <option selected value="">---Select Students---</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Award Title</label>
+                        <input type="text" id="EditAwardTitle" name="AwardTitle" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="EditSession" class="form-label">Session/Year</label>
+                        <select id="EditSession" name="Session" class="form-select" aria-label="Default select example" required>
+                            <option selected value="">Select Session</option>
+                            @foreach (var session in sessions)
+                            {
+                                <option value="@session">@session</option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="EditAwardDate" class="form-label"> Award Date</label>
+                        <input type="date" id="EditAwardDate" name="AwardDate" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+
+                        <label for="awardType" class="form-label">Award Type</label>
+                        <select id="EditAwardType" name="AwardType" class="form-select" aria-label="Default select example" required>
+                            <option selected value="">Select Award Type</option>
+                            <option value="Topper Award">Topper Award</option>
+                            <option value="Subject Excellence Award">Subject Excellence Award </option>
+                            <option value="Homework Hero Award">Homework Hero Award</option>
+                            <option value="Quiz Master Award">Quiz Master Award</option>
+                            <option value="Leadership Award">Leadership Award</option>
+                            <option value="Punctuality Award">Punctuality Award</option>
+                            <option value="Sports Award">Sports Award</option>
+
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Award Certificate</label>
+                        <input type="file" id="EditCertificate" name="Certificate" class="form-control" />
+                    </div>
+
+                    <div class="col-md-12">
+                        <label>Award Description</label>
+                        <textarea id="EditAwardDescription" name="Description" rows="4" class="form-control"></textarea>
+                    </div>
+                    <div class="my-2 text-center">
+                        <button type="submit" class="btn btn-primary">Update Award</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--end modal-->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        const educationOptions = {
+            school: [
+                { value: "secondary", text: "Secondary (Class Nursery – 10)" },
+                { value: "senior_secondary", text: "Senior Secondary (Class 11 – 12)" }
+            ],
+            college: [
+                { value: "diploma", text: "Diploma" },
+                { value: "ug", text: "Undergraduate (UG)" },
+                { value: "pg", text: "Postgraduate (PG)" },
+                { value: "phd", text: "Doctorate (Ph.D.)" }
+            ]
+        };
+        $('#institutionType').on('change', function () {
+            $('#streamWrapper').hide();
+            $('#optsubject').hide();
+            const selectedType = $(this).val();
+            const $educationLevel = $('#educationLevel');
+            $educationLevel.empty();
+            $.get('/Admin/GetEducationLevelByInstitution?institution=' + selectedType, function (data) {
+                if (data && data.length > 0) {
+                    $.each(data, function (index, item) {
+                        $educationLevel.append($('<option>', {
+                            value: item,
+                            text: item
+                        }));
+                    });
+                }
+            });
+            $educationLevel.empty().append('<option selected disabled>--Select Education Level--</option>');
+
+            //if (educationOptions[selectedType]) {
+            //    $.each(educationOptions[selectedType], function (index, item) {
+            //        $educationLevel.append($('<option>', {
+            //            value: item.value,
+            //            text: item.text
+            //        }));
+            //    });
+            //}
+            if (selectedType === "college") {
+                $('#streamWrapper').show();
+            }
+        });
+        let streamFlag = false;
+
+        $('#educationLevel').on('change', function () {
+            debugger
+            const selectedLevel = $(this).val();
+
+            $('#streamWrapper').hide();
+            $('#optsubject').hide();
+
+            if (selectedLevel !== 'secondary') {
+                $('#streamWrapper').show();
+                $('#optsubject').show();
+                streamFlag = true;
+
+            }
+
+            const $classdropdown = $('#class');
+            $classdropdown.empty();
+            $classdropdown.html(`<option value="0" disabled selected>-- Select Class --</option>`);
+            $.get('/admin/GetClassByEducationLevel?educationlevel=' + selectedLevel, function (data) {
+                if (data && data.length > 0) {
+                    $.each(data, function (index, item) {
+                        $classdropdown.append($('<option>', {
+                            value: item.ClassId,
+                            text: item.ClassName
+
+                        }));
+                    });
+                }
+            });
+        });
+        $('#class').on('change', function () {
+            debugger
+            if (streamFlag) {
+                let id = $(this).val();
+                const $streamdrp = $('#streamInput');
+                $streamdrp.empty();
+                $streamdrp.html(`<option value="0" disabled selected>-- Select Stream --</option>`);
+                $.get('/admin/GetStreamByClassId?classid=' + id, function (data) {
+                    if (data && data.length > 0) {
+                        $.each(data, function (index, item) {
+                            $streamdrp.append($('<option>', {
+                                value: item.Classstreamid,
+                                text: item.ClassStream
+                            }));
+                        });
+                    }
+                });
+            }
+        });
+        $('#closebtnaddmodal').on('click', function () {
+            $('#subjectContainer').empty();
+            $('#exampleModal').modal('hide');
+        });
+    });
+
+
+</script>
+<script>
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('awardDate').setAttribute('max', today);
+    document.getElementById('EditAwardDate').setAttribute('max', today);
+
+
+    function viewAwardDesc(description) {
+        $('#awardDescriptionContent').text(description);
+        $('#viewDescriptionModal').modal('show');
+    }
+         @if (TempData["msg"] != null)
+{
+    var msgType = TempData["msgType"] as string ?? "success";
+    <text>
+        Swal.fire({
+            title: '@(msgType == "success" ? "Success!" : "Error!")',
+            text: '@TempData["msg"]',
+            icon: '@msgType',
+            confirmButtonText: 'OK'
+        });
+    </text>
+}
+
+
+
+    $("#class").on("change", function () {
+        $("#section").html(`<option selected disabled>--Select Section--</option>`);
+        let id = $(this).val();
+        $.ajax({
+            url: '/Admin/GetSectionByClassId',
+            type: 'get',
+            data: { id: id },
+            success: function (response) {
+                if (response && response.length > 0) {
+                    $.each(response, function (index, item) {
+                        $("#section").append(`<option value='${item.SectionId}'>${item.SectionName}</option>`);
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'error',
+                    text: 'Something went wrong with the request'
+                });
+            }
+        });
+    });
+
+    $('#studentawardform').on('submit', function () {
+        Swal.fire({
+            title: 'Please wait...',
+            text: 'Submitting your data...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    })
+
+    function deleteAward(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the award record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show loader
+                Swal.fire({
+                    title: 'Deleting...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '/Admin/DeleteStudentAward',
+                    type: 'POST',
+                    data: { AwardId: id },
+                    success: function (response) {
+                        Swal.close();  // Close loader
+
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.close();  // Close loader
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+
+    function editAward(id) {
+        $.get('/Admin/GetStudentAwardById?id=' + id, function (data) {
+            Swal.fire({
+                title: 'Please wait...',
+                text: 'Processing your request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            console.log(data);
+            if (data) {
+                $('#EditAwardId').val(data.AwardId);
+                $('#EditStudentName').val(data.StudentId);
+                $('#EditAwardTitle').val(data.AwardTitle);
+                $('#EditClass').val(data.ClassId);
+                $('#EditSession').val(data.Session);
+                $('#EditAwardDate').val(data.AwardDate);
+                $('#EditAwardDescription').val(data.Description);
+                $('#EditAwardType').val(data.AwardType);
+
+
+                $.ajax({
+                    url: '/Admin/GetSectionByClassId',
+                    type: 'get',
+                    data: { id: data.ClassId },
+                    success: function (response) {
+                        $("#EditSection").html(`<option selected value="">--Select Section--</option>`);
+                        if (response && response.length > 0) {
+                            $.each(response, function (index, item) {
+                                $("#EditSection").append(`<option value='${item.SectionId}'>${item.SectionName}</option>`);
+                            });
+
+                            $('#EditSection').val(data.SectionId);
+
+                            bindstudentonclassandsection(data.ClassId, data.SectionId).then(() => {
+                                $('#EditStudentName').val(data.StudentId);
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong with the request'
+                        });
+                    }
+                });
+                Swal.close();
+                $('#editAwardModal').modal('show');
+            }
+        });
+    }
+
+
+
+    $('#editAwardForm').on('submit', function (e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Please wait...',
+            text: 'Submitting your data...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        var formData = new FormData(this);
+
+        
+
+        $.ajax({
+            url: '/Admin/UpdateStudentAward',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                Swal.close(); // Close loader
+
+                if (res.success) {
+                    $('#editAwardModal').modal('hide');
+                    Swal.fire('Updated!', 'Award updated successfully.', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', 'Something went wrong.', 'error');
+                }
+            },
+            error: function () {
+                Swal.close(); // Close loader
+                Swal.fire('Error', 'Something went wrong.', 'error');
+            }
+        });
+    });
+
+
+    $('.bindsection').change(async function () {
+        debugger
+        let classid = $('#class').val();
+        let sectionid = $(this).val();
+        await bindstudentonclassandsection(classid, sectionid);
+    })
+
+    async function bindstudentonclassandsection(classid, sectionid) {
+        await $.ajax({
+            url: '/admin/GetStudentsByClassAndSection',
+            type: 'GET',
+            data: { classId: classid, sectionId: sectionid },
+            success: function (data) {
+                Swal.close()
+
+                let tableBody = '<option selected  value="">--select student--</option>';
+                data.forEach(student => {
+                    tableBody += `
+            <option value="${student.StudentId}">${student.StudentName}</option>`;
+                });
+                $('.bindStudent').html(tableBody);
+
+            },
+            error: function () {
+                Swal.fire("error", "Failed to load student", "error");
+            }
+        });
+    }
+
+</script>
+
+
+
+
+
+
+

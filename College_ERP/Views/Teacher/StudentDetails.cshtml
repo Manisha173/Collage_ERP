@@ -1,0 +1,50 @@
+﻿
+@{
+   ViewBag.Title = "StudentDetails";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Student Details</h4>
+
+                    <div class="table-responsive">
+                        <table class="table" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Student Name</th>
+                                    <th>Father Name </th>
+                                    <th>Mother Name </th>
+                                    <th>Mobile Number</th>
+                                    <th>Address</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ 
+                                    int i = 1;
+                                }
+
+                                @foreach (var student in Model)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@student.StudentName</td>
+                                        <td>@student.FatherName</td>
+                                        <td>@student.MotherName</td>
+                                        <td>@student.MobileNo</td>
+                                        <td>@student.Address</td>
+                                    </tr>
+                                    i++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+</div>
+                </div>
+            </div></div></div>
+
+

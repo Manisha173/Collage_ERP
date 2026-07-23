@@ -1,0 +1,717 @@
+﻿
+@{
+    ViewBag.Title = "AddBusRoute";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var data = ViewData["routeList"] as List<College_ERP.Models.Admin.BusRoute>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addbus">Add Bus</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/adddriver">Add Driver</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Bus Route
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AssignBusToDriver"> Assign Bus to Driver </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddStudentRouteWise"> Add Student In Bus </a>
+                    </li>
+
+                </ol>
+            </nav>
+
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Bus Route</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="addBusRouteForm">
+                        <input type="hidden" value="0" name="Id" id="id" />
+                        <div class="row px-5">
+                            <div class="col-sm-3">
+                                <label class="form-label pt-1"><strong>Buss No</strong></label>
+                            </div>
+                            <div class="col-md-9">
+                                <select type="text" id="BussNo" name="BussNo" class="form-control" required>
+                                    <option value="">Select Bus No</option>
+                                    @if (ViewBag.list != null)
+                                    {
+                                        foreach (var item in ViewBag.list as List<College_ERP.Models.Admin.Buss>)
+                                        {
+                                            <option value="@item.Id">@item.BusNo (@item.Type)</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label for="st_Id" class="form-label"><strong>State</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select id="StateId" name="StateId" class="form-select Statechange">
+                                    <option value=""> Select State </option>
+                                    @if (ViewBag.state != null)
+                                    {
+                                        foreach (var item in ViewBag.state)
+                                        {
+                                            if (ViewBag?.updata?.State != null)
+                                            {
+                                                <option @(ViewBag?.updata.State == item.st_Id ? "selected" : "") value="@item.st_Id">@item.stateName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.st_Id">@item.stateName</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label for="CityId" class="form-label"><strong>City</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select id="CityId" data-action="add" name="CityId" class="form-select">
+                                    <option value="">Select City</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div id="pickupPointsContainer">
+                                <div class="row pickup-row">
+                                    <div class="col-md-3">
+                                        <label class="form-label pt-1"><strong>Pickup Point</strong></label>
+                                    </div>
+                                    <div class="col-sm-9 d-flex">
+                                        <input type="text" name="ppm[0].pickupPoint" class="form-control me-2" required placeholder="Enter Pickup Point" />
+                                        <button type="button" class="btn btn-sm btn-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Describe Route</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" id="Route" name="Route" class="form-control" required placeholder="Describe Route" />
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Bus Charges</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="number" id="BusCharges" name="BusCharges" class="form-control" required placeholder="Enter Bus Charges" />
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span>Bus Route List</span>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Add Bus Route
+                        </button>
+                    </h4>
+                    <div class="table-responsive">
+                        <table id="busRouteTable" class="table table-bordered dt-responsive nowrap w-100">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Buss No</th>
+                                    <th>State</th>
+                                    <th>City</th>
+                                    <th>Bus Charge</th>
+                                    <th>Route</th>
+                                    <th>Pickup Point</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (data != null)
+                                {
+                                    int count = 1;
+                                    foreach (var item in data)
+                                    {
+                                        <tr>
+                                            <td>@count</td>
+                                            <td>@item.BussNo (@item.type)</td>
+                                            <td>@item.StateName</td>
+                                            <td>@item.CityName</td>
+                                            <td>@item.BusCharges</td>
+                                            <td>
+                                                @if (string.IsNullOrEmpty(item.Route))
+                                                {
+                                                    <span>N/A</span>
+                                                }
+                                                else
+                                                {
+                                                    <a role="button" class="text-primary  view-description-btn"
+                                                        data-description="@(item.Route)"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#descriptionModal">
+                                                        View
+                                                    </a>
+                                                }
+                                            </td>
+                                            <td><a title="Show All Pickup Points" href="#" data-id="@item.Id" class="showpickuppoint">View</a></td>
+                                            <td class="text-center">
+                                                <a role="button" title="Update" data-id="@item.Id" class="btn btn-sm editDriver p-0"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                                <a role="button" class="btn btn-sm deletemat p-0" data-id="@item.Id" title="Delete"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal to Update Route-->
+    <div class="modal fade" tabindex="-1" id="updateModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title">Update Buss Route</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="addBusRouteForm">
+                        <input type="hidden" value="0" name="Id" id="rid" />
+                        <div class="row px-5">
+                            <div class="col-sm-3">
+                                <label class="form-label pt-1"><strong>Buss No</strong></label>
+                            </div>
+                            <div class="col-md-9">
+                                <input type="text" disabled id="upBussNo" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label for="upStateId" class="form-label"><strong>State</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select id="upStateId" data-action="update" name="StateId" class="form-select Statechange">
+                                    <option value="">Select State</option>
+                                    @if (ViewBag.state != null)
+                                    {
+                                        foreach (var item in ViewBag.state)
+                                        {
+                                            if (ViewBag?.updata?.State != null)
+                                            {
+                                                <option @(ViewBag?.updata.State == item.st_Id ? "selected" : "") value="@item.st_Id">@item.stateName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.st_Id">@item.stateName</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label for="upCityId" class="form-label"><strong>City</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select id="upCityId" name="CityId" class="form-select">
+                                    <option value="">Select City</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div id="updatePickupPointsContainer">
+                                <div class="row pickup-row">
+                                    <div class="col-md-3">
+                                        <label class="form-label pt-1"><strong>Pickup Point</strong></label>
+                                    </div>
+                                    <div class="col-sm-9 d-flex">
+                                        <input type="text" name="ppm[0].pickupPoint" class="form-control me-2" required placeholder="Enter Pickup Point" />
+                                        <button type="button" class="btn btn-sm btn-primary add-btn">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Describe Route</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" id="upRoute" name="Route" class="form-control" required placeholder="Describe Route" />
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Bus Charges</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="number" id="upBusCharges" name="BusCharges" class="form-control" required placeholder="Enter Bus Charges" />
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal to show pickup points start-->
+<div class="modal fade" id="busModal" tabindex="-1" aria-labelledby="busModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="busModalLabel">Bus Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>SR</th>
+                            <th>Bus No</th>
+                            <th>Pickup Point</th>
+                        </tr>
+                    </thead>
+                    <tbody id="busTableBody">
+                        <!-- Dynamic rows will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal to show pickup points  end-->
+
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+    function initializeDataTable() {
+        debugger
+        let table = $('#busRouteTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+    $(document).ready(function () {
+        initializeDataTable();
+        $(".addBusRouteForm").on('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            debugger
+            let formdata = new FormData(this);
+
+            $.ajax({
+                url: '/admin/AddBusRoute', type: 'post', data: formdata, contentType: false, processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                    console.log(xhr)
+                }
+            });
+        })
+        $(".deletemat").on('click', function () {
+            let id = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to delete this item?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                customClass: {
+                    confirmButton: 'mx-2 btn btn-danger',
+                    cancelButton: 'mx-2 btn btn-light'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing Your Request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/admin/DeleteBusRoute',
+                        type: 'get',
+                        data: { Id: id },
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: res.message,
+                                    icon: 'success',
+                                    didClose: () => {
+                                        location.reload(true);
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: res.message,
+                                    icon: 'warning'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Server Error. Try Again Later!',
+                                icon: 'error'
+                            });
+                            console.log(xhr);
+                        }
+                    });
+                } else {
+                    Swal.fire('Cancelled', 'Your item is safe.', 'info');
+                }
+            });
+        });
+
+        $(".editDriver").on('click', function () {
+            debugger
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let id = $(this).data("id")
+            $.ajax({
+                url: '/admin/EditBusRoute', type: 'get', data: { id: id },
+                success: function (res) {
+                    console.log(res)
+                    if (res) {
+                        $("#rid").val(res[0].Id);
+                        $("#upBussNo").val(res[0].BussNo);
+                        $("#upStateId").val(res[0].StateId);
+                        GetCityByState(res[0].StateId, "update").then(() => {
+                            $("#upCityId").val(res[0].CityId);
+                        });
+                        $("#upStartingPoint").val(res[0].StartingPoint);
+                        $("#upEndPoint").val(res[0].EndPoint);
+                        $("#upRoute").val(res[0].Route);
+                        $("#upBusCharges").val(res[0].BusCharges);
+
+                        // ✅ Fill Pickup Points
+                        const container = $("#updatePickupPointsContainer");
+                        container.empty(); // clear any previous rows
+                        console.log(res[0].ppm)
+                        if (res[0].ppm && res[0].ppm.length > 0) {
+                            res[0].ppm.forEach((item, index) => {
+                                if (index === 0) {
+                                    // First row with label and Add button
+                                    container.append(`
+                        <div class="row mt-3 pickup-row">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Pickup Point</strong></label>
+                            </div>
+                            <div class="col-sm-9 d-flex">
+                            <input type="hidden" name="ppm[0].id" value="${item.id}" />
+                                <input type="text" name="ppm[0].pickupPoint" value="${item.pickupPoint}" class="form-control me-2" required placeholder="Enter Pickup Point" />
+                                <button type="button" class="btn btn-sm btn-primary update-add-btn">Add</button>
+                            </div>
+                        </div>
+                    `);
+                                } else {
+                                    // Additional rows with delete button
+                                    container.append(`
+                        <div class="row mt-2 pickup-row position-relative">
+                        <div class="col-sm-3"></div>
+                            <div class="col-sm-9 d-flex">
+                            <input type="hidden" name="ppm[${index}].id" value="${item.id}" />
+                                <input type="text" name="ppm[${index}].pickupPoint" value="${item.pickupPoint}" class="form-control me-2" required placeholder="Enter Pickup Point" />
+                                <button type="button" class="btn btn-sm btn-danger delete-btn" style="z-index: 2;"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </div>
+                    `);
+                                }
+                            });
+                        } else {
+                            // No pickup points? Add a default blank row
+                            container.append(`
+                <div class="row mt-3 pickup-row">
+                    <div class="col-md-3">
+                        <label class="form-label pt-1"><strong>Pickup Point</strong></label>
+                    </div>
+                    <div class="col-sm-9 d-flex">
+                    <input type="hidden" name="ppm[0].id" value="${item.id}" />
+                        <input type="text" name="ppm[0].pickupPoint" class="form-control me-2" required placeholder="Enter Pickup Point" />
+                        <button type="button" class="btn btn-sm btn-primary update-add-btn">Add</button>
+                    </div>
+                </div>
+            `);
+                        }
+
+                        Swal.close();
+                        $("#updateModal").modal('show');
+                    }
+                },
+                error: function (xhr) {
+
+                }
+            });
+
+        });
+
+
+        async function GetCityByState(id, action) {
+            await $.ajax({
+                url: '/Admin/GetCityById',
+                type: 'get',
+                data: { id: id },
+                success: function (response) {
+                    console.log(response[0].City_Name)
+                    let cities = action == "update" ? $("#upCityId") : $("#CityId");
+                    cities.empty();
+                    let citiesBind = '<option value="">Select City</option>';
+                    $.each(response, function (index, item) {
+                        citiesBind += (`<option value="${item.city_Id}">${item.City_Name}</option>`);
+                    });
+                    cities.append(citiesBind);
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'error',
+                        text: 'Something went wrong with the request'
+                    });
+                }
+            });
+        }
+        $(".Statechange").on("change", async function () {
+            debugger
+            let id = $(this).val();
+            let action = $(this).attr("data-action")
+            await GetCityByState(id, action);
+        });
+
+        $(".showpickuppoint").on('click', function () {
+            debugger
+            let id = $(this).data("id")
+            $.ajax({
+                url: '/admin/GetAllPickupPointOfBus', type: 'get', data: { id: id },
+                success: function (res) {
+                    console.log(res)
+                    if (res) {
+                        $("#busTableBody").empty();
+
+                        // Loop through response and add rows
+                        res.forEach((item, index) => {
+                            const row = `<tr>
+                                    <td>${index + 1}</td>
+                                    <td>${item.busNO}</td>
+                                    <td>${item.pickupPoint}</td>
+                                 </tr>`;
+                            $("#busTableBody").append(row);
+                        });
+
+                        $("#busModal").modal('show');
+                    }
+                },
+                error: function (xhr) {
+
+                }
+            });
+
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        function updateIndexes() {
+            $('#pickupPointsContainer .pickup-row').each(function (index) {
+                $(this).find('input').attr('name', `ppm[${index}].pickupPoint`);
+            });
+        }
+
+        $(document).on('click', '.add-btn', function () {
+            const newRow = $(`
+            <div class="row mt-2 pickup-row position-relative">
+            <div class="col-md-3">
+</div>
+                <div class="col-sm-9 d-flex">
+                    <input type="text" class="form-control me-2" required placeholder="Enter Pickup Point" />
+                    <button type="button" class="btn btn-sm btn-danger delete-btn"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            </div>
+        `);
+            $('#pickupPointsContainer').append(newRow);
+            updateIndexes();
+        });
+
+        $(document).on('click', '.delete-btn', function () {
+            $(this).closest('.pickup-row').remove();
+            updateIndexes();
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        function updateUpdatePickupIndexes() {
+            $('#updatePickupPointsContainer .pickup-row').each(function (index) {
+                $(this).find('.input-indexp').attr('name', `ppm[${index}].pickupPoint`);
+                $(this).find('.input-indexid').attr('name', `ppm[${index}].id`);
+            });
+        }
+
+        $(document).on('click', '.update-add-btn', function () {
+            const newRow = $(`
+            <div class="row mt-2 pickup-row position-relative">
+            <div class="col-sm-3"></div>
+                <div class="col-sm-9 d-flex">
+                <input type="hidden" name="ppm[0].id" value="0" class="input-indexid" />
+                    <input type="text" class="form-control input-indexp me-2" required placeholder="Enter Pickup Point" />
+                    <button type="button" class="btn btn-sm delete-btn btn-danger" style="z-index: 2;"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            </div>
+        `);
+            $('#updatePickupPointsContainer').append(newRow);
+            updateUpdatePickupIndexes();
+        });
+
+        $(document).on('click', '.delete-btn', function () {
+            $(this).closest('.pickup-row').remove();
+            updateUpdatePickupIndexes();
+        });
+
+        $('#updateRouteModal').on('hidden.bs.modal', function () {
+            const container = $('#updatePickupPointsContainer');
+            container.find('.pickup-row').not(':first').remove();
+            container.find('input').first().val('');
+            updateUpdatePickupIndexes();
+        });
+    });
+</script>
+<!--description-->
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descriptionModalLabel">Route Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalDescriptionBody">
+                <!-- Content will be injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".view-description-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                const descHtml = this.getAttribute("data-description");
+                document.getElementById("modalDescriptionBody").innerHTML = descHtml;
+            });
+        });
+    });
+</script>
+

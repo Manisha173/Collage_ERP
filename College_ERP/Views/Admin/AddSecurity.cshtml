@@ -1,0 +1,759 @@
+﻿
+@{
+    ViewBag.Title = "AddSecurity";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var data = ViewData["securityList"] as List<College_ERP.Models.Admin.Security>;
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.2/css/buttons.dataTables.css" />
+
+<style>
+    .custom-file-upload {
+        border: 1px solid #1e7644;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        margin-top: 2px;
+        width: 115px;
+        background: #1e7644;
+        color: white;
+    }
+
+
+    .filter-section {
+        background: white;
+        border-radius: 12px;
+        padding: 10px 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .filter-select {
+        padding: 12px 20px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+        min-width: 200px;
+    }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-select:hover {
+            border-color: #667eea;
+        }
+</style>
+<div class="content-page">
+    <div class="content">
+        <!-- container-fluid -->
+        <div class="container-fluid">
+            <!-- Academic Year Filter -->
+            <div class="filter-section" id="filterCard">
+                <label class="filter-label" for="academicYearSelect">Academic Year:</label>
+
+                <select id="academicYearSelect" class="filter-select">
+                    <option value="">-- Select Academic Year --</option>
+                    <option value="2026-27">2026-27</option>
+                    <option value="2025-26">2025-26</option>
+                    <option value="2024-25">2024-25</option>
+                    <option value="2023-24">2023-24</option>
+                    <option value="2022-23">2022-23</option>
+                    <option value="2021-22">2021-22</option>
+                    <option value="2020-21">2020-21</option>
+                </select>
+            </div>
+
+            <!--add security Modal -->
+            <div class="modal fade" id="exampleModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add Security</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form enctype="multipart/form-data" method="Post" class="addSecurity">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="EmployeeId" class="form-label">Employee Id</label>
+                                        <input type="text" id="EmployeeId" name="EmployeeId" class="form-control" placeholder="Enter Employee Id">
+                                    </div>
+                                    <!-- Warden Name -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="Name" class="form-label">Security Name</label>
+                                        <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Security Name">
+                                    </div>
+                                    <!-- Email -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="EmailId" class="form-label">Email Id</label>
+                                        <input type="email" id="Email" name="Email" class="form-control" placeholder="Enter Email" required>
+                                    </div>
+                                    <!-- DOB -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="DOB" class="form-label">Date Of Birth</label>
+                                        <input type="date" id="DOB" max="@DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd")" name="DOB" class="form-control" required>
+                                    </div>
+                                    <!-- Mobile Number -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="MobileNo" class="form-label">Mobile Number</label>
+                                        <input type="number" id="MobileNo" name="MobileNo" class="form-control mobileval" placeholder="Enter Your Mobile No." maxlength="10" required>
+                                        <span id="mobileError" class="text-danger mobileError" sstyle="font-size: 0.9em;"></span>
+                                    </div>
+                                    <!-- State -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="st_Id" class="form-label">State</label>
+                                        <select id="StateId" name="StateId" class="form-select Statechange">
+                                            <option value="">-- Select State --</option>
+                                            @if (ViewBag.state != null)
+                                            {
+                                                foreach (var item in ViewBag.state)
+                                                {
+                                                    if (ViewBag?.updata?.State != null)
+                                                    {
+                                                        <option @(ViewBag?.updata.State == item.st_Id ? "selected" : "") value="@item.st_Id">@item.stateName</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@item.st_Id">@item.stateName</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                    <!-- City -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="CityId" class="form-label">City</label>
+                                        <select id="CityId" data-action="add" name="CityId" class="form-select">
+                                            <option value="">-- Select City --</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Gender -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label d-block">Gender</label>
+                                        <div class="d-flex pt-1 gap-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="genderMale" name="Gender" checked value="Male">
+                                                <label class="form-check-label" for="genderMale">Male</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="genderFemale" name="Gender" value="Female">
+                                                <label class="form-check-label" for="genderFemale">Female</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Category -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label d-block">Category</label>
+                                        <div class="d-flex pt-1 gap-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input Securitycategory" type="radio" id="school" name="category" checked value="School">
+                                                <label class="form-check-label" for="school">School</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input Securitycategory" type="radio" id="hostel" name="category" value="Hostel">
+                                                <label class="form-check-label" for="hostel">Hostel</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Block Name -->
+                                    <div class="col-md-6 mb-3" id="blockContainer" style="display:none">
+                                        <label for="BlockId" class="form-label">Block Name</label>
+                                        <select name="BlockId" id="BlockId" class="form-select">
+                                            <option value="0" disabled selected>--Select Block--</option>
+                                            @if (ViewBag.BlockList != null)
+                                            {
+                                                foreach (var item in ViewBag.BlockList)
+                                                {
+                                                    <option value="@item.HostelId">@item.BlockName</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                    <!-- Gete No -->
+                                    <div class="col-md-6 mb-3" id="gateNoContainer">
+                                        <label for="Name" class="form-label">Gate No</label>
+                                        <input type="text" id="GateNo" name="GateNo" class="form-control" placeholder="Enter Gate No">
+                                    </div>
+                                    <!-- Adhar Number -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="MobileNo" class="form-label">Adhar Number</label>
+                                        <input type="number" id="AdharNo" name="AdharNo" class="form-control adharval" placeholder="Enter Your Adhar No." maxlength="12" required>
+                                        <span style="font-size: 0.9em;" class="text-danger adharError"></span>
+                                    </div>
+                                    <!-- Document -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="Documents" class="form-label">Profile</label>
+                                        <input type="file" id="Document" name="Document" class="form-control">
+                                    </div>
+                                    <!-- Address -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="Address" class="form-label">Address</label>
+                                        <textarea id="Address" name="Address" class="form-control" placeholder="Enter Address" rows="1"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4">
+                                    <div class="col-12 text-center">
+                                        <button type="submit" data-action="add" id="btnSubmit" class="btn btn-primary px-4">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Modal for update security-->
+            <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" id="updateSecurityModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered">
+                    <div class="modal-content ">
+                        <div class="modal-header border-bottom-0">
+                            <h5 class="modal-title">Update Security</h5>
+                            <button type="button" id="closeUpdateModal" class="btn-close" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body px-4 mx-4">
+                            <div class="form-section">
+                                <!--- addmission form--->
+                                <form enctype="multipart/form-data" method="Post" class="addSecurity">
+                                    <div class="row">
+                                        <input type="hidden" id="id" name="Id" />
+                                        <div class="col-md-6 mb-3">
+                                            <label for="upEmployeeId" class="form-label">Employee Id</label>
+                                            <input type="text" id="upEmployeeId" name="EmployeeId" class="form-control" placeholder="Enter Employee Id">
+                                        </div>
+                                        <!-- Warden Name -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="upName" class="form-label">Security Name</label>
+                                            <input type="text" id="upName" name="Name" class="form-control" placeholder="Enter Security Name">
+                                        </div>
+                                        <!-- Email -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="upEmail" class="form-label">Email Id</label>
+                                            <input type="email" id="upEmail" name="Email" class="form-control" placeholder="Enter Email" required>
+                                        </div>
+                                        <!-- DOB -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="upDOB" class="form-label">Date Of Birth</label>
+                                            <input type="date" id="upDOB" name="DOB" class="form-control" required>
+                                        </div>
+                                        <!-- Mobile Number -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="upMobileNo" class="form-label">Mobile Number</label>
+                                            <input type="number" id="upMobileNo" name="MobileNo" class="form-control mobileval" placeholder="Enter Your Mobile No." maxlength="10" required>
+                                            <span id="mobileError" style="font-size: 0.9em;" class="text-danger mobileError"></span>
+                                        </div>
+                                        <!-- State -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="upStateId" class="form-label">State</label>
+                                            <select id="upStateId" data-action="update" name="StateId" class="form-select Statechange">
+                                                <option value="">-- Select State --</option>
+                                                @if (ViewBag.state != null)
+                                                {
+                                                    foreach (var item in ViewBag.state)
+                                                    {
+                                                        if (ViewBag?.updata?.State != null)
+                                                        {
+                                                            <option @(ViewBag?.updata.State == item.st_Id ? "selected" : "") value="@item.st_Id">@item.stateName</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@item.st_Id">@item.stateName</option>
+                                                        }
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                        <!-- City -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="upCityId" class="form-label">City</label>
+                                            <select id="upCityId" name="CityId" class="form-select">
+                                                <option value="">-- Select City --</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Gender -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label d-block">Gender</label>
+                                            <div class="d-flex pt-1 gap-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" id="upgenderMale" name="Gender" checked value="Male">
+                                                    <label class="form-check-label" for="upgenderMale">Male</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" id="upgenderFemale" name="Gender" value="Female">
+                                                    <label class="form-check-label" for="upgenderFemale">Female</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Category -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label d-block">Category</label>
+                                            <div class="d-flex pt-1 gap-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input Securitycategory" type="radio" id="upschool" name="category" checked value="School">
+                                                    <label class="form-check-label" for="upschool">School</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input Securitycategory" type="radio" id="uphostel" name="category" value="Hostel">
+                                                    <label class="form-check-label" for="uphostel">Hostel</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Block Name -->
+                                        <div class="col-md-6 mb-3" id="upblockContainer" style="display:none">
+                                            <label for="upBlockId" class="form-label">Block Name</label>
+                                            <select name="BlockId" id="upBlockId" class="form-select">
+                                                <option value="0" disabled selected>--Select Block--</option>
+                                                @if (ViewBag.BlockList != null)
+                                                {
+                                                    foreach (var item in ViewBag.BlockList)
+                                                    {
+                                                        <option value="@item.HostelId">@item.BlockName</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                        <!-- Gete No -->
+                                        <div class="col-md-6 mb-3" id="upgateNoContainer" style="display:none">
+                                            <label for="upGateNo" class="form-label">Gate No</label>
+                                            <input type="text" id="upGateNo" name="GateNo" class="form-control" placeholder="Enter Gate No">
+                                        </div>
+                                        <!-- Adhar Number -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="upAdharNo" class="form-label">Adhar Number</label>
+                                            <input type="number" id="upAdharNo" name="AdharNo" class="form-control adharval" placeholder="Enter Your Adhar No." maxlength="12" required>
+                                            <span style="font-size: 0.9em;" class="text-danger adharError"></span>
+                                        </div>
+                                        <!-- Document -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="upDocument" class="form-label">Profile</label>
+                                            <input type="file" id="upDocument" name="Document" class="form-control">
+                                        </div>
+                                        <!-- Address -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="upAddress" class="form-label">Address</label>
+                                            <textarea id="upAddress" name="Address" class="form-control" placeholder="Enter Address" rows="1"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-4">
+                                        <div class="col-12 text-center">
+                                            <button type="submit" data-action="add" id="btnSubmit" class="btn btn-primary px-4">Update</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+
+                        <div class="card-header border-bottom-0 mb-0 pb-0">
+                            <h5 class="card-title mb-0 d-flex justify-content-between">
+                                <span>Security List</span> <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Add Security
+                                </button>
+                            </h5>
+                        </div><!-- end card header -->
+
+                        <div class="card-body table-responsive">
+
+                            <table id="securityTable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Employee ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Mobile</th>
+                                        <th>State</th>
+                                        <th>Block / Gate No</th>
+                                        <th>Username</th>
+                                        <th>Password</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td>@item.EmployeeId</td>
+                                                <td><a target="_blank" href="/admin/SecurityProfile?id=@item.Id" title="Show Profile">@item.Name</a></td>
+                                                <td>@item.Email</td>
+                                                <td>@item.MobileNo</td>
+                                                <td>@item.State</td>
+                                                <td>@(!string.IsNullOrEmpty(item.BlockName) ? item.BlockName:$"Gate No {item.GateNo}")</td>
+                                                <td>@item.username</td>
+                                                <td>@item.password</td>
+                                                <td class="text-center">
+                                                    <a role="button" data-bs-toggle="modal" data-id="@item.Id" class="btn btn-sm updateSecurity p-0 fs-5"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                                    <a role="button" class="btn btn-sm deleteSecurity p-0" data-id="@item.Id" title="Delete"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                                </td>
+
+                                            </tr>
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+    function initializeDataTable() {
+        debugger
+        let table = $('#securityTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![6].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![6].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        //doc.content[1].table.widths =
+                        //    Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                        // Center align headers (th)
+                        doc.styles.tableHeader.alignment = 'center';
+
+                        // Center align all table body rows (td)
+                        doc.styles.tableBodyEven = {
+                            alignment: 'center'
+                        };
+                        doc.styles.tableBodyOdd = {
+                            alignment: 'center'
+                        };
+
+                        // Set equal column widths to fix alignment
+                        var table = doc.content[1].table;
+                        var columnCount = table.body[0].length;
+                        table.widths = Array(columnCount).fill('*');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+    $(document).ready(function () {
+        initializeDataTable()
+        $('#closeUpdateModal').on('click', function () {
+            debugger
+            $('.addSecurity')[0].reset();
+            $('#updateSecurityModal').modal('hide');
+            $('#upgateNoContainer').css('display', 'none');
+        });
+
+        $(".Securitycategory").on('change', function () {
+            let cat = $(this).val();
+            if (cat === 'School') {
+                $('#blockContainer').css('display', 'none');
+                $('#upblockContainer').css('display', 'none');
+                $('#gateNoContainer').css('display', 'block');
+                $('#upgateNoContainer').css('display', 'block');
+                $('#upBlockId').prop('disabled', true);
+            }
+            else if (cat === 'Hostel') {
+                $('#gateNoContainer').css('display', 'none');
+                $('#upgateNoContainer').css('display', 'none');
+                $('#blockContainer').css('display', 'block');
+                $('#upblockContainer').css('display', 'block');
+                $('#upGateNo').prop('disabled', true);
+            }
+        });
+
+        async function GetCityByState(id, action) {
+            await $.ajax({
+                url: '/Admin/GetCityById',
+                type: 'get',
+                data: { id: id },
+                success: function (response) {
+                    console.log(response[0].City_Name)
+                    let cities = action == "update" ? $("#upCityId") : $("#CityId");
+                    cities.empty();
+                    let citiesBind = '<option value="">--Select City--</option>';
+                    $.each(response, function (index, item) {
+                        citiesBind += (`<option value="${item.city_Id}">${item.City_Name}</option>`);
+                    });
+                    cities.append(citiesBind);
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'error',
+                        text: 'Something went wrong with the request'
+                    });
+                }
+            });
+        }
+        $(".Statechange").on("change", async function () {
+            debugger
+            let id = $(this).val();
+            let action = $(this).attr("data-action")
+            await GetCityByState(id, action);
+        });
+
+        $('.addSecurity').submit(function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            debugger
+            var data = new FormData(this);
+            var fileUpload = document.getElementById("Document");
+            if (fileUpload.files.length > 0) {
+                for (var i = 0; i < fileUpload.files.length; i++) {
+                    data.append("Image", fileUpload.files[i]);
+                }
+            }
+
+            var upfileUpload = document.getElementById("upDocument");
+            if (upfileUpload.files.length > 0) {
+                for (var i = 0; i < upfileUpload.files.length; i++) {
+                    data.append("Image", upfileUpload.files[i]);
+                }
+            }
+            $.ajax({
+                type: 'Post',
+                url: '/admin/AddSecurity',
+                data: data,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+
+        $(".deleteSecurity").on('click', function () {
+            let id = $(this).data('id');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to delete this item?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                customClass: {
+                    confirmButton: 'mx-2 btn btn-danger',
+                    cancelButton: 'mx-2 btn btn-light'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing Your Request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/admin/DeleteSecurity',
+                        type: 'get',
+                        data: { Id: id },
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: res.message,
+                                    icon: 'success',
+                                    didClose: () => {
+                                        location.reload(true);
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: res.message,
+                                    icon: 'warning'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Server Error. Try Again Later!',
+                                icon: 'error'
+                            });
+                            console.log(xhr);
+                        }
+                    });
+                } else {
+                    Swal.fire('Cancelled', 'Your item is safe.', 'info');
+                }
+            });
+        });
+
+        $(".updateSecurity").on('click', function () {
+            let id = $(this).data('id')
+            $.ajax({
+                url: '/admin/EditSecurity', type: 'get', data: { id, id },
+                success: function (res) {
+                    console.log(res[0].DOB)
+                    if (res) {
+
+                        function convertMSDateToInputDate(msDate) {
+                            const timestamp = parseInt(msDate.replace(/\/Date\((\d+)\)\//, '$1'));
+                            const date = new Date(timestamp);
+                            const formattedDate = date.toISOString().split('T')[0];
+                            return formattedDate;
+                        }
+
+                        $('#id').val(res[0].Id);
+                        $("#upName").val(res[0].Name);
+                        $("#upEmployeeId").val(res[0].EmployeeId);
+                        $("#upEmail").val(res[0].Email);
+                        $("#upDOB").val(convertMSDateToInputDate(res[0].DOB));
+                        $("#upMobileNo").val(res[0].MobileNo);
+                        $("#upStateId").val(res[0].StateId);
+                        GetCityByState(res[0].StateId, "update").then(() => {
+                            $("#upCityId").val(res[0].CityId);
+                        });
+                        $(`input[name="Gender"][value="${res[0].Gender}"]`).prop("checked", true);
+                        $(`input[name="category"][value="${res[0].Category}"]`).prop("checked", true);
+                        if (res[0].Category === "School") {
+                            $('#upgateNoContainer').css('display', 'block');
+                            $('#upblockContainer').css('display', 'none');
+
+                            $('#upGateNo').val(res[0].GateNo)
+                        } else if (res[0].Category === "Hostel") {
+                            $('#upblockContainer').css('display', 'block');
+                            $('#upgateNoContainer').css('display', 'none');
+
+                            $('#upBlockId').val(res[0].BlockId)
+                        }
+                        $("#upAdharNo").val(res[0].AdharNo);
+                        $("#upAddress").val(res[0].Address);
+                        $('#updateSecurityModal').modal('show');
+                    }
+                },
+                error: function (xhr) {
+
+                }
+            });
+        });
+    });
+</script>
+
+
+<script>
+    $(function () {
+        $('.mobileval').on('input', function () {
+            let m = $(this).val().replace(/\D/g, '').slice(0, 10);
+            $(this).val(m);
+            $('.mobileError').text(
+                m.length < 10 ? 'Mobile number must be 10 digits.' :
+                    !/^[6-9]/.test(m) ? 'Mobile number must start with 6, 7, 8, or 9.' : ''
+            );
+        });
+    });
+    $(function () {
+        $('.adharval').on('input', function () {
+            let a = $(this).val().replace(/\D/g, '').slice(0, 12);
+            $(this).val(a);
+            $('.adharError').text(
+                a.length < 12 ? 'Aadhaar number must be 12 digits.' : ''
+            );
+        });
+    });
+</script>
+<script>
+    document.getElementById("academicYearSelect").addEventListener("change", function () {
+
+        let academicYear = this.value;
+
+        if (academicYear) {
+            let year = academicYear.split('-')[0]; // 2026
+
+            window.location.href = "/Admin/AddSecurity?academicYear=" + year;
+        }
+    });
+</script>

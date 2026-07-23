@@ -1,0 +1,134 @@
+﻿
+@{
+    ViewBag.Title = "SecurityReport";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var data = ViewData["securityList"] as List<College_ERP.Models.Admin.Security>;
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.2/css/buttons.dataTables.css" />
+<div class="content-page">
+    <div class="content">
+        <!-- container-fluid -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+
+                        <div class="card-header d-flex border-bottom-0 pb-0">
+                            <h5 class="card-title mb-0 d-flex justify-content-between">
+                                <span>Security List</span> <!-- Button trigger modal -->
+                            </h5>
+                        </div><!-- end card header -->
+
+                        <div class="card-body table-responsive">
+
+                            <table id="securityTable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Mobile</th>
+                                        <th>State</th>
+                                        <th>Block / Gate No</th>
+                                        <th>Show Visitors</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td><a target="_blank" href="/admin/SecurityProfile?id=@item.Id" title="Show Profile">@item.Name</a></td>
+                                                <td>@item.Email</td>
+                                                <td>@item.MobileNo</td>
+                                                <td>@item.State</td>
+                                                <td>@(!string.IsNullOrEmpty(item.BlockName) ? item.BlockName:$"Gate No {item.GateNo}")</td>
+                                                <td>
+                                                    <a href="/admin/VisitorList?id=@item.Id" title="Show Visitor">View</a>
+                                                </td>
+                                            </tr>
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+
+<script>
+        function initializeDataTable() {
+            debugger
+            let table = $('#securityTable').DataTable({
+                ordering: false,
+                autoWidth: false,
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+                dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+                buttons: [
+                    {
+                        extend: 'excel',
+                        text: 'Export Excel',
+                        exportOptions: {
+                            columns: function (idx, data, node) {
+                                return ![6].includes(idx);
+                            } // exclude last column
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'Export PDF',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        exportOptions: {
+                            columns: function (idx, data, node) {
+                                return ![6].includes(idx);
+                            } // exclude last column
+                        },
+                        customize: function (doc) {
+                            doc.defaultStyle.fontSize = 6;
+                            doc.styles.tableHeader.fontSize = 7;
+                            //doc.content[1].table.widths =
+                            //    Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                            // Center align headers (th)
+                            doc.styles.tableHeader.alignment = 'center';
+
+                            // Center align all table body rows (td)
+                            doc.styles.tableBodyEven = {
+                                alignment: 'center'
+                            };
+                            doc.styles.tableBodyOdd = {
+                                alignment: 'center'
+                            };
+
+                            // Set equal column widths to fix alignment
+                            var table = doc.content[1].table;
+                            var columnCount = table.body[0].length;
+                            table.widths = Array(columnCount).fill('*');
+                        }
+                    }
+                ]
+            });
+            return table;
+        }
+        $(document).ready(function () {
+            initializeDataTable()
+        })
+</script>

@@ -1,0 +1,627 @@
+﻿@{
+    ViewBag.Title = "Teacher Registration";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Register Teacher 
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/teacherRegistrationlist"> Teacher List </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/adddesignation"> Add Teacher Designation </a>
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+                <div class="flex-grow-1">
+                    <h4 class="fs-18 fw-semibold m-0">@(ViewBag?.teacher!=null?"Update Teacher":"Teacher Registration")</h4>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form method="post" enctype="multipart/form-data" id="teacherForm">
+                                <input type="hidden" name="TeacherId" value="@(ViewBag?.teacher?.TeacherId ?? 0)" />
+                                <div class="row">
+                                    <!-- Personal Info -->
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="required-label">Employee Id</label>
+                                            <input type="text" name="EmployeeId" value="@(ViewBag?.teacher?.EmployeeId)" class="form-control" placeholder="Enter Employee Id" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="required-label">Teacher Name</label>
+                                            <input type="text" required name="TeacherName" value="@(ViewBag?.teacher?.TeacherName)" class="form-control" placeholder="Enter Teacher Name" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="required-label">Teacher Email</label>
+                                            <input type="email" required value="@(ViewBag?.teacher?.TeacherEmail)" name="teacheremail" class="form-control" placeholder="Enter email address" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="required-label">Mobile Number</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.TeacherMobile)" required name="teachermobile"
+                                                   id="teachermobile" class="form-control" placeholder="Enter mobile number"
+                                                   pattern="[6-9][0-9]{9}" maxlength="10" minlength="10"
+                                                   title="Enter a valid 10-digit mobile number starting with 6-9" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="required-label">Date of Birth</label>
+                                            <input type="date" value="@(ViewBag?.teacher?.TeacherDOB?.ToString("yyyy-MM-dd"))" required max="@DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd")" name="teacherdob" class="form-control" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="required-label">Gender</label>
+                                            <select name="Gender" required class="form-select">
+                                                <option value="" selected disabled>Select Gender</option>
+                                                <option value="Male" @(ViewBag?.teacher?.Gender == "Male" ? "selected" : "")>Male</option>
+                                                <option value="Female" @(ViewBag?.teacher?.Gender == "Female" ? "selected" : "")>Female</option>
+                                                <option value="Others" @(ViewBag?.teacher?.Gender == "Others" ? "selected" : "")>Others</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="required-label">Mother Tongue</label>
+                                            <select id="mothertongue" name="mothertongue" required class="form-select">
+                                                <option value="" disabled @(ViewBag?.teacher?.MotherTongue == null ? "selected" : "")>Select Language</option>
+                                                <option value="Assamese" @(ViewBag?.teacher?.MotherTongue == "Assamese" ? "selected" : "")>Assamese</option>
+                                                <option value="Assamese" @(ViewBag?.teacher?.MotherTongue == "English" ? "selected" : "")>English</option>
+                                                <option value="Bengali" @(ViewBag?.teacher?.MotherTongue == "Bengali" ? "selected" : "")>Bengali</option>
+                                                <option value="Bodo" @(ViewBag?.teacher?.MotherTongue == "Bodo" ? "selected" : "")>Bodo</option>
+                                                <option value="Dogri" @(ViewBag?.teacher?.MotherTongue == "Dogri" ? "selected" : "")>Dogri</option>
+                                                <option value="Gujarati" @(ViewBag?.teacher?.MotherTongue == "Gujarati" ? "selected" : "")>Gujarati</option>
+                                                <option value="Hindi" @(ViewBag?.teacher?.MotherTongue == "Hindi" ? "selected" : "")>Hindi</option>
+                                                <option value="Kannada" @(ViewBag?.teacher?.MotherTongue == "Kannada" ? "selected" : "")>Kannada</option>
+                                                <option value="Kashmiri" @(ViewBag?.teacher?.MotherTongue == "Kashmiri" ? "selected" : "")>Kashmiri</option>
+                                                <option value="Konkani" @(ViewBag?.teacher?.MotherTongue == "Konkani" ? "selected" : "")>Konkani</option>
+                                                <option value="Maithili" @(ViewBag?.teacher?.MotherTongue == "Maithili" ? "selected" : "")>Maithili</option>
+                                                <option value="Malayalam" @(ViewBag?.teacher?.MotherTongue == "Malayalam" ? "selected" : "")>Malayalam</option>
+                                                <option value="Manipuri" @(ViewBag?.teacher?.MotherTongue == "Manipuri" ? "selected" : "")>Manipuri</option>
+                                                <option value="Marathi" @(ViewBag?.teacher?.MotherTongue == "Marathi" ? "selected" : "")>Marathi</option>
+                                                <option value="Nepali" @(ViewBag?.teacher?.MotherTongue == "Nepali" ? "selected" : "")>Nepali</option>
+                                                <option value="Odia" @(ViewBag?.teacher?.MotherTongue == "Odia" ? "selected" : "")>Odia</option>
+                                                <option value="Punjabi" @(ViewBag?.teacher?.MotherTongue == "Punjabi" ? "selected" : "")>Punjabi</option>
+                                                <option value="Sanskrit" @(ViewBag?.teacher?.MotherTongue == "Sanskrit" ? "selected" : "")>Sanskrit</option>
+                                                <option value="Santali" @(ViewBag?.teacher?.MotherTongue == "Santali" ? "selected" : "")>Santali</option>
+                                                <option value="Sindhi" @(ViewBag?.teacher?.MotherTongue == "Sindhi" ? "selected" : "")>Sindhi</option>
+                                                <option value="Tamil" @(ViewBag?.teacher?.MotherTongue == "Tamil" ? "selected" : "")>Tamil</option>
+                                                <option value="Telugu" @(ViewBag?.teacher?.MotherTongue == "Telugu" ? "selected" : "")>Telugu</option>
+                                                <option value="Urdu" @(ViewBag?.teacher?.MotherTongue == "Urdu" ? "selected" : "")>Urdu</option>
+                                            </select>
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label  for="bloodGroup">Select Blood Group:</label>
+                                            <select id="bloodGroup" name="bloodGroup"  class="form-select">
+                                                <option value="" disabled @(ViewBag?.teacher?.BloodGroup == null ? "selected" : "")>Select Blood Group</option>
+                                                <option value="A+" @(ViewBag?.teacher?.BloodGroup == "A+" ? "selected" : "")>A+</option>
+                                                <option value="A-" @(ViewBag?.teacher?.BloodGroup == "A-" ? "selected" : "")>A-</option>
+                                                <option value="B+" @(ViewBag?.teacher?.BloodGroup == "B+" ? "selected" : "")>B+</option>
+                                                <option value="B-" @(ViewBag?.teacher?.BloodGroup == "B-" ? "selected" : "")>B-</option>
+                                                <option value="AB+" @(ViewBag?.teacher?.BloodGroup == "AB+" ? "selected" : "")>AB+</option>
+                                                <option value="AB-" @(ViewBag?.teacher?.BloodGroup == "AB-" ? "selected" : "")>AB-</option>
+                                                <option value="O+" @(ViewBag?.teacher?.BloodGroup == "O+" ? "selected" : "")>O+</option>
+                                                <option value="O-" @(ViewBag?.teacher?.BloodGroup == "O-" ? "selected" : "")>O-</option>
+                                                <option value="Rh+" @(ViewBag?.teacher?.BloodGroup == "Rh+" ? "selected" : "")>Rh+</option>
+                                                <option value="Rh-" @(ViewBag?.teacher?.BloodGroup == "Rh-" ? "selected" : "")>Rh-</option>
+                                                <option value="Prefer not to say" @(ViewBag?.teacher?.BloodGroup == "Prefer not to say" ? "selected" : "")>Prefer not to say</option>
+                                            </select>
+
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="required-label">Nationality</label>
+                                            <select class="form-select" required name="Nationality">
+                                                <option value="" disabled @(ViewBag?.teacher?.Nationality == null ? "selected" : "")>Select Nationality</option>
+                                                <option value="Indian" @(ViewBag?.teacher?.Nationality == "Indian" ? "selected" : "")>Indian</option>
+                                                <option value="Afghan" @(ViewBag?.teacher?.Nationality == "Afghan" ? "selected" : "")>Afghan</option>
+                                                <option value="American" @(ViewBag?.teacher?.Nationality == "American" ? "selected" : "")>American</option>
+                                                <option value="Australian" @(ViewBag?.teacher?.Nationality == "Australian" ? "selected" : "")>Australian</option>
+                                                <option value="Bangladeshi" @(ViewBag?.teacher?.Nationality == "Bangladeshi" ? "selected" : "")>Bangladeshi</option>
+                                                <option value="Bhutanese" @(ViewBag?.teacher?.Nationality == "Bhutanese" ? "selected" : "")>Bhutanese</option>
+                                                <option value="British" @(ViewBag?.teacher?.Nationality == "British" ? "selected" : "")>British</option>
+                                                <option value="Canadian" @(ViewBag?.teacher?.Nationality == "Canadian" ? "selected" : "")>Canadian</option>
+                                                <option value="Chinese" @(ViewBag?.teacher?.Nationality == "Chinese" ? "selected" : "")>Chinese</option>
+                                                <option value="French" @(ViewBag?.teacher?.Nationality == "French" ? "selected" : "")>French</option>
+                                                <option value="German" @(ViewBag?.teacher?.Nationality == "German" ? "selected" : "")>German</option>
+                                                <option value="Indonesian" @(ViewBag?.teacher?.Nationality == "Indonesian" ? "selected" : "")>Indonesian</option>
+                                                <option value="Iranian" @(ViewBag?.teacher?.Nationality == "Iranian" ? "selected" : "")>Iranian</option>
+                                                <option value="Iraqi" @(ViewBag?.teacher?.Nationality == "Iraqi" ? "selected" : "")>Iraqi</option>
+                                                <option value="Italian" @(ViewBag?.teacher?.Nationality == "Italian" ? "selected" : "")>Italian</option>
+                                                <option value="Japanese" @(ViewBag?.teacher?.Nationality == "Japanese" ? "selected" : "")>Japanese</option>
+                                                <option value="Malaysian" @(ViewBag?.teacher?.Nationality == "Malaysian" ? "selected" : "")>Malaysian</option>
+                                                <option value="Maldivian" @(ViewBag?.teacher?.Nationality == "Maldivian" ? "selected" : "")>Maldivian</option>
+                                                <option value="Nepali" @(ViewBag?.teacher?.Nationality == "Nepali" ? "selected" : "")>Nepali</option>
+                                                <option value="Pakistani" @(ViewBag?.teacher?.Nationality == "Pakistani" ? "selected" : "")>Pakistani</option>
+                                                <option value="Russian" @(ViewBag?.teacher?.Nationality == "Russian" ? "selected" : "")>Russian</option>
+                                                <option value="Singaporean" @(ViewBag?.teacher?.Nationality == "Singaporean" ? "selected" : "")>Singaporean</option>
+                                                <option value="South African" @(ViewBag?.teacher?.Nationality == "South African" ? "selected" : "")>South African</option>
+                                                <option value="Sri Lankan" @(ViewBag?.teacher?.Nationality == "Sri Lankan" ? "selected" : "")>Sri Lankan</option>
+                                                <option value="Swiss" @(ViewBag?.teacher?.Nationality == "Swiss" ? "selected" : "")>Swiss</option>
+                                                <option value="Thai" @(ViewBag?.teacher?.Nationality == "Thai" ? "selected" : "")>Thai</option>
+                                                <option value="UAE" @(ViewBag?.teacher?.Nationality == "UAE" ? "selected" : "")>Emirati (UAE)</option>
+                                                <option value="Vietnamese" @(ViewBag?.teacher?.Nationality == "Vietnamese" ? "selected" : "")>Vietnamese</option>
+                                                <option value="Other" @(ViewBag?.teacher?.Nationality == "Other" ? "selected" : "")>Other</option>
+                                            </select>
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="required-label">Address</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.address)" required name="address" placeholder="Enter current address" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <!-- Professional Info -->
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="required-label" for="maritalStatus">Select Marital Status:</label>
+                                            <select id="maritalStatus" class="form-select" name="maritalStatus" required>
+                                                <option value="" disabled @(ViewBag?.teacher?.MaritalStatus == null ? "selected" : "")>Select Marital Status</option>
+                                                <option value="Single" @(ViewBag?.teacher?.MaritalStatus == "Single" ? "selected" : "")>Single</option>
+                                                <option value="Married" @(ViewBag?.teacher?.MaritalStatus == "Married" ? "selected" : "")>Married</option>
+                                                <option value="Divorced" @(ViewBag?.teacher?.MaritalStatus == "Divorced" ? "selected" : "")>Divorced</option>
+                                                <option value="Widowed" @(ViewBag?.teacher?.MaritalStatus == "Widowed" ? "selected" : "")>Widowed</option>
+                                                <option value="Separated" @(ViewBag?.teacher?.MaritalStatus == "Separated" ? "selected" : "")>Separated</option>
+                                                <option value="Prefer not to say" @(ViewBag?.teacher?.MaritalStatus == "Prefer not to say" ? "selected" : "")>Prefer not to say</option>
+                                            </select>
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="required-label">Pan No.</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.PanNo)" required placeholder="Enter pan card no" name="panno" class="form-control panval" maxlength="10" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" title="PAN must be in format: 5 letters, 4 digits, 1 letter (e.g., ABCDE1234F)" style="text-transform: uppercase" />
+                                            <span id="panError" class="text-danger panError" sstyle="font-size: 0.9em;"></span>
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Profile</label>
+                                            <input type="file" name="profileIamge" id="profileIamge" class="form-control" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="required-label" for="experience">Years of Experience:</label>
+                                            @{
+                                                var selectedExperience = ViewBag?.teacher?.Experience?.ToString();
+                                            }
+
+                                            <select id="experience" class="form-select" name="experience" required>
+                                                <option value="" disabled @(string.IsNullOrEmpty(selectedExperience) ? "selected" : "")>Select Years of Experience</option>
+                                                <option value="0" @(selectedExperience == "0" ? "selected" : "")>0 (Fresher)</option>
+                                                <option value="1" @(selectedExperience == "1" ? "selected" : "")>1 Year</option>
+                                                <option value="2" @(selectedExperience == "2" ? "selected" : "")>2 Years</option>
+                                                <option value="3" @(selectedExperience == "3" ? "selected" : "")>3 Years</option>
+                                                <option value="4" @(selectedExperience == "4" ? "selected" : "")>4 Years</option>
+                                                <option value="5" @(selectedExperience == "5" ? "selected" : "")>5 Years</option>
+                                                <option value="6" @(selectedExperience == "6" ? "selected" : "")>6 Years</option>
+                                                <option value="7" @(selectedExperience == "7" ? "selected" : "")>7 Years</option>
+                                                <option value="8" @(selectedExperience == "8" ? "selected" : "")>8 Years</option>
+                                                <option value="9" @(selectedExperience == "9" ? "selected" : "")>9 Years</option>
+                                                <option value="10" @(selectedExperience == "10" ? "selected" : "")>10 Years</option>
+                                                <option value="11" @(selectedExperience == "11" ? "selected" : "")>11 Years</option>
+                                                <option value="12" @(selectedExperience == "12" ? "selected" : "")>12 Years</option>
+                                                <option value="13" @(selectedExperience == "13" ? "selected" : "")>13 Years</option>
+                                                <option value="14" @(selectedExperience == "14" ? "selected" : "")>14 Years</option>
+                                                <option value="15" @(selectedExperience == "15" ? "selected" : "")>15 Years</option>
+                                                <option value="16" @(selectedExperience == "16" ? "selected" : "")>16 Years</option>
+                                                <option value="17" @(selectedExperience == "17" ? "selected" : "")>17 Years</option>
+                                                <option value="18" @(selectedExperience == "18" ? "selected" : "")>18 Years</option>
+                                                <option value="19" @(selectedExperience == "19" ? "selected" : "")>19 Years</option>
+                                                <option value="20" @(selectedExperience == "20" ? "selected" : "")>20 Years</option>
+                                                <option value="21" @(selectedExperience == "21" ? "selected" : "")>21 Years</option>
+                                                <option value="22" @(selectedExperience == "22" ? "selected" : "")>22 Years</option>
+                                                <option value="23" @(selectedExperience == "23" ? "selected" : "")>23 Years</option>
+                                                <option value="24" @(selectedExperience == "24" ? "selected" : "")>24 Years</option>
+                                                <option value="25" @(selectedExperience == "25" ? "selected" : "")>25 Years</option>
+                                                <option value="26" @(selectedExperience == "26" ? "selected" : "")>26 Years</option>
+                                                <option value="27" @(selectedExperience == "27" ? "selected" : "")>27 Years</option>
+                                                <option value="28" @(selectedExperience == "28" ? "selected" : "")>28 Years</option>
+                                                <option value="29" @(selectedExperience == "29" ? "selected" : "")>29 Years</option>
+                                                <option value="30" @(selectedExperience == "30" ? "selected" : "")>30+ Years</option>
+                                            </select>
+
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Subject</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.Subject)" name="Subject" class="form-control" placeholder="Enter Subject" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="required-label" for="caste">Select Caste Category:</label>
+                                            @{
+                                                var selectedCaste = ViewBag?.teacher?.Caste as string;
+                                            }
+
+                                            <select id="caste" required class="form-select" name="Caste">
+                                                <option value="" disabled @(string.IsNullOrEmpty(selectedCaste) ? "selected" : "")>Select Caste</option>
+                                                <option value="General" @(selectedCaste == "General" ? "selected" : "")>General</option>
+                                                <option value="OBC" @(selectedCaste == "OBC" ? "selected" : "")>OBC (Other Backward Class)</option>
+                                                <option value="SC" @(selectedCaste == "SC" ? "selected" : "")>SC (Scheduled Caste)</option>
+                                                <option value="ST" @(selectedCaste == "ST" ? "selected" : "")>ST (Scheduled Tribe)</option>
+                                                <option value="EWS" @(selectedCaste == "EWS" ? "selected" : "")>EWS (Economically Weaker Section)</option>
+                                            </select>
+
+
+                                        </div>
+                                        @{
+                                            var maxDate = DateTime.Now.ToString("yyyy-MM-dd");
+                                            var joinDate = ViewBag?.teacher != null
+                                                ? ((DateTime)ViewBag.teacher.JoinDate).ToString("yyyy-MM-dd")
+                                                : DateTime.Now.ToString("yyyy-MM-dd");
+                                        }
+                                        <div class="mb-3">
+                                            <label class="required-label">Joining Date</label>
+                                            <input type="date" name="JoinDate" class="form-control" required   value="@joinDate" max="@maxDate" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="required-label">Religion</label>
+                                            @{
+                                                var selectedReligion = ViewBag?.teacher?.Religion as string;
+                                            }
+
+                                            <select id="religion" name="Religion" required class="form-select">
+                                                <option value="" disabled @(string.IsNullOrEmpty(selectedReligion) ? "selected" : "")>Select Religion</option>
+                                                <option value="Hinduism" @(selectedReligion == "Hinduism" ? "selected" : "")>Hinduism</option>
+                                                <option value="Islam" @(selectedReligion == "Islam" ? "selected" : "")>Islam</option>
+                                                <option value="Christianity" @(selectedReligion == "Christianity" ? "selected" : "")>Christianity</option>
+                                                <option value="Sikhism" @(selectedReligion == "Sikhism" ? "selected" : "")>Sikhism</option>
+                                                <option value="Buddhism" @(selectedReligion == "Buddhism" ? "selected" : "")>Buddhism</option>
+                                                <option value="Jainism" @(selectedReligion == "Jainism" ? "selected" : "")>Jainism</option>
+                                                <option value="Zoroastrianism" @(selectedReligion == "Zoroastrianism" ? "selected" : "")>Zoroastrianism (Parsi)</option>
+                                                <option value="Judaism" @(selectedReligion == "Judaism" ? "selected" : "")>Judaism</option>
+                                                <option value="Other" @(selectedReligion == "Other" ? "selected" : "")>Other</option>
+                                                <option value="Prefer not to say" @(selectedReligion == "Prefer not to say" ? "selected" : "")>Prefer not to say</option>
+                                            </select>
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="required-label">Designation</label>
+                                            <select required class="form-select" name="designation">
+                                                <option>Select Designation</option>
+                                                @if (ViewBag.designationlist != null)
+                                                {
+                                                    foreach (var item in ViewBag.designationlist)
+                                                    {
+                                                        <option @(ViewBag?.teacher?.designation == item.DesignationId ? "selected" : "") value="@item.DesignationId">@item.DesignationName</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                @*last employeement detail*@
+
+                                <hr />
+                                <h5 class="mt-4">Last Employeement Detail</h5>
+                                <div class="row">
+                                    <div class="col-sm-6">
+
+                                        <div class="mb-3">
+                                            <label>Last Employeement</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.LastSchoolName)" name="LastSchoolName" class="form-control" placeholder="Enter Last School Name" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Experience Document</label>
+                                            <input type="file" name="ExperienceDocument" id="ExperienceDocument" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="mb-3">
+                                            <label>Address</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.LastEmpAddress)" name="lastempAddress" class="form-control" placeholder="Enter address here" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Academic Info -->
+                                <hr />
+                                <h5 class="mt-4">Academic Qualifications</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>10th Qualification</h5>
+                                        <div class="mb-3">
+                                            <label>Board</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.TenthBoard)" name="TenthBoard" class="form-control" placeholder="Enter Board Of 10th " />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Passout Year</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.TenthPassoutYear)" name="TenthPassoutYear" class="form-control" placeholder="Enter Passout Year" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Percentage</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.TenthPercent)" name="TenthPercent" class="form-control" placeholder="Enter Percentage of 10th" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Marksheet</label>
+                                            <input type="file" name="TenthMarksheet" id="TenthMarksheet" class="form-control" />
+                                        </div>
+
+                                        <h5>Graduation</h5>
+                                        <div class="mb-3">
+                                            <label>Degree</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.GraduationDegree)" name="GraduationDegree" class="form-control" placeholder="Enter Degree Of Graduation" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Stream</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.GraduationDegree)" name="GraduationStream" class="form-control" placeholder="Enter Graduation Stream" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Year</label>
+                                            <input type="text" name="GraduationYear" value="@(ViewBag?.teacher?.GraduationYear)" class="form-control" placeholder="Enter Graduation Year" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Percentage</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.GraduationPercent)" name="GraduationPercent" class="form-control" placeholder="Enter Percentage" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Marksheet</label>
+                                            <input type="file" name="GraduationMarksheet" id="GraduationMarksheet" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <h5>12th Qualification</h5>
+                                        <div class="mb-3">
+                                            <label>Board</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.TwelfthBoard)" name="TwelfthBoard" class="form-control" placeholder="Enter Board Of 12th" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Passout Year</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.TwelfthPassoutYear)" name="TwelfthPassoutYear" class="form-control" placeholder="Enter Passout Year" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Percentage</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.TwelfthPercent)" name="TwelfthPercent" class="form-control" placeholder="Enter Percentage" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Marksheet</label>
+                                            <input type="file" name="TwelfthMarksheet" id="TwelfthMarksheet" class="form-control" />
+                                        </div>
+
+                                        <h5>Post Graduation</h5>
+                                        <div class="mb-3">
+                                            <label>Degree</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.PostGraduationDegree)" name="PostGraduationDegree" class="form-control" placeholder="Enter Degree Of Post Graduation" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Stream</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.PostGraduationStream)" name="PostGraduationStream" class="form-control" placeholder="Enter Post Graduation Stream" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Year</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.PostGraduationYear)" name="PostGraduationYear" class="form-control" placeholder="Enter Post Graduation Year" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Percentage</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.PostGraduationPercent)" name="PostGraduationPercent" class="form-control" placeholder="Enter Percentage" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Marksheet</label>
+                                            <input type="file" name="PostGraduationMarksheet" id="PostGraduationMarksheet" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Other Diploma -->
+                                <h5 class="mt-4">Other Diploma</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label>Diploma/Degree</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.OtherDiplomaDegree)" name="OtherDiplomaDegree" class="form-control" placeholder="Enter Degree Of Diploma" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Stream</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.OtherDiplomaDegree)" name="OtherDiplomaStream" class="form-control" placeholder="Enter Stream" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Year</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.OtherDiplomaYear)" name="OtherDiplomaYear" class="form-control" placeholder="Enter Year" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Percentage</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.OtherDiplomaPercent)" name="OtherDiplomaPercent" class="form-control" placeholder="Enter Percentage" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Marksheet</label>
+                                            <input type="file" name="OtherDiplomaMarksheet" id="OtherDiplomaMarksheet" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label>Bank Name</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.BankName)" name="bankname" class="form-control" placeholder="Enter bank name" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Account Holder Name</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.AccountHolderName)" name="accountholdername" class="form-control" placeholder="Enter Account Holder name" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="BankAccountNumber" class="form-label required-label">Account Number</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.BankAccountNumber != 0 && ViewBag?.teacher?.BankAccountNumber !=null ? ViewBag.teacher.BankAccountNumber.ToString() : "")"
+                                                   name="BankAccountNumber" id="BankAccountNumber" class="form-control"
+                                                   placeholder="Enter Account Number" pattern="\d{9,18}"
+                                                   title="Account number must be between 9 to 18 digits" />
+                                            <span id="BankAccountNumberError" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label>Re-enter Account Number</label>
+                                            <input type="number" value="@(ViewBag?.teacher?.BankAccountNumber != 0 && ViewBag?.teacher?.BankAccountNumber !=null ? ViewBag.teacher.BankAccountNumber.ToString() : "")" name="ReenterBankAccountNumber" id="ReenterBankAccountNumber" class="form-control" placeholder="Re-enter Account Number" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>IFSC Code</label>
+                                            <input type="text" value="@(ViewBag?.teacher?.IfscCode)" name="ifsccode" class="form-control" placeholder="Enter Account Number" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="row mt-4">
+                                    <div class="col-12 text-center">
+                                        <input id="btnSubmit" type="submit" value="@(ViewBag?.teacher!=null?"Update Teacher":"Register Teacher")" class="btn btn-primary fw-bold px-5" />
+                                    </div>
+                                </div>
+                            </form>
+                        </div> <!-- card-body -->
+                    </div> <!-- card -->
+                </div> <!-- col-12 -->
+            </div> <!-- row -->
+        </div> <!-- container-fluid -->
+    </div> <!-- content -->
+</div> <!-- content-page -->
+
+<script>
+    document.getElementById('BankAccountNumber').addEventListener('input', function () {
+        const input = this;
+        const errorSpan = document.getElementById('BankAccountNumberError');
+
+        if (input.validity.valid) {
+            errorSpan.textContent = '';
+        } else if (input.validity.valueMissing) {
+            errorSpan.textContent = 'Account number is required.';
+        } else if (input.validity.patternMismatch) {
+            errorSpan.textContent = 'Account number must be 9 to 18 digits.';
+        } else {
+            errorSpan.textContent = 'Invalid input.';
+        }
+    });
+
+    let isValid = true;
+    $("#BankAccountNumber , #ReenterBankAccountNumber").on("blur", function () {
+        //$("#ReenterBankAccountNumber").attr("required",true)
+        if (Number($("#BankAccountNumber").val()) != Number($("#ReenterBankAccountNumber").val()) && $("#ReenterBankAccountNumber").val()!="")
+        {
+            isValid = false;
+            Swal.fire({
+                icon: 'info',
+                title: 'Warning',
+                text: "Account number did not match."
+            });
+        } else {
+            isValid = true;
+        }
+    })
+
+    $('#teacherForm').on('submit', function (e) {
+        e.preventDefault(); 
+        if (!isValid) {
+            return
+        }
+
+        Swal.fire({
+            title: "Please Wait..!",
+            html: "your request are under process",
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        })
+
+        var formData = new FormData(this); 
+
+        if ($("#ExperienceDocument").get(0).files.length > 0) {
+            formData.append("ExperienceDocument", $("#ExperienceDocument").get(0).files[0])
+        }
+        if ($("#TenthMarksheet").get(0).files.length > 0) {
+            formData.append("TenthMarksheet", $("#TenthMarksheet").get(0).files[0])
+        }
+        if ($("#GraduationMarksheet").get(0).files.length > 0) {
+            formData.append("GraduationMarksheet", $("#GraduationMarksheet").get(0).files[0])
+        }
+        if ($("#TwelfthMarksheet").get(0).files.length > 0) {
+            formData.append("TwelfthMarksheet", $("#TwelfthMarksheet").get(0).files[0])
+        }
+        if ($("#PostGraduationMarksheet").get(0).files.length > 0) {
+            formData.append("PostGraduationMarksheet", $("#PostGraduationMarksheet").get(0).files[0])
+        }
+        if ($("#OtherDiplomaMarksheet").get(0).files.length > 0) {
+            formData.append("OtherDiplomaMarksheet", $("#OtherDiplomaMarksheet").get(0).files[0])
+        }
+        if ($("#profileIamge").get(0).files.length > 0) {
+            formData.append("profileImage", $("#profileIamge").get(0).files[0])
+        }
+
+        $.ajax({
+            url: '/Admin/TeacherRegistration',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                console.log(res)
+                if (res.success) {
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: res.message
+                    }).then(() => {
+
+                        if (res.type == "update" || res.type =="add") location.href = "/admin/TeacherRegistrationList"
+                        $("#teacherForm")[0].reset()
+                    })
+                  
+           
+                } else {
+                    console.log('Missing', res.invalidFields);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: res.message
+                    });
+                }
+            },
+            error: function (xhr) {
+
+                let message = "Something went wrong";
+
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;  
+                }
+                else if (xhr.responseText) {
+                    try {
+                        let parsed = JSON.parse(xhr.responseText);
+                        if (parsed.message) {
+                            message = parsed.message;   
+                        }
+                    } catch (e) {
+                        message = xhr.responseText;
+                    }
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: message
+                });
+            }
+        });
+    });
+    $(function () {
+        $('.panval').on('input', function () {
+            let value = $(this).val().toUpperCase();
+            $(this).val(value);
+
+            const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+
+            if (value.length < 10) {
+                $('.panError').text('PAN must be 10 characters long.');
+            } else if (!panRegex.test(value)) {
+                $('.panError').text('PAN must be in format: 5 letters, 4 digits, 1 letter (e.g., ABCDE1234F)');
+            } else {
+                $('.panError').text('');
+            }
+        });
+    });
+
+</script>

@@ -1,0 +1,182 @@
+﻿
+@{
+    ViewBag.Title = "UploadAttendaceReportForStaff";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row justify-content-between mt-2">
+                <div class="col-sm-3 fw-bold fs-4">Staff Attendance</div>
+                <div class="col-sm-3 text-end">
+                    <!-- ✅ Upload Button to Trigger Modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                        Upload Attendance Excel
+                    </button>
+                </div>
+            </div>
+            <!-- ✅ Bootstrap 5 Modal -->
+            <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="uploadModalLabel">Upload Biometric Attendance</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <!-- ✅ Upload Form -->
+                        @using (Html.BeginForm("UploadAttendanceExcel", "admin", FormMethod.Post, new { enctype = "multipart/form-data", id = "uploadForm" }))
+                        {
+                            <div class="modal-body">
+                                <div class="mb-2">
+                                    <label for="file" class="form-label">Choose Excel File (.xls/.xlsx):</label>
+                                    <input type="file" name="file" class="form-control" id="file" accept=".xls,.xlsx" required />
+                                </div>
+                            </div>
+
+                            <div class="text-center mb-2">
+                                <button type="submit" class="btn btn-success">Upload</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Department & Date Filters -->
+            <form id="filterForm" class="w-100" action="/admin/UploadAttendaceReportForStaff" method="get">
+                <div class="row align-items-end justify-content-center">
+                    <div class="col-md-3">
+                        <label for="departmentFilter" class="form-label">Filter by Department</label>
+                        <select id="departmentFilter" name="department" class="form-select">
+                            <option value="">--Select Department--</option>
+                            @foreach (var dept in ViewBag.Department)
+                            {
+                                <option @(Request.QueryString["department"]?.ToString() == dept ? "selected" : "") value="@dept">@dept</option>
+                            }
+                        </select>
+                    </div>
+
+                    @*<div class="col-md-3">
+                            <label for="startDate" name="startDate" class="form-label">Start Date</label>
+                            <input type="date"
+                                   id="startDate"
+                                   name="startDate"
+                                   class="form-control"
+                                   value="@(Request.QueryString["startDate"] ?? "")" />
+
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="endDate" class="form-label">End Date</label>
+                            <input type="date" value="@(Request.QueryString["endDate"] ?? "")" name="endDate" id="endDate" class="form-control" />
+                        </div>*@
+                    <div class="col-sm-3">
+                        <input type="submit" value="Filter" class="btn btn-primary" />
+                    </div>
+                </div>
+            </form>
+
+            <!-- DataTable -->
+            <table id="datatable" class="table display table-bordered table-striped table-hover mt-3">
+                <thead class="table-dark">
+                    <tr>
+                        <th>SR</th>
+                        <th>Department</th>
+                        <th>Emp Code</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int srNo = 1;
+                    }
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@srNo</td>
+                            <td>@item.DepartmentName</td>
+                            <td>@item.EmployeeCode</td>
+                            <td>@item.EmployeeName</td>
+                            <td>
+
+                                <a class="btn btn-warning btn-sm" href="/admin/ShowHistory?department=@item.DepartmentName&empcode=@item.EmployeeCode">Show History</a>
+
+                            </td>
+                        </tr>
+                        srNo++;
+                    }
+                </tbody>
+            </table>
+
+            @section scripts {
+                <script>
+                    $(document).ready(function () {
+                        function toDMY(isoDate) {
+                            if (!isoDate) return "";
+                            const [yyyy, MM, dd] = isoDate.split("-");
+                            return `${dd}-${MM}-${yyyy}`;
+                        }
+                        // Initialize DataTable
+                        $('#attendanceTable').DataTable();
+
+                    });
+                </script>
+            }
+
+
+        </div>
+    </div>
+</div>
+
+
+@if (TempData["Message"] != null)
+{
+
+    <script>
+        Swal.fire({
+            title: "Success",
+            icon: "success",
+            text:"@TempData["Message"]"
+        })
+    </script>
+
+}
+@{
+    var errorMsg = TempData["Error"] != null ? TempData["Error"].ToString() : "";
+}
+
+@if (!string.IsNullOrEmpty(errorMsg))
+{
+    <script>
+        $(document).ready(function () {
+            let msg = @Html.Raw(Json.Encode(errorMsg));
+            Swal.fire({
+                title: "Error",
+                icon: "error",
+                text: msg
+            });
+        });
+    </script>
+}
+
+
+
+<script>
+    $('#uploadForm').on('submit', function () {
+        Swal.fire({
+            title: 'Uploading Attendance',
+            text: 'Please wait while we process your file...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    });
+</script>

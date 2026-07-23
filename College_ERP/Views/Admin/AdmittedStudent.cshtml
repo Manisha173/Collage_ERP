@@ -1,0 +1,260 @@
+﻿
+@{
+    ViewBag.Title = "AdmittedStudent";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var data = ViewData["admittedStudents"] as List<College_ERP.Models.Admin.RegistrationModel>;
+}
+<style>
+    #datatable {
+        white-space: nowrap;
+    }
+</style>
+<div class="content-page">
+    <div class="container-fluid">
+        <nav class="my-3" aria-label="breadcrumb"
+             style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+            <ol class="breadcrumb bg-light rounded p-2">
+                <li class="breadcrumb-item ">
+                    <a class="text-decoration-none text-primary" href="/admin/admissionmanagement">Admission Management</a>
+                </li>
+                <li class="breadcrumb-item ">
+                    <a class="text-decoration-none text-primary" href="/admin/studentRegistration">Admit Student</a>
+                </li>
+                <li class="breadcrumb-item ">
+                    <a class="text-decoration-none text-primary" href="/admin/studentRegistrationlist">Student List</a>
+                </li>
+                <li class="breadcrumb-item active text-dark" aria-current="page">
+                    Promote Student
+                </li>
+               
+            </ol>
+        </nav>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card px-0">
+                    <div class="card-header border-bottom-0 p-0 m-0">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <h4 class="py-0 my-0">Admitted Student List</h4>
+                            </div>
+                            <div class="col-sm-8 d-flex align-items-center">
+                                <label class="form-label me-3 pt-1">Search By Academic year</label>
+                                <select name="academicyear" class="form-control w-50" id="academicyear">
+                                    <option selected disabled value="">--Select Academic Year--</option>
+                                    @{
+                                        for (int i = 0; i <= 10; i++)
+                                        {
+                                            <option @(Request.QueryString["year"] == (DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year) ? "selected" : "") value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body px-0 m-0">
+                        <div class="table-responsive">
+                            <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Admission No</th>
+                                        <th>Date Of Admission</th>
+                                        <th>Student Name</th>
+                                        <th>Class</th>
+                                        <th>Student Email</th>
+                                        <th>Mobile Number</th>
+                                        <th>Student Photo</th>
+
+                                        <th style="width:150px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (data != null && data.Count > 0)
+                                    {
+                                        int srNo = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@srNo</td>
+                                                <td>@item.AdmissionNo</td>
+                                                <td>@Convert.ToDateTime(item.DateOfAdmission).ToString("dd-MMM-yyyy")</td>
+                                                <td>
+                                                    <a href="@Url.Action("StudentDetails", "Admin", new { id = item.StudentId })">
+                                                        @item.StudentName
+                                                    </a>
+                                                </td>
+                                                <td>@item.ClassName @(string.IsNullOrEmpty(item.SectionName)?"":"-") @item.SectionName</td>
+                                                <td>@item.StudentEmail</td>
+                                                <td>@item.MobileNo</td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(item.StudentPhotos))
+                                                    {
+                                                        <a href="@Url.Content(item.StudentPhotos)" target="_blank">View</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Not Uploaded</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-sm promoteStudent" href="#" data-id="@item.StudentId" data-bs-toggle="modal" data-bs-target="#PromoteStudentModal" title="Promote Student">
+                                                        <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            srNo++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Add Timetable modal -->
+<div class="modal fade" id="PromoteStudentModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Promote Student</h1>
+                <button type="button" class="btn-close" id="CloseModalPromoteStudent"></button>
+            </div>
+            <div class="modal-body">
+                <form id="PromoteStudentForm">
+                    <input type="hidden" name="studentId" id="studentidd" />
+                    <div class="row">
+                        <div class="col-sm-4 mb-2">
+                            <label for="class" class="form-label">Class</label>
+                            <select id="class" name="classId" class="form-select" required>
+                                <option value="">--Select Class--</option>
+                                @if (ViewBag.ClassList != null)
+                                {
+                                    foreach (var item in ViewBag.ClassList)
+                                    {
+                                        <option value="@item.ClassId">@item.ClassName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="section" class="form-label">Section</label>
+                            <select id="section" name="sectionId" class="form-select">
+                                <option value="">--Select Section--</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <button type="submit" class="btn btn-primary">Promote</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#academicyear").on("change", function () {
+            let input = $(this).val();
+            location.href = "/admin/AdmittedStudent?year=" + input;
+        })
+
+        $('#CloseModalPromoteStudent').on('click', function () {
+            $('#PromoteStudentForm')[0].reset();
+            $('#PromoteStudentModal').modal('hide');
+        });
+        async function getSectionByClassId(id) {
+            await $.ajax({
+                url: '/admin/GetSubjectandSectionByClassId', type: 'get', data: { id: id },
+                success: function (data) {
+                    console.log('sections', data.section);
+                    if (data) {
+                        let ele = $('#section')
+                        ele.empty();
+                        ele.append($('<option>', {
+                            value: '',
+                            text: '-- Select Section --'
+                        }));
+
+                        $.each(data.section, function (index, section) {
+                            ele.append($('<option>', {
+                                value: section.SectionId,
+                                text: section.SectionName
+                            }));
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            });
+        }
+        $('#class').on('change',async function () {
+            let id = $(this).val();
+           await getSectionByClassId(id);
+        });
+        $('.promoteStudent').on('click', function () {
+            let id = $(this).data('id');
+            $.ajax({
+                url: '/admin/PromoteStudent', type: 'get', data: { id: id },
+                success: function (res) {
+                    console.log(res);
+                    if (res) {
+                        $('#studentidd').val(res.StudentId);
+                        $('#class').val(res.ClassId);
+                        getSectionByClassId(res.ClassId).then(() => {
+                            $('#section').val(res.SectionId);
+                        })                        
+                    } else {
+                        Swal.fire('Error', 'Data not found!', 'error');
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire('Error', 'Some error occured during fetching data', 'error');
+                }
+            })
+        })
+        $('#PromoteStudentForm').submit(function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            var data = new FormData(this);
+
+            $.ajax({
+                type: 'Post',
+                url: '/admin/PromoteStudent',
+                data: data,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+    });
+</script>

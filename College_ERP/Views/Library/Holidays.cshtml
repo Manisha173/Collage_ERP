@@ -1,0 +1,116 @@
+﻿@model List<College_ERP.Models.Teacher.HolidayModel>
+@{
+    ViewBag.Title = "Holidays";
+    Layout = "~/Views/Shared/_libraryLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <!-- Heading + Centered Filter -->
+                    <div class="row mb-3 align-items-center">
+                        <!-- Left-aligned heading -->
+                        <div class="col-md-4">
+                            <h4 class="card-title mb-0">Holiday List</h4>
+                        </div>
+
+                        <!-- Centered filter -->
+                        <div class="col-md-4 d-flex justify-content-center">
+                            <div>
+                                <label for="holidayTypeFilter" class="form-label fw-bold mb-1 text-center d-block">Filter by Holiday Type:</label>
+                                <select id="holidayTypeFilter" class="form-select" style="min-width: 200px;">
+                                    <option value="">-- All Types --</option>
+                                    @foreach (var type in Model.Select(m => m.HolidayType).Distinct())
+                                    {
+                                        <option value="@type">@type</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Right side left empty or can add buttons if needed -->
+                        <div class="col-md-4"></div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Holiday From</th>
+                                    <th>Holiday To</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int sr = 1;
+                                }
+                                @foreach (var holiday in Model)
+                                {
+                                    <tr>
+                                        <td>@sr</td>
+                                        <td>@holiday.Title</td>
+                                        <td>@holiday.HolidayType</td>
+                                        <td>@holiday.HolidayDateFrom.ToString("dd-MMM-yyyy")</td>
+                                        <td>@holiday.HolidayDateTo.ToString("dd-MMM-yyyy")</td>
+                                        <td><a role="button" data-descr="@holiday.Description" class="showDesc" title="Show Description">View</a></td>
+                                    </tr>
+                                    sr++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal of description-->
+<div class="modal fade" id="descModal" tabindex="-1" aria-labelledby="descModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-bg-primary">
+                <h5 class="modal-title" id="descModalLabel">Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="descModalBody">
+                <!--Description here-->
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.showDesc').on('click', function () {
+            let dsc = $(this).data('descr');
+            $('#descModalBody').html(dsc);
+            $('#descModal').modal('show');
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#holidayTypeFilter').on('change', function () {
+            var selectedType = $(this).val().toLowerCase();
+
+            $('#datatable tbody tr').each(function () {
+                var rowType = $(this).find('td:eq(2)').text().toLowerCase();
+
+                if (selectedType === "" || rowType === selectedType) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>

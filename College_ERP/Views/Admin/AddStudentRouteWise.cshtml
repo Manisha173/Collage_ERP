@@ -1,0 +1,687 @@
+﻿
+@{
+    ViewBag.Title = "AddStudentRouteWise";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var data = ViewData["stlist"] as List<College_ERP.Models.Admin.AddStudentInBus>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addbus">Add Bus</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/adddriver">Add Driver</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddBusRoute">  Add Bus Route </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/AssignBusToDriver"> Assign Bus to Driver </a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Student In Bus
+                    </li>
+
+                </ol>
+            </nav>
+
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Assign Bus to Student</h1>
+                    <button type="button" class="btn-close" id="closeModalBtn" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="addStudentInBus">
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Class</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select type="text" id="class" name="classId" class="form-control classbind" required>
+                                    <option value="">Select Class</option>
+                                    @if (ViewBag.ClassList != null)
+                                    {
+                                        foreach (var item in ViewBag.ClassList)
+                                        {
+                                            <option value="@item.ClassId">@item.ClassName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Section</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select type="text" id="section" name="sectionId" class="form-control bindsection" required>
+                                    <option value="">Select Section</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Student Name</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select type="text" id="studentName" name="studentId" class="form-control bindStudent" required>
+                                    <option value="">Select Student</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Bus No</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select type="text" id="BussNo" name="busId" class="form-control" required>
+                                    <option value="">Select Bus No</option>
+                                    @if (ViewBag.list != null)
+                                    {
+                                        foreach (var item in ViewBag.list)
+                                        {
+                                            <option value="@item.Id">@item.BusNo (@item.Type)</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Pick Up Point</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select type="text" id="pickUpPoint" name="pickUpPointId" class="form-control" required>
+                                    <option value="">Select Pickup Point</option>
+
+                                </select>
+
+                            </div>
+                        </div>
+                        @*<div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Fee</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="number" id="fee" name="fee" class="form-control" required placeholder="Enter Fee" />
+                            </div>
+                        </div>*@
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span>Student in Bus List</span><!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Assign Bus to Student
+                        </button>
+                    </h4>
+                    <table id="assignbusTable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Student Name</th>
+                                <th>Class</th>
+                                <th>Buss No</th>
+                                <th>Pick Up Point</th>
+                                @*<th>Fee</th>*@
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (data != null)
+                            {
+                                int count = 1;
+                                foreach (var item in data)
+                                {
+                                    <tr>
+                                        <td>@count</td>
+                                        <td>@item.studentName</td>
+                                        <td>@item.className - @item.sectionName</td>
+                                        <td>@item.bussNo (@item.type)</td>
+                                        <td>@item.pickupPoint</td>
+                                        @*<td>@item.fee</td>*@
+                                        <td class="text-center">
+                                            <a role="button" title="Update" data-id="@item.id" class="btn btn-sm editStudentInBus p-0"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                            <a role="button" class="btn btn-sm deleteStudentFromBus p-0" data-id="@item.id" title="Delete"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                        </td>
+                                    </tr>
+                                    count++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal to Update Stock Material-->
+    <div class="modal fade" tabindex="-1" id="updateModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title">Update Student In Bus</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="addStudentInBus">
+                        <input type="hidden" value="0" name="Id" id="id" />
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Class</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select type="text" id="upclass" name="classId" class="form-control classbind" required>
+                                    <option value="">Select Class</option>
+                                    @if (ViewBag.ClassList != null)
+                                    {
+                                        foreach (var item in ViewBag.ClassList)
+                                        {
+                                            <option value="@item.ClassId">@item.ClassName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Section</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select type="text" id="upsection" name="sectionId" class="form-control bindsection" required>
+                                    <option value="">Select Section</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Student Name</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select type="text" id="upstudentName" name="studentId" class="form-control bindStudent" required>
+                                    <option value="">Select Student</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Bus No</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select type="text" id="upBussNo" name="busId" class="form-control BUSNO" required>
+                                    <option value="">Select Bus No</option>
+                                    @if (ViewBag.list != null)
+                                    {
+                                        foreach (var item in ViewBag.list)
+                                        {
+                                            <option value="@item.Id">@item.BusNo (@item.Type)</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Pick Up Point</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                
+                                <select type="text" id="uppickUpPoint" name="pickUpPointId" class="form-control" required>
+                                    <option value="">Select Pickup Point</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        @*<div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Fee</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="number" id="upfee" name="fee" class="form-control" required placeholder="Enter Fee" />
+                            </div>
+                        </div>*@
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+
+<script>
+        $(document).ready(function () {
+            $('#BussNo').change(function () {
+                var busId = $(this).val();
+                $('#pickUpPoint').empty().append('<option value="">Select Pickup Point</option>');
+
+                if (busId) {
+                    $.ajax({
+                        url: '/admin/GetPickupPointsByBusId', 
+                        type: 'GET',
+                        data: { busId: busId },
+                        success: function (data) {
+                            $.each(data, function (i, item) {
+                                $('#pickUpPoint').append($('<option>', {
+                                    value: item.id,
+                                    text: item.pickupPoint
+                                }));
+                            });
+                        },
+                        error: function () {
+                            alert('Failed to retrieve pickup points.');
+                        }
+                    });
+                }
+            });
+            $('#upBussNo').change(function () {
+                var busId = $(this).val();
+                $('#uppickUpPoint').empty().append('<option value="">Select Pickup Point</option>');
+
+                if (busId) {
+                    $.ajax({
+                        url: '/admin/GetPickupPointsByBusId', 
+                        type: 'GET',
+                        data: { busId: busId },
+                        success: function (data) {
+                            $.each(data, function (i, item) {
+                                $('#uppickUpPoint').append($('<option>', {
+                                    value: item.id,
+                                    text: item.pickupPoint
+                                }));
+                            });
+                        },
+                        error: function () {
+                            alert('Failed to retrieve pickup points.');
+                        }
+                    });
+                }
+            });
+    });
+
+   
+    function initializeDataTable() {
+        debugger
+        let table = $('#assignbusTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![7].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![7].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+
+    $(document).ready(function () {
+        initializeDataTable();
+
+        $('#closeModalBtn').on('click', function () {
+            $('.addStudentInBus')[0].reset();
+            $('#exampleModal').modal('hide');
+        })
+    })
+
+    $(".addStudentInBus").on('submit', function (e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Please Wait!',
+            text: 'Processing Your Request...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        debugger
+        let formdata = new FormData(this);
+
+        $.ajax({
+            url: '/admin/AddStudentRouteWise', type: 'post', data: formdata, contentType: false, processData: false,
+            success: function (res) {
+                if (res.status) {
+                    Swal.fire({
+                        title: 'Success', text: res.message, icon: 'success',
+                        didClose: () => { location.reload(true); }
+                    });
+                }
+                else {
+                    Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                }
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Server Error. Try Again Later!', icon: 'error'
+                });
+                console.log(xhr)
+            }
+        });
+    })
+    $(".deleteStudentFromBus").on('click', function () {
+        debugger
+        let id = $(this).data('id');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to delete this item?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            customClass: {
+                confirmButton: 'mx-2 btn btn-danger',
+                cancelButton: 'mx-2 btn btn-light'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Please Wait!',
+                    text: 'Processing Your Request...',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '/admin/DeleteStudentRouteWise',
+                    type: 'get',
+                    data: { Id: id },
+                    success: function (res) {
+                        console.log(res);
+                        if (res.status) {
+                            Swal.fire({
+                                title: 'Success',
+                                text: res.message,
+                                icon: 'success',
+                                didClose: () => {
+                                    location.reload(true);
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: res.message,
+                                icon: 'warning'
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Server Error. Try Again Later!',
+                            icon: 'error'
+                        });
+                        console.log(xhr);
+                    }
+                });
+            } else {
+                Swal.fire('Cancelled', 'Your item is safe.', 'info');
+            }
+        });
+    });
+
+    $(".editStudentInBus").on('click', function () {
+        debugger
+        let id = $(this).data("id");
+        Swal.fire({
+            title: 'Please wait!',
+            text: 'Loading data...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        $.ajax({
+            url: '/admin/EditStudentInBus',
+            type: 'get',
+            data: { id: id },
+            success: function (res) {
+                console.log('data', res);
+                if (res) {
+                    $("#id").val(res[0].id);
+                    $("#upclass").val(res[0].classId);
+                    $(".classbind").trigger("change");
+
+                    $("#upBussNo").val(res[0].busId);
+                    $(".BUSNO").trigger("change");
+
+                    // ✅ Corrected pickup point binding
+                    var busId = res[0].busId;
+                    $('#uppickUpPoint').empty().append('<option value="">Select Pickup Point</option>');
+
+                    if (busId) {
+                        $.ajax({
+                            url: '/admin/GetPickupPointsByBusId',
+                            type: 'GET',
+                            data: { busId: busId },
+                            success: function (data) {
+                                $.each(data, function (i, item) {
+                                    $('#uppickUpPoint').append($('<option>', {
+                                        value: item.id,
+                                        text: item.pickupPoint
+                                    }));
+                                });
+                               
+                                $('#uppickUpPoint').val(res[0].pickUpPointId);
+                            },
+                            error: function () {
+                                alert('Failed to retrieve pickup points.');
+                            }
+                        });
+                    }
+
+                    $("#upfee").val(res[0].fee);
+
+                    $.ajax({
+                        url: '/Admin/GetSectionByClassId',
+                        type: 'get',
+                        data: { id: res[0].classId },
+                        success: function (response) {
+                            $("#upsection").html(`<option selected disabled>--Select Section--</option>`);
+                            if (response && response.length > 0) {
+                                $.each(response, function (index, item) {
+                                    $("#upsection").append(`<option value='${item.SectionId}'>${item.SectionName}</option>`);
+                                });
+
+                                $('#upsection').val(res[0].sectionId);
+
+                                bindstudentonclassandsection(res[0].classId, res[0].sectionId).then(() => {
+                                    $('#upstudentName').val(res[0].studentId);
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Something went wrong with the request'
+                            });
+                        }
+                    });
+
+                    Swal.close();
+                    $("#updateModal").modal('show');
+                }
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to load student data.'
+                });
+            }
+        });
+    });
+    $("#upclass").on("change", function () {
+        $("#upsection").html(`<option selected disabled>--Select Section--</option>`);
+        let id = $(this).val();
+        Swal.fire({
+            title: 'Please wait!',
+            text: 'Loading Section...',
+            outsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        $.ajax({
+            url: '/Admin/GetSectionByClassId',
+            type: 'get',
+            data: { id: id },
+            success: function (response) {
+                if (response && response.length > 0) {
+                    $.each(response, function (index, item) {
+                        $("#upsection").append(`<option value='${item.SectionId}'>${item.SectionName}</option>`);
+                    });
+                    Swal.close();
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'error',
+                    text: 'Something went wrong with the request'
+                });
+            }
+        });
+    });
+
+    $("#class").on("change", function () {
+        $("#section").html(`<option selected disabled>--Select Section--</option>`);
+        let id = $(this).val();
+        Swal.fire({
+            title: 'Please wait!',
+            text: 'Loading Section...',
+            outsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        $.ajax({
+            url: '/Admin/GetSectionByClassId',
+            type: 'get',
+            data: { id: id },
+            success: function (response) {
+                if (response && response.length > 0) {
+                    $.each(response, function (index, item) {
+                        $("#section").append(`<option value='${item.SectionId}'>${item.SectionName}</option>`);
+                    });
+                    Swal.close();
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'error',
+                    text: 'Something went wrong with the request'
+                });
+            }
+        });
+    });
+    $('#section').change(async function () {
+        debugger
+        let classid = $('#class').val();
+        let sectionid = $(this).val();
+        await bindstudentonclassandsection(classid, sectionid);
+    })
+    $('#upsection').change(async function () {
+        debugger
+        let classid = $('#upclass').val();
+        let sectionid = $(this).val();
+        await bindstudentonclassandsection(classid, sectionid);
+    })
+
+    async function bindstudentonclassandsection(classid, sectionid) {
+        Swal.fire({
+            title: 'Please wait!',
+            text: 'Loading Student...',
+            outsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        await $.ajax({
+            url: '/admin/GetStudentsByClassAndSectionForBus',
+            type: 'GET',
+            data: { classId: classid, sectionId: sectionid },
+            success: function (data) {
+                Swal.close()
+                $('.bindStudent').empty();
+
+                let tableBody = '<option selected disabled value="">--select student--</option>';
+                data.forEach(student => {
+                    tableBody += `
+<option value="${student.StudentId}">${student.StudentName}</option>`;
+                });
+                $('.bindStudent').html(tableBody);
+
+            },
+            error: function (xhr) {
+                console.log(xhr);
+                Swal.fire("error", "Failed to load student", "error");
+                $('.bindStudent').html('<option selected disabled value="">--No student--</option>');
+            }
+        });
+    }
+
+</script>

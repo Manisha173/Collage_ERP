@@ -1,0 +1,724 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from zoyothemes.com/silva/html/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Apr 2025 07:35:16 GMT -->
+<!-- Added by HTTrack -->
+<!--<meta http-equiv="content-type" content="text/html;charset=UTF-8" />--><!-- /Added by HTTrack -->
+<head>
+
+    <meta charset="utf-8" />
+    <title>College_ERP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A fully featured admin theme which can be used to build CRM, CMS, etc." />
+    <meta name="author" content="macreel" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assets/images/favicon.ico" />
+    <link rel="stylesheet" href="~/assets/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="~/assets/fontawsome/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- App css -->
+    <link href="~/assets/css/app.min.css" rel="stylesheet" />
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" />
+    <link href="~/assets/tom-select/tom-select.css" rel="stylesheet" />
+    <link href="~/assets/js/sweetalert/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet" />
+    <script src="~/assets/libs/jquery/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.2/css/buttons.dataTables.css" />
+
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif !important;
+            background-color: white !important;
+            color: #19476d !important;
+        }
+       
+        th {
+            white-space: nowrap !important;
+        }
+
+        .college-theme .btn-primary {
+            background-color: #19476d !important;
+            border-color: #19476d !important;
+            color: white !important;
+        }
+
+        .college-theme a {
+            color: #19476d !important;
+        }
+
+        .college-theme h1,
+        .college-theme h2,
+        .college-theme h3,
+        .college-theme h4 {
+            color: #19476d !important;
+        }
+
+        th {
+            background: #287f71 !important;
+            color: antiquewhite !important;
+            border-radius: 0 !important;
+            white-space: nowrap;
+        }
+
+        td {
+            white-space: nowrap;
+        }
+
+        .dt-layout-end {
+            text-align: end !important;
+            margin-bottom: 5px !important;
+        }
+
+        .dt-layout-start {
+            float: left !important;
+        }
+
+        .modal-header {
+            background: teal;
+            color: white;
+        }
+
+        .required-label::after {
+            content: " *" !important;
+            color: red !important;
+        }
+
+        .note-editable {
+            background: white !important;
+        }
+
+        .dt-search {
+            float: right !important;
+            margin-bottom: 10px !important;
+        }
+
+        .dt-buttons {
+            float: left;
+        }
+
+        a {
+            white-space: nowrap;
+        }
+
+        .buttons-excel {
+            background-color: #217346 !important;
+            color: white !important;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* PDF red */
+        .buttons-pdf {
+            background-color: #D32F2F !important;
+            color: white !important;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+
+
+<!-- body start -->
+<body data-menu-color="light" data-barba="wrapper" data-sidebar="default">
+
+    <!-- Begin page -->
+    <div id="app-layout">
+
+
+        <!-- Topbar Start -->
+        <div class="topbar-custom">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between">
+                    <ul class="list-unstyled topnav-menu mb-0 d-flex align-items-center">
+                        <li>
+                            <button class="button-toggle-menu nav-link">
+                                <i data-feather="menu" class="noti-icon"></i>
+                            </button>
+                        </li>
+                        <li class="d-none d-lg-block">
+                            <h5 class="mb-0"></h5>
+                        </li>
+                    </ul>
+                    <ul class="list-unstyled  topnav-menu mb-0 d-flex align-items-center" id="searchContainer">
+                        <li class="mx-4 position-relative" style="width:300px;">
+                            <form method="post" id="searchForm">
+                                <input id="searchComponent" type="search" class="form-control" placeholder="Search Module..." />
+                            </form>
+                            <ul id="componentUrlContainer" class="list-unstyled d-none bg-light rounded border w-100 position-absolute shadow-sm mt-1">
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                <div class="avatar rounded-circle d-inline-block overflow-hidden" style="width: 40px; height: 40px;">
+                                    <img class="admin-avatar" id="adminI1" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;" />
+                                </div>
+
+                                <span class="ms-1 fw-bold" id="admin-name"></span>
+                                <i data-feather="chevron-down" class="me-1"></i>
+
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow p-3" aria-labelledby="userDropdown" style="width: 250px;">
+                                <li class="text-center mb-2">
+                                    <div class="avatar rounded-circle d-inline-block overflow-hidden" style="width: 40px; height: 40px;">
+                                        <img class="admin-avatar" id="adminI2" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;" />
+                                    </div>
+                                    <div class="fw-bold mt-2">@User.Identity.Name</div>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <div class="d-flex justify-content-center">
+                                        <a id="admin-profile-link" class="dropdown-item fw-bold w-50 text-center" href="/admin/AdminProfile">
+                                            <i data-feather="user" class="me-1 text-primary"></i>Profile
+                                        </a>
+
+                                        <a class="dropdown-item fw-bold w-50 text-center" href="#" id="logoutuser">
+                                            <i data-feather="log-out" class="me-1 text-danger"></i>Logout
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+
+
+                        </li>
+                    </ul>
+
+                    @*<ul class="list-unstyled topnav-menu mb-0 d-flex align-items-center">
+                            <li><button class="btn btn-outline-info" id="logoutuser">Logout</button></li>
+                        </ul>*@
+                </div>
+
+            </div>
+
+        </div>
+        <!-- end Topbar -->
+        <!-- Left Sidebar Start -->
+        <div class="app-sidebar-menu">
+            <div class="h-100" data-simplebar>
+
+                <!--- Sidemenu -->
+                <div id="sidebar-menu">
+
+                    <div class="logo-box">
+                        <a class='logo logo-light fs-3' href="/admin/dashboard">
+                            CollegeERP
+                        </a>
+                        <a class='logo logo-dark fs-3' href='/admin/dashboard'>
+                            CollegeERP
+                        </a>
+                    </div>
+
+                    <ul id="side-menu">
+
+                        <!--Dashboard-->
+                        <li id="sidebarfavoriteContainer">
+                            <a href="#sidebarAuthsearch" data-bs-toggle="collapse">
+                                <i class="fa-solid text-warning fa-star"></i>
+                                <span> Favorite </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="sidebarAuthsearch">
+                                <ul class="nav-second-level" id="favoriteUrlContainer">
+                                </ul>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="/admin/dashboard">
+                                <i data-feather="home"></i>
+                                <span>
+                                    Dashboard
+                                </span>
+                            </a>
+
+
+                        </li>
+
+                        @*master data*@
+                        <!--<li>
+                            <a href="#sidebarAuth1" data-bs-toggle="collapse">
+                                <i data-feather="layers"></i>
+                                <span> Master </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="sidebarAuth1">
+                                <ul class="nav-second-level">-->
+                        @*<li>
+                                <a class='tp-link' href='/admin/adddesignation'>Add Designation</a>
+                            </li>*@
+
+                        <!--</ul>
+                            </div>
+                        </li>-->
+                        <!--Awards Management-->
+                        <li>
+                            <a href='/admin/schoolaward'>
+                                <i data-feather="award"></i>
+                                <span class='tp-link'>Award Management</span>
+                            </a>
+                        </li>
+
+                        <!--Class Management-->
+                        <li>
+                            <a href="#sidebarAuth" data-bs-toggle="collapse">
+                                <i data-feather="users"></i>
+                                <span> Class Management </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="sidebarAuth">
+                                <ul class="nav-second-level">
+                                    <li>
+                                        <a class='tp-link' href='/admin/addclass'>Class Management</a>
+                                    </li>
+                                    <li>
+                                        <a href='/admin/addteacherlist'>
+                                            <span> Assign Subject </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href='/admin/AddTimeTable'>
+                                            <span> Manage TimeTable</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href='/admin/ScheduleExam'>
+                                            <span> Schedule Exam</span>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </li>
+
+                        @*<li class="menu-title mt-2">Circular Management</li>*@
+
+                        @*facility management*@
+                        <li>
+                            <a href="#facilityAuth" data-bs-toggle="collapse">
+                                <i data-feather="tool"></i>
+                                <span> Facility Management </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="facilityAuth">
+                                <ul class="nav-second-level">
+                                    <li>
+                                        <a href='/admin/addcirculars'>
+                                            <span class='tp-link'>Events & Circulars </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href='/admin/addnotice'>
+                                            <span> Add Notice </span>
+                                        </a>
+                                    </li>
+                                    @*<li>
+                                            <a href='/admin/addeventcategories'>
+                                                <span> Events </span>
+                                            </a>
+                                        </li>*@
+                                    <li>
+                                        <a class='tp-link' href='/admin/AddSecurity'>Add Security</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/HostelBlockOverview'>Hostel Management</a>
+                                    </li>
+
+                                    <li>
+                                        <a class='tp-link' href='/admin/HolidayManagement'>Holiday Management</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/AddMaterial'>Inventory Management</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/AddBus'>Bus Management</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/UploadAttendaceReportForStaff'>Attendance Management</a>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </li>
+
+                        <!--Circular Management-->
+                        @*<li class="menu-title mt-2">General</li>*@
+                        <!--Fee Management-->
+                        <li>
+                            <a href='/admin/registrationfee'>
+                                <i data-feather="credit-card"></i>
+                                <span class='tp-link'> Fee Management </span>
+                            </a>
+
+                        </li>
+
+
+                        <!--Library Management-->
+                        <li>
+                            <a href="#sidebarForms" data-bs-toggle="collapse">
+                                <i data-feather="book"></i>
+                                <span> Library Management </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="sidebarForms">
+                                <ul class="nav-second-level">
+                                    <li>
+                                        <a class='tp-link' href='/admin/LibraryOverview'>Librarian Overview</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/AddBook'>Add Book</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/OrderManagement'>Order Management</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/AddLibrarian'>Librarian Registration</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <!--Library Management-->
+                        <li>
+                            <a href="#sidebarTask" data-bs-toggle="collapse">
+                                <i data-feather="check-square"></i>
+                                <span> Task Management </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="sidebarTask">
+                                <ul class="nav-second-level">
+                                    <li>
+                                        <a class='tp-link' href='/admin/AddTask'>Add Task</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <!--Registration Management-->
+                        <li>
+                            <a href="#sidebarregister1" data-bs-toggle="collapse">
+                                <i data-feather="users"></i>
+                                <span> Student Management </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="sidebarregister1">
+                                <ul class="nav-second-level">
+                                    <li>
+                                        <a class='tp-link' href='/admin/AdmissionManagement'>Admission Management</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/admittedstudent'>Promote Student</a>
+                                    </li>
+                                    @*<li>
+                                            <a class='tp-link' href='/admin/studentRegistrationlist'>Register Student List</a>
+                                        </li>*@
+
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li>
+                            <a href="#sidebarregister2" data-bs-toggle="collapse">
+                                <i data-feather="user-check"></i>
+                                <span> Teacher Management </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="sidebarregister2">
+                                <ul class="nav-second-level">
+
+                                    <li>
+                                        <a class='tp-link' href='/admin/teacherRegistration'>Teacher Management</a>
+                                    </li>
+                                    <!--Leave Management-->
+                                    <li>
+                                        <a href='/admin/LeaveRequest'>
+                                            @*<i data-feather="calendar"></i>*@
+                                            <span class='tp-link'> Leave Management </span>
+                                        </a>
+
+                                    </li>
+                                    @*<li>
+                                            <a class='tp-link' href='/admin/teacherRegistrationlist'>Register Teacher List</a>
+                                        </li>*@
+
+                                </ul>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="#sidebarregiste" data-bs-toggle="collapse">
+                                <i data-feather="smartphone"></i>
+                                <span> App Management </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="sidebarregiste">
+                                <ul class="nav-second-level">
+
+                                    <li>
+                                        <a class='tp-link' href='/admin/appdetail'>App Details</a>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="#sidebarregister4" data-bs-toggle="collapse">
+                                <i data-feather="briefcase"></i>
+                                <span> Reports </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="sidebarregister4">
+                                <ul class="nav-second-level">
+
+                                    <li>
+                                        <a class='tp-link' href='/admin/teacherRegistrationlist'>Teacher Report</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/AdmissionManagement'>Student Report</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/SecurityReport'>Security Report</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/AddWarden'>Hostel Report</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/AddTask'>Task Report</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/AddBook'>Library Report</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/HolidayManagement'>Holiday Report</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/addbus'>Bus Report</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/AddMaterial'>Inventory Report</a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href='/admin/allfeerecords'>Fee Report</a>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- End Sidebar -->
+
+                <div class="clearfix"></div>
+
+            </div>
+        </div>
+        <!-- Left Sidebar End -->
+        <main class="mb-5">
+            @RenderBody();
+        </main>
+
+        <!-- Footer Start -->
+        <footer class="footer mt-5">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col fs-13 text-muted text-center">
+                        &copy;
+                        <script>document.write(new Date().getFullYear())</script> - Made with <span class="mdi mdi-heart text-danger"></span> by <a target="_blank" href="https://macreel.co.in/" class="text-reset fw-semibold">Macreel Infosoft pvt. ltd.</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- end Footer -->
+
+    </div>
+    <!-- END wrapper -->
+    <!-- Vendor -->
+    @RenderSection("Scripts", required: false)
+
+    @section Scripts {
+        @Html.Partial("_ValidationScriptsPartial")
+    }
+
+    <script src="~/assets/libs/jquery/jquery.min.js"></script>
+    <script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="~/assets/libs/node-waves/waves.min.js"></script>
+    <script src="~/assets/libs/waypoints/lib/jquery.waypoints.min.js"></script>
+    <script src="~/assets/libs/jquery.counterup/jquery.counterup.min.js"></script>
+    <script src="~/assets/libs/feather-icons/feather.min.js"></script>
+    <script src="~/assets/js/sweetalert/sweetalert2@11.js"></script>
+    <script src="~/assets/summernote/summernote.min.js"></script>
+    <script src="~/assets/tom-select/tom-select.complete.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- Apexcharts JS -->
+    <script src="~/assets/libs/apexcharts/apexcharts.min.js"></script>
+    <script src="~/assets/fontawsome/all.min.js"></script>
+
+    <!-- for basic area chart -->
+    <script src="~/Content/apexcharts.com/samples/assets/stock-prices.js"></script>
+
+    <!-- Widgets Init Js -->
+    <script src="~/assets/js/pages/crm-dashboard.init.js"></script>
+    <script src="~/assets/libs/datatable/dataTables.min.js"></script>
+
+    <!-- App js-->
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/ProjectJs/admin.js"></script>
+
+    <script>
+        $("#logoutuser").click(function () {
+            Swal.fire({
+                icon: "info",
+                title: "Do you really want to Logout?",
+                showCancelButton: true,
+                confirmButtonText: "Logout"
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    location.href = "/home/Logout"
+                }
+            });
+        })
+
+        $(document).ready(function () {
+            $("#datatable").DataTable({
+                paging: true,
+                pageLength: 10,
+                "columnDefs": [
+                    { "width": "50px", "targets": 0 }
+                ]
+            })
+
+            $.ajax({
+                url: '/admin/GetAdminDetails',
+                type: 'GET',
+                success: function (data) {
+                    console.log(data.adminImage)
+                    if (data) {
+                        $('#admin-name').text(data.adminName);
+                        //$('#admin-profile-link').attr('href', '/admin/adminprofile?id=' + data.adminId);
+                        if (data.adminImage) {
+                            $('#adminI1').attr('src', data.adminImage);
+                            $('#adminI2').attr('src', data.adminImage);
+
+                        } else {
+                            $('#adminI1').attr('src', '/Upload/default-user.png');
+                            $('#adminI2').attr('src', '/Upload/default-user.png');
+                        }
+
+                        $('.admin-avatar').attr('title', data.adminName);
+                    }
+                },
+                error: function () {
+                    $('#admin-name').text("Error loading data.");
+                    $('.admin-avatar').attr('src', '/Upload/default-user.png');
+                }
+            });
+
+        })
+
+        function showLoading(action) {
+            Swal.fire({
+                title: "Please Wait..!",
+                html: "your request are under process",
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            })
+            if (!action) {
+                Swal.close();
+            }
+        }
+
+        document.addEventListener('click', function (event) {
+            let container = document.getElementById('searchContainer');
+            if (container && !container.contains(event.target)) {
+                let urlcontainer = $("#componentUrlContainer");
+                urlcontainer.addClass("d-none");
+                $("#searchComponent").val('');
+            }
+        });
+
+        $("#searchForm").on("submit", function (e) {
+            e.preventDefault()
+            debugger
+            let url = $("#componentUrlContainer").children().first().children().attr("href")
+            if (url != null && url != "" && url)
+                location.href = url;
+        })
+
+        let searchInterval;
+        $("#searchComponent").on("input", function () {
+            clearInterval(searchInterval)
+            searchInterval = setTimeout(() => {
+                let input = $(this).val().trim();
+                let container = $("#componentUrlContainer")
+                container.empty();
+                container.removeClass("d-none")
+
+                $.get("/admin/getUrlByUserInput", { input: input }).done((res) => {
+                    console.log(res, "res")
+                    if (res != null) {
+                        if (res.length > 0) {
+                            res.forEach(function (d, i) {
+                                $("#componentUrlContainer").append(`
+                                        <li class='border-bottom urlLi p-1 w-100'><a class='w-100 d-block' href='${d.url}'>${d.name}</a></li>
+                                        `)
+                            })
+                        } else {
+                            $("#componentUrlContainer").append(`
+                                        <li class='border-bottom urlLi p-1 w-100'><a class='w-100 d-block' >no result found</a></li>
+                                        `)
+                        }
+                    }
+                }).fail((err) => {
+                    console.log(err, "err")
+                })
+            }, 500)
+        })
+        let IsValidToBindFavorite = true;
+        let isCliCkable = true;
+        $("#sidebarfavoriteContainer").on("click", function () {
+            if (IsValidToBindFavorite && isCliCkable) {
+                $("#favoriteUrlContainer").empty()
+                IsValidToBindFavorite = false;
+                $.get("/admin/getUrlByUserFavorite").done((res) => {
+                    console.log(res, "res")
+                    if (res != null) {
+                        if (res.length > 0) {
+                            res.forEach(function (d, i) {
+                                $("#favoriteUrlContainer").append(`
+                                                <li>
+                    <a class='tp-link' href='${d.url}'><i class="fa-solid text-warning fa-star-of-life"></i>&nbsp; ${d.name}</a>
+</li>
+                         `)
+                            })
+                        } else {
+                            $("#favoriteUrlContainer").append(`
+                         <li class='border-bottom urlLi p-1 w-100'><a class='w-100 d-block' >no result found</a></li>
+                         `)
+                        }
+                    }
+                }).fail((err) => {
+                    console.log(err, "err")
+                })
+            }
+            isCliCkable = !isCliCkable;
+            setTimeout(() => {
+                IsValidToBindFavorite = true
+            }, 1000)
+
+        })
+    </script>
+
+</body>
+
+<!-- Mirrored from zoyothemes.com/silva/html/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Apr 2025 07:36:35 GMT -->
+</html>
+

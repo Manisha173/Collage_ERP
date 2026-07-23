@@ -1,0 +1,394 @@
+﻿
+@{
+    ViewBag.Title = "StudentNumberAllocation";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var classes = ViewData["classes"] as List<College_ERP.Models.Admin.ClassModel>;
+    var exams = ViewData["exams"] as List<College_ERP.Models.Admin.ExamModel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/ScheduleExam">Schedule Exam </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/ExamMarkSheet">Exam MarkSheet</a>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Student Number Allocation
+                    </li>
+                    </li>
+
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/StudentReportCard">Student Report Card</a>
+                    </li>
+                </ol>
+            </nav>
+
+        </div>
+        <div class="row mx-3">
+            <div class="col-md-3">
+                <select class="form-select" id="classId" name="classId">
+                    <option selected value="">Select Class</option>
+                    @if (ViewData["classes"] != null)
+                    {
+                        foreach (var clas in classes)
+                        {
+                            <option value="@clas.ClassId">@clas.ClassName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="sectionId" name="sectionId">
+                    <option selected value="">Select Section</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="subjectId" name="subjectId">
+                    <option selected value="">Select Subject</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="examId" name="examId">
+                    <option selected value="">Select Exam Name</option>
+                    @if (ViewData["exams"] != null)
+                    {
+                        foreach (var exam in exams)
+                        {
+                            <option value="@exam.ExamId">@exam.ExamName</option>
+                        }
+                    }
+                </select>
+            </div>
+
+        </div>
+
+        <div class="d-flex justify-content-end align-items-center mt-3 px-4">
+           
+            <button class="submit btn btn-md btn-primary" id="btnSubmit">Save</button>
+        </div>
+
+
+        <div class="row mx-3 mt-3">
+            <table id="datatable" cellpadding="1" cellspacing="1" class="table table-bordered dt-responsive nowrap w-100">
+                <thead>
+                    <tr>
+                        <th>SR</th>
+                        <th>Student Names</th>
+                        <th>Theory Marks</th>
+                        <th>Practical Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<style>
+    .swal2-title-custom {
+        font-family: 'Segoe UI', sans-serif;
+        color: #d33;
+        font-size: 1.5rem;
+    }
+
+    .swal2-content-custom {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 1rem;
+        color: #444;
+    }
+
+    .swal2-rounded {
+        border-radius: 16px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+</style>
+<script>
+    //bind section
+    $(document).ready(function () {
+        $('#classId').on('change', function () {
+            var classId = $(this).val();
+            var sectionDropdown = $('#sectionId');
+            sectionDropdown.empty().append('<option value="">Loading.......</option>');
+
+            if (classId !== "") {
+                $.ajax({
+                    url: '@Url.Action("GetSectionsByClass", "Admin")',
+                    type: 'GET',
+                    data: { classId: classId },
+                    success: function (sections) {
+                        sectionDropdown.empty().append('<option value="">Select Section</option>');
+                        $.each(sections, function (i, section) {
+                            sectionDropdown.append(`<option value="${section.SectionId}">${section.SectionName}</option>`);
+                        });
+                    },
+                    error: function () {
+                        Swal.fire("Error", "Error fetching sections.", "error");
+                        
+                        sectionDropdown.empty().append('<option value="">Select Section</option>');
+                    }
+                });
+            } else {
+                sectionDropdown.empty().append('<option value="">Select Section</option>');
+            }
+        });
+        //bind subject
+        function fetchSubjectsByClassAndSection() {
+    var classId = $('#classId').val();
+    var subjectDropdown = $('#subjectId');
+
+    subjectDropdown.empty().append('<option value="">Loading...</option>');
+
+    if (classId !== "" && sectionId !== "") {
+        $.ajax({
+            url: '@Url.Action("GetSubjectsByClass", "Admin")',
+            type: 'GET',
+            data: {
+                id: classId,
+            },
+            success: function (subjects) {
+                subjectDropdown.empty().append('<option value="">Select Subject</option>');
+                $.each(subjects, function (i, subject) {
+                    subjectDropdown.append(`<option value="${subject.SubjectId}">${subject.Subject}</option>`);
+                });
+            },
+            error: function () {
+                Swal.fire("Error", "Error fetching subjects.", "error");
+                subjectDropdown.empty().append('<option value="">Select Subject</option>');
+            }
+        });
+    } else {
+        subjectDropdown.empty().append('<option value="">Select Subject</option>');
+    }
+}
+     
+
+$('#classId').on('change', function () {
+    fetchSubjectsByClassAndSection();
+});
+
+//fetch students
+        function fetchStudentsByClassAndSection(classId, sectionId) {
+
+            debugger
+        if (classId !== "" && sectionId !== "") {
+            $.ajax({
+                url: '@Url.Action("GetStudentsByClassAndSection", "Admin")',
+                type: 'GET',
+                data: {
+                    classId: classId,
+                    sectionId: sectionId
+                },
+                success: function (students) {
+                    console.log("Students:",  students);
+                    debugger
+                    var tbody = $('#datatable tbody');
+                    tbody.empty(); // Clear existing rows
+
+                    if (students != null && students && students.length>0) {
+                        $.each(students, function (i, student) {
+                            var row = `
+                                    <tr>
+                                    <td>${i + 1}</td>
+                                        <td>
+                                            <input type="hidden" name="Students[${i}].StudentId" value="${student.StudentId}" />
+                                            ${student.StudentName}
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control" name="Students[${i}].theoryMarks" min="0" />
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control" name="Students[${i}].practicalMarks" min="0" />
+                                        </td>
+                                    </tr>`;
+                            tbody.append(row);
+                            Swal.close();
+                        });
+                    } else {
+                        Swal.close();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'No Student Found!',
+                            text: 'Please check your input and try again.',
+                            showConfirmButton: false,
+                            timer: 3000, // 3 seconds
+                            timerProgressBar: true,
+                            position: 'center',
+                            background: '#fff',
+                            customClass: {
+                                popup: 'swal2-rounded',
+                                title: 'swal2-title-custom',
+                                content: 'swal2-content-custom'
+                            }
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire("Error", "Error fetching students.", "error");
+                }
+            });
+        }
+    }
+
+        $(document).ready(function () {
+
+            $('#sectionId').on('change', function () {
+                Swal.fire({
+                    title: 'Please Wait!',
+                    text: 'Processing Your Request...',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => { Swal.showLoading(); }
+                });
+                var classId = $('#classId').val();
+                var sectionId = $('#sectionId').val();
+                fetchStudentsByClassAndSection(classId, sectionId);
+        });
+
+        $('#classId').on('change', function () {
+            $('#datatable tbody').empty();
+        });
+    });
+
+        //insert
+        $("#btnSubmit").on("click", function () {
+            Swal.fire({
+                title: 'Saving...',
+                text: 'Please wait while we save the marks.',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            const classId = $("#classId").val();
+            const sectionId = $("#sectionId").val();
+            const subjectId = $("#subjectId").val();
+            const examId = $("#examId").val();
+
+            if (!classId || !sectionId || !subjectId || !examId) {
+                Swal.fire("Error", "All fields are required", "error");
+                return;
+            }
+
+            const marksData = [];
+            $("#datatable tbody tr").each(function () {
+                const studentId = ($(this).find("input[type=hidden]").val());
+                const theoryMarks = $(this).find("input[name$='theoryMarks']").val();
+                const practicalMarks = $(this).find("input[name$='practicalMarks']").val();
+
+                marksData.push({
+                    studentId: parseInt(studentId),
+                    theoryMarks: parseInt(theoryMarks) || 0,
+                    practicalMarks: parseInt(practicalMarks) || 0
+                });
+            });
+
+            const payload = {
+                classId: parseInt(classId),
+                sectionId: parseInt(sectionId),
+                subjectId: parseInt(subjectId),
+                examId: parseInt(examId),
+                Marks: marksData
+            };
+
+            $.ajax({
+                url: '/Admin/InsertStudentMarks',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function (res) {
+                    console.log('Payload:', payload);
+                    Swal.close();
+                    if (res.success) {
+                        Swal.fire("Success", res.message, "success").then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire("Failed", res.message, "warning");
+                    }
+                },
+                error: function () {
+                    Swal.close();
+                    Swal.fire("Error", "Something went wrong", "error");
+                }
+            });
+        });
+
+        function fetchPreInsertedStudentMarks() {
+            debugger;
+            const classId = $('#classId').val();
+            const sectionId = $('#sectionId').val();
+            const subjectId = $('#subjectId').val();
+            const examId = $('#examId').val();
+
+            if (!classId || !sectionId || !subjectId || !examId) {
+                Swal.fire("Error", "Please select Class, Section, Subject and Exam", "error");
+                return;
+            }
+
+            $.ajax({
+                url: '/Admin/GetPreInsertedStudentMarks',
+                type: 'GET',
+                data: {
+                    classId: classId,
+                    sectionId: sectionId,
+                    subjectId: subjectId,
+                    examId: examId
+                },
+                success: function (res) {
+                    const tbody = $('#datatable tbody');
+                    tbody.empty();
+
+                    if (res && res.length > 0) {
+                        $.each(res, function (i, item) {
+                            const row = `
+                    <tr data-student-id="${item.studentId}">
+                        <td>${i + 1}</td>
+                       <td>
+                         <input type="hidden" name="Students[${i}].studentId" value="${item.studentId}" />
+                         ${item.studentName || ''}
+                         </td>
+                        <td><input type="number" class="form-control theory-marks" name="Students[${i}].theoryMarks" value="${item.theoryMarks}" /></td>
+                        <td><input type="number" class="form-control practical-marks" name="Students[${i}].practicalMarks" value="${item.practicalMarks}" /></td>
+                    </tr>
+                `;
+                            tbody.append(row);
+                        });
+                        Swal.close();
+                    } else {
+                        fetchStudentsByClassAndSection(classId, sectionId);
+                        Swal.close();
+                    }
+                },
+                error: function () {
+                    Swal.fire("Error", "Failed to load existing marks.", "error");
+                }
+            });
+
+        }
+        $('#examId, #subjectId').on('change', function () {
+            debugger
+            const classId = $('#classId').val();
+            const sectionId = $('#sectionId').val();
+            const subjectId = $('#subjectId').val();
+            const examId = $('#examId').val();
+            
+            if (classId && sectionId && subjectId && examId) {
+                Swal.fire({
+                    title: 'Please wait!',
+                    text: 'Processing your request...',
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading(); }
+                });
+                fetchPreInsertedStudentMarks();
+            }
+        });
+
+    });
+</script>
+

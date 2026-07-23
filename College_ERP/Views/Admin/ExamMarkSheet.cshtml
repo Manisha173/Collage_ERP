@@ -1,0 +1,371 @@
+﻿
+@{
+    ViewBag.Title = "ExamMarkSheet";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var classes = ViewData["classes"] as List<College_ERP.Models.Admin.ClassModel>;
+    var exams = ViewData["exams"] as List<College_ERP.Models.Admin.ExamModel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/ScheduleExam">Schedule Exam </a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Exam MarkSheet
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/StudentNumberAllocation">Student Number Allocation</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/StudentReportCard">Student Report Card</a>
+                    </li>
+
+
+                </ol>
+            </nav>
+
+        </div>
+        <div class="row mx-3">
+            <div class="col-md-4">
+                <select class="form-select" id="classId" name="classId">
+                    <option selected value="">Select Class Name</option>
+                    @if (ViewData["classes"] != null)
+                    {
+                        foreach (var clas in classes)
+                        {
+                            <option value="@clas.ClassId">@clas.ClassName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" id="examId" name="examId">
+                    <option selected value="">Select Exam Name</option>
+                    @if (ViewData["exams"] != null)
+                    {
+                        foreach (var exam in exams)
+                        {
+                            <option value="@exam.ExamId">@exam.ExamName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" id="subjectId" name="subjectId">
+                    <option selected value="">Select Subject Name</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-3 px-4">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="copyMarksCheckbox" disabled />
+                <label class="form-check-label" for="copyMarksCheckbox">
+                    Copy first row marks to all
+                </label>
+            </div>
+            <button class="submit btn btn-md btn-primary" id="btnSubmit">Save</button>
+        </div>
+
+
+        <div class="row mx-3 mt-3">
+            <table id="datatable" cellpadding="1" cellspacing="1" class="table table-bordered dt-responsive nowrap w-100">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Theory Marks</th>
+                        <th>Practical Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    // Monitor changes in first row's marks
+    function toggleCopyCheckbox() {
+        let firstTheory = $(".theory-marks").first().val();
+        let firstPractical = $(".practical-marks").first().val();
+
+        if (firstTheory && firstPractical) {
+            $("#copyMarksCheckbox").prop("disabled", false);
+        } else {
+            $("#copyMarksCheckbox").prop("disabled", true);
+        }
+    }
+
+    // Call this after populating the table
+    function setupCheckboxLogic() {
+        toggleCopyCheckbox();
+
+        $(".theory-marks").first().on("input", toggleCopyCheckbox);
+        $(".practical-marks").first().on("input", toggleCopyCheckbox);
+    }
+
+    $("#copyMarksCheckbox").on("change", function () {
+        if (this.checked) {
+            const firstTheory = $(".theory-marks").first().val();
+            const firstPractical = $(".practical-marks").first().val();
+
+            $(".theory-marks").each(function (index) {
+                if (index !== 0) $(this).val(firstTheory);
+            });
+
+            $(".practical-marks").each(function (index) {
+                if (index !== 0) $(this).val(firstPractical);
+            });
+        }
+    });
+    $("#classId").on("change", function () {
+        
+        $("#subjectId").html(`<option selected disabled>Select Subject</option>`);
+        let id = $(this).val();
+        $.ajax({
+            url: '/Admin/GetSubjectsByClass',
+            type: 'get',
+            data: { id: id },
+            success: function (response) {
+                if (response && response.length > 0) {
+                    $("#subjectId").append(`<option>All Subject</option>`);
+                    $.each(response, function (index, item) {
+                        $("#subjectId").append(`<option value='${item.SubjectId}'>${item.Subject}</option>`);
+                    });
+                }
+               
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'error',
+                    text: 'Something went wrong with the request'
+                });
+            },
+            finally: function () {
+                Swal.close();
+            }
+        });
+    });
+
+    $(document).ready(() => {
+        // When subject dropdown changes
+        $("#subjectId").on("change", function () {
+            Swal.fire({
+                title: 'Please wait!',
+                text: 'Processing your request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            const classId = $("#classId").val()
+            const examId = $("#examId").val()
+            const subjectId = $(this).val()
+
+            if (!classId) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Warning",
+                    text: "Please select a class first",
+                })
+                return
+            }
+
+            if (!examId) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Warning",
+                    text: "Please select an exam first",
+                })
+                return
+            }
+
+            // Clear the table first
+            $("#datatable tbody").empty()
+
+            if (subjectId === "All Subject") {
+                // Get all subjects for the selected class
+                $.ajax({
+                    url: "/Admin/GetSubjectsByClass",
+                    type: "get",
+                    data: { id: classId },
+                    success: (response) => {
+                        if (response && response.length > 0) {
+                            populateTableWithSubjects(response)
+                        }
+                    },
+                    error: () => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Something went wrong while fetching subjects",
+                        })
+                    },
+                })
+            } else {
+                // Get the selected subject details
+                $.ajax({
+                    url: "/Admin/GetSubjectById",
+                    type: "get",
+                    data: { id: subjectId },
+                    success: (response) => {
+                        if (response) {
+                            populateTableWithSubjects([response])
+                        }
+                    },
+                    error: () => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Something went wrong while fetching subject details",
+                        })
+                    },
+                    finally: function () {
+                        Swal.close();
+                    }
+                });
+                Swal.close();
+            }
+        })
+
+        // Function to populate table with subjects
+        function populateTableWithSubjects(subjects) {
+            debugger
+            const tableBody = $("#datatable tbody");
+            tableBody.empty();
+
+            $.each(subjects, (index, subject) => {
+                const row = `<tr data-subject-id="${subject.SubjectId}">
+        <td>${subject.Subject}</td>
+        <td><input type="number" class="form-control theory-marks" min="0" max="100"></td>
+        <td><input type="number" class="form-control practical-marks" min="0" max="100"></td>
+    </tr>`;
+
+                tableBody.append(row);
+            });
+            Swal.close();
+            setupCheckboxLogic(); 
+        }
+
+        $("#btnSubmit").on("click", function () {
+            Swal.fire({
+                title: 'Please wait...',
+                text: 'Processing your request...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            const classId = $("#classId").val();
+            const examId = $("#examId").val();
+            const subjectId = $("#subjectId").val();
+
+            if (!classId || !examId || !subjectId) {
+                Swal.close(); 
+                Swal.fire("Error", "Please select Class, Exam and Subject", "error");
+                return;
+            }
+
+            const marksData = [];
+            $("#datatable tbody tr").each(function () {
+                const subjectId = $(this).data("subject-id");
+                const theoryMarks = $(this).find(".theory-marks").val();
+                const practicalMarks = $(this).find(".practical-marks").val();
+
+                marksData.push({
+                    SubjectId: subjectId,
+                    TheoryMarks: theoryMarks,
+                    PracticalMarks: practicalMarks
+                });
+            });
+
+            $.ajax({
+                url: "/Admin/InsertExamMarksheet",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    ClassId: classId,
+                    ExamId: examId,
+                    Marks: marksData
+                }),
+                success: function (res) {
+                    Swal.close(); 
+                    if (res.success) {
+                        Swal.fire("Success", res.message, "success").then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire("Failed", res.message, "error");
+                    }
+                },
+                error: function () {
+                    Swal.close();
+                    Swal.fire("Error", "Something went wrong while inserting marks.", "error");
+                }
+            });
+        });
+
+
+      
+        function populateTableWithSubjects(subjects) {
+            const classId = $("#classId").val();
+            const examId = $("#examId").val();
+
+            const tableBody = $("#datatable tbody");
+            tableBody.empty();
+
+            let ajaxCalls = subjects.length;
+
+            $.each(subjects, function (index, subject) {
+                $.ajax({
+                    url: "/Admin/GetExistingMarks",
+                    type: "GET",
+                    data: {
+                        classId: classId,
+                        examId: examId,
+                        subjectId: subject.SubjectId
+                    },
+                    success: function (data) {
+                        const existing = data && data.length > 0 ? data[0] : null;
+
+                        const row = `<tr data-subject-id="${subject.SubjectId}">
+                    <td>${subject.Subject}</td>
+                    <td><input type="number" class="form-control theory-marks" min="0" max="100" value="${existing ? existing.TheoryMarks : ''}"></td>
+                    <td><input type="number" class="form-control practical-marks" min="0" max="100" value="${existing ? existing.PracticalMarks : ''}"></td>
+                </tr>`;
+
+                        tableBody.append(row);
+                        Swal.close();
+                    },
+                    complete: function () {
+                        ajaxCalls--;
+                        if (ajaxCalls === 0) {
+                            // All rows added
+                            setupCheckboxLogic();
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Error", "Failed to fetch existing marks", "error");
+                    },
+                    finally: function () {
+                        Swal.close();
+                    }
+                });
+            });
+        }
+
+
+
+
+
+    })
+
+
+</script>

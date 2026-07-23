@@ -1,0 +1,390 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assets/images/favicon.ico">
+
+    <!-- App css -->
+    <link href="~/assets/css/app.min.css" rel="stylesheet" />
+
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" />
+    <link href="~/assets/js/sweetalert/select2.min.css" rel="stylesheet" />
+    <script src="~/assets/libs/jquery/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/assets/fontawsome/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="~/assets/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    @*<link href="~/assets/summernote/summernote.min.css" rel="stylesheet" />*@
+
+    <link href="~/assets/tom-select/tom-select.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif !important;
+            background-color: white !important;
+            color: #19476d !important;
+        }
+
+        th {
+            white-space: nowrap !important;
+        }
+
+        .college-theme .btn-primary {
+            background-color: #19476d !important;
+            border-color: #19476d !important;
+            color: white !important;
+        }
+
+        .college-theme a {
+            color: #19476d !important;
+        }
+
+        .college-theme h1,
+        .college-theme h2,
+        .college-theme h3,
+        .college-theme h4 {
+            color: #19476d !important;
+        }
+
+        th {
+            background: #287f71 !important;
+            color: antiquewhite !important;
+            border-radius: 0 !important;
+            white-space: nowrap;
+        }
+
+        td {
+            white-space: nowrap;
+        }
+
+        .dt-layout-end {
+            text-align: end !important;
+            margin-bottom: 5px !important;
+        }
+
+        .dt-layout-start {
+            float: left !important;
+        }
+
+        .modal-header {
+            background: teal;
+            color: white;
+        }
+
+        .required-label::after {
+            content: " *" !important;
+            color: red !important;
+        }
+
+        .note-editable {
+            background: white !important;
+        }
+
+        .dt-search {
+            float: right !important;
+            margin-bottom: 10px !important;
+        }
+
+        .dt-buttons {
+            float: left;
+        }
+
+        a {
+            white-space: nowrap;
+        }
+
+        .buttons-excel {
+            background-color: #217346 !important;
+            color: white !important;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* PDF red */
+        .buttons-pdf {
+            background-color: #D32F2F !important;
+            color: white !important;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif !important;
+            background-color: white !important;
+            color: #19476d !important;
+        }
+
+        .college-theme .btn-primary {
+            background-color: #19476d !important;
+            border-color: #19476d !important;
+            color: white !important;
+        }
+
+        .college-theme a {
+            color: #19476d !important;
+        }
+
+        .college-theme h1,
+        .college-theme h2,
+        .college-theme h3,
+        .college-theme h4 {
+            color: #19476d !important;
+        }
+
+        th {
+            background: #287f71 !important;
+            color: antiquewhite !important;
+            border-radius: 0 !important;
+        }
+
+        .dt-layout-end {
+            text-align: end !important;
+            margin-bottom: 5px !important;
+        }
+    </style>
+
+</head>
+
+<body data-menu-color="light" data-sidebar="default">
+    <!-- Begin page -->
+    <div id="app-layout">
+
+
+        <!-- Topbar Start -->
+        <div class="topbar-custom">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between">
+                    <ul class="list-unstyled topnav-menu mb-0 d-flex align-items-center">
+                        <li>
+                            <button class="button-toggle-menu nav-link">
+                                <i data-feather="menu" class="noti-icon"></i>
+                            </button>
+                        </li>
+                        <li class="d-none d-lg-block">
+                            <h5 class="mb-0"></h5>
+                        </li>
+                    </ul>
+
+                    <ul>
+                    </ul>
+                    <ul class="list-unstyled topnav-menu mb-0 d-flex align-items-center">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                <div class="avatar rounded-circle d-inline-block overflow-hidden" style="width: 40px; height: 40px;">
+                                    <img class="warden-avatar" src="/Upload/default-user.png" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;" />
+                                </div>
+
+                                <span class="ms-1 fw-bold" id="warden-name" style="line-height: 1.2;"></span>
+
+
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow p-3" aria-labelledby="userDropdown" style="width: 250px;">
+                                <li class="text-center mb-2">
+                                    <div class="avatar rounded-circle d-inline-block overflow-hidden" style="width: 40px; height: 40px;">
+                                        <img class="warden-avatar" src="/Upload/default-user.png" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;" />
+                                    </div>
+                                    <div class="fw-bold mt-2">@User.Identity.Name</div>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <div class="d-flex justify-content-between">
+                                        <a id="warden-profile-link" class="dropdown-item fw-bold w-50 text-center" href="#">
+                                            <i data-feather="user" class="me-1 text-primary"></i>Profile
+                                        </a>
+
+                                        <a class="dropdown-item fw-bold w-50 text-center" href="#" id="logoutuser">
+                                            <i data-feather="log-out" class="me-1 text-danger"></i>Logout
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+
+
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- end Topbar -->
+        <!-- Left Sidebar Start -->
+        <div class="app-sidebar-menu">
+            <div class="h-100" data-simplebar>
+
+                <!--- Sidemenu -->
+                <div id="sidebar-menu">
+
+                    <div class="logo-box">
+                        <a class='logo logo-light fs-3' href="/warden/dashboard">
+                            CollegeERP
+                        </a>
+                        <a class='logo logo-dark fs-3' href='/warden/dashboard'>
+                            CollegeERP
+                        </a>
+                    </div>
+
+                    <ul id="side-menu">
+
+                        <li class="menu-title">Main Menu</li>
+
+                        <li>
+                            <a href="/warden/Dashboard">
+                                <i data-feather="home"></i>
+                                <span> Dashboard </span>
+                            </a>
+
+                        </li>
+
+                        <li>
+                            <a href="/warden/StudentsInBlock">
+                                <i data-feather="users"></i>
+                                <span>Students In Block</span>
+                            </a>
+
+                        </li>
+                        <li>
+                            <a href="/warden/MealSchedule">
+                                <i data-feather="calendar"></i>
+                                <span>Meal Schedule</span>
+                            </a>
+
+                        </li>
+                        <li>
+                            <a href="/warden/Communication">
+                                <i data-feather="mail"></i>
+                                <span>Communication</span>
+                            </a>
+
+                        </li>
+                        <li>
+                            <a href="/warden/notice">
+                                <i data-feather="bell"></i>
+                                <span>Notice</span>
+                            </a>
+
+                        </li>
+                        <li>
+                            <a href="/warden/feerecords">
+                                <i data-feather="file-text"></i>
+                                <span>Fee Records</span>
+                            </a>
+
+                        </li>
+                        <li>
+                            <a href="/warden/holidays">
+                                <i data-feather="calendar"></i>
+                                <span> Holidays </span>
+                            </a>
+
+                        </li>
+                        <li>
+                            <a href="/warden/HostelProblems">
+                                <i data-feather="bell"></i>
+                                <span> Hostel Problems </span>
+                            </a>
+
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+        <!-- Left Sidebar End -->
+
+        @RenderBody();
+
+        <!-- Footer Start -->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col fs-13 text-muted text-center">
+                        &copy;
+                        <script>document.write(new Date().getFullYear())</script> - Made with <span class="mdi mdi-heart text-danger"></span> by<a target="_blank" href="https://macreel.co.in/" class="text-reset fw-semibold">Macreel Infosoft pvt. ltd.</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- end Footer -->
+    </div>
+    <!-- END wrapper -->
+    <!-- Vendor -->
+    <script src="~/assets/libs/jquery/jquery.min.js"></script>
+    <script src="~/assets/summernote/summernote.min.js"></script>
+    <script src="~/assets/tom-select/tom-select.complete.min.js"></script>
+    <script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="~/assets/libs/node-waves/waves.min.js"></script>
+    <script src="~/assets/libs/waypoints/lib/jquery.waypoints.min.js"></script>
+    <script src="~/assets/libs/jquery.counterup/jquery.counterup.min.js"></script>
+    <script src="~/assets/libs/feather-icons/feather.min.js"></script>
+    <script src="~/assets/js/sweetalert/sweetalert2@11.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.min.js"></script>
+    <!-- Apexcharts JS -->
+    <script src="~/assets/libs/apexcharts/apexcharts.min.js"></script>
+    <script src="~/assets/fontawsome/all.min.js"></script>
+
+    <!-- for basic area chart -->
+    <script src="~/Content/apexcharts.com/samples/assets/stock-prices.js"></script>
+
+    <!-- Widgets Init Js -->
+    <script src="~/assets/js/pages/crm-dashboard.init.js"></script>
+    <script src="~/assets/libs/datatable/dataTables.min.js"></script>
+
+    <!-- App js-->
+    <script src="~/assets/js/app.js"></script>
+    <script>
+        $("#logoutuser").click(function () {
+            Swal.fire({
+                icon: "info",
+                title: "Do you really want to Logout?",
+                showCancelButton: true,
+                confirmButtonText: "Logout"
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    location.href = "/home/Logout"
+                }
+            });
+        })
+
+        $(document).ready(function () {
+            $("#datatable").DataTable()
+        })
+            $.ajax({
+                url: '@Url.Action("GetWardenDetails", "Warden")',
+                type: 'GET',
+                success: function (data) {
+                    if (data) {
+                        $('#warden-name').html(
+                            data.WardenName + '<br/><small class="text-muted">' + data.BlockName + '</small>' +
+                            ' <i data-feather="chevron-down" class="text-primary"></i>'
+                        );
+                        feather.replace();
+                        $('#warden-profile-link').attr('href', '/Warden/WardenProfile?id=' + data.WardenId);
+                        if (data.ProfileImage) {
+                            $('.warden-avatar').attr('src', data.ProfileImage);
+                        } else {
+                            $('.warden-avatar').attr('src', '/Upload/default-user.png');
+                        }
+
+                        $('.warden-avatar').attr('title', data.WardenName + ' ^');
+                    }
+                },
+
+    error: function () {
+        $('#warden-name').text("Error loading data.");
+        $('.warden-avatar').attr('src', '/Upload/default-user.png');
+    }
+});
+    </script>
+</body>
+</html>

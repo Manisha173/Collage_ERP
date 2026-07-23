@@ -1,0 +1,670 @@
+﻿@{
+    ViewBag.Title = "SubjectAssign";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var teacherList = ViewData["teacherlist"] as List<College_ERP.Models.Admin.TeacherModel>;
+
+}
+
+<style>
+    .required-label::after {
+        content: " *";
+        color: red;
+    }
+</style>
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <!--assign Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Assign Subject</h1>
+                            <button type="button" class="btn-close" id="closemodalbtn" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Teacher Form -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card mb-0 pb-0">
+                                        <div class="card-body">
+                                            <form enctype="multipart/form-data" method="Post" id="subjectAssignForm">
+                                                <div id="dropdownContainer">
+                                                    <!-- First dropdown set -->
+                                                    <input type="hidden" name="TeacherId" value="@ViewData["teacherid"]" />
+                                                    <div class="row dropdown-set subject-assign-row">
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-3">
+                                                                <label class="form-label required-label">Class Name</label>
+                                                                <select class="form-select class-select" name="ClassId" required>
+                                                                    <option value="">Select Class</option>
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-3">
+                                                                <label class="form-label required-label">Section</label>
+                                                                <select class="form-select section-select" name="SectionId" required>
+                                                                    <option value="">Select Section</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-3">
+                                                                <label class="form-label required-label">Subject</label>
+                                                                <select class="form-select subject-select" name="SubjectId" required>
+                                                                    <option value="">Select Subject</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="text-end mb-3">
+                                                    <button type="button" id="addRowBtn" class="btn btn-primary btn-sm">+ Add More</button>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-12 text-center">
+                                                        <input id="btnSubmit" type="submit" value="Submit" class="btn btn-md btn-primary" />
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*table*@
+            <div class="row mt-3">
+                <div class="col-12 table-responsive">
+                    <h4 class="d-flex justify-content-between">
+                        <span>Assign Subject</span><!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Assign Subject
+                        </button>
+                    </h4>
+                    <table id="datatable" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Class</th>
+                                <th>Subject</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var assignment in Model)
+                            {
+                                <tr>
+                                    <td>@(Model.IndexOf(assignment) + 1)</td>
+                                    <td><a role="button" data-classid="@assignment.ClassId" data-subname="@assignment.SubjectName" data-sectionid="@assignment.SectionId" data-subjectid="@assignment.SubjectId" title="Show Time Schedule" class="showTimeBtn">@assignment.ClassName - @assignment.SectionName</a></td>
+                                    <td>@assignment.SubjectName</td>
+
+                                    <td>
+                                        <button class="btn btn-sm"><i data-feather="trash-2" onclick="deleteSubjectAssign(@assignment.AssignedId)" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+                                        
+
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div> <!-- container-fluid -->
+
+    </div> <!-- content -->
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editSubjectAssignModal" tabindex="-1" aria-labelledby="editSubjectAssignModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <form id="editSubjectAssignForm" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editSubjectAssignModalLabel">Edit Subject Assignment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row" style="max-height: 70vh; overflow-y: auto;">
+                    <input type="hidden" id="EditAssignedId" name="AssignedId" />
+
+                    <div class="col-md-4">
+                        <label class="form-label required-label">Class</label>
+                        <select class="form-select" id="EditClassId" name="ClassId" required>
+                            <option value="">--Select Class--</option>
+                            @foreach (var item in ViewBag.ClassList)
+                            {
+                                <option value="@item.ClassId">@item.ClassName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label required-label">Section</label>
+                        <select class="form-select" id="EditSectionId" name="SectionId" required>
+                            <option value="">--Select Section--</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label required-label">Subject</label>
+                        <select class="form-select" id="EditSubjectId" name="SubjectId" required>
+                            <option value="">--Select Subject--</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center mb-2">
+                    <button type="submit" class="btn btn-primary">Update Subject Assignment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!--Time show  Modal -->
+<div class="modal fade" id="TimeshowModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="showSubjectHeader"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Teacher Form -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered dt-responsive table-responsive nowrap">
+                                        <thead>
+                                            <tr id="day-row"></tr>
+                                        </thead>
+                                        <tbody id="timetable-body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Class data injected into JS from the backend
+    let classList = @Html.Raw(Json.Encode(ViewData["classlist"]));
+
+    function populateClassDropdown(dropdown) {
+        dropdown.empty().append('<option value="">----Select Class----</option>');
+        $.each(classList, function (i, item) {
+            dropdown.append('<option value="' + item.ClassId + '">' + item.ClassName + '</option>');
+        });
+    }
+
+    //function bindDropdownEvents(set) {
+    //    set.find('.class-select').on('change', function () {
+    //        let classId = $(this).val();
+    //        let sectionDropdown = set.find('.section-select');
+    //        let subjectDropdown = set.find('.subject-select');
+
+    //        sectionDropdown.empty().append('<option value="">----Select Section----</option>');
+    //        subjectDropdown.empty().append('<option value="">----Select Subject----</option>');
+
+    //        if (classId) {
+    //            $.get('/admin/GetSubjectandSectionByClassId', { id: classId }, function (res) {
+    //                $.each(res.section, function (i, section) {
+    //                    sectionDropdown.append('<option value="' + section.SectionId + '">' + section.SectionName + '</option>');
+    //                });
+    //                $.each(res.subject, function (i, subject) {
+    //                    subjectDropdown.append('<option value="' + subject.SubjectId + '">' + subject.Subject + '</option>');
+    //                });
+    //            }).fail(function () {
+    //                Swal.fire("Warning", 'Failed to fetch data', 'warning');
+    //            });
+    //        }
+    //    });
+    //}
+    //SECTION
+    function loadSectionsByClass(set, classId) {
+        let sectionDropdown = set.find('.section-select');
+
+        $.get('/admin/GetSectionsByClassId', { id: classId }, function (sections) {
+            console.log("Sections fetched:", sections);
+            $.each(sections, function (i, section) {
+                sectionDropdown.append('<option value="' + section.SectionId + '">' + section.SectionName + '</option>');
+            });
+        }).fail(function () {
+            Swal.fire("Warning", 'Failed to fetch sections', 'warning');
+        });
+    }
+    //SUBJECT
+    function loadSubjectsByClass(set, classId, teacherId) {
+        let subjectDropdown = set.find('.subject-select');
+
+        subjectDropdown.empty().append('<option value="">Select Subject</option>');
+
+        if (classId) {
+            $.get('/admin/GetSubjectsByClassId', { classId: classId, teacherId: teacherId }, function (subjects) {
+                if (subjects.success === false) {
+                    Swal.fire("Warning", subjects.message, "warning");
+                    return;
+                }
+                $.each(subjects, function (i, subject) {
+                    subjectDropdown.append('<option value="' + subject.SubjectId + '">' + subject.Subject + '</option>');
+                });
+            }).fail(function () {
+                Swal.fire("Warning", 'Failed to fetch subjects', 'warning');
+            });
+        }
+    }
+
+
+    function bindClassChangeEvent(set, teacherId) {
+        debugger;
+        let classDropdown = set.find('.class-select');
+
+        // Debug log
+        console.log("Binding class change event for:", classDropdown);
+
+        classDropdown.off('change').on('change', function () {
+            let classId = $(this).val();
+            console.log("Class changed:", classId);
+
+            let sectionDropdown = set.find('.section-select');
+            let subjectDropdown = set.find('.subject-select');
+
+            // Reset dropdowns
+            sectionDropdown.empty().append('<option value="">Select Section</option>');
+            subjectDropdown.empty().append('<option value="">Select Subject</option>');
+
+            if (classId) {
+                loadSectionsByClass(set, classId);
+                loadSubjectsByClass(set, classId, teacherId);
+            }
+        });
+    }
+
+
+    $(document).on("change", "#EditClassId", function () {
+        let classId = $(this).val();
+        let sectionDropdown = $("#EditSectionId")
+        let subjectDropdown = $("#EditSubjectId")
+        if (classId) {
+            sectionDropdown.empty().append('<option value="">Select Section</option>');
+            subjectDropdown.empty().append('<option value="">Select Subject</option>');
+            $.get('/admin/GetSubjectandSectionByClassId', { id: classId }, function (res) {
+                $.each(res.section, function (i, section) {
+                    sectionDropdown.append('<option value="' + section.SectionId + '">' + section.SectionName + '</option>');
+                });
+                $.each(res.subject, function (i, subject) {
+                    subjectDropdown.append('<option value="' + subject.SubjectId + '">' + subject.Subject + '</option>');
+                });
+            }).fail(function () {
+                Swal.fire("Warning", 'Failed to fetch data', 'warning');
+            });
+        }
+    })
+
+    function bindSubjectChangeEvent(set) {
+        let subjectDropdown = set.find('.subject-select');
+
+        subjectDropdown.off('focus').on('focus', function () {
+            // Collect all selected subject values from other dropdowns
+            let selectedSubjects = [];
+
+            $('.subject-select').each(function () {
+                if ($(this).val() && $(this).is(':not(:focus)')) {
+                    selectedSubjects.push($(this).val());
+                }
+            });
+
+            // Enable all options first
+            subjectDropdown.find('option').prop('disabled', false);
+
+            // Disable selected subjects
+            subjectDropdown.find('option').each(function () {
+                if (selectedSubjects.includes($(this).val())) {
+                    $(this).prop('disabled', true);
+                }
+            });
+        });
+    }
+
+
+
+   $(document).ready(function () {
+
+    // Clear previous rows when modal opens
+    $("#exampleModal").on("show.bs.modal", function () {
+        $(".dynamic-row").remove();
+    });
+
+    let teacherId = '@ViewData["teacherid"]'; // You can also get this from hidden input
+
+    // First row setup
+    let firstSet = $('.dropdown-set').first();
+    populateClassDropdown(firstSet.find('.class-select'));
+    bindClassChangeEvent(firstSet, teacherId);
+    bindSubjectChangeEvent(firstSet);
+
+    // Add More button logic
+    $('#addRowBtn').on('click', function () {
+        let newSet = $('.dropdown-set').first().clone();
+
+        // Reset dropdowns
+        newSet.find('select').val('');
+        newSet.find('.section-select').html('<option value="">----Select Section----</option>');
+        newSet.find('.subject-select').html('<option value="">----Select Subject----</option>');
+
+        // Add delete button
+        newSet.prepend('<div class="text-end"><i role="button" class="fa-solid deleteRowBtn text-danger border rounded p-2 fa-trash"></i></div>');
+
+        // Append to container
+        $('#dropdownContainer').append(newSet);
+
+        // Bind only class dropdown initially
+        populateClassDropdown(newSet.find('.class-select'));
+
+        // On class change → bind sections & subjects
+        bindClassChangeEvent(newSet, teacherId);
+        bindSubjectChangeEvent(newSet);
+    });
+       $('#closemodalbtn').on('click', function () {
+           $('.dropdown-set').not(':first').remove();
+           $('#exampleModal').modal('hide');
+       })
+    // Row deletion
+    $(document).on('click', '.deleteRowBtn', function () {
+        $(this).closest('.dropdown-set').remove();
+    });
+
+});
+
+
+    // Insert function
+   $('#btnSubmit').on('click', function (e) {
+    e.preventDefault();
+
+    var assignmentList = [];
+
+    $('.subject-assign-row').each(function () {
+        var classId = $(this).find('.class-select').val();
+        var sectionId = $(this).find('.section-select').val();
+        var subjectId = $(this).find('.subject-select').val();
+
+        if (classId && sectionId && subjectId) {
+            assignmentList.push({
+                ClassId: parseInt(classId),
+                SectionId: parseInt(sectionId),
+                SubjectId: parseInt(subjectId)
+            });
+        }
+    });
+
+    if (assignmentList.length === 0) {
+        Swal.fire("Error", "Please fill at least one subject assignment row", "error");
+        return;
+    }
+
+    // Show loader
+    Swal.fire({
+        title: 'Submitting...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    $.ajax({
+        url: '/Admin/SubjectAssign?id=@Request.QueryString["id"]',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(assignmentList),
+        success: function (res) {
+            Swal.close(); // Hide loader
+
+            if (res.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: res.message
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire("Error", res.message, "error");
+            }
+        },
+        error: function (xhr) {
+            Swal.close(); // Hide loader
+            Swal.fire("Error", "Something went wrong: " + xhr.responseText, "error");
+        }
+    });
+});
+
+
+    //delete
+    function deleteSubjectAssign(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the subject record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show loader
+                Swal.fire({
+                    title: 'Deleting...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '/Admin/DeleteSubjectAssigned',
+                    type: 'POST',
+                    data: { AssignedId: id },
+                    success: function (response) {
+                        Swal.close(); // Hide loader
+
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.close(); // Hide loader
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+
+
+    function editSubject(id) {
+        const modal = $('#editSubjectAssignModal');
+
+
+        modal.find('input, select').val('');
+
+        $.get('/Admin/GetSubjectAssignedById?id=' + id, function (data) {
+            if (data) {
+
+                modal.find('#EditAssignedId').val(data.AssignedId);
+                modal.find('#EditClassId').val(data.ClassId);
+
+
+                $.get('/Admin/GetSubjectandSectionByClassId', { id: data.ClassId }, function (res) {
+                    const sectionDropdown = modal.find('#EditSectionId');
+                    const subjectDropdown = modal.find('#EditSubjectId');
+
+                    sectionDropdown.empty().append('<option value="">--Select Section--</option>');
+                    subjectDropdown.empty().append('<option value="">--Select Subject--</option>');
+
+                    $.each(res.section, function (i, section) {
+                        sectionDropdown.append('<option value="' + section.SectionId + '">' + section.SectionName + '</option>');
+                    });
+
+                    $.each(res.subject, function (i, subject) {
+                        subjectDropdown.append('<option value="' + subject.SubjectId + '">' + subject.Subject + '</option>');
+                    });
+
+
+                    sectionDropdown.val(data.SectionId);
+                    subjectDropdown.val(data.SubjectId);
+                });
+
+                modal.modal('show');
+            } else {
+                Swal.fire("Error", "No data found for editing.", "error");
+            }
+        }).fail(function () {
+            Swal.fire("Error", "Failed to load data.", "error");
+        });
+    }
+
+
+    //EDIT
+    $('#editSubjectAssignForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var data = {
+            AssignedId: $('#EditAssignedId').val(),
+            ClassId: $('#EditClassId').val(),
+            SectionId: $('#EditSectionId').val(),
+            SubjectId: $('#EditSubjectId').val()
+        };
+
+        // Show loader before sending AJAX
+        Swal.fire({
+            title: 'Updating...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/UpdateSubjectAssign',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (res) {
+                Swal.close(); // Hide loader
+
+                if (res.success) {
+                    Swal.fire("Updated!", res.message, "success").then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire("Error", res.message, "error");
+                }
+            },
+            error: function (err) {
+                Swal.close(); // Hide loader
+                Swal.fire("Error", "Something went wrong.", "error");
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $('.showTimeBtn').on('click', function () {
+            debugger
+            let classId = $(this).data('classid');
+            let sectionId = $(this).data('sectionid');
+            let subjectId = $(this).data('subjectid');
+            let subname = $(this).data('subname');
+            $.ajax({
+                url: '/admin/ShowTimeScheduleToTeacher', type: 'get', data: { classId: classId, sectionId: sectionId, subjectId: subjectId },
+                success: function (res) {
+                    console.log(res)
+                    if (res) {
+                        $('#showSubjectHeader').text(subname);
+                        setTimeTable(res);
+                        $('#TimeshowModal').modal('show');
+                    } else {
+                        Swal.fire('Warning', 'Data not found', 'warning');
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire('Error', 'Server error occured', 'error');
+                }
+            });
+        });
+        function setTimeTable(data) {
+            const dayRow = document.getElementById("day-row");
+            const tbody = document.getElementById("timetable-body");
+
+            if (!dayRow || !tbody) {
+                console.error("Missing #day-row or #timetable-body in the DOM");
+                return;
+            }
+
+            // Clear old content
+            $("#day-row").empty();
+            $("#timetable-body").empty();
+
+            // Set header: Day | Time
+            const thDay = document.createElement("th");
+            thDay.textContent = "Day";
+            dayRow.appendChild(thDay);
+
+            const thTime = document.createElement("th");
+            thTime.textContent = "Time";
+            dayRow.appendChild(thTime);
+
+            // Group time slots by day
+            const grouped = {};
+
+            data.forEach(entry => {
+                const day = entry.day;
+                const time = `${entry.from} - ${entry.to}`;
+                if (!grouped[day]) {
+                    grouped[day] = [];
+                }
+                grouped[day].push(time);
+            });
+
+            // Render table rows
+            for (const day in grouped) {
+                const tr = document.createElement("tr");
+
+                const tdDay = document.createElement("td");
+                tdDay.textContent = day;
+                tr.appendChild(tdDay);
+
+                const tdTime = document.createElement("td");
+                tdTime.textContent = grouped[day].join(", ");
+                tr.appendChild(tdTime);
+
+                tbody.appendChild(tr);
+            }
+        }
+
+    });
+</script>
+

@@ -1,0 +1,366 @@
+﻿
+@{
+    ViewBag.Title = "RegistrationFee";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-1" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Registration Fee
+                    </li>
+                    <li class="breadcrumb-item "><a class="text-decoration-none text-primary" href="/admin/addcollegefee">Add College Fee</a></li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/adddiscountfee">Add Discount on Fee</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/allfeerecords">Fee Statement </a>
+                    </li>
+                </ol>
+            </nav>
+
+          
+        </div>
+    </div>
+
+    <!-- Edit   Registration Fee Modal -->
+    <div class="modal fade" id="editRegistrationFeeModal" tabindex="-1" aria-labelledby="editRegistrationFeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="editRegistrationFeeForm" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editRegistrationFeeModalLabel">Edit Registration Fee</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="EditRegistrationId" name="RegistrationId" />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" id="EditClassId" name="ClassName" />
+                                <div class="mb-3">
+                                    <label class="form-label">Select Class</label>
+                                    <select  id="EditClassName" class="form-select" disabled>
+                                        <option value="0" disabled selected>-- Select Class --</option>
+                                        @foreach (var item in ViewBag.ClassList)
+                                        {
+                                            <option value="@item.ClassId">@item.ClassName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="EditRegistrationFee" class="form-label">Registration Fee </label>
+                                    <input type="text" id="EditRegistrationFee" name="RegistrationFee" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mb-3">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--end modal-->
+    <!-- add Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Registration Fee</h1>
+                    <button type="button" class="btn-close" id="addfeemodal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="registrationForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" id="RegistrationId" name="RegistrationId" value="0" />
+
+                                <div class="mb-3">
+                                    <label>Class Name</label>
+                                    <select id="ClassId" name="ClassName" class="form-select">
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+
+
+                                <div class="mb-3">
+                                    <label>Registration Fee</label>
+                                    <input type="number" id="RegistrationFee" name="RegistrationFee" class="form-control" placeholder="Registration Fee" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Add Registration Fee</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span>Registration Fee List</span> <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                          Add Registration Fee
+                        </button>
+                    </h4>
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Class Name</th>
+                                <th>Registration Fee</th>
+
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int sr = 1;
+                            }
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@sr</td>
+                                    <td>@item.ClassName</td>
+                                    <td>₹ @item.RegistrationFee.ToString("N2")</td>
+
+                                    <td>
+                                        <button class="btn btn-sm p-0" onclick="editRegistrationFee(@item.RegistrationId)"><i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>
+                                        <button class="btn btn-sm p-0" onclick="deleteRegistrationFee(@item.RegistrationId)"><i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+
+                                    </td>
+                                </tr>
+                                sr++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#addfeemodal').on('click', function () {
+            $('#registrationForm')[0].reset();
+            $('#staticBackdrop').modal('hide');
+        })
+        //bind classes
+        function loadUnassignedClasses() {
+            $.ajax({
+                url: '/admin/SelectClassByRegistrationId',
+                type: 'POST',
+                success: function (data) {
+                    let dropdown = $('#ClassId');
+                    dropdown.empty();
+                    dropdown.append('<option disabled selected>-- Select Class --</option>');
+                    $.each(data, function (i, classItem) {
+                        dropdown.append('<option value="' + classItem.ClassId + '">' + classItem.ClassName + '</option>');
+                    });
+                },
+                error: function () {
+                    alert('Error fetching class list');
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            loadUnassignedClasses();
+        });
+
+
+     @*var data =  @Html.Raw(Json.Encode(ViewData["classlist"]));
+     console.log(data);
+     var dropdown = $('#ClassId');
+     dropdown.empty();
+     dropdown.append('<option value="">----Select Class----</option>');
+
+     $.each(data, function (i, classItem) {
+         dropdown.append('<option value="' + classItem.ClassId + '">' + classItem.ClassName + '</option>');
+     });*@
+ });
+    $('#btnSubmit').on('click', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData($('#registrationForm')[0]);
+
+        // 🔄 Show SweetAlert loader
+        Swal.fire({
+            title: 'Submitting...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/RegistrationFee',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                Swal.close(); // ✅ Close loader
+
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: res.message,
+                        didClose: () => {
+                            location.href = '/admin/RegistrationFee';
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: res.message
+                    });
+                }
+            },
+            error: function (xhr) {
+                Swal.close(); // ✅ Close loader
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong: ' + xhr.responseText
+                });
+            }
+        });
+    });
+
+
+    function deleteRegistrationFee(RegistrationId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the subject record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                // 🔄 Show SweetAlert loader
+                Swal.fire({
+                    title: 'Deleting...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '/Admin/DeleteRegistrationFee',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ RegistrationId: RegistrationId }),
+                    success: function (response) {
+                        Swal.close(); // ✅ Close loader
+
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.close(); // ✅ Close loader
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+
+
+
+    function editRegistrationFee(id) {
+        debugger;
+        $.get('/Admin/GetRegistrationFeeById?id=' + id, function (data) {
+            if (data) {
+                $("#EditRegistrationId").val(data.RegistrationId);
+                $("#EditRegistrationFee").val(data.RegistrationFee);
+                $("#EditClassId").val(data.ClassName);
+                $("#EditClassName").val(data.ClassName);
+
+                console.log(data.ClassName)
+                $('#editRegistrationFeeModal').modal('show');
+            }
+        });
+    }
+
+    $('#editRegistrationFeeForm').on('submit', function (e) {
+        e.preventDefault();
+        debugger;
+        var formData = new FormData(this);
+        for (var pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+
+        Swal.fire({
+            title: 'Updating...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/UpdateRegistrationFee',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                Swal.close(); // Close loading indicator
+                if (res.success) {
+                    $('#editRegistrationFeeModal').modal('hide');
+                    Swal.fire('Updated!', 'Registration Fee updated successfully.', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', 'Something went wrong.', 'error');
+                }
+            },
+            error: function () {
+                Swal.close();
+                Swal.fire('Error', 'Something went wrong.', 'error');
+            }
+        });
+    });
+
+
+</script>
+
+
+
+
+
+
+

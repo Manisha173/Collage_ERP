@@ -1,0 +1,513 @@
+﻿@{
+    ViewBag.Title = "Add Section";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addclass">Add Class</a>
+                    </li>
+                    <li class="breadcrumb-item  active text-dark" aria-current="page">Add Section</li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/addsubject">Add Subject</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/addsyllabus">Add Syllabus</a>
+                    </li>
+                </ol>
+            </nav>
+
+
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span>Section List</span>
+                        <span class="w-50">
+                            <select id="academicFilter" class="form-select w-50">
+                                <option value="" selected>--Search By Class--</option>
+                                @if (ViewBag.ClassList != null)
+                                {
+                                    foreach (var ay in ViewBag.ClassList)
+                                    {
+                                        <option value="@ay.ClassName">@ay.ClassName</option>
+                                    }
+                                }
+                            </select>
+                        </span>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Add Section
+                        </button>
+                    </h4>
+                    <table id="sectionTable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Class</th>
+                                <th>Stream</th>
+                                <th>Section</th>
+                                @*<th>Description</th>*@
+                                <th style="width:150px !important;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int sr = 1;
+                            }
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@sr</td>
+                                    <td>@item.ClassName</td>
+                                    <td>@(!string.IsNullOrEmpty(item.Stream) ? item.Stream : "N/A")</td>
+                                    <td>@item.SectionName</td>
+                                    @*<td>
+            <a class="" data-bs-toggle="modal" data-bs-target="#sectionModal"
+                    data-section="@item.SectionDescription">
+                View Description
+            </a>
+        </td>*@
+
+                                    <td>
+                                        <button class="btn btn-sm p-0" onclick="editsection(@item.SectionId)"> <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>
+                                        <button class="btn btn-sm p-0" onclick="deleteSection(@item.SectionId)"><i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+                                    </td>
+                                </tr>
+                                sr++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--description-->
+<div class="modal fade" id="sectionModal" tabindex="-1" aria-labelledby="sectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sectionModalLabel">Section Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalSectionDescription">
+                <!-- Description will appear here -->
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+
+<!--add Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Section</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card mb-0 pb-0">
+                    <div class="card-body">
+                        <form method="post" id="addSection">
+                            <div class="row">
+                                <input type="hidden" id="SectionId" name="SectionId" />
+                                <!-- Institution Type -->
+                                <div class="col-sm-6 mb-2">
+                                    <label for="institutionType" class="form-label">Institution Type</label>
+                                    <select name="institutionType" id="institutionType" class="form-select">
+                                        <option selected disabled>--Select Institution Type--</option>
+                                        <option value="school">School</option>
+                                        <option value="college">College</option>
+                                    </select>
+                                </div>
+                                <!-- Education Level -->
+                                <div class="col-sm-6 mb-2">
+                                    <label for="educationLevel" class="form-label">Education Level</label>
+                                    <select name="educationLevel" id="educationLevel" class="form-select">
+                                        <option selected disabled>--Select Education Level--</option>
+                                    </select>
+                                </div>
+                                <!--class-->
+                                <div class="col-sm-6 mb-2">
+                                    <label for="classId" class="form-label">Class</label>
+                                    <select id="classId" class="form-select" name="ClassId" required>
+                                        <option value="">--Select Class--</option>
+
+                                    </select>
+                                </div>
+                                <!--Stream-->
+                                <div class="col-sm-6 mb-2" id="streamWrapper" style="display:none;">
+                                    <label for="streamInput" class="form-label">Stream</label>
+                                    <select id="streamInput" name="classStreamId" placeholder="Select Stream" class="form-select">
+                                        <option value="">--Select Stream--</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="SectionName" class="form-label">Section Name</label>
+                                        <input type="text" name="SectionName" id="SectionName" class="form-control" placeholder="Enter Section Name" required />
+                                    </div>
+                                </div>
+
+                                @*<div class="col-md-12">
+            <div class="mb-3">
+                <label>Description</label>
+                <textarea name="SectionDescription" placeholder="write here.." id="SectionDescription" class="form-control" rows="3"></textarea>
+            </div>
+        </div>*@
+
+                                <div class="col-12 text-center">
+                                    <button type="submit" id="btnSubmit" class="btn btn-primary">Add Section</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Section Modal -->
+<div class="modal fade" id="editSectionModal" tabindex="-1" aria-labelledby="editSectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="editSectionForm" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editSectionModalLabel">Edit Section</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+
+                    <input type="hidden" id="EditSectionId" name="SectionId" />
+                    <div class="col-md-6 mb-3">
+                        <label>Select Class</label>
+                        <select name="ClassId" id="EditClassName" class="form-select" disabled>
+                            <option value="0" disabled selected>-- Select Class --</option>
+                            @foreach (var item in ViewBag.ClassList)
+                            {
+                                <option value="@item.ClassId">@item.ClassName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="EditSectionName">Section Name</label>
+                        <input type="text" id="EditSectionName" name="SectionName" class="form-control" />
+
+                    </div>
+
+                    @*<div class="col-md-12 mb-3">
+                        <label> Description</label>
+                        <textarea type="text" id="EditDescription" name="SectionDescription" placeholder="write here.." class="form-control"></textarea>
+                    </div>*@
+
+
+
+                </div>
+                <div class="text-center mb-2">
+                    <button type="submit" class="btn btn-primary">Update Section</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--end modal-->
+<script>
+    $(document).ready(function () {
+        const educationOptions = {
+            school: [
+                { value: "secondary", text: "Secondary (Class Nursery – 10)" },
+                { value: "senior_secondary", text: "Senior Secondary (Class 11 – 12)" }
+            ],
+            college: [
+                { value: "diploma", text: "Diploma" },
+                { value: "ug", text: "Undergraduate (UG)" },
+                { value: "pg", text: "Postgraduate (PG)" },
+                { value: "phd", text: "Doctorate (Ph.D.)" }
+            ]
+        };
+        $('#institutionType').on('change', function () {
+            $('#streamWrapper').hide();
+            $('#optsubject').hide();
+            const selectedType = $(this).val();
+            const $educationLevel = $('#educationLevel');
+            $educationLevel.empty();
+            $.get('/Admin/GetEducationLevelByInstitution?institution=' + selectedType, function (data) {
+                if (data && data.length > 0) {
+                    $.each(data, function (index, item) {
+                        $educationLevel.append($('<option>', {
+                            value: item,
+                            text: item
+                        }));
+                    });
+                }
+            });
+            $educationLevel.empty().append('<option selected disabled>--Select Education Level--</option>');
+
+            //if (educationOptions[selectedType]) {
+            //    $.each(educationOptions[selectedType], function (index, item) {
+            //        $educationLevel.append($('<option>', {
+            //            value: item.value,
+            //            text: item.text
+            //        }));
+            //    });
+            //}
+            if (selectedType === "college") {
+                $('#streamWrapper').show();
+            }
+        });
+        let streamFlag = false;
+
+        $('#educationLevel').on('change', function () {
+            debugger
+            const selectedLevel = $(this).val();
+
+            $('#streamWrapper').hide();
+            $('#optsubject').hide();
+
+            if (selectedLevel !== 'secondary') {
+                $('#streamWrapper').show();
+                $('#optsubject').show();
+                streamFlag = true;
+
+            }
+
+            const $classdropdown = $('#classId');
+            $classdropdown.empty();
+            $classdropdown.html(`<option value="0" disabled selected>-- Select Class --</option>`);
+            $.get('/admin/GetClassByEducationLevel?educationlevel=' + selectedLevel, function (data) {
+                if (data && data.length > 0) {
+                    $.each(data, function (index, item) {
+                        $classdropdown.append($('<option>', {
+                            value: item.ClassId,
+                            text: item.ClassName
+
+                        }));
+                    });
+                }
+            });
+        });
+        $('#classId').on('change', function () {
+            debugger
+            if (streamFlag) {
+                let id = $(this).val();
+                const $streamdrp = $('#streamInput');
+                $streamdrp.empty();
+                $streamdrp.html(`<option value="0" disabled selected>-- Select Stream --</option>`);
+                $.get('/admin/GetStreamByClassId?classid=' + id, function (data) {
+                    if (data && data.length > 0) {
+                        $.each(data, function (index, item) {
+                            $streamdrp.append($('<option>', {
+                                value: item.Classstreamid,
+                                text: item.ClassStream
+                            }));
+                        });
+                    }
+                });
+            }
+        });
+        $('#closebtnaddmodal').on('click', function () {
+            $('#subjectContainer').empty();
+            $('#exampleModal').modal('hide');
+        });
+    });
+
+
+</script>
+<script>
+    //description
+    var sectionModal = document.getElementById('sectionModal');
+    sectionModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var sectionDescription = button.getAttribute('data-section');
+
+        var modalBody = sectionModal.querySelector('#modalSectionDescription');
+        modalBody.textContent = sectionDescription;
+    });
+    $(document).ready(function () {
+        $('#addSection').submit(function (e) {
+            e.preventDefault();
+            debugger;
+
+            var formData = {
+                ClassId: $('#classId').val(),
+                SectionName: $('#SectionName').val(),
+                classStreamId:$('#streamInput').val() || 0,
+                SectionDescription: $('#SectionDescription').val()
+            };
+
+            // Show SweetAlert loader before sending AJAX
+            Swal.fire({
+                title: 'Please wait...',
+                text: 'Saving section details...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: '/Admin/AddSection',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message
+                        }).then(function () {
+                            location.reload();
+                            $('#addSection')[0].reset();
+                            $('#btnSubmit').val('Add Section');
+                            $('#classId').val(0);
+                        });
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr)
+                    Swal.fire('Error', 'Something went wrong!.', 'error');
+                }
+            });
+        });
+    });
+
+    function resetForm() {
+        $('#classForm')[0].reset();
+        $('#classId').val('');
+        $('#submitBtn').text('Add Class');
+    }
+
+    // delete section
+    function deleteSection(SectionId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This section will be deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show loading indicator
+                Swal.fire({
+                    title: 'Deleting...',
+                    text: 'Please wait while we delete the section.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.post('/admin/deletesection', { SectionId: SectionId }, function (res) {
+                    if (res.success) {
+                        Swal.fire('Deleted!', res.message, 'success').then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', res.message, 'error');
+                    }
+                }).fail(function () {
+                    Swal.fire('Error', 'Server error occurred.', 'error');
+                });
+            }
+        });
+    }
+
+
+    function editsection(id) {
+        Swal.fire({
+            title: 'Please wait...',
+            text: 'Processing your request...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        $.get('/Admin/GetSectionById?id=' + id, function (data) {
+            if (data) {
+                $('#EditSectionId').val(data.SectionId);
+                $('#EditSectionName').val(data.SectionName);
+                $('#EditClassName').val(data.ClassId);
+                $('#EditDescription').val(data.SectionDescription);
+
+                Swal.close();
+                $('#editSectionModal').modal('show');
+            }
+        });
+    }
+
+    $('#editSectionForm').on('submit', function (e) {
+        e.preventDefault();
+        debugger;
+
+        var sectionId = $('#EditSectionId').val();          
+        var sectionName = $('#EditSectionName').val();   
+        var classId = $('#EditClassName').val();
+        var sectionDescription = $('#EditDescription').val();
+
+        // Show SweetAlert loader
+        Swal.fire({
+            title: 'Please wait...',
+            text: 'Updating section details...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/UpdateSection',
+            type: 'POST',
+            data: {
+                sectionId: sectionId,
+                sectionName: sectionName,
+                classId: classId,
+                sectionDescription: sectionDescription
+            },
+            success: function (res) {
+                if (res.success) {
+                    $('#editSectionModal').modal('hide');
+                    Swal.fire('Updated!', 'Section updated successfully.', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', 'Something went wrong.', 'error');
+                }
+            },
+            error: function (xhr) {
+                console.log(xhr)
+                Swal.fire('Error', 'Server error occurred.', 'error');
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        var table = $('#sectionTable').DataTable();
+        $('#academicFilter').change(function () {
+            let filterval = $(this).val();
+            table.column(1).search(filterval).draw();
+        });
+    });
+
+</script>

@@ -1,0 +1,414 @@
+﻿@{
+    ViewBag.Title = "AppDetail";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<div class="content-page">
+    <div class="card">
+        <div class="card-header">
+            <!-- Tabs Navigation -->
+            <ul class="nav nav-tabs mb-2" id="formTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="form1-tab" data-bs-toggle="tab" data-bs-target="#form1" type="button" role="tab">
+                        About
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="form2-tab" data-bs-toggle="tab" data-bs-target="#form2" type="button" role="tab">
+                        Contact
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="form3-tab" data-bs-toggle="tab" data-bs-target="#form3" type="button" role="tab">
+                        Privacy Policy
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="form3-tab" data-bs-toggle="tab" data-bs-target="#form4" type="button" role="tab">
+                        Version Detail
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="form3-tab" data-bs-toggle="tab" data-bs-target="#form5" type="button" role="tab">
+                        Terms And Conditions
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <!-- Tabs Content -->
+            <div class="tab-content mt-3">
+                <div class="tab-pane fade show active" id="form1" role="tabpanel">
+                    <form id="addaboutForm">
+                        <div class="w-100">
+                            <textarea id="aboutarea" class="txtArea">@(string.IsNullOrEmpty(Model.about) && Model == null?"" : Html.Raw(Model.about))</textarea>
+                        </div>
+                        <div class="text-center my-3">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="form2" role="tabpanel">
+                    <form id="addcontactForm">
+                        <div class="w-100">
+                            <textarea id="contactarea" class="txtArea">@(string.IsNullOrEmpty(Model.about) && Model == null ? "":Html.Raw(Model.contact))</textarea>
+                        </div>
+                        <div class="text-center my-3">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="form3" role="tabpanel">
+                    <form id="addprivacypolicyForm">
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <label for="role" class="form-label pt-1"> <strong>Select Role :</strong> </label>
+                            </div>
+                            <div class="col-sm-6">
+                                <select class="form-select" id="role" name="role">
+                                    <option selected value="teacher">Teacher</option>
+                                    <option value="librarian">Library</option>
+                                    <option value="student">Student</option>
+                                    <option value="parent">Parent</option>
+                                    <option value="driver">Driver</option>
+                                    <option value="security">Security</option>
+                                    <option value="warden">Warden</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="w-100">
+                            <textarea id="privacyarea" class="txtArea">@(ViewBag.ppm != null? ViewBag.ppm.privacyPolicy : "")</textarea>
+                        </div>
+                        <div class="text-center my-3">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-pane fade show" id="form4" role="tabpanel">
+                    <form id="AddVersionForm">
+                        <div class="row mb-2 px-5">
+                            <div class="col-sm-3">
+                                <label for="type" class="form-label pt-1"><strong>Type</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                @{
+                                    string vertype = "";
+                                    if (ViewBag.avd != null)
+                                    {
+                                         vertype = !string.IsNullOrEmpty(ViewBag.avd.Type) ? ViewBag.avd.Type : "";
+                                    }
+                                }
+
+                                <select id="type" name="Type" class="form-select" required>
+                                    <option value="">--Select Type--</option>
+                                    <option value="iOS" @(vertype == "iOS" ? "selected" : "")>iOS</option>
+                                    <option value="Android" @(vertype == "Android" ? "selected" : "")>Android</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2 px-5">
+                            <div class="col-sm-3">
+                                <label for="currentVersion" class="form-label pt-1"><strong>Current Version</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" id="currentVersion" name="CurrentVersion" value="@(ViewBag.avd != null? ViewBag.avd.CurrentVersion : "")" class="form-control" placeholder="Enter Current Version" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2 px-5">
+                            <div class="col-sm-3">
+                                <label for="oldVersion" class="form-label pt-1"><strong>Old Version</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" id="oldVersion" name="OldVersion" class="form-control" value="@(ViewBag.avd != null? ViewBag.avd.OldVersion : "")" placeholder="Enter Old Version" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2 px-5">
+                            <div class="col-sm-3">
+                                <label for="updateUrl" class="form-label pt-1"><strong>Update URL</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="url" id="updateUrl" name="UpdateUrl" value="@(ViewBag.avd != null? ViewBag.avd.UpdateUrl : "")" class="form-control" placeholder="Enter Update URL" required>
+                            </div>
+                        </div>
+
+                        <div class="add-btn text-center">
+                            <input type="submit" class="btn btn-primary" value="Submit">
+                        </div>
+                    </form>
+
+                </div>
+                <div class="tab-pane fade" id="form5" role="tabpanel">
+                    <form id="addtermsandconditionForm">
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <label for="role" class="form-label pt-1"> <strong>Select Role :</strong> </label>
+                            </div>
+                            <div class="col-sm-6">
+                                <select class="form-select" id="tandcrole" name="role">
+                                    <option selected value="teacher">Teacher</option>
+                                    <option value="librarian">Library</option>
+                                    <option value="student">Student</option>
+                                    <option value="parent">Parent</option>
+                                    <option value="driver">Driver</option>
+                                    <option value="security">Security</option>
+                                    <option value="warden">Warden</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="w-100">
+                            <textarea id="termandcondition" class="txtArea">@(ViewBag.tac != null? ViewBag.tac.termsAndConditions : "")</textarea>
+                        </div>
+                        <div class="text-center my-3">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.txtArea').summernote({
+            height: 270,
+            placeholder:'Write Something Here...'
+        });
+
+        $('#addaboutForm').submit(function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            var content = $('#aboutarea').val();
+            let type = 'About';
+            $.ajax({
+                type: 'Post',
+                url: '/admin/AddAppDetails',
+                data: {content,type},
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+        $('#addcontactForm').submit(function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            var content = $('#contactarea').val();
+            let type = 'Contact';
+            $.ajax({
+                type: 'Post',
+                url: '/admin/AddAppDetails',
+                data: { content, type },
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+        $('#addprivacypolicyForm').submit(function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            var content = $('#privacyarea').val();
+            let role = $('#role').val();
+            let type = 'PrivacyPolicy';
+            $.ajax({
+                type: 'Post',
+                url: '/admin/AddAppDetails',
+                data: { content, type,role },
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+        $('#addtermsandconditionForm').submit(function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            var content = $('#termandcondition').val();
+            let role = $('#tandcrole').val();
+            let type = 'TermsAndConditions';
+            $.ajax({
+                type: 'Post',
+                url: '/admin/AddAppDetails',
+                data: { content, type, role },
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+
+        $('#role').change(function () {
+            let role = $(this).val();
+            $.ajax({
+                type: 'GET',
+                url: '/admin/PrivacyPolicyByRole',
+                data: { role: role },
+                dataType: 'json',
+                success: function (res) {
+                    console.log(res.data);
+                    if (res.status) {
+                        $('#privacyarea').summernote('code', res.data.content);
+                    } else {
+                        $('#privacyarea').summernote('code',"");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('Status:', status);
+                    console.log('Error:', error);
+                    console.log('Response:', xhr.responseText);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!',
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+        $('#tandcrole').change(function () {
+            let role = $(this).val();
+            $.ajax({
+                type: 'GET',
+                url: '/admin/TermsAndConditions',
+                data: { role: role },
+                dataType: 'json',
+                success: function (res) {
+                    console.log(res.data);
+                    if (res.status) {
+                        $('#termandcondition').summernote('code', res.data.termsAndConditions);
+                    } else {
+                        $('#termandcondition').summernote('code',"");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('Status:', status);
+                    console.log('Error:', error);
+                    console.log('Response:', xhr.responseText);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!',
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+        $('#AddVersionForm').submit(function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            var formdata = new FormData(this);
+            $.ajax({
+                type: 'Post',
+                url: '/admin/AddAppVersionDetails',
+                data: formdata,
+                processData: false,
+                contentType:false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+    })
+</script>

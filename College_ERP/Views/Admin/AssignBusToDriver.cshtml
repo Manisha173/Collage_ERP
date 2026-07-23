@@ -1,0 +1,451 @@
+﻿
+@{
+    ViewBag.Title = "AssignBusToDriver";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var data = ViewData["assignList"] as List<College_ERP.Models.Admin.AssignBus>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addbus">Add Bus</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/adddriver">Add Driver</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddBusRoute">  Add Bus Route </a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Assign Bus to Driver
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddStudentRouteWise"> Add Student In Bus </a>
+                    </li>
+
+                </ol>
+            </nav>
+
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Assign Bus to Driver</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="assingBusForm">
+                        <input type="hidden" value="0" name="Id" id="id" />
+                        <div class="row px-5">
+                            <div class="col-sm-3">
+                                <label class="form-label pt-1"><strong>Driver Name</strong></label>
+                            </div>
+                            <div class="col-md-9">
+                                <select type="text" id="driver" name="driverId" class="form-control" required>
+                                    <option value="">--Select Driver--</option>
+                                    @if (ViewBag.driverList != null)
+                                    {
+                                        foreach (var item in ViewBag.driverList as List<College_ERP.Models.Admin.Drivers>)
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row px-5 mt-2">
+                            <div class="col-sm-3">
+                                <label class="form-label pt-1"><strong>Buss No</strong></label>
+                            </div>
+                            <div class="col-md-9">
+                                <select type="text" id="BussNo" name="busId" class="form-control" required>
+                                    <option value="">--Select Bus No--</option>
+                                    @if (ViewBag.busList != null)
+                                    {
+                                        foreach (var item in ViewBag.busList as List<College_ERP.Models.Admin.Buss>)
+                                        {
+                                            <option value="@item.Id">@item.BusNo (@item.Type)</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span>Assigned Bus List</span><!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Assign Bus
+                        </button>
+                    </h4>
+                    <table id="busRouteTable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Driver Name</th>
+                                <th>Buss No</th>
+                                <th>Assigned Date</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (data != null)
+                            {
+                                int count = 1;
+                                foreach (var item in data)
+                                {
+                                    <tr>
+                                        <td>@count</td>
+                                        <td data-did="@item.driverId">@item.driverName</td>
+                                        <td data-bid="@item.busId">@item.busNo (@item.type)</td>
+                                        <td>@item.createdAt.ToString("dd-MMM-yyyy")</td>
+                                        <td class="text-center">
+                                            <a role="button" title="Update" data-id="@item.id" class="btn btn-sm p-0 updateAssigendBus"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                            <a role="button" class="btn btn-sm deleteAssignedBus p-0" data-id="@item.id" title="Delete"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                        </td>
+                                    </tr>
+                                    count++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal to Update Stock Material-->
+    <div class="modal fade" tabindex="-1" id="updateModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title">Update Assigned Bus</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="assingBusForm" id="assingBusFormModal">
+                        <input type="hidden" value="0" name="id" id="upid" />
+                        <div class="row px-5">
+                            <input type="hidden" id="updateDriver" name="driverId" />
+                            <input type="hidden" id="updatebussNo" name="busId" />
+                            <div class="col-sm-3">
+                                <label class="form-label pt-1"><strong>Driver Name</strong></label>
+                            </div>
+                            <div class="col-md-9">
+                                <div id="driverContainer" class="input-group">
+                                    <input type="text" readonly value="" id="upDriver" class="form-control" />
+                                    <button type="button" class="btn btn-outline-dark" id="driverBtn" onclick="toggleField('driver')">Change</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row px-5 mt-2">
+                            <div class="col-sm-3">
+                                <label class="form-label pt-1"><strong>Buss No</strong></label>
+                            </div>
+                            <div class="col-md-9">
+                                <div id="bussContainer" class="input-group">
+                                    <input type="text" readonly value="" id="upBuss" class="form-control" />
+                                    <button type="button" class="btn btn-outline-dark" id="bussBtn" onclick="toggleField('buss')">Change</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+
+    function initializeDataTable() {
+        debugger
+        let table = $('#busRouteTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![4].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![4].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+
+    $(document).ready(function () {
+        initializeDataTable();
+    })
+
+    $(".assingBusForm").on('submit', function (e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Please Wait!',
+            text: 'Processing Your Request...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        debugger
+        let formdata = new FormData(this);
+
+        $.ajax({
+            url: '/admin/AssignBusToDriver', type: 'post', data: formdata, contentType: false, processData: false,
+            success: function (res) {
+                if (res.status) {
+                    Swal.fire({
+                        title: 'Success', text: res.message, icon: 'success',
+                        didClose: () => { location.reload(true); }
+                    });
+                }
+                else {
+                    Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                }
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Server Error. Try Again Later!', icon: 'error'
+                });
+                console.log(xhr)
+            }
+        });
+    })
+    $(".deleteAssignedBus").on('click', function () {
+        let id = $(this).data('id');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to delete this item?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            customClass: {
+                confirmButton: 'mx-2 btn btn-danger',
+                cancelButton: 'mx-2 btn btn-light'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Please Wait!',
+                    text: 'Processing Your Request...',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '/admin/DeleteAssignedBus',
+                    type: 'get',
+                    data: { Id: id },
+                    success: function (res) {
+                        console.log(res);
+                        if (res.status) {
+                            Swal.fire({
+                                title: 'Success',
+                                text: res.message,
+                                icon: 'success',
+                                didClose: () => {
+                                    location.reload(true);
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: res.message,
+                                icon: 'warning'
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Server Error. Try Again Later!',
+                            icon: 'error'
+                        });
+                        console.log(xhr);
+                    }
+                });
+            } else {
+                Swal.fire('Cancelled', 'Your item is safe.', 'info');
+            }
+        });
+    });
+
+    $(".updateAssigendBus").on('click', function () {
+        debugger;
+
+        Swal.fire({
+            title: 'Please Wait!',
+            text: 'Processing Your Request...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        let row = $(this).closest('tr');
+
+        let tds = row.find('td');
+
+        let id = $(this).data('id');
+        let busno = $(tds[2]).text();
+        let busid = $(tds[2]).data('bid');
+        let driverid = $(tds[1]).data('did');
+        let drivername = $(tds[1]).text().trim();
+        //$('#assingBusFormModal')[0].reset();
+        $("#upid").val(id);
+        $("#upBuss").val(busno);
+        $("#updatebussNo").val(busid);
+        $("#upDriver").val(drivername);
+        $("#updateDriver").val(driverid);
+
+        Swal.close();
+        $("#updateModal").modal('show');
+    });
+</script>
+<script>
+    function toggleField(fieldType) {
+        var buss = @Html.Raw(Json.Encode(ViewBag.busList));
+        var driver = @Html.Raw(Json.Encode(ViewBag.driverList));
+        console.log("Buss", buss);
+        console.log("Driver", driver);
+
+        const isDriver = fieldType === 'driver';
+        const container = document.getElementById(`${fieldType}Container`);
+        const input = document.getElementById(`up${capitalize(fieldType)}`);
+        const button = document.getElementById(`${fieldType}Btn`);
+
+        if (button.innerText === "Change") {
+            // Store original value in button's dataset
+            button.dataset.originalValue = input.value;
+
+            // Create dropdown
+            const select = document.createElement("select");
+            select.className = "form-control";
+            select.id = `${fieldType}Select`;
+
+            const dataList = isDriver ? driver : buss;
+            if (dataList.length > 0) {
+                const options = isDriver
+                    ? dataList.map(d => ({ value: d.Id, text: d.Name }))
+                    : dataList.map(b => ({ value: b.Id, text: `${b.BusNo} (${b.Type})`  }));
+                options.forEach(opt => {
+                    const option = document.createElement("option");
+                    option.value = opt.value;
+                    option.text = opt.text;
+                    select.appendChild(option);
+                });
+            } else {
+                // No data available
+                const option = document.createElement("option");
+                option.value = "";
+                option.text = isDriver ? "No driver available" : "No bus available";
+                option.disabled = true;
+                option.selected = true;
+                select.appendChild(option);
+            }
+
+            // Remove input and insert select
+            container.removeChild(input);
+            container.insertBefore(select, button);
+
+            // Update button
+            button.innerText = "Cancel";
+        } else {
+            // Cancel clicked: remove select and bring back input
+            const select = document.getElementById(`${fieldType}Select`);
+            container.removeChild(select);
+
+            const newInput = document.createElement("input");
+            newInput.type = "text";
+            newInput.readOnly = true;
+            newInput.id = `up${capitalize(fieldType)}`;
+            newInput.className = "form-control";
+
+            // Restore original value
+            newInput.value = button.dataset.originalValue || "";
+
+            container.insertBefore(newInput, button);
+            button.innerText = "Change";
+        }
+    }
+
+    function capitalize(text) {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    $(document).on('change', '#driverSelect', function () {
+        debugger;
+        let dr = $(this).val();
+        $('#updateDriver').val(dr);
+    });
+    $(document).on('change', '#bussSelect', function () {
+        let bs = $(this).val();
+        $('#updatebussNo').val(bs);
+    });
+</script>
+
+
+

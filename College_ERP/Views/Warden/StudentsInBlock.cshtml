@@ -1,0 +1,855 @@
+﻿@model List<College_ERP.Models.Warden.StudentDetailModel>
+@{
+    ViewBag.Title = "StudentsInBlock";
+    Layout = "~/Views/Shared/_wardenLayout.cshtml";
+    var floors = ViewData["floors"] as List<int>;
+}
+
+<style>
+    .bed-card {
+        border-radius: 12px;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+        font-size: 0.85rem;
+    }
+
+    .bed-icon {
+        font-size: 1.6rem;
+        transition: color 0.2s;
+    }
+
+    .bed-status {
+        display: inline-block;
+        margin-top: 4px;
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        border-radius: 12px;
+    }
+
+    /* Available Bed */
+    .bed-available {
+        border: 2px solid #28a745;
+        color: #28a745;
+    }
+
+        .bed-available .bed-icon {
+            color: #28a745;
+        }
+
+        .bed-available .bed-status {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+    /* Occupied Bed */
+    .bed-occupied {
+        border: 2px solid #6c757d;
+        color: #6c757d;
+    }
+
+        .bed-occupied .bed-icon {
+            color: #6c757d;
+        }
+
+        .bed-occupied .bed-status {
+            background-color: #6c757d;
+            color: #fff;
+        }
+
+    /* Hover Effect */
+    .bed-card:hover {
+        transform: scale(1.08);
+        cursor: pointer;
+    }
+
+    /* Selected State */
+    .bed-selected {
+        border: 2px solid #0d6efd !important;
+        background-color: #e7f1ff;
+        color: #0d6efd !important;
+    }
+
+        .bed-selected .bed-icon {
+            color: #0d6efd !important;
+        }
+
+        .bed-selected .bed-status {
+            background-color: #0d6efd !important;
+            color: #fff !important;
+        }
+</style>
+
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Students In Block</h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Student Name</th>
+                                    <th>Mobile No</th>
+                                    <th>Gender</th>
+                                    <th>Class</th>
+                                    <th>Section</th>
+                                    <th>Room No</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Count > 0)
+                                {
+                                    int sr = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@sr</td>
+                                            <td>@item.StudentName</td>
+                                            <td>@item.MobileNo</td>
+                                            <td>@item.Gender</td>
+                                            <td>@item.ClassName</td>
+                                            <td>@item.SectionName</td>
+                                            <td>@item.RoomNumber</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary reallocatemodalbtn" data-id="@item.StudentId">
+                                                    Reallocate Room
+                                                </button>
+                                            </td>
+
+                                        </tr>
+                                        sr++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Reallocate Room modal-->
+        <div class="modal fade" id="reallocateRoomModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="reallocateRoomModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-light">
+                        <h5 class="modal-title" id="reallocateRoomModalLabel">Reallocate Room</h5>
+                        <button type="button" onclick="location.reload();" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body pt-0">
+
+                        <!---------------------------------------------------------->
+
+                       
+                        <div class="card">
+                            <div class="card-header border-bottom-0 mb-0 pb-0">
+                                <!-- Tabs Navigation -->
+                                <ul class="nav nav-tabs mb-2 mt-0 pt-0" id="formTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="form1-tab" data-bs-toggle="tab" data-bs-target="#form1" type="button" role="tab">
+                                            By Floor
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="form2-tab" data-bs-toggle="tab" data-bs-target="#form2" type="button" role="tab">
+                                            By Room No
+                                        </button>
+                                    </li>
+                                </ul>
+
+                            </div>
+                            <div class="card-body mt-0 pt-0">
+                                <!-- Tabs Content -->
+                                <div class="tab-content mt-0 pt-0">
+                                    <div class="tab-pane fade show active" id="form1" role="tabpanel">
+                                        <div id="studentDetails" class="mb-1" style="display:none;">
+
+                                            <div class="col-12 d-flex flex-wrap gap-3">
+                                                <div><strong style="color:seagreen">Name:</strong> <span id="studentName"></span></div>
+                                                <div><strong style="color:seagreen">Email:</strong> <span id="studentEmail"></span></div>
+                                                <div><strong style="color:seagreen">Room No:</strong> <span id="studentRoomNo"></span></div>
+                                                <div><strong style="color:seagreen">Address:</strong> <span id="studentAddress"></span></div>
+                                            </div>
+
+
+                                        </div>
+                                        <div id="roomInfo" class="row align-items-center mb-2" style="display: none;">
+
+                                            <div class="col-12 d-flex flex-wrap gap-4 mb-2">
+
+
+                                                <p class="mb-0"><b style="color:seagreen">Total Beds:</b> <span id="totalBeds">0</span></p>
+                                                <p class="mb-0"><b style="color:seagreen">Occupied Beds:</b> <span id="occupiedBeds">0</span></p>
+                                                <p class="mb-0"><b style="color:seagreen">Available Beds:</b> <span id="availableBeds">0</span></p>
+                                                <p class="mb-0"><b style="color:seagreen">Facilities:</b> <span id="roomFacilities">N/A</span></p>
+                                                <p class="mb-0"><b style="color:seagreen">Total Fees:</b> <span id="totalFees">N/A</span></p>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <input type="hidden" id="FeeType" name="FeeType" />
+                                            <input type="hidden" id="FeeSlip" name="FeeSlip" />
+                                            <input type="hidden" id="TransactionId" name="transactionid" />
+
+                                            <div class="col-md-6 mb-1">
+                                                <label class="form-label" for="roomStudentsDropdown" style="display:none;">Select Student</label>
+
+                                                <select id="roomStudentsDropdown" class="form-select " style="display:none;"></select>
+                                            </div>
+                                            <div class="col-md-7"></div>
+                                            <div class="mb-3 col-sm-6">
+                                                <label class="form-label">Student Name</label>
+                                                <input type="text" readonly class="form-control" id="StudentId" />
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="form-label">Floor</label>
+                                                <select id="floor" name="floor" class="form-select floordropdown" required>
+                                                    <option selected disabled>--Select Floor--</option>
+                                                    @if (floors != null)
+                                                    {
+                                                        foreach (var floor in floors)
+                                                        {
+                                                            <option value="@floor">@(floor == 0?"Ground": floor)</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="mb-3 col-md-6">
+                                                <input type="hidden" id="hiddenBlockId" name="BlockId" />
+
+                                                <input type="hidden" id="hiddenStudentId" name="StudentId" />
+                                                <label class="form-label" for="RoomNo">Room No</label>
+                                                <select id="RoomNo" name="RoomNo" class="form-select" required>
+                                                    <option disabled selected>Select Room Number</option>
+
+                                                </select>
+
+
+                                            </div>
+                                            <div class=" col-6">
+                                                <label class="form-label">
+                                                    Fees Submitted
+                                                </label>
+                                                <input type="number" class="form-control" id="FeesSubmitted" name="FeesSubmitted" readonly placeholder="Enter Fees Submitted" />
+                                            </div>
+                                            <div class="col-md-6 mt-2">
+                                                <label class="form-label">
+                                                    Remaining Fees
+                                                </label>
+                                                <input type="number" class="form-control" id="RemainingFees" name="RemainingFees" placeholder="Enter Remaining Fees" readonly />
+                                            </div>
+                                            <div class="col-md-6 mt-2" id="duedatecontainer">
+                                                <label class="form-label">Due Date</label>
+                                                <input type="date" class="form-control" id="DueDate" name="DueDate" min="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="form2" role="tabpanel">
+                                        <div class="row">
+                                            <div class="mb-3 col-sm-6">
+                                                <label class="form-label">Student Name</label>
+                                                <input type="text" readonly class="form-control" id="StudentIdbr" />
+                                            </div>
+                                            <input type="hidden" id="hiddenBlockId" name="BlockId" />
+                                            <input type="hidden" id="hiddenStudentId" name="StudentId" />
+
+                                            <div class="mb-3 col-md-6">
+                                                <label class="form-label" for="RoomNo">Room No</label>
+                                                <div class="input-group">
+                                                    <input type="text" id="RoomNoch" name="RoomNo" class="form-control" placeholder="Enter Room Number" required>
+                                                    <button class="input-group-text" id="checkroom">Check</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--end modal-->
+        </div>
+    </div>
+</div>
+<!--Modal to show beds-->
+<div class="modal fade" id="roomModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="roomModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="roomModalLabel">Room: A-101</h5>
+                <button type="button" class="btn-close btn-close-white" id="closereallocateroommodal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-2 mx-0 px-0">
+                    <div class="col-sm-6">
+                        <strong>Room Facilitate : </strong>
+                        <span id="roomFacilitate">asdfkjaldfjl</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>Total Fee : </strong>
+                        <span id="roomFee">100000</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>Remaining Fee : </strong>
+                        <span id="remainFee">100000</span>
+                    </div>
+                </div>
+                <input type="hidden" id="roomidch" />
+                <input type="hidden" id="studentidch" />
+                <input type="hidden" id="remainingfeech" />
+                <div class="container py-3">
+                    <div class="row g-3 justify-content-start" id="bedscontainer">
+
+                        <!-- Bed 1 -->
+                        <div class="col-md-2 col-4">
+                            <div class="card bed-card text-center border border-secondary">
+                                <div class="card-body py-2 px-1">
+                                    <i class="fa-solid fa-bed text-secondary" style="font-size: 1.4rem;"></i>
+                                    <div class="small fw-semibold">Bed 1</div>
+                                    <span class="badge bg-secondary">Occupied</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bed 2 -->
+                        <div class="col-md-2 col-4">
+                            <div class="card bed-card text-center border border-success">
+                                <div class="card-body py-2 px-1">
+                                    <i class="fa-solid fa-bed text-success" style="font-size: 1.4rem;"></i>
+                                    <div class="small fw-semibold">Bed 2</div>
+                                    <span class="badge bg-success">Available</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal to show beds-->
+
+<script>
+        let submittedFeeOfStudent = 0;
+    $(document).ready(function () {
+        const today = new Date().toISOString().split('T')[0];
+        $('#DueDate').attr('min', today);
+
+        $('#closereallocateroommodal').on('click', function () {
+            $('#reallocateRoomModal').modal('show');
+            $('#roomModal').modal('hide');
+        });
+        let TotalRoomFee = 0.0;
+        $('#checkroom').on('click', function () {
+            debugger
+            let chroom = $('#RoomNoch').val();
+            $.ajax({
+                url: '/warden/GetRoomInfo',
+                type: 'get',
+                data: { chroom: chroom },
+                success: function (response) {
+                    debugger
+                    if (response) {
+                        debugger
+                        $('#roomModalLabel').text(`Room No : ${response.RoomNumber}`);
+                        $('#roomFacilitate').text(`${response.RoomFacilitate}`);
+                        $('#roomidch').val(`${response.RoomId}`);
+                        $('#roomFee').text(`${response.TotalFees}`);
+                        TotalRoomFee = parseFloat(response.TotalFees);
+                        if (TotalRoomFee > parseFloat(submittedFeeOfStudent)) {
+                            $('#remainingfeech').val(TotalRoomFee - parseFloat(submittedFeeOfStudent));
+                            $('#remainFee').text(TotalRoomFee - parseFloat(submittedFeeOfStudent))
+                        } else {
+                            $('#remainFee').text(0)
+                            $('#remainingfeech').val(0);
+                        }
+                        let bedcon = document.getElementById("bedscontainer");
+                        bedcon.innerHTML = '';
+                        console.log(response);
+
+                        for (let i = 1; i <= response.TotalBeds; i++) {
+                            let isOccupied = response.OccupiedBeds >= i;
+                            let bedHtml = `
+<div class="col-md-4 col-4">
+    <div class="bed-wrapper ${isOccupied ? "occbtn" : ""}" 
+         data-bed="${i}" 
+         data-available="${!isOccupied}"
+         ${isOccupied ? `data-bs-toggle="popover" title="Occupied Bed" data-bs-content="${(response.students[i - 1] || {}).name || ''}" data-bs-placement="right"` : ''}>
+        <div class="card bed-card text-center ${isOccupied ? "bed-occupied" : "bed-available"}" id="bedCard${i}">
+            <div class="card-body py-2 px-1">
+                <i class="fa-solid fa-bed bed-icon"></i>
+                <div class="small fw-semibold">Bed ${i}</div>
+                <span class="badge bed-status">${isOccupied ? "Occupied" : "Available"}</span>
+            </div>
+        </div>
+    </div>
+</div>`;
+
+                            bedcon.insertAdjacentHTML('beforeend', bedHtml);
+                        }
+                        document.querySelectorAll('.occbtn').forEach(el => {
+                            new bootstrap.Popover(el, {
+                                trigger: 'manual',
+                                html: true,
+                                placement: 'top'
+                            });
+                        });
+
+                        // Event Binding
+                        document.querySelectorAll('.bed-wrapper').forEach(el => {
+                            el.addEventListener('click', function () {
+                                let isAvailable = this.dataset.available === "true";
+                                if (!isAvailable) return;
+
+                                // Deselect all
+                                document.querySelectorAll('.bed-wrapper .bed-card').forEach(card => {
+                                    card.classList.remove('bed-selected');
+                                });
+
+                                // Select current
+                                this.querySelector('.bed-card').classList.add('bed-selected');
+
+                                // Add Assign Room button
+                                let assignBtnContainer = document.getElementById("assignRoomBtnContainer");
+                                if (!assignBtnContainer) {
+                                    assignBtnContainer = document.createElement('div');
+                                    assignBtnContainer.id = "assignRoomBtnContainer";
+                                    assignBtnContainer.className = "col-sm-12 text-end mt-3";
+                                    bedcon.parentNode.appendChild(assignBtnContainer);
+                                }
+
+                                assignBtnContainer.innerHTML = `
+                <button class="btn btn-primary" id="assignRoomBtn" data-bed="${this.dataset.bed}">
+                    Assign Bed ${this.dataset.bed}
+                </button>
+            `;
+                            });
+                        });
+
+                        $('#reallocateRoomModal').modal('hide');
+                        $('#roomModal').modal('show');
+                    }
+
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire('Error', 'Something went wrong while fetching details', 'error');
+                }
+            });
+        });
+        $(function () {
+            var hideTimer;
+
+            $(document).on('mouseenter', '.occbtn', function () {
+                clearTimeout(hideTimer);
+                $(this).popover('show');
+            }).on('mouseleave', '.occbtn', function () {
+                var self = this;
+                hideTimer = setTimeout(function () {
+                    $(self).popover('hide');
+                }, 200);
+            });
+
+            $(document).on('mouseenter', '.popover', function () {
+                clearTimeout(hideTimer);
+            }).on('mouseleave', '.popover', function () {
+                $('.occbtn').popover('hide');
+            });
+        });
+
+        $(document).on('click', '#assignRoomBtn', function () {
+            debugger
+            Swal.fire({
+                title: 'Please wait!',
+                text: 'Processing your request...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            var formData = new FormData();
+
+            formData.append('RoomId', $('#roomidch').val());
+            formData.append('StudentId', $('#studentidch').val());
+            formData.append('RemainingFees', $('#remainingfeech').val() || 0);
+
+            $.ajax({
+                url: '/warden/ReallocateRoom',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire('Success', 'Room reallocated successfully', 'success').then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', response.message || 'Failed to reallocate room', 'error');
+                    }
+                },
+                error: function () {
+                    Swal.fire('Error', 'An error occurred during submission', 'error');
+                }
+            });
+        });
+    });
+
+
+    //calculate remaining fees
+    $(document).ready(function () {
+
+        $('#FeesSubmitted').on('input', function () {
+            var totalFees = parseFloat($('#totalFees').text()) || 0;
+            var feesSubmitted = parseFloat($(this).val()) || 0;
+
+            var remainingFees = totalFees - feesSubmitted;
+            if (remainingFees < 0) remainingFees = 0;
+
+            $('#RemainingFees').val(remainingFees);
+        });
+    });
+    //------
+    $(document).on('change', 'input[name="reallocateOption"]', function () {
+        $('#studentDetails').hide();
+        $('#roomStudentsDropdown').hide().empty();
+        $('label[for="roomStudentsDropdown"]').hide();
+        $('#admissionNoInput').val('');
+        $('#roomNoInput').val('');
+        if ($(this).val() === 'admission') {
+            $('#admissionInputContainer').show();
+            $('#roomInputContainer').hide();
+            $('#roomStudentsDropdown').hide();
+        } else if ($(this).val() === 'room') {
+            $('#roomInputContainer').show();
+            $('#admissionInputContainer').hide();
+        }
+    });
+
+
+    let typingTimer;
+    const doneTypingInterval = 500;
+    $('#admissionNoInput').on('input', function () {
+        clearTimeout(typingTimer);
+
+        const admissionNo = $(this).val().trim();
+
+        if (admissionNo.length >= 3) {
+            typingTimer = setTimeout(function () {
+                fetchAdmissionDetails(admissionNo);
+            }, doneTypingInterval);
+        } else {
+            $('#studentDetails').hide();
+        }
+    });
+
+    function fetchAdmissionDetails(admissionNo) {
+        $.ajax({
+            url: '/warden/GetUserByAdmissionNo',
+            type: 'POST',
+            data: {
+                userNo: admissionNo,
+                userType: 'student'
+            },
+            success: function (response) {
+                if (response.length > 0) {
+                    const data = response[0];
+
+                    $('#studentName').text(data.userName);
+                    $('#studentEmail').text(data.emailId || '-');
+                    $('#studentRoomNo').text(data.roomNo || '-');
+                    $('#studentAddress').text(data.address);
+                    $('#hiddenHostelId').val(data.hostelId);
+                    $('#hiddenBlockId').val(data.blockId);
+                    $('#hiddenStudentId').val(data.studentid);
+
+                    fetchRoomsByBlockId(data.blockId);
+
+
+                    $('#studentDetails').show();
+                } else {
+                    $('#studentDetails').hide();
+                    $('#hiddenHostelId').val('');
+                }
+            },
+            error: function () {
+                Swal.fire('Error', 'Something went wrong while fetching details', 'error');
+            }
+        });
+    }
+
+    //data according to roomno
+    let typingTimerRoom;
+    const doneTypingIntervalRoom = 500;
+
+    $('#roomNoInput').on('input', function () {
+        clearTimeout(typingTimerRoom);
+
+        const roomNo = $(this).val().trim();
+
+        if (roomNo.length > 0) {
+            typingTimerRoom = setTimeout(function () {
+                fetchStudentsByRoomNo(roomNo);
+            }, doneTypingIntervalRoom);
+        } else {
+            $('#roomStudentsDropdown').empty().hide();
+        }
+    });
+
+    function fetchStudentsByRoomNo(roomNo) {
+        $.ajax({
+            url: '/warden/GetStudentsByRoomNo',
+            type: 'POST',
+            data: { roomNo: roomNo },
+            success: function (response) {
+                if (response.length > 0) {
+                    let options = '<option value="">Select Student</option>';
+                    response.forEach(student => {
+                        options += `<option value="${student.studentid}" data-blockid="${student.blockId}" data-hostelid="${student.hostelId}">${student.userName} [${student.emailId}]</option>`;
+
+
+                    });
+                    $('#roomStudentsDropdown').html(options).show();
+
+                    $('label[for="roomStudentsDropdown"]').show();
+                    $('#roomStudentsDropdown').off('change').on('change', function () {
+                        const selectedOption = $(this).find('option:selected');
+                        const studentId = selectedOption.val();
+                        const blockId = selectedOption.data('blockid');
+
+
+                        $('#hiddenStudentId').val(studentId);
+                        $('#hiddenBlockId').val(blockId);
+                        console.log(studentId)
+
+                        if (blockId) {
+                            fetchRoomsByBlockId(blockId);
+                        } else {
+                            $('#RoomNo').empty().append('<option disabled selected>Select Room Number</option>');
+                        }
+                    });
+
+                } else {
+                    $('#roomStudentsDropdown').empty().hide();
+                    $('#RoomNo').empty().append('<option disabled selected>Select Room Number</option>');
+                }
+            },
+            error: function () {
+                Swal.fire('Error', 'Unable to fetch students for this Room No', 'error');
+            }
+        });
+    }
+    $('.floordropdown').change(function () {
+        let flno = $(this).val();
+        fetchRoomsByBlockId(flno);
+    })
+    //ROOMNO ACCORDING TO floor
+    function fetchRoomsByBlockId(floor) {
+        debugger;
+        $.ajax({
+            url: '/warden/GetRoomsByFloor',
+            type: 'get',
+            data: { floorno: floor },
+            success: function (response) {
+                $('#RoomNo').empty().append('<option disabled selected>Select Room Number</option>');
+                if (response.length > 0) {
+                    $.each(response, function (i, room) {
+                        $('#RoomNo').append('<option value="' + room.RoomId + '">' + room.RoomNo + ' (' + room.RoomFacilitate + ')' + ' (No of Beds - ' + room.NoOfBeds + ')' + '</option>');
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire('Error', 'Unable to load rooms', 'error');
+            }
+        });
+    }
+
+    //showing details on change of roomnumber
+    $('#RoomNo').on('change', function () {
+        debugger
+        const roomId = $(this).val();
+        console.log("Selected RoomId:", roomId);
+        if (roomId) {
+
+            $.ajax({
+                url: '/Warden/GetRoomDetails',
+                type: 'GET',
+                data: { roomId: roomId },
+                success: function (data) {
+                    console.log("Room Details Response:", data);
+                    if (data) {
+
+                        $('#totalBeds').text(data.TotalBeds);
+                        $('#occupiedBeds').text(data.OccupiedBeds);
+                        $('#availableBeds').text(data.AvailableBeds);
+                        $('#roomFacilities').text(data.RoomFacilitate || 'N/A');
+                        $('#totalFees').text(data.TotalFees || 'N/A');
+                        debugger
+                        let subfee = parseInt($('#FeesSubmitted').val());
+                        if (parseInt(data.TotalFees) > subfee) {
+                            $('#RemainingFees').val(parseInt(data.TotalFees) - subfee);
+                        } else {
+                            $('#RemainingFees').val(0);
+                        }
+
+                        $('#roomInfo').show();
+
+
+                        if (data.AvailableBeds === 0) {
+                            $('#roomInfo').addClass('alert-danger').removeClass('alert-info');
+                            //$('#btnSubmit').prop('disabled', true);
+                        } else {
+                            $('#roomInfo').addClass('alert-info').removeClass('alert-danger');
+                            $('#btnSubmit').prop('disabled', false);
+                        }
+                    } else {
+                        $('#roomInfo').hide();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Response: ", xhr);
+
+                }
+            });
+        } else {
+            $('#roomInfo').hide();
+        }
+    });
+
+    //insert formdata
+    $('#saveReallocation').on('click', function () {
+        Swal.fire({
+            title: 'Please wait!',
+            text: 'Processing your request...',
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        // Validate required fields first (simple example)
+        if (!$('#RoomNo').val()) {
+            Swal.close();
+            Swal.fire('Validation', 'Please select a Room Number', 'warning');
+            return;
+        }
+
+        if (!$('#FeesSubmitted').val()) {
+            Swal.close();
+            Swal.fire('Validation', 'Please enter Fees Submitted', 'warning');
+            return;
+        }
+
+        var formData = new FormData();
+
+        // Add fields from modal form
+        formData.append('userid', $('#hiddenStudentId').val() || 0);
+        formData.append('hostelId', $('#hiddenHostelId').val() || 0);
+        formData.append('BlockId', $('#hiddenBlockId').val() || 0);
+        formData.append('RoomId', $('#RoomNo').val());
+        formData.append('RoomNo', $('#RoomNo option:selected').text());
+        formData.append('StudentId', $('#hiddenStudentId').val());
+        formData.append('FeeType', $('#FeeType').val());
+        formData.append('FeeSlipPath', $('#FeeSlip').val());
+        formData.append('transactionid', $('#TransactionId').val());
+
+        //var feeSlipFile = $('#FeeSlip')[0].files[0];
+        //if (feeSlipFile) {
+        //    formData.append('FeeSlip', feeSlipFile);
+        //}
+        formData.append('FeesSubmitted', $('#FeesSubmitted').val());
+        formData.append('RemainingFees', $('#RemainingFees').val() || 0);
+        formData.append('DueDate', $('#DueDate').val());
+        formData.append('Status', 1);
+
+        $.ajax({
+            url: '/warden/ReallocateRoom',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire('Success', 'Room reallocated successfully', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', response.message || 'Failed to reallocate room', 'error');
+                }
+            },
+            error: function () {
+                Swal.fire('Error', 'An error occurred during submission', 'error');
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $('.reallocatemodalbtn').click(function () {
+            Swal.fire({
+                title: 'Please wait!',
+                text: 'Processing your request...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            debugger
+            let stdid = $(this).data('id');
+            $.ajax({
+                url: '/Warden/GetDataForReallocte',
+                type: 'GET',
+                data: { studentid: stdid },
+                success: function (data) {
+                    console.log("Room Details :", data);
+                    if (data) {
+                        $('#floor').val(data[0].floor).trigger('change');
+                        fetchRoomsByBlockId(data[0].floor)
+                        setTimeout(() => {
+                            $('#RoomNo').val(data[0].roomNo);
+                        }, 1000)
+                        $('#hiddenStudentId').val(data[0].studentid);
+                        $('#studentidch').val(data[0].studentid);
+                        $('#StudentId').val(data[0].studentName);
+                        $('#StudentIdbr').val(data[0].studentName);
+                        $('#FeeType').val(data[0].feeType);
+                        $('#FeeSlip').val(data[0].feeSlip);
+                        $('#TransactionId').val(data[0].transactionid);
+                        $('#RemainingFees').val(data[0].remainingFee);
+                        submittedFeeOfStudent = data[0].feeSubmitted;
+                        if (!data[0].dueDate) {
+                            $('#duedatecontainer').hide();
+                        } else {
+                            $('#DueDate').val(data[0].dueDate);
+                        }
+                        $('#FeesSubmitted').val(data[0].feeSubmitted);
+                        $('#hiddenBlockId').val(data[0].BlockId);
+                        
+                        Swal.close();
+                        $('#reallocateRoomModal').modal('show');
+                    } else {
+                        Swal.fire('Error', 'Failed to load', 'error');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    //Swal.fire({
+                    //    title: 'Error',
+                    //    text: 'Server error occured',
+                    //    icon: 'error'
+                    //});
+                    Swal.close();
+                    $('#reallocateRoomModal').modal('show');
+                    console.log(xhr);
+                }
+            });
+        });
+        $('#FeesSubmitted').on('input', function () {
+            let remfee = $('#RemainingFees').val();
+            if (remfee > 0) {
+                $('#duedatecontainer').show();
+            } else {
+                $('#duedatecontainer').hide();
+            }
+        })
+    });
+</script>

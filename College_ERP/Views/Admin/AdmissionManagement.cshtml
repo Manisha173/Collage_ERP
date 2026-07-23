@@ -1,0 +1,175 @@
+﻿@model College_ERP.Models.Admin.AdminDashboardCount
+@{
+    ViewBag.Title = "AdmissionManagement";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Admission Management
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/studentregistration">Admit Student</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/studentRegistrationlist">Student List</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/admittedstudent"> Promote Student</a>
+                    </li>
+                </ol>
+            </nav>
+            <div class="row">
+                <div class="col-md-6 col-xl-4">
+                    <div class="card mb-0 shadow-lg rounded-3">
+                        <div class="card-body">
+                            <a href="/admin/StudentRegistrationList?year=null&stage=enquiry">
+                                <div class="widget-first">
+                                    <div class="d-flex">
+                                        <div class="">
+                                            <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                <div class="bg-primary rounded-circle widget-size text-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#ffffff" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"></path></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ms-1 mb-0">
+                                            <p class="fs-20 text-dark mb-0">Enquiry</p>
+                                            <h3 class="fs-22 ps-2 text-black">@Model.admissionEnquiry</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card mb-0 shadow-lg rounded-3">
+                        <div class="card-body">
+                            <a href="/admin/StudentRegistrationList?year=null&stage=interview">
+                                <div class="widget-first">
+                                    <div class="d-flex">
+                                        <div class="">
+                                            <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                <div class="bg-primary rounded-circle widget-size text-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#ffffff" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"></path></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ms-1 mb-0">
+                                            <p class="fs-20 text-dark mb-0">Interview</p>
+                                            <h3 class="fs-22 ps-2 text-black">@Model.admissionInterview</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card mb-0 shadow-lg rounded-3">
+                        <div class="card-body">
+                            <a href="/admin/StudentRegistrationList?year=null&stage=exam">
+
+                                <div class="widget-first">
+                                    <div class="d-flex">
+                                        <div class="">
+                                            <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                <div class="bg-primary rounded-circle widget-size text-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#ffffff" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"></path></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ms-1 mb-0">
+                                            <p class="fs-20 text-dark mb-0">Exam</p>
+                                            <h3 class="fs-22 ps-2 text-black">@Model.admissionExam</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6 col-xl-4">
+                    <div class="card mb-0 shadow-lg rounded-3">
+                        <div class="card-body">
+                            <a href="/admin/StudentRegistrationList?year=null&stage=shortList">
+
+                                <div class="widget-first">
+                                    <div class="d-flex">
+                                        <div class="">
+                                            <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                <div class="bg-primary rounded-circle widget-size text-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#ffffff" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"></path></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ms-1 mb-0">
+                                            <p class="fs-20 text-dark mb-0">Short List</p>
+                                            <h3 class="fs-22 ps-2 text-black">@Model.admissionShortList</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card mb-0 shadow-lg rounded-3">
+                        <div class="card-body">
+                            <a href="/admin/StudentRegistrationList?year=null&stage=admitted">
+
+                                <div class="widget-first">
+                                    <div class="d-flex">
+                                        <div class="">
+                                            <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                <div class="bg-primary rounded-circle widget-size text-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#ffffff" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"></path></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ms-1 mb-0">
+                                            <p class="fs-20 text-dark mb-0">Admitted</p>
+                                            <h3 class="fs-22 ps-2 text-black">@Model.admissionAdmitted</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card mb-0 shadow-lg rounded-3">
+                        <div class="card-body">
+                            <a href="/admin/StudentRegistrationList?year=null&stage=formIssued">
+                                <div class="widget-first">
+                                    <div class="d-flex">
+                                        <div class="">
+                                            <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                <div class="bg-primary rounded-circle widget-size text-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#ffffff" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"></path></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ms-1 mb-0">
+                                            <p class="fs-20 text-dark mb-0">Form Issued</p>
+                                            <h3 class="fs-22 ps-2 text-black">@Model.admissionFormIssued</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

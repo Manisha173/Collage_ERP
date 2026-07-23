@@ -1,0 +1,436 @@
+﻿
+@{
+    ViewBag.Title = "OrderManagement";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var data = ViewData["BookList"] as List<College_ERP.Models.Admin.BookModel>;
+    var categories = ViewData["categories"] as List<College_ERP.Models.Admin.BookCategoryModel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/admin/LibraryOverview"> Library Overview</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/admin/AddLibrarian">Librarian Registration </a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/admin/addbook">Add Book </a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Order Management
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/admin/OrderHistory"> Order History</a>
+                    </li>
+                </ol>
+            </nav>
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="py-0 card-header border-bottom-0 d-flex justify-content-between">
+                            <h4 class="card-title mb-0">Book List</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-1">
+                                <div class="col-sm-3">
+                                    <label for="category" class="form-label">Search Book By Category</label>
+                                    <select id="category" class="form-select">
+                                        <option value="">--Select Category--</option>
+                                        @if (ViewData["categories"] != null)
+                                        {
+                                            foreach (var category in categories)
+                                            {
+                                                <option value="@category.id">@category.categoryName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="isbnno" class="form-label">Search Book By ISBN</label>
+                                    <input type="text" id="isbnno" class="form-control" placeholder="Enter ISBN Number" />
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="issnno" class="form-label">Search Book By ISSN</label>
+                                    <input type="text" id="issnno" class="form-control" placeholder="Enter ISSN Number" />
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="accession" class="form-label">Search Book By Accession</label>
+                                    <input type="text" id="accession" class="form-control" placeholder="Enter Accession Number" />
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>SR</th>
+                                            <th>Title</th>
+                                            <th>Sub Title</th>
+                                            <th>Category</th>
+                                            <th>Author</th>
+                                            <th>ISBN No.</th>
+                                            <th>ISSN Print</th>
+                                            <th>Accession No.</th>
+                                            <th>Book Availabe</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="BookTableBody">
+                                        @if (data != null)
+                                        {
+                                            int count = 1;
+                                            foreach (var item in data)
+                                            {
+                                                <tr>
+                                                    <td>@count</td>
+                                                    <td><a href="/admin/ShowBookDetailsPage?id=@item.id" title="Show Details">@item.title</a></td>
+                                                    <td>@item.subTitle</td>
+                                                    <td>@item.categoryName</td>
+                                                    <td>@item.author</td>
+                                                    <td>@item.isbn</td>
+                                                    <td>@item.issnPrint</td>
+                                                    <td>@item.accessionNumber</td>
+                                                    <td>@(item.numberOfCopies - item.bookCount)</td>
+                                                    <td class="text-center">
+                                                        <a href="#" class="btn btn-sm btn-outline-primary orderBook" data-id="@item.id" data-count="@(item.numberOfCopies - item.bookCount)" data-bs-toggle="modal" data-price="@item.price" data-bs-target="#OrderAddModal" title="Order Book">Book Now</a>
+                                                    </td>
+                                                </tr>
+                                                count++;
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal To Add Book-->
+<div class="modal fade" id="OrderAddModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Order</h1>
+                <button type="button" class="btn-close" id="CloseModalAddOrder"></button>
+            </div>
+            <div class="modal-body">
+                <div id="userDetailsContainer" class="w-100"></div>
+                <form class="AddOrderForm">
+                    <input type="hidden" name="bookId" id="bookId" />
+                    <input type="hidden" name="buyerId" class="buyerId" />
+                    <div class="row">
+                        <div class="col-sm-4 mb-2">
+                            <label for="userTypeSelect" class="form-label">Select Type</label>
+                            <select class="form-select uuserTypeSelect" name="userType" id="userTypeSelect">
+                                <option value="student" selected>Student</option>
+                                <option value="teacher">Teacher</option>
+                            </select>
+                        </div>
+
+                        <div id="teacherInput" class="col-sm-4 mb-2" style="display: none;">
+                            <label for="teacher" class="form-label">Search Teacher</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control searhUser" data-actiontype="teacher" placeholder="Enter Registration Number" />
+                                <button class="btn btn-primary text-light changeBtn" type="button" id="changeTeacherBtn" style="display:none">
+                                    Change
+                                </button>
+                            </div>
+                        </div>
+                        <div id="studentInput" class="col-sm-4 mb-2">
+                            <label for="student" class="form-label">Search Student</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control searhUser" data-actiontype="student" placeholder="Enter Admission Number" />
+                                <button class="btn btn-primary text-light changeBtn" type="button" id="changeStudentBtn" style="display:none">
+                                    Change
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="orderDate" class="form-label">Order Date</label>
+                            <input type="date" class="form-control" name="orderDate" id="orderDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="returnDate" class="form-label">Return Date</label>
+                            <input type="date" class="form-control" name="returnDate" id="returnDate" min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                        </div>
+
+                        <div class="col-sm-4 mb-2">
+                            <label for="lateFine" class="form-label">Late Fine (per Day)</label>
+                            <input type="text" class="form-control" name="lateFine" id="lateFine" placeholder="Enter Late Fine" />
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="damageFine" class="form-label">Damage Fine (per Book)</label>
+                            <input type="text" class="form-control" name="damageFine" id="damageFine" placeholder="Enter Damage Fine" />
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="lostFine" class="form-label">Lost Fine (per Book)</label>
+                            <input type="text" class="form-control" name="lostFine" id="lostFine" placeholder="Enter Lost Fine" />
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control quantity" name="quantity" id="quantity" placeholder="Enter Quantity" />
+                            <span class="text-danger checkqntymsg" style="font-size:12px;"></span>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="price" class="form-label">Price in (Rupees)</label>
+                            <input type="number" class="form-control price" name="price" readonly id="price" placeholder="Price" />
+                        </div>
+                    </div>
+
+                    <div class="mt-2 text-center">
+                        <button type="submit" class="btn btn-primary addOrderBtn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let catid =@Html.Raw(Json.Encode(Request.QueryString["categoryId"]));
+    if (catid) {
+        $('#category').val(catid);
+    }
+  
+
+    
+    $('.uuserTypeSelect').on('change', function () {
+        if ($(this).val() === 'teacher') {
+            $('#teacherInput').css('display', 'block');
+            $('#studentInput').css('display', 'none');
+        } else {
+            $('#teacherInput').css('display', 'none');
+            $('#studentInput').css('display', 'block');
+        }
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#CloseModalAddOrder').on('click', function () {
+            $('.AddOrderForm').each(function () {
+                this.reset();
+            });
+            $('#OrderAddModal').modal('hide')
+        });
+
+        $('#category').on('change', function () {
+            let filterval = $(this).val();
+            let filterType = "category";
+            GetFilteredBooks(filterval, filterType);
+        })
+        let debounceTimer;
+
+        $('#isbnno').on('input', function () {
+            clearTimeout(debounceTimer);
+            debugger
+            debounceTimer = setTimeout(() => {
+                let filterval = $(this).val();
+                let filterType = "isbn";
+                GetFilteredBooks(filterval, filterType);
+            }, 1000);
+        });
+        $('#issnno').on('input', function () {
+            clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(() => {
+                let filterval = $(this).val();
+                let filterType = "issn";
+                GetFilteredBooks(filterval, filterType);
+            }, 1000);
+        });
+        function GetFilteredBooks(filterval, filterType) {
+            debugger
+            $.ajax({
+                url: '/admin/FilterForBook', type: 'get', data: { filter: filterval, filterType: filterType },
+                success: function (res) {
+                    let $tbody = $('#BookTableBody');
+                    $tbody.empty();
+                    if (res && res.length > 0) {
+                        let count = 1;
+                        res.forEach(book => {
+                            let row = `
+            <tr>
+                <td>${count}</td>
+                <td><a href="/admin/ShowBookDetailsPage?id=${book.id}" title="Show Details">${book.title}</a></td>
+                <td>${book.subTitle}</td>
+                <td>${book.categoryName}</td>
+                <td>${book.author}</td>
+                <td>${book.isbn}</td>
+                <td>${book.issnPrint}</td>
+                <td>${book.accessionNumber}</td>
+                <td>${book.numberOfCopies - book.bookCount}</td>
+                <td><a href="#" class="btn btn-sm btn-outline-primary orderBook" data-id="${book.id}" data-count="${book.numberOfCopies - book.bookCount}" data-price="${book.price}" data-bs-toggle="modal" data-bs-target="#OrderAddModal" title="Order Book">Book Now</a></td>
+            </tr>`;
+                            count++;
+                            $tbody.append(row);
+                        });
+                    } else {
+                        $tbody.html(`
+        <tr>
+            <td colspan="8" style="text-align:center;">No records found</td>
+        </tr>`);
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire('Error', 'Server Issue Try Again Later', 'error');
+                }
+            })
+        }
+        $('#accession').on('input', function () {
+            clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(() => {
+                let filterval = $(this).val();
+                let filterType = "accession";
+                GetFilteredBooks(filterval, filterType);
+            }, 500);
+        });
+        $(document).on('change', '.uuserTypeSelect', function () {
+            $('.searhUser').val('')
+            $('#userDetailsContainer').empty();
+        });
+
+        $(document).on('input', '.searhUser', function () {
+            debugger
+            let std = $(this).val();
+            let type = $(this).data('actiontype');
+            $.ajax({
+                url: '/admin/GetUserForOrderBook', type: 'get', data: { userNo: std, type: type },
+                success: function (res) {
+                    console.log(res);
+                    if (res != null && res.length>0) {
+                        $('.buyerId').val(res[0].userId);
+                        $('#userDetailsContainer').empty();
+
+                        let html = '<div class="row mb-2">';
+
+                        html += `<div class="col-md-4"><strong>Name:</strong> ${res[0].userName}</div>`;
+
+                        if (type === 'teacher') {
+                            html += `<div class="col-md-4"><strong>Email:</strong> ${res[0].emailId}</div>`;
+                            html += `<div class="col-md-4"><strong>Mobile:</strong> ${res[0].mobileNo}</div>`;
+                        } else if (type === 'student') {
+                            html += `<div class="col-md-4"><strong>Class:</strong> ${res[0].className}</div>`;
+                            html += `<div class="col-md-4"><strong>Section:</strong> ${res[0].sectionName}</div>`;
+
+                        }
+
+                        html += '</div>';
+
+                        // Append to container
+                        $('#userDetailsContainer').append(html);
+                        $('.searhUser').attr('readonly', true);
+                        $('.changeBtn').css('display', 'block');
+                        $('.uuserTypeSelect').prop('disabled', true);
+
+                    } else {
+                        Swal.fire('Warninig', 'Not match found...', 'warning');
+                        $('#userDetailsContainer').empty();
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire('Error', 'Server Error! Try Again Later', 'error');
+                    $('#userDetailsContainer').empty();
+                }
+            });
+        });
+        let count = 0;
+        let price = 0;
+        $(document).on('click', '.changeBtn', function () {
+            $('.searhUser').attr('readonly', false);
+            $('.changeBtn').css('display', 'none');
+            $('.uuserTypeSelect').prop('disabled', false);
+        })
+        $('.orderBook').on('click', function () {
+            debugger
+            Swal.fire({
+                title: 'Please wait!',
+                text: 'Processing your request',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            })
+            debugger
+            let bookId = $(this).data('id');
+            count = $(this).data('count');
+            price = $(this).data('price');
+            $('#bookId').val(bookId);
+            Swal.close();
+        });
+        $('.quantity').on('input', function () {
+            debugger
+
+            let qnty = $(this).val();
+            if (qnty > count) {
+                $('.price').val(0);
+                $('.checkqntymsg').text('Quantity exceeds stock. Enter valid amount.');
+                $('.addOrderBtn').prop('disabled', true);
+            } else {
+                $('.price').val(price * qnty);
+                $('.checkqntymsg').text('');
+                $('.addOrderBtn').prop('disabled', false);
+            }
+        });
+        $('.AddOrderForm').on('submit', function (e) {
+            debugger
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Please Wait!',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                text: 'Processing your request...',
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            var data = new FormData(this);
+            let usertype = $('#userTypeSelect').val()
+            console.log(usertype)
+            data.append('userType', usertype);
+
+
+            $.ajax({
+                url: '/admin/AddBookOrder',
+                type: 'post',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            didClose: () => { location.href = '/admin/OrderHistory' }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again.'
+                    });
+                }
+            });
+        });
+    });
+</script>

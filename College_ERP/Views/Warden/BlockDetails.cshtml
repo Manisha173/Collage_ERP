@@ -1,0 +1,62 @@
+﻿
+@{
+    ViewBag.Title = "BlockDetails";
+    Layout = "~/Views/Shared/_wardenLayout.cshtml";
+    var data = ViewData["blockdetails"] as List<College_ERP.Models.Warden.BlockDetailModel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title d-flex">
+                        <div class="h4">Block Details</div>
+                    </div>
+                    <table id="problemTable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>Details</th>
+                                @if (data != null)
+                                {
+                                    foreach (var item in data)
+                                    {
+                                        <th>Count</th>
+ <!-- Use a meaningful name like building name -->
+                                    }
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Total Floors</td>
+                                @if (data != null)
+                                {
+                                    foreach (var item in data)
+                                    {
+                                        <td>@item.floors</td>
+                                    }
+                                }
+                            </tr>
+                            <tr>
+                                <td>Total Rooms</td>
+                                @if (data != null)
+                                {
+                                    foreach (var item in data)
+                                    {
+                                        <td>
+                                            <a href="/warden/roomlist" class="actionBtn text-primary" title="Show Room List">
+                                                @item.rooms
+                                            </a>
+                                        </td>
+                                    }
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

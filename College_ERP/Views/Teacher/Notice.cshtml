@@ -1,0 +1,87 @@
+﻿
+@{
+    ViewBag.Title = "Notice";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Notice List</h4>
+
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Title</th>
+                                    <th>CreatedOn</th>
+                                    <th>Description</th>
+                                    <th>Attachment</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int sr = 1;
+                                }
+
+                                @foreach (var notice in Model)
+                                {
+                                    <tr>
+                                        <td>@sr</td>
+                                        <td>@notice.Title</td>
+                                        <td>@notice.CreatedOn.ToString("dd-MMM-yyyy")</td>
+                                        <td>
+                                            <a role="button" class="text-primary  view-description-btn"
+                                                    data-description="@(notice.Description)"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#descriptionModal">
+                                                View
+                                            </a>
+                                        </td>
+
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(notice.Attachments))
+                                            {
+                                                <a href="@Url.Content(notice.Attachments)" target="_blank">View</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                    sr++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--description-->
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descriptionModalLabel">Notice Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalDescriptionBody">
+                <!-- Content will be injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".view-description-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                const descHtml = this.getAttribute("data-description");
+                document.getElementById("modalDescriptionBody").innerHTML = descHtml;
+            });
+        });
+    });
+</script>

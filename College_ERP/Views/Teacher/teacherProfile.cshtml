@@ -1,0 +1,681 @@
+﻿@{
+    ViewBag.Title = "teacherProfile";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+}
+
+        <style>
+        :root {
+            --primary: #0f766e;
+            --secondary: #134e4a;
+            --accent: #115e59;
+            --light: #042f2e;
+            --dark: #042f2e;
+            --success: #0d9488;
+            --teal-50: #f0fdfa;
+            --teal-100: #ccfbf1;
+            --teal-200: #99f6e4;
+            --teal-300: #5eead4;
+            --teal-400: #2dd4bf;
+            --teal-500: #14b8a6;
+            --teal-600: #0d9488;
+            --teal-700: #0f766e;
+            --teal-800: #115e59;
+            --teal-900: #134e4a;
+            --teal-950: #042f2e;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--teal-50) 0%, #ffffff 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+            .profile-container {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 2rem 1rem;
+                background: #FFFAFA !important;
+            }
+            
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-title {
+            color: var(--primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-subtitle {
+            color: var(--teal-600);
+            font-size: 1.2rem;
+        }
+
+        .card {
+            border: 1px solid var(--teal-200);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--teal-600));
+            color: white;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1rem 1.5rem;
+            border: none;
+        }
+
+        .card-header h5 {
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 4px solid var(--primary);
+            object-fit: cover;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .badge-custom {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 0.25rem;
+        }
+
+        .badge-outline {
+            border: 1px solid var(--teal-300);
+            color: var(--teal-700);
+            background: transparent;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 0.25rem;
+        }
+
+        .info-item {
+            background: rgba(240, 253, 250, 0.5);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid var(--teal-200);
+        }
+
+        .info-item:hover {
+            background: var(--teal-50);
+            border-left-color: var(--primary);
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            color: #1f2937;
+            font-size: 0.95rem;
+            word-break: break-word;
+        }
+
+        .education-card {
+            background: rgba(240, 253, 250, 0.3);
+            border: 1px solid var(--teal-100);
+            border-radius: 8px;
+            padding: 1.25rem;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .education-card:hover {
+            background: rgba(240, 253, 250, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .education-title {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .document-card {
+            border: 1px solid var(--teal-200);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .document-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .document-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background: var(--teal-50);
+        }
+
+        .document-placeholder {
+            width: 100%;
+            height: 150px;
+            background: var(--teal-50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--teal-300);
+            font-size: 3rem;
+        }
+
+            .document-title {
+                padding: 1rem;
+                text-align: center;
+                font-weight: 500;
+                color: #374151;
+                font-size: 0.9rem;
+                overflow: visible;
+                white-space: normal;
+                word-wrap: break-word;
+            }
+
+        .not-uploaded {
+            color: var(--teal-600);
+            font-size: 0.8rem;
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        .gradient-header-1 { background: linear-gradient(135deg, var(--primary), var(--teal-600)); }
+        .gradient-header-2 { background: linear-gradient(135deg, var(--teal-600), var(--teal-700)); }
+        .gradient-header-3 { background: linear-gradient(135deg, var(--teal-700), var(--teal-800)); }
+        .gradient-header-4 { background: linear-gradient(135deg, var(--teal-800), var(--teal-900)); }
+        .gradient-header-5 { background: linear-gradient(135deg, var(--teal-900), var(--primary)); }
+        .gradient-header-6 { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+
+        @@media (max-width: 768px) {
+            .profile-title {
+                font-size: 2rem;
+            }
+            .profile-avatar {
+                width: 150px;
+                height: 150px;
+            }
+        }
+        </style>
+        <div class="content-page">
+            <div class="profile-container">
+                <!-- Header -->
+                <div class="profile-header">
+                    <h1 class="profile-title">@(!string.IsNullOrWhiteSpace(Model.TeacherName) ? Model.TeacherName : "N/A")</h1>
+                    <p class="profile-subtitle">Personal, Academic & Professional Details</p>
+                </div>
+
+                <!-- Profile Overview Card -->
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="row align-items-start">
+                            <div class="col-lg-3 col-md-4 text-center mt-5">
+                                <img src="@(!string.IsNullOrEmpty(Model.profileImagePath) ? Model.profileImagePath : "/assets/images/no-images.png")"
+                                     alt="Profile Picture"
+                                     class="profile-avatar" style="min-height: 200px; min-width: 200px;">
+                            </div>
+                            <div class="col-lg-9 col-md-8">
+                                <div class="mb-4">
+                                    <h2 class="h3 fw-bold text-dark mb-3">
+                                        @(!string.IsNullOrWhiteSpace(Model.TeacherName) ? Model.TeacherName : "N/A")
+                                    </h2>
+                                    <div class="mb-3">
+                                        <span class="badge-custom">
+                                            @(!string.IsNullOrWhiteSpace(Model.Subject) ? Model.Subject : "N/A")
+                                        </span>
+                                        <span class="badge-outline">
+                                            @(Model.Experience .ToString() ?? "N/A") Year Experience
+                                        </span>
+                                        <span class="badge-outline">
+                                            @(!string.IsNullOrWhiteSpace(Model.RegistrationNo) ? Model.RegistrationNo : "N/A")
+                                        </span>
+                                        <span class="badge-outline"> Join On
+                                            @((Model.JoinDate!=null) ? Model.JoinDate.ToString("dd-MM-yyyy") : "N/A")
+                                            </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <i class="fas fa-envelope text-primary me-2 mt-1"></i>
+                                                <div>
+                                                    <div class="info-label">Email</div>
+                                                    <div class="info-value">
+                                                        @(!string.IsNullOrWhiteSpace(Model.TeacherEmail) ? Model.TeacherEmail : "N/A")
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <i class="fas fa-phone text-primary me-2 mt-1"></i>
+                                                <div>
+                                                    <div class="info-label">Mobile</div>
+                                                    <div class="info-value">
+                                                        @(!string.IsNullOrWhiteSpace(Model.TeacherMobile) ? Model.TeacherMobile : "N/A")
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <i class="fas fa-calendar text-primary me-2 mt-1"></i>
+                                                <div>
+                                                    <div class="info-label">Date of Birth</div>
+                                                    <div class="info-value">
+                                                         @((Model.TeacherDOB!=null) ? Model.TeacherDOB.ToString("dd-MM-yyyy") : "N/A") 
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <div class="d-flex align-items-start">
+                                                <i class="fas fa-user text-primary me-2 mt-1"></i>
+                                                <div>
+                                                    <div class="info-label">Gender</div>
+                                                    <div class="info-value">
+                                                        @(!string.IsNullOrWhiteSpace(Model.Gender) ? Model.Gender : "N/A")
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Personal Information -->
+                    <div class="col-xl-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header gradient-header-1">
+                                <h5><i class="fas fa-user me-2"></i>Personal Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row ms-2">
+                                    <div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-language text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Mother Tongue</div>
+                                                <div class="info-value">@(!string.IsNullOrWhiteSpace(Model.MotherTongue) ? Model.MotherTongue : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-flag text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Nationality</div>
+                                                <div class="info-value">@(!string.IsNullOrWhiteSpace(Model.Nationality) ? Model.Nationality : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-pray text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Religion</div>
+                                                <div class="info-value">@(!string.IsNullOrWhiteSpace(Model.Religion) ? Model.Religion : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-heart text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Marital Status</div>
+                                                <div class="info-value">@(!string.IsNullOrWhiteSpace(Model.MaritalStatus) ? Model.MaritalStatus : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-users text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Caste</div>
+                                                <div class="info-value">@(!string.IsNullOrWhiteSpace(Model.Caste) ? Model.Caste : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-id-card text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">PAN No</div>
+                                                <div class="info-value">@(!string.IsNullOrWhiteSpace(Model.PanNo) ? Model.PanNo : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Professional Information -->
+                    <div class="col-xl-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header gradient-header-2">
+                                <h5><i class="fas fa-briefcase me-2"></i>Professional Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row ms-2">
+                                    <div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-book text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Subject</div>
+                                                <div class="info-value">@(!string.IsNullOrWhiteSpace(Model.Subject) ? Model.Subject : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-award text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Experience</div>
+                                                <div class="info-value">@(Model.Experience .ToString() ?? "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*<div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-calendar-plus text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Joining Date</div>
+                                                <div class="info-value">@((Model.JoinDate!=null) ? Model.JoinDate.ToString("dd-MM-yyyy") : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>*@
+                                    <div class="info-item col-sm-12">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-school text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Last School</div>
+                                                <div class="info-value">@(!string.IsNullOrWhiteSpace(Model.LastSchoolName) ? Model.LastSchoolName : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item col-sm-12">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-map-marker-alt text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Previous Employer Address</div>
+                                                <div class="info-value">@(!string.IsNullOrWhiteSpace(Model.LastEmpAddress) ? Model.LastEmpAddress : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education -->
+                <div class="card">
+                    <div class="card-header gradient-header-3">
+                        <h5><i class="fas fa-graduation-cap me-2"></i>Educational Qualifications</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="education-card">
+                                    <div class="education-title">10th Standard</div>
+                                    <p class="mb-1"><strong>Board:</strong>  @(string.IsNullOrWhiteSpace(Model.TenthBoard) ? "N/A" : Model.TenthBoard)</p>
+                                    <p class="mb-1"><strong>Year:</strong> (@(string.IsNullOrWhiteSpace(Model.TenthPassoutYear) ? "N/A" : Model.TenthPassoutYear))</p>
+                                    <p class="mb-0"><strong>Percentage:</strong> <span style="color: var(--teal-700); font-weight: 600;"> @(string.IsNullOrWhiteSpace(Model.TenthPercent) ? "N/A" : Model.TenthPercent + "%")</span></p>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="education-card">
+                                    <div class="education-title">12th Standard</div>
+                                    <p class="mb-1"><strong>Board:</strong>  @(string.IsNullOrWhiteSpace(Model.TwelfthBoard) ? "N/A" : Model.TwelfthBoard)</p>
+                                    <p class="mb-1"><strong>Year:</strong> (@(string.IsNullOrWhiteSpace(Model.TwelfthPassoutYear) ? "N/A" : Model.TwelfthPassoutYear))</p>
+                                    <p class="mb-0"><strong>Percentage:</strong> <span style="color: var(--teal-700); font-weight: 600;">@(string.IsNullOrWhiteSpace(Model.TwelfthPercent) ? "N/A" : Model.TwelfthPercent + "%")</span></p>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="education-card">
+                                    <div class="education-title">Graduation</div>
+                                    <p class="mb-1"><strong>Degree:</strong>   @(Model.GraduationDegree ?? "N/A") in @(Model.GraduationStream ?? "N/A")</p>
+                                    <p class="mb-1"><strong>Year:</strong>  (@(Model.GraduationYear ?? "N/A"))</p>
+                                    <p class="mb-0"><strong>Percentage:</strong> <span style="color: var(--teal-700); font-weight: 600;">  @(string.IsNullOrWhiteSpace(Model.GraduationPercent) ? "N/A" : Model.GraduationPercent + "%")</span></p>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="education-card">
+                                    <div class="education-title">Post Graduation</div>
+                                    <p class="mb-1"><strong>Degree:</strong>   @(Model.PostGraduationDegree ?? "N/A") in @(Model.PostGraduationStream ?? "N/A")</p>
+                                    <p class="mb-1"><strong>Year:</strong>  (@(Model.PostGraduationYear ?? "N/A"))</p>
+                                    <p class="mb-0"><strong>Percentage:</strong> <span style="color: var(--teal-700); font-weight: 600;">  @(string.IsNullOrWhiteSpace(Model.PostGraduationPercent) ? "N/A" : Model.PostGraduationPercent + "%")</span></p>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="education-card">
+                                    <div class="education-title">Other Qualification</div>
+                                    <p class="mb-1"><strong>Degree:</strong>    @(Model.OtherDiplomaDegree ?? "N/A") in @(Model.OtherDiplomaStream ?? "N/A")</p>
+                                    <p class="mb-1"><strong>Year:</strong>   (@(Model.OtherDiplomaYear ?? "N/A"))</p>
+                                    <p class="mb-0"><strong>Percentage:</strong> <span style="color: var(--teal-700); font-weight: 600;"> @(string.IsNullOrWhiteSpace(Model.OtherDiplomaPercent) ? "N/A" : Model.OtherDiplomaPercent + "%")</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Bank Details -->
+                    <div class="col-xl-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header gradient-header-4">
+                                <h5><i class="fas fa-university me-2"></i>Bank Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row ms-2">
+                                    <div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-building text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Bank Name</div>
+                                                <div class="info-value">@(!string.IsNullOrWhiteSpace(Model.BankName) ? Model.BankName : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-user-circle text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Account Holder Name</div>
+                                                <div class="info-value">@(!string.IsNullOrWhiteSpace(Model.AccountHolderName) ? Model.AccountHolderName : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-credit-card text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">Account Number</div>
+                                                <div class="info-value">
+                                                    @((Model.BankAccountNumber != null && Model.BankAccountNumber != 0)
+? Model.BankAccountNumber.ToString()
+: "N/A")
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item col-sm-6">
+                                        <div class="d-flex align-items-start">
+                                            <i class="fas fa-code text-primary me-2 mt-1"></i>
+                                            <div>
+                                                <div class="info-label">IFSC Code</div>
+                                                <div class="info-value">@(!string.IsNullOrWhiteSpace(Model.IfscCode) ? Model.IfscCode : "N/A")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="col-xl-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header gradient-header-5">
+                                <h5><i class="fas fa-map-marker-alt me-2"></i>Contact Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="info-item">
+                                    <div class="d-flex align-items-start">
+                                        <i class="fas fa-home text-primary me-2 mt-1"></i>
+                                        <div>
+                                            <div class="info-label">Address</div>
+                                            <div class="info-value">@(Model.address ?? "N/A")</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents -->
+                <div class="card">
+                    <div class="card-header gradient-header-6">
+                        <h5><i class="fas fa-file-alt me-2"></i>Documents</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-lg-2 col-md-4 col-sm-6 mb-4 ">
+                                <div class="document-card">
+                                    <a href="#" target="_blank">
+                                        <!-- Replace href with: @Model.ExperienceDocumentPath -->
+                                        <div class="document-placeholder">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <!-- Replace src with: @Model.ExperienceDocumentPath -->
+                                        <div class="document-title">
+                                            Experience Certificate
+                                            <!-- Replace condition with: @(Model.ExperienceDocumentPath != null ? "" : " - (not uploaded)") -->
+                                            <span class="not-uploaded">(Not uploaded)</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-6 mb-4 ">
+                                <div class="document-card">
+                                    <a href="#" target="_blank">
+                                        <!-- Replace href with: @Model.TenthMarksheetPath -->
+                                        <div class="document-placeholder">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <div class="document-title">
+                                            10th Marksheet
+                                            <!-- Replace condition with: @(Model.TenthMarksheetPath != null ? "" : " - (not uploaded)") -->
+                                            <span class="not-uploaded">(Not uploaded)</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-6 mb-4 ">
+                                <div class="document-card">
+                                    <a href="#" target="_blank">
+                                        <!-- Replace href with: @Model.TwelfthMarksheetPath -->
+                                        <div class="document-placeholder">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <div class="document-title">
+                                            12th Marksheet
+                                            <!-- Replace condition with: @(Model.TwelfthMarksheetPath != null ? "" : " - (not uploaded)") -->
+                                            <span class="not-uploaded">(Not uploaded)</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-6 mb-4 ">
+                                <div class="document-card">
+                                    <a href="#" target="_blank">
+                                        <!-- Replace href with: @Model.GraduationMarksheetPath -->
+                                        <div class="document-placeholder">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <div class="document-title">
+                                            Graduation Certificate
+                                            <!-- Replace condition with: @(Model.GraduationMarksheetPath != null ? "" : " - (not uploaded)") -->
+                                            <span class="not-uploaded">(Not uploaded)</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-6 mb-4 ">
+                                <div class="document-card">
+                                    <a href="#" target="_blank">
+                                        <!-- Replace href with: @Model.PostGraduationMarksheetPath -->
+                                        <div class="document-placeholder">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <div class="document-title">
+                                            Post Graduation Certificate
+                                            <!-- Replace condition with: @(Model.PostGraduationMarksheetPath != null ? "" : " - (not uploaded)") -->
+                                            <span class="not-uploaded">(Not uploaded)</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            // Handle image errors
+            document.addEventListener('DOMContentLoaded', function () {
+                const images = document.querySelectorAll('img');
+                images.forEach(function (img) {
+                    img.addEventListener('error', function () {
+                        this.src = '/assets/images/no-images.png';
+                        this.style.height = '200px';
+                        this.style.width = '200px';
+                        this.style.margin = 'auto';
+                    });
+                });
+            });
+        </script>
+

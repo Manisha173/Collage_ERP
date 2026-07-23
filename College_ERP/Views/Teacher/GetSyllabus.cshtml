@@ -1,0 +1,61 @@
+﻿
+@{
+    ViewBag.Title = "GetSyllabus";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+    var data = ViewData["syllabusList"] as List<College_ERP.Models.Admin.AddSyllabusMoedel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="py-0 card-header border-bottom-0 d-flex justify-content-between">
+                            <h4 class="card-title mb-0 mt-3">Syllabus List</h4>
+                            
+                        </div>
+                        <div class="card-body">
+                            <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Class</th>
+                                        <th>Subject</th>
+                                        <th>Academic Year</th>
+                                        <th>View</th>
+                                        @*<th>Actions</th>*@
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td>@item.className</td>
+                                                <td>@item.subjectName</td>
+                                                <td>@item.academicYear</td>
+                                                <td><a href="@item.attachmentName" target="_blank" title="Show Attachment">View</a></td>
+                                                @*<td>
+                                                    <a role="button" title="Update Syllabus" data-id="@item.id" class="btn btn-sm updateSyllabus p-0"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                                    <a role="button" class="btn btn-sm deleteSyllabus p-0" data-id="@item.id" title="Delete Syllabus"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                                </td>*@
+                                            </tr>
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

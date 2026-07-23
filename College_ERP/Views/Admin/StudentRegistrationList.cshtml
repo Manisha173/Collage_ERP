@@ -1,0 +1,250 @@
+﻿
+@{
+    ViewBag.Title = "StudentRegistrationList";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.2/css/buttons.dataTables.css" />
+<style>
+    td {
+        white-space: nowrap !important;
+    }
+</style>
+<div class="content-page">
+    <div class="container-fluid">
+
+        <nav class="my-3" aria-label="breadcrumb"
+             style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+            <ol class="breadcrumb bg-light rounded p-2">
+                <li class="breadcrumb-item ">
+                    <a class="text-decoration-none text-primary" href="/admin/AdmissionManagement">Admission Management</a>
+                </li>
+                <li class="breadcrumb-item ">
+                    <a class="text-decoration-none text-primary" href="/admin/studentRegistration">Admit Student</a>
+                </li>
+                <li class="breadcrumb-item active text-dark" aria-current="page">
+                    Student List
+                </li>
+                <li class="breadcrumb-item ">
+                    <a class="text-decoration-none text-primary" href="/admin/admittedstudent"> Promote Student</a>
+                </li>
+            </ol>
+        </nav>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3 d-flex gap-3 align-items-center">
+                            <span>Registered Students</span>
+                            <!--academic year-->
+                            <select name="academicyear" class="form-select w-25" id="academicyear">
+                                <option selected disabled value="">--select academic year--</option>
+                                @{
+                                    for (int i = 0; i <= 10; i++)
+                                    {
+                                        <option @(Request.QueryString["year"] == (DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year) ? "selected" : "") value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)</option>
+                                    }
+                                }
+                            </select>
+                            <!--Admission Stage-->
+                            <select required name="AdmissionStage" class="form-select w-25" id="admissionStage">
+                                <option selected disabled value="">--select admission stage--</option>
+                                <option @(Request.QueryString["stage"] == "enquiry" ? "selected" : "") value="enquiry">Enquiry</option>             )
+                                <option @(Request.QueryString["stage"] == "formIssued" ? "selected" : "") value="formIssued">Application for Issued</option>
+                                <option @(Request.QueryString["stage"] == "interview" ? "selected" : "") value="interview">Interview</option>         )
+                                <option @(Request.QueryString["stage"] == "exam" ? "selected" : "") value="exam">Exam</option>                                      )
+                                <option @(Request.QueryString["stage"] == "shortList" ? "selected" : "") value="shortList">Short List</option>        )
+                                <option @(Request.QueryString["stage"] == "admitted" ? "selected" : "") value="admitted">Admitted</option>
+                            </select>
+                            <a href="/admin/StudentRegistrationList" class="btn btn-danger">Reset</a>
+                        </h4>
+                        <div class="table-responsive">
+                            <table id="studenttable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Admission No</th>
+                                        <th>Student Name</th>
+                                        <th>Date Of Admission</th>
+                                        <th>Class</th>
+                                        <th>Stream</th>
+                                        <th>Student Email</th>
+                                        <th>Mobile Number</th>
+                                        <th>Username</th>
+                                        <th>Password</th>
+                                        <th>Admission Stage</th>
+                                        @*<th>Year Of Passing</th>*@
+                                        <th>Student Photo</th>
+
+                                        <th style="width:150px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Count > 0)
+                                    {
+                                        int srNo = 1;
+                                        foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@srNo</td>
+                                                <td>@item.AdmissionNo</td>
+                                                <td>
+                                                    <a href="@Url.Action("StudentDetails", "Admin", new { id = item.StudentId })">
+                                                        @item.StudentName
+                                                    </a>
+                                                </td>
+                                                <td>@item.DateOfAdmission.ToString("dd-MMM-yyyy")</td>
+                                                <td>@item.ClassName @(string.IsNullOrEmpty(item.SectionName)?"":"-") @item.SectionName</td>                                             
+                                                <td>@(!string.IsNullOrEmpty(item.Stream) ? item.Stream : "N/A")</td>
+                                                <td>@item.StudentEmail</td>
+                                                @*<td>@item.YearOfPassing</td>*@
+                                                <td>@item.MobileNo</td>
+                                                <td>@item.username</td>
+                                                <td>@item.password</td>
+                                                <td>@item.AdmissionStage</td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(item.StudentPhotos))
+                                                    {
+                                                        <a href="@Url.Content( item.StudentPhotos)" target="_blank">View</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Not Uploaded</span>
+                                                    }
+                                                </td>
+
+                                                <td>
+                                                    <button class="btn btn-sm p-0" onclick="editStudent(@item.StudentId)">
+                                                        <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm p-0"><i data-feather="trash-2" onclick="deleteStudent(@item.StudentId)" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+
+                                                </td>
+                                            </tr>
+                                            srNo++;
+                                        }
+                                    }
+                                    @*else
+                                        {
+                                            <tr>
+                                                <td colspan="7" class="text-center">No data available</td>
+                                            </tr>
+                                        }*@
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+    function initializeDataTable() {
+        debugger
+        let table = $('#studenttable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8,9].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8,9].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+
+    $(document).ready(function () {
+        $("#academicyear").on("change", function () {
+            let input = $(this).val();
+            let stage = $("#admissionStage").val()
+            location.href = "/admin/StudentRegistrationList?year=" + input + "&stage=" + stage;
+        })
+        $("#admissionStage").on("change", function () {
+            let input = $("#academicyear").val();
+            let stage = $(this).val()
+            location.href = "/admin/StudentRegistrationList?year=" + input + "&stage=" + stage;
+        })
+        initializeDataTable()
+
+    })
+
+    
+
+    function editStudent(id) {
+        window.location.href = '/admin/StudentRegistration?id=' + id;
+    }
+    function deleteStudent(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the student record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Please wait!',
+                    text: 'Processing your request',
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading(); }
+                })
+                $.ajax({
+                    url: '/Admin/DeleteStudent',
+                    type: 'POST',
+                    data: { StudentId: id },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+            }
+        });
+    }
+</script>

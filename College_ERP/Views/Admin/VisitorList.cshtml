@@ -1,0 +1,314 @@
+﻿
+@{
+    ViewBag.Title = "VisitorList";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var data = ViewData["visitorsList"] as List<College_ERP.Models.Security.main.VisitorModel>;
+}
+
+<div class="content-page">
+    <div class="card">
+        <div class="card-header mb-2 py-0 text-end border-bottom-0">
+        </div>
+        <div class="card-body py-0 my-0">
+            <div class="row">
+                <div class="col-sm-12 text-center">
+
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex border-bottom-0 pb-0">
+                            <h4>Visitors List</h4>
+                            <div class="w-25 pb-1 ms-5 ">
+                                <input type="text" name="searchFilter" id="searchFilter" class="form-control" style="margin-left:200px" placeholder="Search By Name or Mobile" />
+                            </div>
+                        </div>
+                        <div class="card-body py-0 my-0">
+                            <table id="datatable23" class="table table-bordered dt-responsive nowrap w-100">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Name</th>
+                                        <th>Mobile</th>
+                                        <th>Email</th>
+                                        <th>Address</th>
+                                        <th>Photo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="visitorTableBody">
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td>
+                                                    <a role="button" title="Show History" data-id=@item.id class="showvisitoryhistory">@item.name</a>
+                                                </td>
+                                                <td>@item.mobile</td>
+                                                <td>@item.email</td>
+                                                <td>@item.address</td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(item.imageName))
+                                                    {
+                                                        <a href="@item.imageName" target="_blank" rel="noopener noreferrer" title="Show Photo">Show</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p>Not Uploaded</p>
+                                                    }
+                                                </td>
+                                                <!--<td class="text-center">-->
+                                                @*<a href="#" class="btn btn-sm deletemat" data-id="@item.id" title="Delete"><i data-feather="trash-2" class="text-danger ms-2"></i></a>*@
+                                                <!--<a href="#" title="Login Visitor" data-id="@item.id" class="btn text-success loginVisitor">Login</a>
+                                                </td>-->
+                                            </tr>
+                                                    count++;
+                                                }
+                                            }
+                                            else
+                                            {
+                                <tr>
+                                    <td colspan="8" class="text-center text-danger">No Data Found</td>
+                                </tr>
+            }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal History-->
+<div class="modal fade" id="historyShowModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="historyShowModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="historyShowModalLabel">History</h5>
+                <button type="button" class="btn-close" id="historyShowModalclosebtn" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="datatable22" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Name</th>
+                                <th>Reason</th>
+                                <th>Remark</th>
+                                <th>Logout Time</th>
+                                <th>Visit For</th>
+                                <th>Person Name</th>
+                                <th>Photo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="visitorTableBodyHistory">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+    function initializeDataTable1() {
+        debugger
+        let table = $('#datatable22').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8, 9].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8, 9].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+    function initializeDataTable() {
+        debugger
+        let table = $('#datatable23').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8, 9].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8, 9].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+
+    $(document).ready(function () {
+        debugger
+        initializeDataTable();
+        initializeDataTable1();
+
+
+        $('#historyShowModalclosebtn').on('click', function () {
+            $('#historyShowModal').modal('hide');
+        });
+
+        $('.showvisitoryhistory').click(function () {
+            let id = $(this).data('id');
+            $.ajax({
+                url: '/security/GetVisitorsHistory',
+                type: 'get',
+                data: { id: id },
+                success: function (res) {
+                    if (res && res.length > 0) {
+                        let html = '';
+                        res.forEach(function (visitor, index) {
+                            html += `<tr>
+                     <td>${index + 1}</td>
+                     <td>${visitor.name}</td>
+                     <td>${visitor.reason}</td>
+                     <td>${visitor.remark}</td>
+                     <td>${visitor.logOutTime}</td>
+                     <td>${visitor.userType !== "student" ? visitor.staffRole : visitor.userType}</td>
+                     <td>${visitor.personName}</td>
+                     <td>
+  ${visitor.imageName != null && visitor.imageName != ""
+                                    ? `<a href="${visitor.imageName}" target="_blank" rel="noopener noreferrer" title="Show Photo">Show</a>`
+                                    : 'Not Uploaded'
+                                }
+</td>
+
+
+                 </tr>`;
+                        });
+                        $('#visitorTableBodyHistory').html(html);
+                    } else {    
+                        $('#visitorTableBodyHistory').empty();
+                        $('#visitorTableBodyHistory').html(`<td colspan="8" class="text-center text-danger">No Data Found</td>`);
+                        Swal.fire({
+                            title: 'Warning',
+                            text: 'Data not found!',
+                            icon: 'warning',
+                            didClose: () => { $('#visitorTableBody').append(`<tr><td colspan="7" class="text-center text-danger">No data found</td></tr>`) }
+                        });
+                    }
+                    $('#historyShowModal').modal('show');
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+
+                    Swal.fire('Error', 'Failed to fetch data', 'error');
+                }
+            });
+        })
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        let debounceTimer;
+
+        $('#searchFilter').on('input', function () {
+            clearTimeout(debounceTimer); // Clear any existing timer
+
+            debounceTimer = setTimeout(function () {
+                let inputdata = $('#searchFilter').val();
+
+                $.ajax({
+                    url: '/security/GetAllVisitorByFilter',
+                    type: 'get',
+                    data: { filt: inputdata },
+                    success: function (res) {
+                        if (res && res.length > 0) {
+                            $('#visitorTableBody').empty();
+                            let html = '';
+                            res.forEach(function (visitor, index) {
+                                html += `<tr>
+                                    <td>${index + 1}</td>
+                                    <td>${visitor.name}</td>
+                                    <td>${visitor.mobile}</td>
+                                    <td>${visitor.email}</td>
+                                    <td>${visitor.address}</td>
+                                    <td><a href="${visitor.imageName}" target="_blank" title="Show Photo">Show</a></td>
+
+                                </tr>`;
+                            });
+                            $('#visitorTableBody').html(html);
+                        } else {
+                            $('#visitorTableBody').empty();
+                            Swal.fire({
+                                title: 'Warning',
+                                text: 'Data not found!',
+                                icon: 'warning',
+                                didClose: () => { $('#visitorTableBody').append(`<tr><td colspan="7" class="text-center text-danger">No data found</td></tr>`) }
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log(xhr);
+
+                        Swal.fire('Error', 'Failed to fetch data', 'error');
+                    }
+                });
+            }, 500); // Wait 500ms after typing stops
+        });
+    });
+</script>
+

@@ -1,0 +1,227 @@
+﻿
+@{
+    ViewBag.Title = "HostelProblems";
+    Layout = "~/Views/Shared/_wardenLayout.cshtml";
+    var problems = ViewData["problemlist"] as List<College_ERP.Models.Warden.HostelProblemsModel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title d-flex">
+                        <div class="h4">Problem List</div>
+                        <div class="m-auto">
+                            <div class="form-group">
+                                <label class="form-label">Search By Status</label>
+                                <select id="filterstatus" class="form-select">
+                                    <option selected>--Select Status--</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Rejected">Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <table id="problemTable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Student Name</th>
+                                <th>Room Number</th>
+                                <th>Problem</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (problems != null)
+                            {
+                                int srNo = 1;
+                                foreach (var problem in problems)
+                                {
+                                    <tr>
+                                        <td>@srNo</td>
+                                        <td>@problem.studentName</td>
+                                        <td>@problem.roomNo</td>
+                                        <td><a role="button" class="text-primary" onclick="viewDesc(`@problem.problem`)"> View </a></td>
+                                        <td>@problem.createdAt</td> 
+                                        <td>
+                                            @if (problem.problemStatus == 0)
+                                            {
+                                                <span class="badge badge-soft-warning">Pending</span>
+                                            }
+                                            else if (problem.problemStatus == 1)
+                                            {
+                                                <span class="badge badge-soft-primary">Completed</span>
+                                            }
+                                            else if (problem.problemStatus == 2)
+                                            {
+                                                <span class="badge badge-soft-danger">Rejected</span>
+                                            }
+                                        </td>
+                                        <td data-id=@problem.id>
+                                            <a role="button" class="actionBtn btn btn-sm text-warning" title="Update Problem Status">
+                                                <i data-feather="edit" style="width:22px; height:22px;"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    srNo++;
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Description Modal-->
+<div class="modal fade" id="viewDescriptionModal" tabindex="-1" aria-labelledby="viewDescriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title" id="viewDescriptionModalLabel">Problem</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="DescriptionContent" style="white-space: pre-line;"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end description modal-->
+
+<script>
+    $(document).ready(function () {
+
+        var table = $('#problemTable').DataTable();
+
+        $('#filterstatus').change(function () {
+            let filval = $(this).val();
+
+            if (filval === "--Select Status--") {
+                table.column(5).search('').draw(); // Clear filter
+            } else {
+                table.column(5).search(filval).draw(); // Apply filter
+            }
+        });
+
+
+
+
+
+        $('.actionBtn').on('click', function () {
+            debugger
+            let id = $(this).parent().data('id');
+            let remark = null;
+
+            Swal.fire({
+                title: 'Provide Reason',
+                input: 'text',
+                inputLabel: 'Reason for problem',
+                inputPlaceholder: 'Enter your reason here...',
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: 'Reject!',
+                denyButtonText: 'Complete',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#ff5050',
+                denyButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                preConfirm: (inputValue) => {
+                    if (!inputValue) {
+                        Swal.showValidationMessage('Reason is required');
+                        return false;
+                    }
+                    return inputValue;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Reject clicked
+                    const remark = result.value;
+                    setStatusofProblem(id, 2, remark);
+                } else if (result.isDenied) {
+                    // Complete clicked
+                    const remark = result.value;
+                    setStatusofProblem(id, 1, remark);
+                }
+                // Cancel does nothing
+            });
+
+        });
+
+        function setStatusofProblem(id, status, remark) {
+            debugger
+            $.ajax({
+                url: '/warden/CompleteOrRejectHostelProblem',
+                type: 'post',
+                data: { id: id, status: status, reason: remark },
+                success: function (response) {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            didClose: () => { location.reload(true); }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again.'
+                    });
+                }
+            });
+        }
+
+        $('.showfullres').on('click', function () {
+
+            let remark = $(this).data('res');
+            $('#remarkshow').text(remark);
+            $('#RemarkModal').modal('show');
+
+        });
+    });
+</script>
+
+<!--Description Modal-->
+<div class="modal fade" id="viewDescriptionModal" tabindex="-1" aria-labelledby="viewDescriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title" id="viewDescriptionModalLabel">Communication Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="DescriptionContent" style="white-space: pre-line;"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        window.viewDesc = function (description) {
+            $('#DescriptionContent').html(description);
+            $('#viewDescriptionModal').modal('show');
+        };
+    })
+</script>

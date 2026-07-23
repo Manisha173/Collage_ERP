@@ -1,0 +1,578 @@
+﻿
+@{
+    ViewBag.Title = "AddDriver";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var data = ViewData["driverList"] as List<College_ERP.Models.Admin.Drivers>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addbus">Add Bus</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Driver
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/AddBusRoute"> Add Bus Route</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AssignBusToDriver"> Assign Bus to Driver </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddStudentRouteWise"> Add Student In Bus </a>
+                    </li>
+
+                </ol>
+            </nav>
+
+        </div>
+
+        <!--add Modal -->
+        <div class="modal fade" id="exampleModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Driver</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="addDriverForm">
+                            <input type="hidden" value="0" name="purchaseId" id="purchaseId" />
+                            <div class="row px-5">
+
+                                <div class="col-sm-3">
+                                    <label class="form-label pt-1"><strong>Employee ID</strong></label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" id="EmployeeId" name="EmployeeId" class="form-control" placeholder="Enter Employee Id" />
+                                </div>
+                            </div>
+                            <div class="row px-5 mt-3">
+
+                                <div class="col-sm-3">
+                                    <label class="form-label pt-1"><strong>Driver Name</strong></label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" id="driverName" name="Name" class="form-control" required placeholder="Enter Driver Name" />
+                                </div>
+                            </div>
+
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Driver Contact No</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="number" id="cotactNo" name="ContactNo" class="form-control mobileval" required placeholder="Enter Driver Contact No" />
+                                    <span class="mobileError text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Driver Email </strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="email" id="email" name="Email" class="form-control" required placeholder="Enter Email Address" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Father Name</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" id="fatherName" name="FatherName" class="form-control" required placeholder="Enter Father Name" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Driver Salary</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="number" id="salary" name="Salary" class="form-control" required placeholder="Enter Driver Salary" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>DL No</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" id="DLNo" name="DLNo" class="form-control" required placeholder="Enter DL No" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Adhar Card No</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" id="AdharCardNo" name="AdharCardNo" class="form-control adharval" required placeholder="Enter Adhar Card No" />
+                                    <span class="adharError text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Driver Image</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="file" id="DriverImage" name="DriverImage" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Uplaod DL</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="file" id="DLFile" name="DLFile" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Upload Adhar Card</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="file" id="AdharFile" name="AdharFile" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Address</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <textarea type="file" id="Address" name="Address" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3 d-flex justify-content-between">
+                            <span>Driver List</span>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Add Driver
+                            </button>
+                        </h4>
+                        <div class="table-responsive">
+                            <table id="driverTable" class="table table-bordered w-100">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Employee ID</th>
+                                        <th>Name</th>
+                                        <th>Father Name</th>
+                                        <th>Contact No</th>
+                                        <th>DL No</th>
+                                        <th>Adhar Card No</th>
+                                        <th>Address</th>
+                                        <th>Salary</th>
+                                        <th>Username</th>
+                                        <th>Password</th>
+                                        <th class="text-center">Image</th>
+                                        <th class="text-center">Adhar</th>
+                                        <th class="text-center">DL</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td>@item.EmployeeId</td>
+                                                <td>
+                                                    <a href="/admin/DriverProfile?id=@item.Id" title="Show Profile">@item.Name</a>
+                                                </td>
+                                                <td>@item.FatherName</td>
+                                                <td>@item.ContactNo</td>
+                                                <td>@item.DLNo</td>
+                                                <td>@item.AdharCardNo</td>
+                                                <td>@item.Address</td>
+                                                <td>@item.Salary</td>
+                                                <td>@item.username</td>
+                                                <td>@item.password</td>
+                                                <td class="text-center"><a target="_blank" href="@item.DriverFileName">View</a></td>
+                                                <td class="text-center"><a target="_blank" href="@item.DLFileName">View</a></td>
+                                                <td class="text-center"><a target="_blank" href="@item.AdharCardFileName">View</a></td>
+                                                <td class="text-center">
+                                                    <a role="button" title="Update" data-id="@item.Id" class="btn btn-sm editDriver p-0"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                                    <a role="button" class="btn btn-sm deletemat p-0" data-id="@item.Id" title="Delete"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                                </td>
+                                            </tr>
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Modal to Update Stock Material-->
+        <div class="modal fade" tabindex="-1" id="updateModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom-0">
+                        <h5 class="modal-title">Update Driver</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="addDriverForm">
+                            <input type="hidden" value="0" name="Id" id="Id" />
+                            <div class="row  px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Employee ID</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" id="upEmployeeId" name="EmployeeId" class="form-control"  placeholder="Enter Employee Id"  />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-sm-3">
+                                    <label class="form-label pt-1"><strong>Driver Name</strong></label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" id="updriverName" name="Name" class="form-control" required placeholder="Enter Driver Name" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Driver Contact No</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" id="upcotactNo" name="ContactNo" class="form-control mobileval" required placeholder="Enter Driver Contact No" />
+                                    <span class="mobileError text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Driver Email </strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="email" id="upemail" name="Email" class="form-control" required placeholder="Enter Email Address" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Father Name</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" id="upfatherName" name="FatherName" class="form-control" required placeholder="Enter Father Name" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Driver Salary</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="number" id="upsalary" name="Salary" class="form-control" required placeholder="Enter Driver Salary" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>DL No</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" id="upDLNo" name="DLNo" class="form-control" required placeholder="Enter DL No" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Adhar Card No</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="number" id="upAdharCardNo" name="AdharCardNo" class="form-control adharval" required placeholder="Enter Adhar Card No" />
+                                    <span class="adharError text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Driver Image</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="file" id="upDriverImage" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Uplaod DL</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="file" id="upDLFile" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Upload Adhar Card</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="file" id="upAdharFile" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="row mt-3 px-5">
+                                <div class="col-md-3">
+                                    <label class="form-label pt-1"><strong>Address</strong></label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <textarea type="file" id="upAddress" name="Address" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <button type="submit" id="btnSubmit" class="btn btn-primary">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+    <script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+    <script>
+
+        function initializeDataTable() {
+            debugger
+            let table = $('#driverTable').DataTable({
+                ordering: false,
+                autoWidth: false,
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+                dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+                buttons: [
+                    {
+                        extend: 'excel',
+                        text: 'Export Excel',
+                        exportOptions: {
+                            columns: function (idx, data, node) {
+                                return ![8, 9,10,11].includes(idx);
+                            } // exclude last column
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'Export PDF',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        exportOptions: {
+                            columns: function (idx, data, node) {
+                                return ![8, 9,10,11].includes(idx);
+                            } // exclude last column
+                        },
+                        customize: function (doc) {
+                            doc.defaultStyle.fontSize = 6;
+                            doc.styles.tableHeader.fontSize = 7;
+                            doc.content[1].table.widths =
+                                Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                        }
+                    }
+                ]
+            });
+            return table;
+        }
+        $(document).ready(function () {
+            initializeDataTable();
+        })
+
+        $(".addDriverForm").on('submit', function (e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            debugger
+            let formdata = new FormData(this);
+
+            let id = $(this).find("#Id").val();
+
+            let isUpdate = id && id != "0";
+
+            let driverImage = isUpdate ? $("#upDriverImage").get(0).files[0] : $("#DriverImage").get(0).files[0];
+            let dlFile = isUpdate ? $("#upDLFile").get(0).files[0] : $("#DLFile").get(0).files[0];
+            let adharFile = isUpdate ? $("#upAdharFile").get(0).files[0] : $("#AdharFile").get(0).files[0];
+
+            if (driverImage) formdata.append("File1", driverImage);
+            if (dlFile) formdata.append("File2", dlFile);
+            if (adharFile) formdata.append("File3", adharFile);
+
+            $.ajax({
+                url: '/admin/AddDriver',
+                type: 'post',
+                data: formdata,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success',
+                            text: res.message,
+                            icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    } else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!',
+                        icon: 'error'
+                    });
+                    console.log(xhr);
+                }
+            });
+        });
+
+        $(".deletemat").on('click', function () {
+            let id = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to delete this item?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                customClass: {
+                    confirmButton: 'mx-2 btn btn-danger',
+                    cancelButton: 'mx-2 btn btn-light'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing Your Request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/admin/DeleteDriver',
+                        type: 'get',
+                        data: { Id: id },
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: res.message,
+                                    icon: 'success',
+                                    didClose: () => {
+                                        location.reload(true);
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: res.message,
+                                    icon: 'warning'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Server Error. Try Again Later!',
+                                icon: 'error'
+                            });
+                            console.log(xhr);
+                        }
+                    });
+                } else {
+                    Swal.fire('Cancelled', 'Your item is safe.', 'info');
+                }
+            });
+        });
+
+        $(".editDriver").on('click', function () {
+            debugger;
+            Swal.fire({
+                title: 'Loading Driver...',
+                text: 'Please wait while we fetch the details.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+            let id = $(this).data("id")
+            $.ajax({
+                url: '/admin/EditDriver', type: 'get', data: { id: id },
+                success: function (res) {
+                    console.log(res.Name)
+                    if (res) {
+                        $("#Id").val(res[0].Id || 0);
+                        $("#upEmployeeId").val(res[0].EmployeeId || 0);
+                        $("#updriverName").val(res[0].Name);
+                        $("#upcotactNo").val(res[0].ContactNo);
+                        $("#upfatherName").val(res[0].FatherName);
+                        $("#upsalary").val(res[0].Salary);
+                        $("#upDLNo").val(res[0].DLNo);
+                        $("#upAdharCardNo").val(res[0].AdharCardNo);
+                        $("#upAddress").val(res[0].Address);
+                        $("#upemail").val(res[0].Email);
+                        Swal.close();
+                        $("#updateModal").modal('show');
+                    }
+                },
+                error: function (xhr) {
+
+                }
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+            $('.mobileval').on('input', function () {
+                let m = $(this).val().replace(/\D/g, '').slice(0, 10);
+                $(this).val(m);
+                $('.mobileError').text(
+                    m.length < 10 ? 'Mobile number must be 10 digits.' :
+                        !/^[6-9]/.test(m) ? 'Mobile number must start with 6, 7, 8, or 9.' : ''
+                );
+            });
+        });
+        $(function () {
+            $('.adharval').on('input', function () {
+                let a = $(this).val().replace(/\D/g, '').slice(0, 12);
+                $(this).val(a);
+                $('.adharError').text(
+                    a.length < 12 ? 'Aadhaar number must be 12 digits.' : ''
+                );
+            });
+        });
+    </script>

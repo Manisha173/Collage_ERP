@@ -1,0 +1,1248 @@
+﻿
+@{
+    ViewBag.Title = "AddTimeTable";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var data = ViewData["timetablesList"] as List<College_ERP.Models.Admin.TimeTableModel>;
+}
+
+<style>
+    .select2-container {
+        z-index: 9999 !important;
+    }
+
+    .select2 {
+        width: 100% !important;
+    }
+</style>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add TimeTable
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/admin/addexamtimetable"> Add Exam TimeTable</a>
+                    </li>
+                </ol>
+            </nav>
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="py-0 card-header border-bottom-0 d-flex justify-content-between">
+                            <h4 class="card-title mb-3">TimeTable List</h4>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#TimeTableModal">
+                                Add TimeTable
+                            </button>
+                        </div>
+                        <div class="card-body py-2">
+                            <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Class</th>
+                                        <th>Section</th>
+                                        @*<th>Actions</th>*@
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td><a role="button" data-classid="@item.classId" data-sectionid="@item.sectionId" class="showTimeTable" title="Show TimeTable">@item.className</a></td>
+                                                <td>@item.sectionName</td>
+                                               
+                                            </tr>
+
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Add Timetable modal -->
+<div class="modal fade" id="TimeTableModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add TimeTable</h1>
+                <button type="button" class="btn-close" id="CloseModalAddTimeTable"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs Navigation -->
+                <ul class="nav nav-tabs mb-2" id="formTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="form1-tab" data-bs-toggle="tab" data-bs-target="#form1" type="button" role="tab">
+                            Add TimeTable
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="form2-tab" data-bs-toggle="tab" data-bs-target="#form2" type="button" role="tab">
+                            Upload TimeTable
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tabs Content -->
+                <div class="tab-content mt-3">
+                    <div class="tab-pane fade show active" id="form1" role="tabpanel">
+                        <form id="AddTimeTableForm">
+                            <div class="row">
+                                <div class="col-sm-4 mb-2">
+                                    <label for="class" class="form-label">Class</label>
+                                    <select id="class" name="classId" class="form-select" required>
+                                        <option value="">--Select Class--</option>
+                                        @if (ViewBag.ClassList != null)
+                                        {
+                                            foreach (var item in ViewBag.ClassList)
+                                            {
+                                                <option value="@item.ClassId">@item.ClassName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-4 mb-2">
+                                    <label for="section" class="form-label">Section</label>
+                                    <select id="section" name="sectionId" class="form-select" required>
+                                        <option value="">--Select Section--</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4 mb-2">
+                                    <label for="day" class="form-label d-block">Day</label>
+                                    <select id="day" name="dayList" class="select2" multiple required>
+                                        <option value="monday">Monday</option>
+                                        <option value="tuesday">Tuesday</option>
+                                        <option value="wednesday">Wednesday</option>
+                                        <option value="thursday">Thursday</option>
+                                        <option value="friday">Friday</option>
+                                        <option value="saturday">Saturday</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div id="subjectTimeContainer">
+                                <div class="row">
+                                    <div class="col-sm-4 mb-2">
+                                        <label for="class" class="form-label">Subject</label>
+                                        <select id="subject" name="sbm[0].subjectId" class="form-select" required>
+                                            <option value="">--Select Subject--</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4 mb-2">
+                                        <label for="from" class="form-label">From</label>
+                                        <input type="time" name="sbm[0].from" id="from" class="form-control" />
+                                    </div>
+                                    <div class="col-sm-4 mb-2">
+                                        <label for="to" class="form-label d-flex justify-content-between align-items-center">
+                                            To
+                                            <button class="btn btn-sm p-1 py-0 d-none delete-row-btn" type="button" title="Remove Row">
+                                                <i data-feather="trash" style="width: 16px; color:red; height: 16px;"></i>
+                                            </button>
+                                        </label>
+                                        <input type="time" name="sbm[0].to" id="to" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 text-end">
+                                    <button class="btn btn-sm btn-primary" type="button" id="addSubjectBtn">
+                                        <i data-feather="plus" class="noti-icon"></i> Add New
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="form2" role="tabpanel">
+                        <form id="uploadTimeTableForm">
+                            <div class="row">
+                                <div class="col-sm-4 mb-2">
+                                    <label for="class" class="form-label">Class</label>
+                                    <select id="classupl" name="classId" class="form-select" required>
+                                        <option value="">--Select Class--</option>
+                                        @if (ViewBag.ClassList != null)
+                                        {
+                                            foreach (var item in ViewBag.ClassList)
+                                            {
+                                                <option value="@item.ClassId">@item.ClassName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-4 mb-2">
+                                    <label for="section" class="form-label">Section</label>
+                                    <select id="sectionupl" name="sectionId" class="form-select" required>
+                                        <option value="">--Select Section--</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4 mb-2">
+                                    <label class="form-label">Academic year</label>
+                                    <select name="academicYear" class="form-control" id="academicYear" required>
+                                        <option selected disabled value="">--Select Academic Year--</option>
+                                        @{
+                                            for (int i = 0; i <= 10; i++)
+                                            {
+                                                <option @(Request.QueryString["year"] == (DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year) ? "selected" : "") value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-4 mb-2">
+                                    <label for="attachment" class="form-label">Time Table</label>
+                                    <input type="file" id="attachment" name="attachment" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+    </div>
+</div>
+<style>
+    .time-col {
+        font-weight: bold;
+        background-color: #e9ecef;
+        text-align: center;
+    }
+
+    .table td, .table th {
+        text-align: center;
+    }
+
+    .table td {
+        cursor: pointer;
+    }
+</style>
+<!--Modal To show TimeTable-->
+<div class="modal fade" id="showTimeTableModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header pb-1 text-center border-bottom-0 ">
+                <h1 class="modal-title fs-5 mb-0" id="exampleModalLabel">TimeTable</h1>
+                <button type="button" class="btn-close mb-0" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body my-0 pt-0">
+                <!-- Tabs Navigation -->
+                <ul class="nav nav-tabs mt-2" id="formTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="form1-tab" data-bs-toggle="tab" data-bs-target="#timetable1" type="button" role="tab">
+                            Add TimeTable
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="form2-tab" data-bs-toggle="tab" data-bs-target="#timetable2" type="button" role="tab">
+                            Uploaded TimeTable
+                        </button>
+                    </li>
+                </ul>
+                <!-- Tabs Content -->
+                <div class="tab-content mt-3">
+                    <div class="tab-pane fade show active" id="timetable1" role="tabpanel">
+                        <div class="text-end">
+                            <button class="btn btn-sm btn-danger mb-1 ms-1 mt-1" id="downloadPdfBtn" type="button">Download PDF</button>
+                        </div>
+                        <div id="pdfContent">
+                            <div class="row">
+                                <div class="col-sm-12 text-center">
+                                    <h4>TimeTable</h4>
+                                    <h5>Class : <span id="classshowtime"></span> - <span id="sectionshowtime"></span></h5>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table border="1" cellpadding="7" style="border-collapse: collapse;" class="table table-bordered text-center align-middle">
+                                    <thead class="table-light">
+                                        <tr id="day-row">
+                                            <th>Day / Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="timetable-body">
+                                        <!-- Repeat rows as needed -->
+                                        <!-- Add more time slots as needed -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="timetable2" role="tabpanel">
+                        <div class="container my-4" id="previewcontainerl">
+                            <div class="row mb-1">
+                                <div class="col-sm-12 d-flex justify-content-between">
+                                    <h4 class="mb-3">PDF Preview</h4>
+                                    <div class="ifUploaded">
+                                        <button class="btn  btn-primary " id="updateUloadedDocuments"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="btn  btn-danger " id="deleteUloadedDocuments"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- PDF Preview -->
+                            <div id="pdfContainer" class="border rounded shadow text-center" style="max-height: 500px; max-width: 100%; overflow: visible; min-width: 100%;">
+                                
+                            </div>
+
+                            <!-- Message if no file -->
+                            <div id="noPdfMessage" class="border rounded shadow p-3 text-center bg-light d-none">
+                                <p class="text-danger m-0">No file uploaded</p>
+                            </div>
+                        </div>
+                        <div id="updateformcontainer" class="d-none">
+                            <form id="updateuploadtimetableform">
+                                <div class="row">
+                                    <div class="col-sm-4 mb-2">
+                                        <label class="form-label">Academic year</label>
+                                        <input type="hidden" id="updateAttId" name="id" />
+                                        <select name="academicYear" class="form-control" id="upllacademicYear" required>
+                                            <option selected disabled value="">--Select Academic Year--</option>
+                                            @{
+                                                for (int i = 0; i <= 10; i++)
+                                                {
+                                                    <option @(Request.QueryString["year"] == (DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year) ? "selected" : "") value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4 mb-2">
+                                        <label for="attachment1" class="form-label">Time Table</label>
+                                        <input type="file" id="attachment1"  class="form-control" required />
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary" id="submitbtnupl">Submit</button>
+                                    <button type="button" class="btn btn-danger" id="cancelbtnupl">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="UpdateTimeTableModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Update TimeTable</h1>
+                <button type="button" class="btn-close" id="CloseModalUpdateTimeTable"></button>
+            </div>
+            <div class="modal-body">
+                <form id="UpdateTimeTableForm">
+                    <input type="hidden" name="tid" id="tidd" />
+                    <div class="row">
+                        <div class="col-sm-4 mb-2">
+                            <label for="class" class="form-label">Class</label>
+                            <input type="text" id="classup" readonly class="form-control" />
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="section" class="form-label">Section</label>
+                            <input type="text" id="sectionup" readonly class="form-control" />
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="day" class="form-label">Day</label>
+                            <input type="text" id="dayup" readonly class="form-control" />
+                        </div>
+                    </div>
+                    <div id="upsubjectTimeContainer">
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 text-end">
+                            <button class="btn btn-sm btn-primary" type="button" id="addSubjectBtnup">
+                                <i data-feather="plus" class="noti-icon"></i> Add New
+                            </button>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#day').select2({
+            placeholder: "--Select Days--"
+        });
+
+        function getsectionsbyclassid(id, ele) {
+            $.ajax({
+                url: '/admin/GetSubjectandSectionByClassId',
+                type: 'get',
+                data: { id: id },
+                success: function (data) {
+                    console.log('subject', data.subject);
+                    if (data) {
+                        $(ele).empty();
+                        $(ele).append($('<option>', {
+                            value: '',
+                            text: '-- Select Subject --'
+                        }));
+
+                        data.subject.forEach(function (subject) {
+                            $(ele).append($('<option>', {
+                                value: subject.SubjectId,
+                                text: subject.Subject
+                            }));
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            });
+        }
+        $('#class').on('change', function () {
+            let id = $(this).val();
+            getsectionsbyclassid(id, $('#subject'));
+        });
+
+        $("#updateuploadtimetableform").on("submit", function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            var data = new FormData($(this)[0]);
+
+            let fileData = $("#attachment1").get(0).files[0]
+            if (fileData) {
+                data.append("attachment", fileData)
+            } else {
+                Swal.fire({
+                    title: 'Warning', text: "Time table attachment are required", icon: 'warning',
+                   
+                });
+            }
+
+            $.ajax({
+                type: 'Post',
+                url: '/admin/updateUploadedTimeTable',
+                data: data,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        })
+        
+        $('#class').on('change', function () {
+            let id = $(this).val();
+            $.ajax({
+                url: '/admin/GetSubjectandSectionByClassId', type: 'get', data: { id: id },
+                success: function (data) {
+                    console.log('sections', data.section);
+                    if (data) {
+                        let ele = $('#section')
+                        ele.empty();
+                        ele.append($('<option>', {
+                            value: '',
+                            text: '-- Select Section --'
+                        }));
+
+                        $.each(data.section, function (index, section) {
+                            ele.append($('<option>', {
+                                value: section.SectionId,
+                                text: section.SectionName
+                            }));
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            });
+        });
+
+        $('#addSubjectBtn').on('click', function () {
+            let lastRow = $('#subjectTimeContainer .row').last();
+            let subject = lastRow.find('select[name^="sbm["]').val();
+            let fromTime = lastRow.find('input[name^="sbm["]').eq(0).val();
+            let toTime = lastRow.find('input[name^="sbm["]').eq(1).val();
+
+            if (!subject || !fromTime || !toTime) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Incomplete Fields',
+                    text: 'Please fill in Subject, From, and To fields before adding a new row.',
+                });
+                return;
+            }
+
+            let row = lastRow.clone();
+
+            let index = $('#subjectTimeContainer .row').length;
+
+            row.find('select[name^="sbm["]').attr('name', `sbm[${index}].subjectId`);
+            row.find('input[name^="sbm["]').eq(0).attr('name', `sbm[${index}].from`);
+            row.find('input[name^="sbm["]').eq(1).attr('name', `sbm[${index}].to`);
+
+            let newFrom = toTime;
+            let toDate = new Date(`1970-01-01T${newFrom}`);
+            toDate.setMinutes(toDate.getMinutes() + 60);
+            let newTo = toDate.toTimeString().substring(0, 5);
+
+            row.find('select[name^="sbm["]').val('');
+            row.find('input[name^="sbm["]').eq(0).val(newFrom);
+            row.find('input[name^="sbm["]').eq(1).val(newTo);
+            row.addClass('new-Row');
+
+            row.find('input[name^="sbm["]').eq(0).addClass('newFrom');
+            row.find('input[name^="sbm["]').eq(1).addClass('newTo');
+            row.find('select[name^="sbm["]').addClass('new-dropdown-class');
+
+            let deleteBtn = row.find('.delete-row-btn');
+            deleteBtn.removeClass('d-none');
+            deleteBtn.off('click').on('click', function () {
+                row.remove();
+                let from = document.querySelectorAll('.newFrom');
+                let to = document.querySelectorAll('.newTo')
+                $('.new-dropdown-class').each(function (i, d) {
+                    d.name = `sbm[${i + 1}].subjectId`;
+                    from[i].name = `sbm[${i + 1}].from`;
+                    to[i].name = `sbm[${i + 1}].to`;
+                });
+            });
+
+            // Append the new row
+            $('#subjectTimeContainer').append(row);
+
+            // Refresh icons (for example Feather icons)
+            feather.replace();
+        });
+
+        $('#addSubjectBtnup').on('click', function () {
+            let lastRow = $('#upsubjectTimeContainer .row').last();
+            let subject = lastRow.find('select[name^="ttdata["]').val();
+            let fromTime = lastRow.find('input[name^="ttdata["]').eq(0).val();
+            let toTime = lastRow.find('input[name^="ttdata["]').eq(1).val();
+
+            if (!subject || !fromTime || !toTime) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Incomplete Fields',
+                    text: 'Please fill in Subject, From, and To fields before adding a new row.',
+                });
+                return;
+            }
+
+            let row = lastRow.clone();
+
+            let index = $('#upsubjectTimeContainer .row').length;
+
+            row.find('select[name^="ttdata["]').attr('name', `ttdata[${index}].subjectId`);
+            row.find('input[name^="ttdata["]').eq(0).attr('name', `ttdata[${index}].from`);
+            row.find('input[name^="ttdata["]').eq(1).attr('name', `ttdata[${index}].to`);
+
+            let newFrom = toTime;
+            let toDate = new Date(`1970-01-01T${newFrom}`);
+            toDate.setMinutes(toDate.getMinutes() + 60);
+            let newTo = toDate.toTimeString().substring(0, 5);
+
+            row.find('select[name^="ttdata["]').val('');
+            row.find('input[name^="ttdata["]').eq(0).val(newFrom);
+            row.find('input[name^="ttdata["]').eq(1).val(newTo);
+            row.addClass('new-Row');
+
+            row.find('input[name^="ttdata["]').eq(0).addClass('newFrom');
+            row.find('input[name^="ttdata["]').eq(1).addClass('newTo');
+            row.find('select[name^="ttdata["]').addClass('new-dropdown-class');
+
+            let deleteBtn = row.find('.delete-row-btn');
+            deleteBtn.removeClass('d-none');
+            deleteBtn.off('click').on('click', function () {
+                row.remove();
+                let from = document.querySelectorAll('.newFrom');
+                let to = document.querySelectorAll('.newTo')
+                $('.new-dropdown-class').each(function (i, d) {
+                    d.name = `ttdata[${i + 1}].subjectId`;
+                    from[i].name = `ttdata[${i + 1}].from`;
+                    to[i].name = `ttdata[${i + 1}].to`;
+                });
+            });
+
+            // Append the new row
+            $('#upsubjectTimeContainer').append(row);
+
+            // Refresh icons (for example Feather icons)
+            feather.replace();
+        });
+
+        $('#CloseModalAddTimeTable').on('click', function () {
+            $('.new-Row').hide();
+            $('#AddTimeTableForm')[0].reset();
+            $('#TimeTableModal').modal('hide');
+        })
+
+        $('#AddTimeTableForm').submit(function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            var data = new FormData(this);
+
+            $.ajax({
+                type: 'Post',
+                url: '/admin/AddTimeTable',
+                data: data,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+
+        $(".deleteTimeTable").on('click', function () {
+            let id = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to delete this item?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                customClass: {
+                    confirmButton: 'mx-2 btn btn-danger',
+                    cancelButton: 'mx-2 btn btn-light'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing Your Request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/admin/deleteTimeTable',
+                        type: 'get',
+                        data: { Id: id },
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: res.message,
+                                    icon: 'success',
+                                    didClose: () => {
+                                        location.reload(true);
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: res.message,
+                                    icon: 'warning'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Server Error. Try Again Later!',
+                                icon: 'error'
+                            });
+                            console.log(xhr);
+                        }
+                    });
+                } else {
+                    Swal.fire('Cancelled', 'Your item is safe.', 'info');
+                }
+            });
+        });
+
+        $('.showTimeTable').on('click', function () {
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            debugger;
+            let classid = $(this).data('classid');
+            let sectionid = $(this).data('sectionid');
+
+            $.ajax({
+                url: '/admin/ShowTimeTable',
+                type: 'get',
+                data: { classid: classid, sectionid: sectionid },
+                success: function (response) {
+                    console.log('upidddd', response.timetable);
+                        debugger
+                    let res = response.timetable;
+                  
+                    if (res.length > 0) {
+                        document.querySelector('#updateUloadedDocuments').setAttribute('data-upid', response.upid);
+                        document.querySelector('#deleteUloadedDocuments').setAttribute('data-upid', response.upid);
+                        $('#classshowtime').text(res[0]?.ttdata[0]?.className || '');
+                        $('#sectionshowtime').text(res[0]?.ttdata[0]?.sectionName || '');
+                        $('#upid').val(response.upid);
+                        
+                       
+
+                    } else {
+                        $('#classshowtime').text('');
+                        $('#sectionshowtime').text('');
+                    }
+
+                    // Clear previous preview content
+                    $('#pdfContainer').empty();
+                    $('#noPdfMessage').addClass('d-none');
+
+                    if (response.attachment) {
+                        // Check file extension (case insensitive)
+                        var attachment = response.attachment.toLowerCase();
+                        var isPdf = attachment.endsWith('.pdf');
+                        var isImage = attachment.match(/\.(jpeg|jpg|gif|png|bmp|webp)$/i);
+
+                        if (isPdf) {
+                            // Agar PDF hai to ek anchor tag with icon show karo
+                            let pdfIconHtml = `
+                <a href="${response.attachment}" target="_blank" class="d-flex align-items-center text-center" style="text-decoration:none; text-align:center !important; margin-left:440px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="400" fill="red" class="bi bi-file-earmark-pdf" viewBox="0 0 16 16">
+                      <path d="M5.523 7.669v.661c0 .398-.158.579-.44.579-.193 0-.366-.092-.49-.242v.837h-.665v-2.98h.665v1.088c.13-.155.315-.25.523-.25.282 0 .441.18.441.615z"/>
+                      <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zM10.5 1.5v3h3L10.5 1.5z"/>
+                    </svg>
+                    <span class="ms-2 text-center fs-3">View PDF</span>
+                </a>
+            `;
+                            $('#pdfContainer').html(pdfIconHtml).removeClass('d-none');
+                            $(".ifUploaded").removeClass("d-none")
+                        } else if (isImage) {
+                            // Agar image hai to image tag show karo
+                            let imgHtml = `<img src="${response.attachment}" alt="Preview Image" style="max-width:100%; min-width:100%;   max-height:500px;" />`;
+                            $('#pdfContainer').html(imgHtml).removeClass('d-none');
+                            $(".ifUploaded").removeClass("d-none")
+
+                        } else {
+                            // Agar attachment par PDF ya image nahi hai to no file message dikhayen
+                            $('#pdfContainer').addClass('d-none');
+                            $('#noPdfMessage').removeClass('d-none');
+                            $('.ifUploaded').addClass('d-none');
+
+                        }
+                    } else {
+                        $('#pdfContainer').addClass('d-none');
+                        $('#noPdfMessage').removeClass('d-none');
+                        $('.ifUploaded').addClass('d-none');
+                    }
+
+                    if (res) {
+                        setTimeTable(res);
+                        Swal.close();
+                        $('#showTimeTableModal').modal('show');
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            });
+        });
+
+        function parseTimeRange(range) {
+            const [from] = range.split("-");
+            return parseTime(from);
+        }
+
+        function parseTime(timeStr) {
+            const [time, modifier] = timeStr.split(" ");
+            let [hours, minutes] = time.split(":").map(Number);
+
+            if (modifier === "PM" && hours !== 12) hours += 12;
+            if (modifier === "AM" && hours === 12) hours = 0;
+
+            return hours * 60 + minutes; // Total minutes since midnight
+        }
+
+
+        function setTimeTable(data) {
+            debugger
+            const timetable = data;
+
+            // Step 1: Extract all unique times
+            const timeSlots = [...new Set(
+                timetable.flatMap(day => day.ttdata.map(entry => `${entry.from}-${entry.to}`))
+            )]
+                .sort((a, b) => parseTimeRange(a) - parseTimeRange(b));
+
+
+            // Step 2: Extract all unique days
+            const days = timetable.map(d => d.day);
+
+            // Step 3: Build a lookup map: { [time][day] = "Subject (Teacher)" }
+            const lookup = {};
+            timetable.forEach(entry => {
+                const day = entry.day;
+                entry.ttdata.forEach(slot => {
+                    if (!lookup[`${slot.from}-${slot.to}`]) lookup[`${slot.from}-${slot.to}`] = {};
+                    lookup[`${slot.from}-${slot.to}`][day] = `<span class="updateTimeTable" data-id="${slot.tid}">${slot.subjectName} </span>`;
+                });
+            });
+
+            // Step 4: Build the header row (days)
+            const dayRow = document.getElementById("day-row");
+            $("#day-row").empty()
+            const th = document.createElement("th");
+            th.textContent = "Day/Time";
+            dayRow.appendChild(th);
+            days.forEach(day => {
+                const th = document.createElement("th");
+                th.textContent = day;
+                dayRow.appendChild(th);
+            });
+
+            // Step 5: Build the body rows (time slots)
+            const tbody = document.getElementById("timetable-body");
+            $("#timetable-body").empty()
+            timeSlots.forEach(time => {
+
+                const tr = document.createElement("tr");
+                const timeCell = document.createElement("td");
+                timeCell.textContent = time;
+                tr.appendChild(timeCell);
+
+                days.forEach(day => {
+                    console.log(time, "time")
+                    const cell = document.createElement("td");
+                    cell.innerHTML = lookup[time]?.[day] || "--";
+                    tr.appendChild(cell);
+                });
+
+                tbody.appendChild(tr);
+            });
+
+        }
+
+        $(document).on('click', '.updateTimeTable', function () {
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let id = $(this).data('id');
+            $('#tidd').val(id);
+            $.ajax({
+                url: '/admin/GetTimeTableDataById',
+                type: 'get',
+                data: { id: id },
+                success: function (res) {
+                    debugger;
+                    console.log(res);
+                    if (res.length > 0) {
+                        $('#classup').val(res[0].className);
+                        $('#sectionup').val(res[0].sectionName);
+                        $('#dayup').val(res[0].day);
+                        $('#upsubjectTimeContainer').empty(); // clear existing rows
+
+                        // Loop through each row of timetable
+                        $.each(res, function (i, d) {
+                            debugger
+                            getsubjectsbyclassid(res[0].classId, d.subjectId, i, function (selectHtml) {
+                                let element = `
+                            <input type="hidden" name="ttdata[${i}].uid" id="uid" value="${d.id}"/>
+                            <div class="row">
+                                <div class="col-sm-4 mb-2">
+                                    <label for="class" class="form-label">Subject</label>
+                                    ${selectHtml}
+                                </div>
+                                <div class="col-sm-4 mb-2">
+                                    <label for="from" class="form-label">From</label>
+                                    <input type="time" name="ttdata[${i}].from" id="from" value="${d.from}" class="form-control" />
+                                </div>
+                                <div class="col-sm-4 mb-2">
+                                    <label for="to" class="form-label d-flex justify-content-between align-items-center">
+                                        To
+                                        <button class="btn btn-sm p-1 py-0 delete-row-btn" type="button" title="Remove Row">
+                                            <i data-feather="trash" class="fa-regular fa-trash-can" style="width: 16px; color:red; height: 16px;"></i>
+                                        </button>
+                                    </label>
+                                    <input type="time" name="ttdata[${i}].to" id="nto" value="${d.to}" class="form-control" />
+                                </div>
+                            </div>`;
+
+                                $('#upsubjectTimeContainer').append(element);
+                            });
+                        });
+                        Swal.close();
+                        $('#showTimeTableModal').modal('hide');
+                        $('#UpdateTimeTableModal').modal('show');
+                    }
+                    else {
+                        Swal.close();
+                        Swal.fire({
+                            title: 'Warning',
+                            icon: 'warning',
+                            text: 'Failed to fetch data',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            });
+        });
+
+        $('#CloseModalUpdateTimeTable').on('click', function () {
+            $('#showTimeTableModal').modal('show');
+            $('#UpdateTimeTableModal').modal('hide');
+        });
+
+        function getsubjectsbyclassid(id, val, count, callback) {
+            $.ajax({
+                url: '/admin/GetSubjectandSectionByClassId',
+                type: 'get',
+                data: { id: id },
+                success: function (data) {
+                    if (data && data.subject) {
+                        let el = `<select name="ttdata[${count}].subjectId" class="form-select" required>
+                            <option value="">--Select Subject--</option>`;
+                        data.subject.forEach(function (subject) {
+                            el += `<option value="${subject.SubjectId}" ${val === subject.SubjectId ? "selected" : ""}>${subject.Subject}</option>`;
+                        });
+                        el += `</select>`;
+
+                        // Call the callback with the result
+                        callback(el);
+                    } else {
+                        callback('<select class="form-select"><option value="">No subjects found</option></select>');
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    callback('<select class="form-select"><option value="">Error loading subjects</option></select>');
+                }
+            });
+        }
+
+        $('#UpdateTimeTableForm').submit(function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            var data = new FormData(this);
+
+            $.ajax({
+                type: 'Post',
+                url: '/admin/UpdateTimeTable',
+                data: data,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+
+    });
+</script>
+
+<script>
+    $('#downloadPdfBtn').click(function () {
+        var content = $('#pdfContent').html();
+
+        $.ajax({
+            url: '/admin/GeneratePdf',
+            type: 'POST',
+            data: JSON.stringify({ html: content }),
+            contentType: 'application/json; charset=utf-8',
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data, status, xhr) {
+                var blob = new Blob([data], { type: 'application/pdf' });
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = "timetable.pdf";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+            error: function () {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'PDF generation failed.', icon: 'error'
+                });
+            }
+        });
+    });
+
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $('#cancelbtnupl').on('click', function () {
+            $('#updateformcontainer').addClass('d-none');
+            $('#previewcontainerl').removeClass('d-none');
+        })
+
+        $('#classupl').on('change', function () {
+            let id = $(this).val();
+            $.ajax({
+                url: '/admin/GetSubjectandSectionByClassId', type: 'get', data: { id: id },
+                success: function (data) {
+                    console.log('sections', data.section);
+                    if (data) {
+                        let ele = $('#sectionupl')
+                        ele.empty();
+                        ele.append($('<option>', {
+                            value: '',
+                            text: '-- Select Section --'
+                        }));
+
+                        $.each(data.section, function (index, section) {
+                            ele.append($('<option>', {
+                                value: section.SectionId,
+                                text: section.SectionName
+                            }));
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            });
+        });
+
+        $('#uploadTimeTableForm').submit(function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            var formdata = new FormData(this);
+
+            var file = $('#attachment')[0].files;
+            if (file.length > 0) {
+                $.each(file, function (index, item) {
+                    formdata.append("attachment", item);
+                });
+            }
+
+            $.ajax({
+                type: 'Post',
+                url: '/admin/UploadTimeTable',
+                data: formdata,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+
+        $("#deleteUloadedDocuments").on('click', function () {
+            debugger
+            let id = $(this).data('upid');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to delete this item?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                customClass: {
+                    confirmButton: 'mx-2 btn btn-danger',
+                    cancelButton: 'mx-2 btn btn-light'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing Your Request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/admin/DeleteUploadedTimeTable',
+                        type: 'get',
+                        data: { Id: id },
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: res.message,
+                                    icon: 'success',
+                                    didClose: () => {
+                                        location.reload(true);
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: res.message,
+                                    icon: 'warning'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Server Error. Try Again Later!',
+                                icon: 'error'
+                            });
+                            console.log(xhr);
+                        }
+                    });
+                } else {
+                    Swal.fire('Cancelled', 'Your item is safe.', 'info');
+                }
+            });
+        });
+
+
+        $('#updateUloadedDocuments').on('click', function () {
+            debugger
+            let id = $(this).data('upid');
+            Swal.fire({
+                title: "Please wait",
+                text: 'processing your request...',
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            })
+            $.ajax({
+                url: '/admin/GetUploadedTimeTableById',
+                type: 'get',
+                data: { id: id },
+                success: function (res) {
+                    console.log(res);
+                    if (res) {
+                        
+                        $('#upllacademicYear').val(res[0].academicYear);
+                        Swal.close();
+                        $('#updateformcontainer').removeClass('d-none');
+                        $('#previewcontainerl').addClass('d-none');
+                        $("#updateAttId").val(id)
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            });
+        });
+    });
+</script>

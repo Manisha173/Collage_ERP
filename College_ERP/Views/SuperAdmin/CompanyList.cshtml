@@ -1,0 +1,111 @@
+﻿
+@{
+    ViewBag.Title = "CompanyList";
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row mt-1">
+                <div class="col-12">
+                    <div class="card mt-2">
+
+                        <div class="card-header mb-0 pb-0">
+                            <h4>Company List</h4>
+                        </div><!-- end card header -->
+
+                        <div class="card-body pt-0 mt-0">
+                            <div class="table-responsive">
+                                <table id="datatable" class="table table-bordered dt-responsive nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>SR</th>
+                                            <th>School Name</th>
+                                            <th>Mobile Number</th>
+                                            <th>EmailId</th>
+                                            <th>State</th>
+                                            <th>City</th>
+                                            <th>Website Url</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @if (Model != null && Model.Count > 0)
+                                        {
+
+                                            int sr = 1;
+                                            foreach (var item in Model)
+                                            {
+
+                                                <tr>
+                                                    <td>@sr</td>
+                                                    <td>@item.SchoolName</td>
+
+                                                    <td>@item.MobileNo</td>
+
+                                                    <td>@item.EmailId</td>
+                                                    <td>@item.stateName</td>
+                                                    <td>@item.City_Name</td>
+                                                    <td><a href="@item.Website">@item.Website</a></td>
+
+                                                    <td>
+                                                        <a class="btn btn-sm p-0" href="/SuperAdmin/CompanyRegistration?Id=@item.Id"> <i data-feather="edit" class="text-warning cursor-pointer"></i></a>
+                                                        <button class="btn btn-sm p-0"><i data-feather="trash-2" onclick="deleteCompany(@item.Id)" class="text-danger cursor-pointer"></i></button>
+
+                                                    </td>
+                                                </tr>
+                                                sr++;
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script>
+    function deleteCompany(Id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the  record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/SuperAdmin/DeleteCompanyReg',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ Id: Id }),
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+
+            }
+        });
+    }
+</script>
+
+

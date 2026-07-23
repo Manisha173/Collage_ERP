@@ -1,0 +1,546 @@
+﻿@model List<College_ERP.Models.Library.main.AddBookModel>
+@{
+    ViewBag.Title = "ShowBookDetailsPage";
+    Layout = "~/Views/Shared/_libraryLayout.cshtml";
+}
+
+@*<style>
+        .row + .row {
+            margin-top: 0.75rem;
+        }
+
+        .label {
+            font-weight: 600;
+        }
+    </style>
+    <div class="content-page">
+        <div class="content">
+            <div class="container">
+                <div class="card">
+                    <div class="card-header text-bg-primary text-center py-2">
+                        <h3>Book Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">ID:</span> @Model[0].id</div>
+                            <div class="col-md-6"><span class="label">Category Name:</span> @Model[0].categoryName</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Title:</span> @Model[0].title</div>
+                            <div class="col-md-6"><span class="label">Subtitle:</span> @Model[0].subTitle</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Author:</span> @Model[0].author</div>
+                            <div class="col-md-6"><span class="label">Volume:</span> @Model[0].volume</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Edition:</span> @Model[0].edition</div>
+                            <div class="col-md-6"><span class="label">ISBN:</span> @Model[0].isbn</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Publication:</span> @Model[0].publication</div>
+                            <div class="col-md-6"><span class="label">ISSN Print:</span> @Model[0].issnPrint</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Place of Publication:</span> @Model[0].placeOfPublication</div>
+                            <div class="col-md-6"><span class="label">Dewey Decimal Class:</span> @Model[0].deweyDecimalClass</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Year of Publication:</span> @Model[0].yearOfPublication</div>
+                            <div class="col-md-6"><span class="label">Printing Date:</span> @Model[0].printingDate</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Number of Copies:</span> @Model[0].numberOfCopies</div>
+                            <div class="col-md-6"><span class="label">Issuable:</span> @(Model[0].isIssuable?"Yes":"No")</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Number of Pages:</span> @Model[0].numberOfPages</div>
+                            <div class="col-md-6"><span class="label">Purchasing Date:</span> @Model[0].purchasingDate</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Source:</span> @Model[0].source</div>
+                            <div class="col-md-6"><span class="label">Remarks:</span> @Model[0].bookRemarks</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Price:</span> @Model[0].price</div>
+                            <div class="col-md-6"><span class="label">Supplier:</span> @Model[0].supplier</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Book Content:</span> @Model[0].bookContent</div>
+                            <div class="col-md-6"><span class="label">Accession Number:</span> @Model[0].accessionNumber</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Book Location:</span> @Model[0].bookLocation</div>
+                            <div class="col-md-6"><span class="label">Subject:</span> @Model[0].subject</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span class="label">Languages:</span> @Model[0].bookLanguages</div>
+                            <div class="col-md-6"><span class="label">Book Count:</span> @(Model[0].numberOfCopies - Model[0].bookCount)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+<!-- Include Bootstrap and Font Awesome -->
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    /* Completely isolated styles - will not affect your layout */
+    .book-details-isolated {
+        font-family: 'Inter', sans-serif !important;
+        background: #f8f9fa !important;
+        padding: 1rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+
+        .book-details-isolated * {
+            box-sizing: border-box !important;
+        }
+
+        .book-details-isolated .book-card-isolated {
+            background: white !important;
+            border-radius: 20px !important;
+            box-shadow: 0 20px 40px rgba(40, 127, 113, 0.15) !important;
+            overflow: hidden !important;
+            border: none !important;
+            width: 100% !important;
+            margin: 0 !important;
+        }
+
+        .book-details-isolated .card-header-isolated {
+            background: #287F71 !important;
+            padding: 2rem !important;
+            text-align: center !important;
+            border: none !important;
+            margin: 0 !important;
+        }
+
+            .book-details-isolated .card-header-isolated h2 {
+                color: white !important;
+                font-weight: 700 !important;
+                margin: 0 !important;
+                font-size: 2.2rem !important;
+                font-family: 'Inter', sans-serif !important;
+            }
+
+            .book-details-isolated .card-header-isolated .subtitle-isolated {
+                color: rgba(255, 255, 255, 0.9) !important;
+                font-size: 1.1rem !important;
+                margin-top: 0.5rem !important;
+                margin-bottom: 0 !important;
+                font-family: 'Inter', sans-serif !important;
+            }
+
+        .book-details-isolated .section-header-isolated {
+            background: #287F71 !important;
+            color: white !important;
+            padding: 1rem 1.5rem !important;
+            margin: 2rem 0 1.5rem 0 !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            font-size: 1.1rem !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+            .book-details-isolated .section-header-isolated i {
+                margin-right: 0.5rem !important;
+                font-size: 1.2rem !important;
+            }
+
+        .book-details-isolated .info-row-isolated {
+            margin-bottom: 1rem !important;
+            padding: 0.75rem 1rem !important;
+            background: #f8f9fa !important;
+            border-radius: 10px !important;
+            border-left: 4px solid #287F71 !important;
+            transition: all 0.3s ease !important;
+            display: flex !important;
+            align-items: center !important;
+            width: 100% !important;
+        }
+
+            .book-details-isolated .info-row-isolated:hover {
+                background: rgba(40, 127, 113, 0.05) !important;
+                transform: translateX(5px) !important;
+                box-shadow: 0 5px 15px rgba(40, 127, 113, 0.1) !important;
+            }
+
+        .book-details-isolated .info-label-isolated {
+            font-weight: 600 !important;
+            color: #287F71 !important;
+            font-size: 0.95rem !important;
+            margin-right: 0.5rem !important;
+            min-width: 180px !important;
+            flex-shrink: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        .book-details-isolated .info-value-isolated {
+            color: #212529 !important;
+            font-weight: 500 !important;
+            font-size: 1rem !important;
+            flex: 1 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        .book-details-isolated .status-badge-isolated {
+            display: inline-block !important;
+            padding: 0.25rem 0.75rem !important;
+            border-radius: 20px !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        .book-details-isolated .status-available-isolated {
+            background: rgba(40, 127, 113, 0.1) !important;
+            color: #287F71 !important;
+            border: 1px solid #287F71 !important;
+        }
+
+        .book-details-isolated .status-unavailable-isolated {
+            background: rgba(40, 127, 113, 0.05) !important;
+            color: #666 !important;
+            border: 1px solid #ccc !important;
+        }
+
+        .book-details-isolated .price-highlight-isolated {
+            background: rgba(40, 127, 113, 0.1) !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px !important;
+            font-weight: 700 !important;
+            font-size: 1.1rem !important;
+            color: #287F71 !important;
+            display: inline-block !important;
+            border: 2px solid #287F71 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        .book-details-isolated .full-width-section-isolated {
+            background: rgba(40, 127, 113, 0.05) !important;
+            padding: 1.5rem !important;
+            border-radius: 12px !important;
+            border: 2px solid rgba(40, 127, 113, 0.2) !important;
+            margin-top: 1rem !important;
+            width: 100% !important;
+        }
+
+        .book-details-isolated .full-width-label-isolated {
+            font-weight: 600 !important;
+            color: #287F71 !important;
+            font-size: 0.95rem !important;
+            margin-bottom: 0.5rem !important;
+            display: block !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        .book-details-isolated .full-width-value-isolated {
+            color: #212529 !important;
+            font-weight: 500 !important;
+            font-size: 1rem !important;
+            line-height: 1.6 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        .book-details-isolated .card-body-isolated {
+            padding: 1.5rem !important;
+        }
+
+        .book-details-isolated .row-isolated {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            margin: 0 -0.5rem !important;
+        }
+
+        .book-details-isolated .col-isolated {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+            padding: 0 0.5rem !important;
+        }
+
+    /* Mobile responsive */
+    @@media (max-width: 768px) {
+        .book-details-isolated {
+            padding: 0.5rem !important;
+        }
+
+            .book-details-isolated .card-header-isolated h2 {
+                font-size: 1.8rem !important;
+            }
+
+            .book-details-isolated .info-row-isolated {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
+
+            .book-details-isolated .info-label-isolated {
+                min-width: auto !important;
+                margin-bottom: 0.25rem !important;
+            }
+
+            .book-details-isolated .col-isolated {
+                flex: 0 0 100% !important;
+                max-width: 100% !important;
+            }
+    }
+
+    @@media (max-width: 576px) {
+        .book-details-isolated .info-label-isolated {
+            min-width: auto !important;
+        }
+    }
+</style>
+<div class="content-page">
+    <div class="content">
+
+        <div class="book-details-isolated">
+            <div class="book-card-isolated">
+                <!-- Header -->
+                <div class="card-header-isolated">
+                    <h2><i class="fas fa-book-open" style="margin-right: 1rem !important;"></i>Library Book Details</h2>
+                    <div class="subtitle-isolated">Complete Information Overview</div>
+                </div>
+
+                <!-- Body -->
+                <div class="card-body-isolated">
+
+                    <!-- Basic Information Section -->
+                    <div class="section-header-isolated">
+                        <i class="fas fa-info-circle"></i>Basic Information
+                    </div>
+                    <div class="row-isolated">
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Book ID:</div>
+                                <div class="info-value-isolated">@Model[0].id</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Category:</div>
+                                <div class="info-value-isolated">@Model[0].categoryName</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Title:</div>
+                                <div class="info-value-isolated">@Model[0].title</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Subtitle:</div>
+                                <div class="info-value-isolated">@Model[0].subTitle</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Publication & Author Section -->
+                    <div class="section-header-isolated">
+                        <i class="fas fa-pen-fancy"></i>Publication & Author Details
+                    </div>
+                    <div class="row-isolated">
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Author:</div>
+                                <div class="info-value-isolated">@Model[0].author</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Publisher:</div>
+                                <div class="info-value-isolated">@Model[0].publication</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Volume:</div>
+                                <div class="info-value-isolated">@Model[0].volume</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Edition:</div>
+                                <div class="info-value-isolated">@Model[0].edition</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">ISBN:</div>
+                                <div class="info-value-isolated">@Model[0].isbn</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">ISSN (Print):</div>
+                                <div class="info-value-isolated">@Model[0].issnPrint</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Place of Publication:</div>
+                                <div class="info-value-isolated">@Model[0].placeOfPublication</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Year of Publication:</div>
+                                <div class="info-value-isolated">@Model[0].yearOfPublication</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Copies & Classification Section -->
+                    <div class="section-header-isolated">
+                        <i class="fas fa-layer-group"></i>Copies & Classification
+                    </div>
+                    <div class="row-isolated">
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Dewey Decimal Class:</div>
+                                <div class="info-value-isolated">@Model[0].deweyDecimalClass</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Print Date:</div>
+                                <div class="info-value-isolated">@Model[0].printingDate</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Total Copies:</div>
+                                <div class="info-value-isolated">@Model[0].numberOfCopies</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Available Count:</div>
+                                <div class="info-value-isolated">@(@Model[0].numberOfCopies - @Model[0].bookCount)</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Issuable Status:</div>
+                                <div class="info-value-isolated">
+                                    @if (Model[0].isIssuable)
+                                    {
+                                        <span class="status-badge-isolated status-available-isolated">
+                                            <i class="fas fa-check-circle" style="margin-right: 0.25rem !important;"></i>Available
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge-isolated status-unavailable-isolated">
+                                            <i class="fas fa-times-circle" style="margin-right: 0.25rem !important;"></i>Not Available
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Number of Pages:</div>
+                                <div class="info-value-isolated">@Model[0].numberOfPages</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Purchase & Financial Information -->
+                    <div class="section-header-isolated">
+                        <i class="fas fa-shopping-cart"></i>Purchase & Financial Information
+                    </div>
+                    <div class="row-isolated">
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Purchase Date:</div>
+                                <div class="info-value-isolated">@Model[0].purchasingDate</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Source:</div>
+                                <div class="info-value-isolated">@Model[0].source</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Price:</div>
+                                <div class="info-value-isolated">
+                                    <span class="price-highlight-isolated">₹@Model[0].price</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Supplier:</div>
+                                <div class="info-value-isolated">@Model[0].supplier</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="section-header-isolated">
+                        <i class="fas fa-tags"></i>Additional Information
+                    </div>
+                    <div class="row-isolated">
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Languages:</div>
+                                <div class="info-value-isolated">@Model[0].bookLanguages</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Accession Number:</div>
+                                <div class="info-value-isolated">@Model[0].accessionNumber</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Location:</div>
+                                <div class="info-value-isolated">@Model[0].bookLocation</div>
+                            </div>
+                        </div>
+                        <div class="col-isolated">
+                            <div class="info-row-isolated">
+                                <div class="info-label-isolated">Subject:</div>
+                                <div class="info-value-isolated">@Model[0].subject</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Full Width Sections -->
+                    <div class="section-header-isolated">
+                        <i class="fas fa-comment-alt"></i>Remarks & Content
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model[0].bookRemarks))
+                    {
+                        <div class="full-width-section-isolated">
+                            <div class="full-width-label-isolated">Remarks:</div>
+                            <div class="full-width-value-isolated">@Model[0].bookRemarks</div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model[0].bookContent))
+                    {
+                        <div class="full-width-section-isolated">
+                            <div class="full-width-label-isolated">Content Description:</div>
+                            <div class="full-width-value-isolated">@Model[0].bookContent</div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

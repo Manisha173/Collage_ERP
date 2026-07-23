@@ -1,0 +1,243 @@
+﻿
+@{
+    ViewBag.Title = "AttendanceReport";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+    var classList = ViewData["classList"] as List<College_ERP.Models.Teacher.SubjectAssignModel>;
+}
+
+<style>
+    .status-icon::before {
+        content: "";
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        margin-left: 5px;
+        border-radius: 50%;
+        vertical-align: middle;
+    }
+
+    .present .status-icon::before {
+        background-color: green;
+    }
+
+    .absent .status-icon::before {
+        background-color: red;
+    }
+</style>
+
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 border-bottom">Attendance</h4>
+                    <form id="attendance-filter-form" class="mb-2">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="fw-bold">Class</label>
+                                <select id="class-dropdown" name="ClassId" class="form-select " required>
+                                    @if (classList != null && classList.Count > 0)
+                                    {
+                                        foreach (var item in classList)
+                                        {
+                                            <option value="@item.ClassId">@item.ClassName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="fw-bold">Section</label>
+                                <select id="section-dropdown" name="SectionId" class="form-select " required></select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="fw-bold">Subject</label>
+                                <select id="subject-dropdown" name="SubjectId" class="form-select submitStudentFormForFilter" required></select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="fw-bold">Date</label>
+                                <input type="date" id="current-date" value="@DateTime.Now.ToString("yyyy-MM-dd")" name="attendanceDate" class="form-control submitStudentFormForFilter" required />
+                            </div>
+                            <div class="col-md-3 mt-3">
+
+                                <!--academic year-->
+                                <select name="academicyear" class="form-select submitStudentFormForFilter" id="academicyear">
+                                    <option selected disabled value="">--select academic year--</option>
+                                    @{
+                                        for (int i = 0; i <= 10; i++)
+                                        {
+                                            <option @(DateTime.Now.Year == DateTime.Now.AddYears(-i).Year ? "selected" : "") value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+
+                    <table class="table table-bordered" id="student-attendance-table">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Student Name</th>
+                                <th>Father's Name</th>
+                                <th>Mobile No</th>
+                                <th>Address</th>
+                                <th>AttendaceStatus</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Address Modal -->
+<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addressModalLabel">Student Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="addressModalBody">
+                <!-- Address will go here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--end modal-->
+<script>
+
+
+    $(document).ready(function () {
+        // Modal for viewing address
+        $(document).on('click', '.view-address', function (e) {
+            e.preventDefault();
+            const address = $(this).data('address');
+            $('#addressModalBody').text(address);
+            $('#addressModal').modal('show');
+        });
+
+
+        // Load student list
+        $('#attendance-filter-form').on('submit', function (e) {
+            debugger
+            e.preventDefault();
+            Swal.fire({
+                title: "Please Wait..!",
+                html: "your request are under process",
+               allowOutsideClick:false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            })
+            let data = $(this).serialize();
+            $.ajax({
+                url: '/Teacher/GetStudentsForAttendanceReport',
+                type: 'GET',
+                data: data,
+                success: function (data) {
+                    Swal.close()
+                    if ($.fn.DataTable.isDataTable($("#student-attendance-table"))) {
+                        // 2. If so, destroy the DataTable
+                        $($("#student-attendance-table")).DataTable().destroy();
+
+                    }
+                    let tableBody = '';
+                    data.forEach((student, i) => {
+                        tableBody += `
+<tr>
+    <td>
+       ${i + 1}
+    </td>
+    <td>${student.StudentName}</td>
+    <td>${student.FatherName}</td>
+    <td>${student.MobileNo}</td>
+    <td><a href="#" class="view-address" data-address="${student.Address}">View</a></td>
+    <td>
+    <span class='text-light rounded py-1 px-2 ${student.AttendaceStatus ? `bg-primary` : `bg-danger`}'>${student.AttendaceStatus ? `Present` : `Absent`}</span>
+    </td>
+</tr>`;
+                    });
+                    $('#student-attendance-table tbody ').html(tableBody);
+                
+                    $("#student-attendance-table").DataTable();
+                },
+                error: function () {
+                    Swal.fire("error", "Failed to load student", "error");
+                }
+            });
+        });
+
+
+    $('#class-dropdown').on('change', function () {
+        let classid = $(this).val();
+        $.ajax({
+            url: '/teacher/GetSectionByClass', type: 'get', data: { classid: classid },
+            success: function (res) {
+                console.log(res);
+                let $sectionDropdown = $('#section-dropdown');
+                $sectionDropdown.empty();
+                if (res && res.length > 0) {
+                    //$sectionDropdown.append('<option value="">Select Section</option>');
+                    res.forEach(function (section) {
+                        $sectionDropdown.append(
+                            `<option value="${section.SectionId}">${section.SectionName}</option>`
+                        );
+                    });
+                } else {
+                    $sectionDropdown.append('<option value="">No sections available</option>');
+                }
+            },
+            error: function (xhr) {
+                console.log(xhr);
+            }
+        }).then(() => {
+
+            $("#section-dropdown").change()
+        })
+    });
+
+    $('#section-dropdown').on('change', function () {
+        debugger
+        let classid = $('#class-dropdown').val();
+        let sectionid = $(this).val();
+        $.ajax({
+            url: '/teacher/GetSubjectBySection', type: 'get', data: { classid: classid, sectionid: sectionid },
+            success: function (res) {
+                console.log(res);
+                let $subjectDropdown = $('#subject-dropdown');
+                $subjectDropdown.empty();
+                if (res && res.length > 0) {
+                    //$subjectDropdown.append('<option value="">Select Subject</option>');
+                    res.forEach(function (subject) {
+                        $subjectDropdown.append(
+                            `<option value="${subject.SubjectId}">${subject.SubjectName}</option>`
+                        );
+                    });
+                } else {
+                    $subjectDropdown.append('<option value="">No subjects available</option>');
+                }
+            },
+            error: function (xhr) {
+                console.log(xhr);
+            }
+        }).then(() => {
+            $('#attendance-filter-form').trigger('submit');
+        })
+
+    });
+        $("#class-dropdown").change()
+
+        $(".submitStudentFormForFilter").on("change", function () {
+            $('#attendance-filter-form').trigger('submit');
+        })
+    });
+
+</script>
+
+
+

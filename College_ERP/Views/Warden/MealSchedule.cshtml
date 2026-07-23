@@ -1,0 +1,767 @@
+﻿@{
+    ViewBag.Title = "MealSchedule";
+    Layout = "~/Views/Shared/_wardenLayout.cshtml";
+}
+
+<style>
+    .ts-dropdown .optgroup-header {
+        font-weight: bold;
+        padding: 5px 10px;
+        margin: 5px 0;
+        border-radius: 4px;
+    }
+
+    .ts-dropdown .option {
+        padding-left: 20px !important;
+    }
+</style>
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title d-flex justify-content-between">
+                        <span>Meal Schedule List</span>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Add MealSchedule
+                        </button>
+                    </h4>
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Day</th>
+                                <th>Created Date</th>
+                                <th style="width:150px !important;">Actions</th>
+                            </tr>
+                        </thead>
+
+                        @{
+                            var meals = Model as List<College_ERP.Models.Warden.MealViewModel>;
+                            int sr = 1;
+                            var distinctDays = meals.GroupBy(x => x.Day).Select(g => g.First()).ToList();
+                        }
+
+                        <tbody>
+                            @foreach (var item in distinctDays)
+                            {
+                                <tr>
+                                    <td>@sr</td>
+                                    <td>
+                                        <a href="javascript:void(0);" onclick="viewMealDetails('@item.Day')"> @item.Day </a>
+                                    </td>
+                                    <td>@item.CreatedDate.ToString("dd-MMM-yyyy")</td>
+                                    <td>
+                                        <button class="btn btn-sm p-0" onclick="editMeal('@item.Day')">
+                                            <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i>
+                                        </button>
+                                        <button class="btn btn-sm p-0" onclick="deleteClass(@item.MealId)"><i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+
+                                    </td>
+                                </tr>
+                                sr++;
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Menu -->
+        <div class="modal fade" id="mealDetailsModal" tabindex="-1" aria-labelledby="mealDetailsLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-light">
+                        <h5 class="modal-title" id="mealDetailsLabel">Meal Details</h5>
+                        <button type="button" class="btn-close text-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="mealDetailsBody">
+                        <!-- Content will be loaded via AJAX -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Adding Meal Schedule -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-light">
+                        <h5 class="modal-title">Add Meal Schedule</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body modal-dialog-scrollable">
+                        <form id="mealForm" method="post">
+                            <div id="mealRowsContainer">
+                                <!-- Initial Meal Row -->
+                                <div class="meal-row border rounded p-3 mb-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label>Day</label>
+                                            <select class="form-select DaySelect">
+                                                <option selected disabled>---Select Day---</option>
+                                                <option value="Sunday">Sunday</option>
+                                                <option value="Monday">Monday</option>
+                                                <option value="Tuesday">Tuesday</option>
+                                                <option value="Wednesday">Wednesday</option>
+                                                <option value="Thursday">Thursday</option>
+                                                <option value="Friday">Friday</option>
+                                                <option value="Saturday">Saturday</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>Start Time</label>
+                                            <input type="time" class="form-control StartTime" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>End Time</label>
+                                            <input type="time" class="form-control EndTime" />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>Meal</label>
+                                            <select id="select-tags" multiple data-placeholder="Select Meals" class="form-control MealSelect">
+                                                <optgroup label="Dessert">
+                                                    <option value="Gulab Jamun">Gulab Jamun</option>
+                                                    <option value="Kheer">Kheer</option>
+                                                    <option value="Rasgulla">Rasgulla</option>
+                                                </optgroup>
+                                                <optgroup label="Breakfast">
+                                                    <option value="Poha">Poha</option>
+                                                    <option value="Paratha & Curd">Paratha & Curd</option>
+                                                    <option value="Bread Butter / Jam">Bread Butter / Jam</option>
+                                                </optgroup>
+                                                <optgroup label="Dinner">
+                                                    <option value="Roti">Roti</option>
+                                                    <option value="Rice">Rice</option>
+                                                    <option value="Dal">Dal</option>
+                                                </optgroup>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end mb-3">
+                                <button type="button" id="btnAddMealRow" class="btn btn-primary">
+                                    <i data-feather="plus-circle"></i> Add More
+                                </button>
+                            </div>
+
+                            <div class="text-center">
+                                <!-- *** FIXED: Removed 'mealbtn' class to prevent conflict *** -->
+                                <button type="submit" id="btnSaveMeal" class="btn btn-primary">Submit Meal Schedule</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $(document).on('click', '.remove-meal-row', function () {
+        $(this).closest('.meal-row').remove();
+    });
+
+    $(document).ready(function () {
+
+        $("#exampleModal").on("hide.bs.modal", function () {
+            $("#mealForm")[0].reset()
+        })
+
+        new TomSelect("#select-tags", {
+            plugins: ['remove_button'],
+            create: true,
+            onItemAdd: function () {
+                this.setTextboxValue('');
+                this.refreshOptions();
+            },
+            render: {
+                option: function (data, escape) {
+                    return '<div class="d-flex"><span>' + escape(data.value) + '</span></div>';
+                },
+                item: function (data, escape) {
+                    return '<div>' + escape(data.value) + '</div>';
+                }
+            }
+        });
+
+
+        $('#btnAddMealRow').on('click', function () {
+            // Validate the last meal row
+            var $lastRow = $('.meal-row').last();
+            var day = $lastRow.find('.DaySelect').val();
+            var startTime = $lastRow.find('.StartTime').val();
+            var endTime = $lastRow.find('.EndTime').val();
+            var mealsSelected = $lastRow.find('.MealSelect').val();
+
+            if (!day || !startTime || !endTime || !mealsSelected || mealsSelected.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Incomplete Entry',
+                    text: 'Please complete the current meal row before adding a new one.'
+                });
+                return;
+            }
+
+            // Clone and reset the row
+
+            var $original = $('.meal-row').first();
+            var $clone = $original.clone();
+
+            var selectedDay = $original.find('select.DaySelect').val();
+            $clone.find('select.DaySelect').val(selectedDay).prop('disabled', true);
+
+            $clone.find('input.mealId').val('');
+            $clone.find('input.StartTime').val('');
+            $clone.find('input.EndTime').val('');
+            $clone.find('.MealSelect').val('');
+
+            // Replace MealSelect
+            var newMealSelect = $(`
+            <label class="">Meal</label>
+       <select class="form-control MealSelect" multiple data-placeholder="Select Meals">
+            <optgroup label="Dessert">
+                <option value="Gulab Jamun">Gulab Jamun</option>
+                <option value="Kheer">Kheer</option>
+                <option value="Rasgulla">Rasgulla</option>
+            </optgroup>
+            <optgroup label="Breakfast">
+                <option value="Poha">Poha</option>
+                <option value="Paratha & Curd">Paratha & Curd</option>
+                <option value="Bread Butter / Jam">Bread Butter / Jam</option>
+            </optgroup>
+            <optgroup label="Dinner">
+                <option value="Roti">Roti</option>
+                <option value="Rice">Rice</option>
+                <option value="Dal">Dal</option>
+            </optgroup>
+        </select>
+    `);
+
+            $clone.find('.ts-wrapper').remove();
+            $clone.find('.MealSelect').parent().empty().append(newMealSelect);
+
+
+            $clone.append(`
+    <button type="button" class="btn btn-sm position-absolute top-0 end-0 m-2 remove-meal-row">
+        <i class='fa-regular fa-trash-can' style="width: 16px; height: 16px; color:red;"></i>
+    </button>
+`);
+            $clone.addClass('position-relative');
+
+            $('#mealRowsContainer').append($clone);
+
+            feather.replace();
+
+            $clone.find('.MealSelect').each(function () {
+                new TomSelect(this, {
+                    plugins: ['remove_button'],
+                    create: true,
+                    onItemAdd: function () {
+                        this.setTextboxValue('');
+                        this.refreshOptions();
+                    },
+                    render: {
+                        option: function (data, escape) {
+                            return '<div class="d-flex"><span>' + escape(data.value) + '</span></div>';
+                        },
+                        item: function (data, escape) {
+                            return '<div>' + escape(data.value) + '</div>';
+                        }
+                    }
+                });
+            });
+        });
+
+    });
+
+    //show menu
+    function viewMealDetails(day) {
+        $.ajax({
+            url: '/Warden/GetMealDetailsByDay',
+            type: 'GET',
+            data: { day: day },
+            success: function (response) {
+                if (response.success) {
+                    var html = '';
+                    html += '<h5 style="font-weight:bold; margin-bottom:15px;">Day: ' + day + '</h5>';
+                    response.data.forEach(function (meal) {
+                        html += '<div class="meal-block mb-3">';
+                        html += '<h6><span style="font-weight:bold;">Meal Time:</span> ' + meal.StartTime + ' - ' + meal.EndTime + '</h6>';
+                        html += '<ul>';
+                        meal.Menus.forEach(function (menu) {
+                            html += '<li>' + menu.Menu + '</li>';
+                        });
+                        html += '</ul>';
+                        html += '</div>';
+                    });
+
+                    $('#mealDetailsBody').html(html);
+                    $('#mealDetailsModal').modal('show');
+                } else {
+                    Swal.fire("Error", response.message, "error");
+                }
+            },
+            error: function () {
+                Swal.fire("Error", "Some error occured", "error");
+            }
+        });
+    }
+
+    //delete
+    function deleteClass(mealId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to delete this MealSchedule?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Warden/DeleteMealSchedule',
+                    type: 'POST',
+                    data: { mealId: mealId },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success').then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function (err) {
+                        console.error(err);
+                    }
+                });
+            }
+        });
+    }
+
+
+    $(document).ready(function () {
+        editMealSelectControl = new TomSelect("#editMealSelect", {
+            plugins: ['remove_button'],
+            create: true,
+            onItemAdd: function () {
+                this.setTextboxValue('');
+                this.refreshOptions();
+            },
+            render: {
+                option: function (data, escape) {
+                    return '<div class="d-flex"><span>' + escape(data.value) + '</span></div>';
+                },
+                item: function (data, escape) {
+                    return '<div>' + escape(data.value) + '</div>';
+                }
+            }
+        });
+    });
+    //open edit modal
+    function openEditMealModal(day) {
+        debugger;
+        $.ajax({
+            url: '/warden/GetMealDetails',
+            type: 'GET',
+            data: { day: day },
+            success: function (response) {
+                if (response.success) {
+                    const data = response.data;
+
+                    $('#MealId').val(data.MealId);
+                    $('#Day').val(data.Day);
+                    $('#StartTime').val(data.StartTime);
+                    $('#EndTime').val(data.EndTime);
+
+                    $('#MenusContainer').empty();
+
+                    $.each(data.Menus, function (index, menu) {
+                        $('#MenusContainer').append(`
+                        <div class="input-group mb-2">
+                            <input type="hidden" class="menu-id" value="${menu.MenuId}" />
+                            <input type="text" class="form-control menu-item" data-id=${menu.MenuId} value="${menu.Menu}" />
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-danger remove-menu">X</button>
+                            </div>
+                        </div>
+                    `);
+                    });
+
+                    $('#mealModalTitle').text('Edit Meal Details');
+                    $('#mealModal').modal('show');
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function (xhr) {
+                console.log(xhr)
+                alert('Error while fetching meal details.');
+            }
+        });
+    }
+
+
+    $(document).on('click', '.remove-menu', function () {
+        $(this).closest('.input-group').remove();
+    });
+
+    $('#AddMenuBtn').on('click', function () {
+        $('#MenusContainer').append(`
+        <div class="input-group mb-2">
+            <input type="hidden" class="menu-id" value="0" />
+            <input type="text" class="form-control menu-item" placeholder="Enter menu item" />
+            <div class="input-group-append">
+                <button type="button" class="btn btn-danger remove-menu">X</button>
+            </div>
+        </div>
+    `);
+    });
+
+    //insert and update
+
+    $(document).ready(() => {
+        $("#btnSaveMeal").on("click", (e) => {
+            e.preventDefault()
+
+            var modalTitle = $("#exampleModal .modal-title").text()
+
+            let meals
+            if (modalTitle === "Add Meal Schedule") {
+                meals = collectInsertMealData()
+                insertMealSchedule(meals)
+            } else if (modalTitle === "Edit Meal Schedule") {
+                meals = collectUpdateMealData()
+                updateMealSchedule(meals)
+            }
+        })
+
+    })
+
+    // Insert function
+    function collectInsertMealData() {
+        var meals = []
+
+        $("#mealRowsContainer .meal-row").each(function () {
+            var day = $(this).find(".DaySelect").val()
+            var startTime = $(this).find(".StartTime").val()
+            var endTime = $(this).find(".EndTime").val()
+            var menus = []
+
+            $(this)
+                .find(".MealSelect option:selected")
+                .each(function () {
+                    menus.push({ Menu: $(this).val(), menuId: $(this).data("id") })
+                })
+
+            meals.push({
+                Day: day,
+                StartTime: startTime,
+                EndTime: endTime,
+                Menus: menus,
+            })
+        })
+
+        return meals
+    }
+
+    // Update function
+    function collectUpdateMealData() {
+        var meals = []
+
+        $("#mealRowsContainer .meal-row").each(function () {
+            var day = $(this).find(".DaySelect").val()
+            var startTime = $(this).find(".StartTime").val()
+            var endTime = $(this).find(".EndTime").val()
+            var menus = []
+            var mealId = $(this).find(".mealId").val();
+            $(this)
+                .find(".MealSelect option:selected")
+                .each(function () {
+                    menus.push({ Menu: $(this).text(), MenuId: $(this).val() })
+                })
+
+            meals.push({
+                Day: day,
+                StartTime: startTime,
+                EndTime: endTime,
+                Menus: menus,
+                mealId: mealId
+            })
+        })
+
+        return meals
+    }
+
+    function insertMealSchedule(meals) {
+        Swal.fire({
+            title: 'Please wait!',
+            text: 'Processing your request...',
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        console.log("INSERT operation triggered")
+        $.ajax({
+            url: "/Warden/MealSchedule",
+            method: "POST",
+            data: JSON.stringify({ meals: meals }),
+            contentType: "application/json",
+            success: (response) => {
+                handleResponse(response)
+            },
+            error: (err) => {
+                console.error("Insert Error:", err)
+            },
+        })
+    }
+
+    function updateMealSchedule(meals) {
+        Swal.fire({
+            title: 'Please wait!',
+            text: 'Processing your request...',
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        console.log(meals)
+        console.log("UPDATE operation triggered")
+        $.ajax({
+            url: "/Warden/UpdateMealDetails",
+            method: "POST",
+            data: JSON.stringify({ meals: meals }),
+            contentType: "application/json",
+            success: (response) => {
+                handleResponse(response)
+            },
+            error: (err) => {
+                console.error("Update Error:", err)
+            },
+        })
+    }
+
+    function handleResponse(response) {
+        if (response.success) {
+            Swal.fire({
+                icon: "success",
+                title: "Success",
+                text: response.message,
+                showConfirmButton: true,
+            }).then(() => {
+                location.reload()
+            })
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: response.message,
+                showConfirmButton: true,
+            })
+        }
+    }
+
+
+    //set data in edit modal
+    function editMeal(day) {
+        $.ajax({
+            url: "/warden/GetMealDetails",
+            type: "GET",
+            data: { day: day },
+            success: (response) => {
+                if (response.success) {
+                    const data = response.data
+
+                    $("#mealRowsContainer").empty()
+
+                    $.each(data, (i, meal) => {
+                        const mealRowHtml = `
+                    <div class="meal-row border position-relative  rounded p-3 mb-3">
+
+                       <button type="button" class="btn btn-sm position-absolute top-0 end-0 m-2 remove-meal-row">
+    <i class='fa-regular fa-trash-can' style="width: 16px; height: 16px; color:red;"></i>
+                       </button>
+                        <div class="row ">
+                        <input type='hidden' name='mealId' class='mealId' value='${meal.MealId}'>
+                            <div class="col-md-4">
+                                <label>Day</label>
+                                <select required class="form-select DaySelect" disabled>
+                                    <option disabled>---Select Day---</option>
+                                    <option value="Sunday" ${meal.Day == "Sunday" ? "selected" : ""}>Sunday</option>
+                                    <option value="Monday" ${meal.Day == "Monday" ? "selected" : ""}>Monday</option>
+                                    <option value="Tuesday" ${meal.Day == "Tuesday" ? "selected" : ""}>Tuesday</option>
+                                    <option value="Wednesday" ${meal.Day == "Wednesday" ? "selected" : ""}>Wednesday</option>
+                                    <option value="Thursday" ${meal.Day == "Thursday" ? "selected" : ""}>Thursday</option>
+                                    <option value="Friday" ${meal.Day == "Friday" ? "selected" : ""}>Friday</option>
+                                    <option value="Saturday" ${meal.Day == "Saturday" ? "selected" : ""}>Saturday</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Start Time</label>
+                                <input required type="time" class="form-control StartTime" value="${meal.StartTime}" />
+                            </div>
+                            <div class="col-md-4">
+                                <label>End Time</label>
+                                <input required type="time" class="form-control EndTime" value="${meal.EndTime}" />
+                            </div>
+                            <div class="col-md-12">
+                                <label>Meal</label>
+                                <select required multiple class="form-control MealSelect">
+                                    <optgroup label="Dessert">
+                                        <option value="Gulab Jamun">Gulab Jamun</option>
+                                        <option value="Kheer">Kheer</option>
+                                        <option value="Rasgulla">Rasgulla</option>
+                                    </optgroup>
+                                    <optgroup label="Breakfast">
+                                        <option value="Poha">Poha</option>
+                                        <option value="Paratha & Curd">Paratha & Curd</option>
+                                        <option value="Bread Butter / Jam">Bread Butter / Jam</option>
+                                    </optgroup>
+                                    <optgroup label="Dinner">
+                                        <option value="Roti">Roti</option>
+                                        <option value="Rice">Rice</option>
+                                        <option value="Dal">Dal</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                    </div>`
+
+                        $("#mealRowsContainer").append(mealRowHtml)
+
+                        const currentMealSelect = $("#mealRowsContainer .meal-row").last().find(".MealSelect");
+
+                        // Clear existing options (optional if you're rebuilding the whole list)
+                        currentMealSelect.empty();
+
+                        // Maintain a Set to track added names and avoid duplicates
+                        const addedMenuNames = new Set();
+
+                        meal.Menus.forEach(menuItem => {
+                            const menuName = menuItem.Menu.trim();
+                            const menuId = menuItem.MenuId;
+
+                            // Remove any option with same name (even if ID differs)
+                            currentMealSelect.find('option').each(function () {
+                                if ($(this).text().trim() === menuName) {
+                                    $(this).remove();
+                                }
+                            });
+
+                            // Add the new option
+                            if (!addedMenuNames.has(menuName)) {
+                                currentMealSelect.append(`<option value="${menuId}">${menuName}</option>`);
+                                addedMenuNames.add(menuName);
+                            }
+                        });
+
+                        // Destroy TomSelect if already initialized
+                        if (currentMealSelect[0].tomselect) {
+                            currentMealSelect[0].tomselect.destroy();
+                        }
+
+                        // Reinitialize TomSelect
+                        const tom = new TomSelect(currentMealSelect[0], {
+                            plugins: ["remove_button"],
+                            persist: false,
+                            create: true,
+                            maxItems: null
+                        });
+
+                        // Set selected MenuId values
+                        const menuIds = meal.Menus.map(m => m.MenuId);
+                        tom.setValue(menuIds);
+
+                    })
+
+                    $("#exampleModal .modal-title").text("Edit Meal Schedule")
+
+                    $("#btnSaveMeal").text("Update Meal Schedule")
+
+                    $("#exampleModal").modal("show")
+                } else {
+                    Swal.fire("error", response.message, "error")
+                }
+            },
+            error: () => {
+                Swal.fire("error", "Some error occurred", "error")
+            },
+        })
+    }
+
+    $('button[data-bs-target="#exampleModal"]').on("click", () => {
+        // Reset modal for INSERT mode
+        $("#exampleModal .modal-title").text("Add Meal Schedule")
+        $("#btnSaveMeal").text("Submit Meal Schedule")
+
+        // Clear and reset the form
+        $("#mealRowsContainer").html(`
+        <div class="meal-row border rounded p-3 mb-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Day</label>
+                    <select class="form-select DaySelect">
+                        <option selected disabled>---Select Day---</option>
+                        <option value="Sunday">Sunday</option>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label>Start Time</label>
+                    <input type="time" class="form-control StartTime" />
+                </div>
+                <div class="col-md-4">
+                    <label>End Time</label>
+                    <input type="time" class="form-control EndTime" />
+                </div>
+                <div class="col-md-12">
+                    <label>Meal</label>
+                    <select id="select-tags" multiple data-placeholder="Select Meals" class="form-control MealSelect">
+                        <optgroup label="Dessert">
+                            <option value="Gulab Jamun">Gulab Jamun</option>
+                            <option value="Kheer">Kheer</option>
+                            <option value="Rasgulla">Rasgulla</option>
+                        </optgroup>
+                        <optgroup label="Breakfast">
+                            <option value="Poha">Poha</option>
+                            <option value="Paratha & Curd">Paratha & Curd</option>
+                            <option value="Bread Butter / Jam">Bread Butter / Jam</option>
+                        </optgroup>
+                        <optgroup label="Dinner">
+                            <option value="Roti">Roti</option>
+                            <option value="Rice">Rice</option>
+                            <option value="Dal">Dal</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+        </div>
+    `)
+
+        // Reinitialize TomSelect for the reset form
+        new TomSelect("#select-tags", {
+            plugins: ["remove_button"],
+            create: true,
+            onItemAdd: function () {
+                this.setTextboxValue("")
+                this.refreshOptions()
+            },
+        })
+    })
+
+
+
+</script>

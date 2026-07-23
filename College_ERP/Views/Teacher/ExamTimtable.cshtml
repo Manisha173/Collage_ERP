@@ -1,0 +1,194 @@
+﻿
+@{
+    ViewBag.Title = "ExamTimtable";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+    var data = ViewData["exams"] as List<College_ERP.Models.Admin.AddExamTimeTableModel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <div class="card mt-2">
+                        <div class="py-0 card-header border-bottom-0 d-flex">
+                            <h4 class="card-title mb-0">Scheduled Exam List</h4>
+                            <div class="w-75 mx-auto d-flex">
+                                <label class="form-label w-25"></label>
+                                <select id="academicFilter" class="form-select w-50">
+                                    <option disabled selected>--Search By Academic Year--</option>
+                                    @if (ViewBag.academicyears != null)
+                                    {
+                                        foreach (var ay in ViewBag.academicyears)
+                                        {
+                                            <option value="@ay">@ay</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="examTable" class="table table-bordered dt-responsive nowrap w-100">
+                                    <thead>
+                                        <tr>
+                                            <th>SR</th>
+                                            <th>Exam Name</th>
+                                            <th>Academic Year</th>
+                                            <th>Start Exam Date</th>
+                                            <th>End Exam Date</th>
+                                            <th>Description</th>
+                                            <th>View</th>
+                                            @*<th class="text-center">Actions</th>*@
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null && Model.Count > 0)
+                                        {
+                                            int srNo = 1;
+                                            foreach (var item in Model)
+                                            {
+                                                <tr>
+                                                    <td>@srNo</td>
+
+
+                                                    <td data-ctid="@item.examId">@item.examName</td>
+                                                    <td>@item.academicYear</td>
+                                                    <td>@item.startExamDate.ToString("dd-MMM-yyyy")</td>
+                                                    <td>@item.endExamDate.ToString("dd-MMM-yyyy")</td>
+                                                    <td data-desc="@item.description">
+                                                        <a role="button" class=" btn-md text-primary" onclick="viewAwardDesc('@item.description')"> View </a>
+                                                    </td>
+                                                    <td data-desc="@item.description">
+                                                        <a role="button" class=" btn-md text-primary showscheduledexams" data-id="@item.scheduleId" title="Show Exam TimeTable"> View </a>
+                                                    </td>
+                                                    @*<td class="text-center">
+                                                            <a role="button" title="Update" data-id="@item.scheduleId" class="btn btn-sm updateMat p-0"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                                            <a role="button" class="btn btn-sm deletemat p-0" data-id="@item.scheduleId" title="Delete"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                                        </td>*@
+                                                </tr>
+                                                srNo++;
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Show Time Table Start-->
+<div class="modal fade showscheduledexams" id="showTimeTableModal" tabindex="-1" aria-labelledby="showTimeTableModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="showTimeTablenModalLabel">Exam TimeTable</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Class</th>
+                                <th>Exam Name</th>
+                                <th>Academic Year</th>
+                                <th>Description</th>
+                                <th>Attachment</th>
+                                @*<th class="text-center">Actions</th>*@
+                            </tr>
+                        </thead>
+                        <tbody id="showexamstablebody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Show Time Table End-->
+<!--Description Modal-->
+<div class="modal fade" id="viewDescriptionModal" tabindex="-1" aria-labelledby="viewDescriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewDescriptionModalLabel">Exam Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="awardDescriptionContent" style="white-space: pre-line;"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function viewAwardDesc(description) {
+        $('#awardDescriptionContent').text(description);
+        $('#viewDescriptionModal').modal('show');
+    }
+
+    $(document).ready(function () {
+        var table = $('#examTable').DataTable();
+        $('#academicFilter').change(function () {
+            let filterval = $(this).val();
+            table.column(2).search(filterval).draw();
+        })
+
+        $('.showscheduledexams').on('click', function () {
+            debugger
+            let id = $(this).data('id');
+            fetch(`/teacher/ShowTimetable?scheduledid=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    $('#showexamstablebody').empty();
+                    if (data.length === 0) {
+                        $('#showexamstablebody').append(`<tr><td colspan="6" class="text-center">No records found</td></tr>`);
+                        $('#showTimeTableModal').modal('show');
+                    }
+                    data.forEach((exam, index) => {
+                        const descriptionText = exam.description
+                            ? `<a role="button" class="text-primary view-description-btn"
+                                  data-description="${exam.description}"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#descriptionModal">
+                                  View
+                               </a>`
+                            : 'N/A';
+
+                        const attachmentLink = exam.attachmentName
+                            ? `<a href="${exam.attachmentName}" class="">View</a>`
+                            : 'N/A';
+                        $('#showexamstablebody').append(`
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${exam.className}</td>
+                                <td>${exam.examName}</td>
+                                <td>${exam.academicYear}</td>
+                                <td>${descriptionText}</td>
+                                <td>${attachmentLink}</td>
+                            </tr>
+                        `);
+                    });
+                    $('#showTimeTableModal').modal('show');
+                })
+                .catch(error => console.log('Error:', error));
+        });
+
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".view-description-btn").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                const descHtml = this.getAttribute("data-description");
+                document.getElementById("modalDescriptionBody").innerHTML = descHtml;
+            });
+        });
+    });
+</script>

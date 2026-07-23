@@ -1,0 +1,397 @@
+﻿
+@{
+    ViewBag.Title = "LeaveRequest";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var data = ViewData["leaveRequestList"] as List<College_ERP.Models.Admin.LeaveRequestsModel>;
+}
+<style>
+    th {
+        text-align: center !important;
+    }
+
+    td {
+        text-align: center !important;
+    }
+    .custom-file-upload {
+        border: 1px solid #1e7644;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        margin-top: 2px;
+        width: 115px;
+        background: #1e7644;
+        color: white;
+    }
+
+
+    .filter-section {
+        background: white;
+        border-radius: 12px;
+        padding: 10px 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .filter-select {
+        padding: 12px 20px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+        min-width: 200px;
+    }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-select:hover {
+            border-color: #667eea;
+        }
+
+</style>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <!-- Academic Year Filter -->
+            <div class="filter-section" id="filterCard">
+                <label class="filter-label" for="academicYearSelect">Academic Year:</label>
+
+                <select id="academicYearSelect" class="filter-select">
+                    <option value="">-- Select Academic Year --</option>
+                    <option value="2026-27">2026-27</option>
+                    <option value="2025-26">2025-26</option>
+                    <option value="2024-25">2024-25</option>
+                    <option value="2023-24">2023-24</option>
+                    <option value="2022-23">2022-23</option>
+                    <option value="2021-22">2021-22</option>
+                    <option value="2020-21">2020-21</option>
+                </select>
+            </div>
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="py-0 card-header border-bottom-0 d-flex justify-content-between">
+                            <h4 class="card-title mb-0">Leave List</h4>
+                        </div>
+                        <div class="card-body">
+                            <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Teacher Name</th>
+                                        <th>Reason</th>
+                                        <th>From Date</th>
+                                        <th>To Date</th>
+                                        <th class="text-center">View History</th>
+                                        <th class="text-center">Attachment</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td>@item.teacherName</td>
+                                                <td>
+                                                    @if (item.reason.Length > 8)
+                                                    {
+                                                        <a href="#" title="Show more" class="showfullres" data-res="@item.reason">@item.reason.Substring(0, 8)</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        @item.reason
+                                                    }
+                                                </td>
+                                                <td>@item.fromDateString</td>
+                                                <td>@item.toDateString</td>
+                                                <td class="text-center"><a href="#" data-showhid=@item.teacherId class="btn btn-sm btn-primary showHistoryBtn" title="Show History">View</a></td>
+                                                <td class="text-center"><a href="@item.attachmentName" class="btn btn-sm btn-primary" target="_blank" title="Show Attachment">View</a></td>
+                                                <td class="text-center">
+                                                    @if (item.approvalStatus == 0)
+                                                    {
+                                                        <span class="badge bg-warning">Pending</span>
+                                                    }
+                                                    else if (item.approvalStatus == 1)
+                                                    {
+                                                        <span class="badge bg-success">Approved</span>
+                                                    }
+                                                    else if (item.approvalStatus == 2)
+                                                    {
+                                                        <span class="badge bg-danger">Rejected</span>
+                                                    }
+                                                </td>
+                                                <td class="text-center" data-id="@item.id">
+                                                    <a href="#" class="actionBtn btn btn-sm" title="Approve Leave" style="border:1px solid green; color :green;" data-status="1">
+                                                        <i class="fas fa-check"></i>
+                                                    </a>
+                                                    <a href="#" class="text-danger btn btn-sm actionBtn" title="Reject Leave" data-status="2" style="border:1px solid red; color :red;">
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Update Task Modal-->
+<div class="modal fade" id="HistoryModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="HistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="HistoryModalLabel">Leave History</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header border-bottom-0 my-0 py-0 text-end">
+                        Total Leave : <span id="totalleavecount">0</span>
+                    </div>
+                    <div class="card-body px-0">
+                        <div id="HistoryShow" class="table-responsive table-bordered dt-responsive table-responsive nowrap">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <td>SR</td>
+                                        <td>Teacher Name</td>
+                                        <td>From</td>
+                                        <td>To</td>
+                                        <td>Reason</td>
+                                        <td>Status</td>
+                                    </tr>
+                                </thead>
+                                <tbody id="showHistoryTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Update Task Modal-->
+<div class="modal fade" id="RemarkModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="RemarkModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="RemarkModalLabel">Reason</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="remarkshow" class="py-3">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.actionBtn').on('click', function () {
+            debugger
+            let id = $(this).parent().data('id');
+            let status = $(this).data('status');
+            let remark = null;
+            if (status == 1) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Accept !',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        setStatusofRequest(id, status, remark)
+                    }
+                });
+
+            } else if (status == 2) {
+                Swal.fire({
+                    title: 'Provide Remark',
+                    input: 'text',
+                    inputLabel: 'Remark for Rejection',
+                    inputPlaceholder: 'Enter your remark here...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Reject !',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#ff5050',
+                    cancelButtonColor: '#6c757d',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    preConfirm: (inputValue) => {
+                        if (!inputValue) {
+                            Swal.showValidationMessage('Remark is required');
+                            return false;
+                        }
+                        return inputValue;
+                    }
+                }).then((result) => {
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing Your Request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => { Swal.showLoading(); }
+                    });
+                    if (result.isConfirmed) {
+                        remark = result.value;
+                        setStatusofRequest(id, status, remark);
+                    }
+                    // Nothing on cancel
+                });
+            }
+
+        });
+
+        function setStatusofRequest(id, status, remark) {
+            debugger
+            $.ajax({
+                url: '/admin/ApproveOrREject',
+                type: 'post',
+                data: { id: id, status: status, remark: remark },
+                success: function (response) {
+                    if (response.status) {
+                        Swal.close();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            didClose: () => { location.reload(true); }
+                        });
+                    } else {
+                        Swal.close();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again.'
+                    });
+                }
+            });
+        }
+
+        $('.showHistoryBtn').on('click', function () {
+            debugger
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            let id = $(this).data('showhid');
+
+            $.ajax({
+                url: '/admin/GetLeaveHistoryOfTeacher',
+                type: 'get',
+                data: { id: id },
+                success: function (res) {
+                    console.log(res);
+                    Swal.close();
+                    if (res.length>0) {
+                        $('#totalleavecount').text(res[0].leaveCount)
+                        let tbody = $('#showHistoryTable');
+                        tbody.empty();
+
+                        res.forEach((item, index) => {
+                            let statusBadge = '';
+
+                            if (item.approvalStatus == 1) {
+                                statusBadge = '<span class="badge bg-primary">Approved</span>';
+                            } else if (item.approvalStatus == 2) {
+                                statusBadge = '<a href="#" title="Show Reason" class="badge bg-danger showReasons">Rejected</a>';
+                            }
+
+                            let row = `
+        <tr>
+            <td>${index + 1}</td>
+            <td>${item.teacherName}</td>
+            <td>${item.fromDateString}</td>
+            <td>${item.toDateString}</td>
+            <td>${item.reason}</td>
+            <td data-showres="${item.remark}">${statusBadge}</td>
+        </tr>
+    `;
+                            $('#showHistoryTable').append(row);
+                        });
+
+
+                        $('#HistoryModal').modal('show');
+                    }
+                    else {
+                        Swal.fire({ title: 'Warning', text: 'Data Not Found', icon: 'warning' }).then(() => {
+                            $('#HistoryModal').modal('show');
+                        });
+                        
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+
+        $('.showfullres').on('click', function () {
+
+            let remark = $(this).data('res');
+            $('#remarkshow').text(remark);
+            $('#RemarkModal').modal('show');
+
+        });
+    });
+</script>
+<script>
+    document.getElementById("academicYearSelect").addEventListener("change", function () {
+
+        let academicYear = this.value;
+
+        if (academicYear) {
+            let year = academicYear.split('-')[0]; // 2026
+
+            window.location.href = "/Admin/LeaveRequest?academicYear=" + year;
+        }
+    });
+</script>

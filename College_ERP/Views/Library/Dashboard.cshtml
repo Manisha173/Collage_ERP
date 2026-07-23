@@ -1,0 +1,327 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_libraryLayout.cshtml";
+}
+
+
+<style>
+    .custom-border {
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        margin-top: 10px;
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+</style>
+<div class="content-page">
+    <div class="content">
+        <!-- Start Content-->
+        <div class="container-fluid">
+            <!-- start row -->
+            <div class="row mt-2">
+                <div class="col-md-12 ">
+                    <div class="card">
+
+                        <div class="col-12">
+                            <div class="row g-3">
+
+                                <div class="col-md-3">
+                                    <div class="card mb-0 custom-border">
+                                        <div class="card-body">
+                                            <a href="/library/AddBook">
+                                                <div class="widget-first">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                            <div class="bg-primary rounded-circle widget-size text-center">
+                                                                <i data-feather="book" class="text-light"></i>
+                                                            </div>
+                                                        </div>
+                                                        <p class="mb-0 text-dark fs-15">Total Books</p>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black ps-5 ms-1 me-3">
+                                                            @if (Model != null)
+                                                            {
+                                                                @Model.totalbooks
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>No data</span>
+                                                            }
+                                                        </h3>
+                                                        <div class="text-center">
+                                                            <span class="text-dark fs-13 mb-0">View More</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-3">
+                                    <div class="card mb-0 custom-border">
+                                        <div class="card-body">
+                                            <a href="/library/OrderHistory">
+                                                <div class="widget-first">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                            <div class="bg-warning rounded-circle widget-size text-center">
+                                                                <i data-feather="book-open" class="text-light"></i>
+                                                            </div>
+                                                        </div>
+                                                        <p class="mb-0 text-dark fs-15">Ordered Books</p>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                            @if (Model != null)
+                                                            {
+                                                                @Model.orderedbooks
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>No data</span>
+                                                            }
+                                                        </h3>
+                                                        <div class="text-center">
+                                                            <span class="text-dark fs-13 mb-0">View More</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card mb-0 custom-border">
+                                        <div class="card-body">
+                                            <a href="/library/OrderHistory">
+                                                <div class="widget-first">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="p-2 border border-secondary border-opacity-10 bg-secondary-subtle rounded-pill me-2">
+                                                            <div class="bg-secondary rounded-circle widget-size text-center">
+                                                                <i data-feather="book" class="text-light"></i>
+                                                            </div>
+                                                        </div>
+                                                        <p class="mb-0 text-dark fs-15">Received Books</p>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                            @if (Model != null)
+                                                            {
+                                                                @Model.receivedbooks
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>No data</span>
+                                                            }
+                                                        </h3>
+                                                        <div class="text-center">
+                                                            <span class="text-dark fs-13 mb-0">View More</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="card mb-0 custom-border">
+                                        <div class="card-body">
+                                            <a href="/library/OrderHistory">
+                                                <div class="widget-first">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="p-2 border border-danger border-opacity-10 bg-danger-subtle rounded-pill me-2">
+                                                            <div class="bg-danger rounded-circle widget-size text-center">
+                                                                <i data-feather="book" class="text-light"></i>
+                                                            </div>
+                                                        </div>
+                                                        <p class="mb-0 text-dark fs-15">Not Received Books</p>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                            @if (Model != null)
+                                                            {
+                                                                @Model.notreceivedbooks
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>No data</span>
+                                                            }
+                                                        </h3>
+                                                        <div class="text-center">
+                                                            <span class="text-dark fs-13 mb-0">View More</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="card mb-0 custom-border">
+                                        <div class="card-body">
+                                            <a href="/library/AddBook">
+                                                <div class="widget-first">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="p-2 border border-success border-opacity-10 bg-success-subtle rounded-pill me-2">
+                                                            <div class="bg-success rounded-circle widget-size text-center">
+                                                                <i data-feather="dollar-sign" class="text-light"></i>
+                                                            </div>
+                                                        </div>
+                                                        <p class="mb-0 text-dark fs-15">Total Revenue</p>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                            @if (Model != null)
+                                                            {
+                                                                @Model.totalrevenue
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>No data</span>
+                                                            }
+                                                        </h3>
+                                                        <div class="text-center">
+                                                            <span class="text-dark fs-13 mb-0">View More</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="card mb-0 custom-border">
+                                        <div class="card-body">
+                                            <a href="/library/AddBook">
+                                                <div class="widget-first">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="p-2 border border-warning border-opacity-10 bg-warning-subtle rounded-pill me-2">
+                                                            <div class="bg-danger rounded-circle widget-size text-center">
+                                                                <i data-feather="box" class="text-light"></i>
+                                                            </div>
+                                                        </div>
+                                                        <p class="mb-0 text-dark fs-15">Total Copies</p>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                            @if (Model != null)
+                                                            {
+                                                                @Model.availablestock
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>No data</span>
+                                                            }
+                                                        </h3>
+                                                        <div class="text-center">
+                                                            <span class="text-dark fs-13 mb-0">View More</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!--<div class="col-md-3">
+                                    <div class="card mb-0 custom-border">
+                                        <div class="card-body">
+                                            <a href="/warden/Communication">
+                                                <div class="widget-first">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                            <div class="bg-primary rounded-circle widget-size text-center">
+                                                                <i data-feather="mail" class="text-light"></i>
+                                                            </div>
+                                                        </div>
+                                                        <p class="mb-0 text-dark fs-15"></p>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">-->
+                                                            @*@if (Model != null)
+                                                            {
+                                                                @Model.communication
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>No data</span>
+                                                            }*@
+                                                        <!--</h3>
+                                                        <div class="text-center">
+                                                            <span class="text-dark fs-13 mb-0">View More</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>-->
+                                <div class="col-md-3">
+                                    <div class="card mb-0 custom-border">
+                                        <div class="card-body">
+                                            <a href="/Library/notice">
+                                                <div class="widget-first">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                            <div class="bg-secondary rounded-circle widget-size text-center">
+                                                                <i data-feather="bell" class="text-light"></i>
+                                                            </div>
+                                                        </div>
+                                                        <p class="mb-0 text-dark fs-15">Notice</p>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+
+                                                            @if (Model != null)
+                                                            {
+                                                                @Model.notice
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>No data</span>
+                                                            }
+                                                        </h3>
+                                                        <div class="text-center">
+                                                            <span class="text-dark fs-13 mb-0">View More</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                              
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+        <!-- end start -->
+
+
+    </div> <!-- container-fluid -->
+</div> <!-- content -->

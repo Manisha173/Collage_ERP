@@ -1,0 +1,410 @@
+﻿
+@{
+    ViewBag.Title = "AddMaterial";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var categories = ViewData["categories"] as List<College_ERP.Models.Admin.InventoryCategory>;
+    var mtlist = ViewData["materialList"] as List<College_ERP.Models.Admin.Material>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Material
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddStockMaterial">Add Stock Material </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddPurchase"> Add Purchase</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddShortMaterial"> Add Short Material </a>
+                    </li>
+
+                </ol>
+            </nav>
+
+
+        </div>
+    </div>
+
+    <!--add Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Material</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="addMaterialForm">
+                        <div class="row px-5">
+                            <div class="col-sm-3">
+                                <label class="form-label pt-1"><strong>Category Name</strong></label>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <select id="categoryName" name="categoryName" class="form-select" required>
+                                        <option value="">--Select Category--</option>
+                                        @if (ViewData["categories"] != null)
+                                        {
+                                            foreach (var category in categories)
+                                            {
+                                                <option value="@category.CategoryId">@category.CategoryName</option>
+                                            }
+                                        }
+                                    </select>
+                                    <button class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#exampleModal2" type="button" id="addCategoryBtn">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Material Name</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" id="materialName" name="materialName" class="form-control" required placeholder="Add Material" />
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span> Material List </span> <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Add Material
+                        </button>
+                    </h4>
+                    <table id="materialTable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Category Name</th>
+                                <th>Material Name</th>
+                                <th>Created At</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (mtlist != null)
+                            {
+                                int count = 1;
+                                foreach (var item in mtlist)
+                                {
+                                    <tr>
+                                        <td>@count</td>
+                                        <td data-ctid="@item.categoryId">@item.categoryName</td>
+                                        <td>@item.materialName</td>
+                                        <td>@item.createdAt.ToString("dd-MMM-yyyy")</td>
+                                        <td class="text-center">
+                                            <a role="button" title="Update" data-id="@item.materialId" class="btn btn-sm updateMat p-0"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                            <a role="button" class="btn btn-sm deletemat p-0" data-id="@item.materialId" title="Delete"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                        </td>
+                                    </tr>
+                                    count++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal to Add Category-->
+<div class="modal fade" tabindex="-1" id="exampleModal2" aria-labelledby="exampleModal2Label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title">Add Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCategoryForm">
+                    <label class="form-label">Category Name</label>
+                    <input type="text" class="form-control" name="CategoryName" required placeholder="Add Category" />
+
+                    <div class="text-center my-3">
+                        <input type="submit" class="btn btn-primary" id="addCategory" value="Submit" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal to update Category-->
+<div class="modal fade" tabindex="-1" id="updateModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title">Update Material</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="addMaterialForm">
+                    <input type="hidden" value="" id="materialId" name="materialId" />
+                    <div class="row px-5">
+                        <div class="col-sm-3">
+                            <label class="form-label pt-1"><strong>Category Name</strong></label>
+                        </div>
+                        <div class="col-md-9">
+                            <select id="mdcategoryName" name="categoryName" class="form-select" required>
+                                <option value="">--Select Category--</option>
+                                @if (ViewData["categories"] != null)
+                                {
+                                    foreach (var category in categories)
+                                    {
+                                        <option value="@category.CategoryId">@category.CategoryName</option>
+                                    }
+                                }
+                            </select>
+
+                        </div>
+
+                    </div>
+                    <div class="row mt-3 px-5">
+                        <div class="col-md-3">
+                            <label class="form-label pt-1"><strong>Material Name</strong></label>
+                        </div>
+                        <div class="col-sm-9">
+                            <input type="text" id="mdmaterialName" name="materialName" class="form-control" required placeholder="Add Material" />
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button type="submit" id="btnSubmit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+
+    function initializeDataTable() {
+        debugger
+        let table = $('#materialTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![4].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![4].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+
+    $(document).ready(function () {
+        initializeDataTable();
+
+        $("#addCategoryForm").on('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let formdata = new FormData(this);
+            $.ajax({
+                url: '/admin/AddInventoryCategory', type: 'post', data: formdata, contentType: false, processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+
+        $(".addMaterialForm").on('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let formdata = new FormData(this);
+            $.ajax({
+                url: '/admin/AddMaterial', type: 'post', data: formdata, contentType: false, processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+
+        $(".deletemat").on('click', function () {
+            let id = $(this).data('id');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to delete this item?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                customClass: {
+                    confirmButton: 'mx-2 btn btn-danger',
+                    cancelButton: 'mx-2 btn btn-light'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing Your Request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/admin/DeleteMaterial',
+                        type: 'get',
+                        data: { id: id },
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: res.message,
+                                    icon: 'success',
+                                    didClose: () => {
+                                        location.reload(true);
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: res.message,
+                                    icon: 'warning'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Server Error. Try Again Later!',
+                                icon: 'error'
+                            });
+                            console.log(xhr);
+                        }
+                    });
+                } else {
+                    Swal.fire('Cancelled', 'Your item is safe.', 'info');
+                }
+            });
+        });
+
+
+        $(".updateMat").on('click', function () {
+            debugger;
+
+            let row = $(this).closest('tr');
+
+            let tds = row.find('td');
+
+            let id = $(this).data('id');
+            let matname = $(tds[2]).text().trim();
+            let catid = $(tds[1]).data('ctid');
+
+            $("#materialId").val(id);
+            $("#mdmaterialName").val(matname);
+            $("#mdcategoryName option").each(function () {
+                if ($(this).val() == catid) {
+                    $(this).attr('selected', 'selected');
+                }
+            });
+            $("#updateModal").modal('show');
+        });
+
+        $("#exampleModal2").on("hide.bs.modal", function () {
+            $("#exampleModal").modal("show")
+        })
+
+    });
+</script>

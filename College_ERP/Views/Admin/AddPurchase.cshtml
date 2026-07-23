@@ -1,0 +1,567 @@
+﻿
+@{
+    ViewBag.Title = "AddPurchase";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var categories = ViewData["categories"] as List<College_ERP.Models.Admin.InventoryCategory>;
+    var data = ViewData["purchaseList"] as List<College_ERP.Models.Admin.PurchaseMaterial>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddMaterial">Add Material</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/addStockMaterial"> Add Stock Material</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Purchase
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddShortMaterial"> Add Short Material </a>
+                    </li>
+
+                </ol>
+            </nav>
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 d-flex justify-content-between" id="exampleModalLabel">
+                        <span>Add Purchase Material</span><!-- Button trigger modal -->
+
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="purchasematerialform">
+                        <div class="row px-5">
+                            <div class="col-sm-3">
+                                <label class="form-label pt-1"><strong>Category Name</strong></label>
+                            </div>
+                            <div class="col-md-9">
+                                <select data-action="add" id="categoryName" name="categoryName" class="catename form-select" required>
+                                    <option value="">Select Category</option>
+                                    @if (ViewData["categories"] != null)
+                                    {
+                                        foreach (var category in categories)
+                                        {
+                                            <option value="@category.CategoryId">@category.CategoryName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Material Name</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select name="materialName" id="materialName" class="mtname form-select" required>
+                                    <option value="">--Select Material--</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Supplier Name</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                
+                                <input type="text" id="supplierName" name="supplierName" class="form-control" required placeholder="Enter Supplier Name" />                              
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Purchase Price</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="number" id="price" name="purchasePrice" class="form-control" required placeholder="Enter Price" />
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Quantity</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" id="stquantity" name="quantity" class="form-control" required placeholder="Enter Quantity" />
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                          
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Puchase Medium</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select type="text" id="purchaseMedium" name="purchaseMedium" class="form-select" required>
+                                    <option value="">Select purchase Medium</option>
+                                    <option value="online">Online</option>
+                                    <option value="offline">Offline</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Bill No</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" id="billNO" name="billNo" class="form-control" required placeholder="Enter Bill No" />
+                                <span id="BillNoError" style="color:red;"></span>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Bill Slip</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="file" id="billSlip" name="billSlip" class="form-control" required placeholder="Enter Bill Slip" />
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3 d-flex justify-content-between">
+                            <span>Purchase List</span> 
+                            <div class="w-25">
+                                <select id="catfilter" class="form-select">
+                                    <option selected value="">--Search By Category--</option>
+                                    @if (ViewData["categories"] != null)
+                                    {
+                                        foreach (var category in categories)
+                                        {
+                                            <option value="@category.CategoryName">@category.CategoryName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Add Purchase Material
+                            </button>
+                        </h4>
+                        <div class="table-responsive">
+                            <table id="purchaseTable" class="table table-bordered  w-100">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Category Name</th>
+                                        <th>Material Name</th>
+                                        <th>Supplier Name</th>
+                                        <th>Purchase Medium</th>
+                                        <th>Purchase Price</th>
+                                        <th>Bill No</th>
+                                        <th>Quantity</th>
+                                        <th class="text-center">Bill Slip</th>
+                                        <th>Created At</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td data-ctid="@item.categoryId">@item.categoryName</td>
+                                                <td data-matid="@item.materialId">@item.materialName</td>
+                                                <td>@item.supplierName</td>
+                                                <td>@item.purchaseMedium</td>
+                                                <td>₹ @item.purchasePrice.ToString("N2")</td>
+                                                <td>@item.billNo</td>
+                                                <td>@item.quantity</td>
+                                                <td class="text-center">
+                                                    @if (!string.IsNullOrEmpty(item.billSlipName))
+                                                    {
+                                                        <a href="@item.billSlipName" title="Bill Slip" target="_blank">View</a>
+                                                    }
+else
+                    {
+                        <span>N/A</span>
+                    }
+                                                </td>
+                                                <td>@item.createdAt.ToString("dd-MMM-yyyy")</td>
+                                                <td class="text-center">
+                                                    <a role="button" title="Update" data-id="@item.purchaseId" class="btn btn-sm updateMat p-0"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                                    <a role="button" class="btn btn-sm deletemat p-0" data-id="@item.purchaseId" title="Delete"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                                </td>
+                                            </tr>
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal to Update Stock Material-->
+    <div class="modal fade" tabindex="-1" id="updateModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title">Update Purchase Material</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="purchasematerialform">
+                        <input type="hidden" value="0" name="purchaseId" id="purchaseId" />
+                        <div class="row px-5">
+                            <div class="col-sm-3">
+                                <label class="form-label pt-1"><strong>Category Name</strong></label>
+                            </div>
+                            <div class="col-md-9">
+                                <select data-action="update" id="mdcategoryName" name="categoryName" class="catename form-select" required>
+                                    <option value="">Select Category</option>
+                                    @if (ViewData["categories"] != null)
+                                    {
+                                        foreach (var category in categories)
+                                        {
+                                            <option value="@category.CategoryId">@category.CategoryName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Material Name</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select id="updatematerialname" name="materialName" class="form-select" required>
+                                    <option value="">Select Material</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Supplier Name</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" id="ssupplierName" name="supplierName" class="form-control" required placeholder="Enter Supplier Name" />
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Purchase Price</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="number" id="prprice" name="purchasePrice" class="form-control" required placeholder="Enter Price" />
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Quantity</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" id="prquantity" name="quantity" class="form-control" required placeholder="Enter Quantity" />
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Puchase Medium</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select type="text" id="prpurchaseMedium" name="purchaseMedium" class="form-select" required>
+                                    <option value="">--Select purchase Medium--</option>
+                                    <option value="online">Online</option>
+                                    <option value="offline">Offline</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Bill No</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" id="prbillNO" name="billNo" class="form-control" required placeholder="Enter Bill No" />
+                                <span id="PRBillNoError" style="color:red;"></span>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Bill Slip</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="file" id="billSlip" name="billSlip" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+
+<script>
+    //$('#billNO').on('blur', function () {
+    //    var billNo = $(this).val();
+    //    var regex = /^[A-Za-z0-9]{6,10}$/;
+    //    if (!regex.test(billNo)) {
+    //        $('#BillNoError').text("Invalid Bill Number. Must be 6-10 alphanumeric characters.");
+    //    } else {
+    //        $('#BillNoError').text("");
+    //    }
+    //});
+    //$('#prbillNO').on('blur', function () {
+    //    var billNo = $(this).val();
+    //    var regex = /^[A-Za-z0-9]{6,10}$/;
+    //    if (!regex.test(billNo)) {
+    //        $('#PRBillNoError').text("Invalid Bill Number. Must be 6-10 alphanumeric characters.");
+    //    } else {
+    //        $('#PRBillNoError').text("");
+    //    }
+    //});
+    function initializeDataTable() {
+        debugger
+        let table = $('#purchaseTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![7,9].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![7,9].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+
+    $(document).ready(function () {
+        var ttbl = initializeDataTable();
+
+        $('#catfilter').on('change', function () {
+            debugger
+            var filval = $(this).val();
+            ttbl.column(1).search(filval).draw();
+        });
+    })
+
+    async function getmaterialbycatId(id, action) {
+        await $.ajax({
+            url: '/admin/GetMaterial', type: 'get', data: { id: id },
+            success: function (res) {
+                if (res) {
+                    console.log(res);
+                    let mattag = action == "update" ? $("#updatematerialname") : $("#materialName")
+                    mattag.empty();
+                    let materialop = '<option value="">--Select Material--</option>';
+                    $.each(res, function (index, item) {
+                        materialop += '<option value="' + item.materialId + '">' + item.materialName + '</option>';
+                    });
+                    mattag.append(materialop);
+                } else {
+                    Swal.fire({ title: 'Warning', text: 'No Material Found Related to this category!', icon: 'warning' });
+                }
+            },
+            error: function (xhr) {
+                Swal.fire({ title: 'Error', text: 'Server Error', icon: 'error' });
+            }
+        });
+    }
+    $(".catename").change(async function () {
+        let id = $(this).val();
+        let action = $(this).attr("data-action")
+        await getmaterialbycatId(id, action)
+    });
+
+    $(".purchasematerialform").on('submit', function (e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Please Wait!',
+            text: 'Processing Your Request...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        debugger
+        let formdata = new FormData(this);
+        if ($("#billSlip").get(0).files.length > 0) {
+            let file = $("#billSlip").get(0).files[0];
+            formdata.append("billSlip", file);
+        }
+
+        $.ajax({
+            url: '/admin/AddPurchase', type: 'post', data: formdata, contentType: false, processData: false,
+            success: function (res) {
+                if (res.status) {
+                    Swal.fire({
+                        title: 'Success', text: res.message, icon: 'success',
+                        didClose: () => { location.reload(true); }
+                    });
+                }
+                else {
+                    Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                }
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Server Error. Try Again Later!', icon: 'error'
+                });
+                console.log(xhr)
+            }
+        });
+    })
+    $(".deletemat").on('click', function () {
+        let id = $(this).data('id');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to delete this item?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            customClass: {
+                confirmButton: 'mx-2 btn btn-danger',
+                cancelButton: 'mx-2 btn btn-light'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Please Wait!',
+                    text: 'Processing Your Request...',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '/admin/DeletePurchase',
+                    type: 'get',
+                    data: { id: id },
+                    success: function (res) {
+                        console.log(res);
+                        if (res.status) {
+                            Swal.fire({
+                                title: 'Success',
+                                text: res.message,
+                                icon: 'success',
+                                didClose: () => {
+                                    location.reload(true);
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: res.message,
+                                icon: 'warning'
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Server Error. Try Again Later!',
+                            icon: 'error'
+                        });
+                        console.log(xhr);
+                    }
+                });
+            } else {
+                Swal.fire('Cancelled', 'Your item is safe.', 'info');
+            }
+        });
+    });
+
+    $(".updateMat").on('click', function () {
+        debugger;
+
+        let row = $(this).closest('tr');
+        let tds = row.find('td');
+        let matid = $(tds[2]).data('matid');
+
+        let id = $(this).data('id');
+
+        let catid = $(tds[1]).data('ctid');
+        let quantity = $(tds[7]).text().trim()
+        let price = $(tds[5]).text()
+        let nprice = parseFloat(price.replace(/[^\d.]/g, ""));
+        let billNo = $(tds[6]).text()
+        let purchaseMedium = $(tds[4]).text().trim();
+        let supplierName = $(tds[3]).text().trim();
+        console.log(quantity)
+
+        $("#purchaseId").val(id);
+        $("#prquantity").val(quantity);
+        $("#prprice").val(nprice);
+        $("#ssupplierName").val(supplierName);
+        $("#prpurchaseMedium").val(purchaseMedium);
+        $("#prbillNO").val(billNo);
+
+        $("#mdcategoryName").val(catid)
+        getmaterialbycatId(catid, "update").then(() => {
+            $("#updatematerialname").val(matid)
+        })
+        $("#updateModal").modal('show');
+    });
+</script>

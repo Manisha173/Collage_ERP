@@ -1,0 +1,757 @@
+﻿@{
+    ViewBag.Title = "Add Class";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<style>
+    .select2-container--default .select2-selection--multiple {
+        width: 227px !important;
+        padding-top: 4px;
+        /*        height: 38px;*/
+        padding-left: 4px;
+    }
+
+    select {
+        z-index: 1051;
+        position: relative;
+    }
+</style>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Class
+                    </li>
+                    <li class="breadcrumb-item">  <a class="text-decoration-none text-primary" href="/admin/addsection">Add Section</a></li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/addsubject">Add Subject</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/addsyllabus">Add Syllabus</a>
+                    </li>
+                </ol>
+            </nav>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title mb-3 d-flex justify-content-between">
+                                <span>Class List</span>
+                                <select class="form-select w-25" id="institutionfilter">
+                                    <option selected value="">--Search By Filter--</option>
+                                    <option value="school">School</option>
+                                    <option value="college">College</option>
+                                </select>
+                                <select class="form-select w-25" id="educationfiltersc" style="display:none">
+                                    <option selected value="">--Search By Education Level--</option>
+                                    <option value="secondary">Secondary</option>
+                                    <option value="senior_secondary">Senior Secondary</option>
+                                </select>
+                                <select class="form-select w-25" id="educationfiltercl" style="display:none">
+                                    <option selected value="">--Search By Education Level--</option>
+                                    <option value="diploma">Diploma</option>
+                                    <option value="ug">Under Graduate</option>
+                                    <option value="pg">Post Graduate</option>
+                                </select>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Add Class
+                                </button>
+                            </h4>
+                            <div class="table-responsive">
+                                <table id="classtable" class="table table-bordered w-100">
+                                    <thead>
+                                        <tr>
+                                            <th>SR</th>
+                                            <th>Institution Type</th>
+                                            <th>Education Level</th>
+                                            <th>Class Name</th>
+                                            <th>View</th>
+                                            <th style="width:150px !important;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int sr = 1;
+                                        }
+
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@sr</td>
+                                                <td>@item.InstitutionType</td>
+                                                <td>@item.EducationLevel</td>
+                                                <td>@item.ClassName</td>
+                                                <td>
+                                                    @if (item.HasStream)
+                                                    {
+                                                        <a role="button" data-classid=@item.ClassId class="btn btn-warning btn-sm showstream" title="Show Stream">Show Stream</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>No Stream</span>
+                                                    }
+                                                </td>
+                                                @*<td>@item.ClassDescription</td>*@
+                                                <td>
+                                                    @*<button class="btn btn-sm p-0" onclick="editClass(@item.ClassId)"> <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>*@
+                                                    <button class="btn btn-sm p-0" onclick="deleteClass(@item.ClassId)"><i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+                                                </td>
+                                            </tr>
+                                            sr++;
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Class</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card mb-0 pb-0">
+                            <div class="card-body">
+                                <form method="post" id="classForm">
+                                    <div class="row justify-content-center">
+                                            <!-- Institution Type -->
+                                        <div class="col-sm-4">
+                                            <label for="institutionType" class="form-label">Institution Type</label>
+                                            <select name="institutionType" id="institutionType" class="form-select">
+                                                <option selected disabled>--Select Institution Type--</option>
+                                                <option value="school">School</option>
+                                                <option value="college">College</option>
+                                            </select>
+                                        </div>
+                                            <!-- Education Level -->
+                                        <div class="col-sm-4">
+                                            <label for="educationLevel" class="form-label">Education Level</label>
+                                            <select name="educationLevel" id="educationLevel" class="form-select">
+                                                <option selected disabled>--Select Education Level--</option>
+                                            </select>
+                                        </div>
+                                        <div id="classWrapper" class="col-sm-4" style="display: none;">
+                                            <label for="classInput" class="form-label">Class</label>
+                                            <select multiple id="classInput" name="ClassName[]" class="form-select multiClassSelector">
+                                                <!-- JS se options add honge -->
+                                            </select>
+                                        </div>
+                                        <!-- Multi-Select for Senior Secondary (11–12) -->
+                                        <div id="multiClassWrapper" class="col-sm-4" style="display: none;">
+                                            <label for="class" class="form-label">Class</label>
+                                            <select multiple id="multiClassSelect" disabled class="form-select multiClassSelector">
+                                                <option value="Class 11">Class 11</option>
+                                                <option value="Class 12">Class 12</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-sm-4" id="diplomaTypeWrapper" style="display: none;">
+                                            <label for="diplomaType" class="form-label">Diploma Type</label>
+                                            <select id="diplomaType" name="diplomaType" class="form-select" placeholder="Select Diploma Type">
+                                                <option value="">--Select Diploma Type--</option>
+                                                <option value="engineering">Engineering / Polytechnic</option>
+                                                <option value="medical">Medical / Paramedical</option>
+                                                <option value="technical">Technical</option>
+                                                <option value="education">Education</option>
+                                            </select>
+                                        </div>
+                                        <!-- UG Course Type -->
+                                        <div class="col-sm-4" id="ugTypeWrapper" style="display: none;">
+                                            <label for="ugType" class="form-label">UG Course Type</label>
+                                            <select id="ugType" class="form-control" name="ugType">
+                                                <option value="">--Select UG Course Type--</option>
+                                                <option value="ba">B.A.</option>
+                                                <option value="bsc">B.Sc.</option>
+                                                <option value="bcom">B.Com</option>
+                                                <option value="btech">B.Tech</option>
+                                                <option value="be">B.E.</option>
+                                                <option value="bba">BBA</option>
+                                                <option value="bca">BCA</option>
+                                                <option value="llb">LLB</option>
+                                                <option value="mbbs">MBBS</option>
+                                                <option value="bpharma">B.Pharm</option>
+                                                <option value="barch">B.Arch</option>
+                                                <option value="bds">BDS</option>
+                                                <option value="bfa">BFA</option>
+                                                <option value="bms">BMS</option>
+                                                <option value="bhm">BHM</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- PG Type (optional, same as UG if needed) -->
+                                        <div class="col-sm-4" id="pgTypeWrapper" style="display: none;">
+                                            <label for="pgType" class="form-label">PG Course Type</label>
+                                            <select id="pgType" class="form-control" name="pgType">
+                                                <option value="">--Select PG Course Type--</option>
+                                                <option value="ma">M.A.</option>
+                                                <option value="msc">M.Sc.</option>
+                                                <option value="mcom">M.Com</option>
+                                                <option value="mba">MBA</option>
+                                                <option value="mca">MCA</option>
+                                                <option value="mtech">M.Tech</option>
+                                                <option value="me">M.E.</option>
+                                                <option value="llm">LLM</option>
+                                                <option value="mpharma">M.Pharm</option>
+                                                <option value="march">M.Arch</option>
+                                                <option value="msw">MSW</option>
+                                                <option value="mfa">MFA</option>
+                                                <option value="mphil">M.Phil</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Ph.D. Type (optional) -->
+                                        <div class="col-sm-4" id="phdTypeWrapper" style="display: none;">
+                                            <label for="phdType" class="form-label">Ph.D. Course Type</label>
+                                            <select id="phdType" class="form-control" name="phdType">
+                                                <option value="">--Select Ph.D. Course Type--</option>
+                                                <option value="phd_art">Ph.D. in Arts</option>
+                                                <option value="phd_science">Ph.D. in Science</option>
+                                                <option value="phd_commerce">Ph.D. in Commerce</option>
+                                                <option value="phd_management">Ph.D. in Management</option>
+                                                <option value="phd_technology">Ph.D. in Technology</option>
+                                                <option value="phd_law">Ph.D. in Law</option>
+                                                <option value="phd_pharma">Ph.D. in Pharmacy</option>
+                                                <option value="phd_architecture">Ph.D. in Architecture</option>
+                                                <option value="phd_education">Ph.D. in Education</option>
+                                                <option value="phd_social">Ph.D. in Social Work</option>
+                                                <option value="phd_finearts">Ph.D. in Fine Arts</option>
+                                            </select>
+                                        </div>
+
+                                        @*<input type="hidden" id="ClassId" name="ClassId" value="0" />
+                                            <div class="col-md-12 mt-2">
+                                                <div class="mb-3">
+                                                    <label>Class Name</label>
+                                                    <input type="text" id="ClassName" name="ClassName" class="form-control" placeholder="Enter Class Name" required autocomplete="off" />
+                                                </div>
+                                            </div>*@
+                                    </div>
+                                    <div class="row mt-2">
+                                        <!-- Specialization -->
+                                        <div class="col-sm-12" id="specializationWrapper" style="display: none;">
+                                            <label for="specializationInput" class="form-label">Stream (if any)</label>
+                                            <select id="specializationInput" class="form-control" name="specialization[]" multiple>
+                                            </select>
+                                        </div>
+                                        <!--Stream-->
+                                        <div class="col-sm-4" id="streamWrapper" style="display:none;">
+                                            <label for="streamInput" class="form-label">Stream</label>
+                                            <select id="streamInput" multiple name="stream" placeholder="Select Stream" autocomplete="off">
+                                                <option value="">--Select Stream--</option>
+                                                <option value="Science">Science</option>
+                                                <option value="Commerce">Commerce</option>
+                                                <option value="Arts">Arts</option>
+                                                <option value="Vocational">Vocational</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <button type="submit" id="submitBtn" class="btn btn-primary">Add Class</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Stream Modal-->
+<div class="modal fade" id="StreamModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="StreamModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="StreamModalLabel"> Class Stream </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card mb-0 pb-0">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="datatable" class="table table-bordered w-100">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Class Name</th>
+                                        <th>Stream</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="streambody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Stream Modal End-->
+<!-- Edit Class Modal -->
+<div class="modal fade" id="editClassModal" tabindex="-1" aria-labelledby="editClassModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editClassForm" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editClassModalLabel">Edit Class</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+
+                    <input type="hidden" id="EditClassId" name="ClassId" />
+                    <div class="col-md-12 mb-3">
+                        <label for="EditClassName" class="form-label">Class Name</label>
+                        <input type="text" id="EditClassName" name="ClassName" class="form-control" />
+
+                    </div>
+
+                    @*<div class="col-md-6 mb-3">
+                            <label> Description</label>
+                            <textarea type="text" id="EditDescription" name="ClassDescription" class="form-control"></textarea>
+                        </div>*@
+
+                </div>
+                <div class="text-center mb-2">
+                    <button type="submit" class="btn btn-primary">Update Class</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--end modal-->
+<script>
+    $(document).ready(function () {
+        const specializationSelect = new TomSelect("#specializationInput", {
+            plugins: ['remove_button'],
+            create: true,
+            maxItems: null,
+            placeholder: "Add Specialization (if any)"
+        });
+
+        // Stream
+        new TomSelect("#streamInput", {
+            plugins: ['remove_button'],
+            create: true,
+            onItemAdd: function () {
+                this.setTextboxValue('');
+                this.refreshOptions();
+            },
+            render: {
+                option: function (data, escape) {
+                    return '<div class="d-flex"><span>' + escape(data.value) + '</span></div>';
+                },
+                item: function (data, escape) {
+                    return '<div>' + escape(data.value) + '</div>';
+                }
+            }
+        });
+
+        // Diploma
+        //new TomSelect("#diplomaType", {
+        //    plugins: ['remove_button'],
+        //    create: true,
+        //    onItemAdd: function () {
+        //        this.setTextboxValue('');
+        //        this.refreshOptions();
+        //    },
+        //    render: {
+        //        option: function (data, escape) {
+        //            return '<div class="d-flex"><span>' + escape(data.value) + '</span></div>';
+        //        },
+        //        item: function (data, escape) {
+        //            return '<div>' + escape(data.value) + '</div>';
+        //        }
+        //    }
+        //});
+
+        // Class (multi-select)
+        $('.multiClassSelector').select2({
+            dropdownParent: $('#exampleModal'),
+            placeholder: 'Select Class'
+        });
+
+        const educationOptions = {
+            school: [
+                { value: "secondary", text: "Secondary (Class Nursery – 10)" },
+                { value: "senior_secondary", text: "Senior Secondary (Class 11 – 12)" }
+            ],
+            college: [
+                { value: "diploma", text: "Diploma" },
+                { value: "ug", text: "Undergraduate (UG)" },
+                { value: "pg", text: "Postgraduate (PG)" },
+                { value: "phd", text: "Doctorate (Ph.D.)" }
+            ]
+        };
+
+        const classOptions = [
+            "Nursery", "LKG", "UKG",
+            "Class 1", "Class 2", "Class 3", "Class 4", "Class 5",
+            "Class 6", "Class 7", "Class 8", "Class 9", "Class 10"
+        ];
+
+        // Institution Type Change
+        $('#institutionType').on('change', function () {
+            const selectedType = $(this).val();
+            const $educationLevel = $('#educationLevel');
+
+            $educationLevel.empty().append('<option selected disabled>--Select Education Level--</option>');
+
+            // Hide all dependent fields
+            $('#classWrapper').hide();
+            $('#multiClassWrapper').hide();
+            $('#streamWrapper').hide();
+            $('#diplomaTypeWrapper').hide();
+            $('#ugTypeWrapper').hide();
+
+            if (educationOptions[selectedType]) {
+                $.each(educationOptions[selectedType], function (index, item) {
+                    $educationLevel.append($('<option>', {
+                        value: item.value,
+                        text: item.text
+                    }));
+                });
+            }
+        });
+
+        // Education Level Change
+        $('#educationLevel').on('change', function () {
+            const selectedLevel = $(this).val();
+            const $classInput = $('#classInput');
+
+            // Reset and hide all
+            $('#classWrapper').hide();
+            $('#multiClassWrapper').hide();
+            $('#streamWrapper').hide();
+            $('#diplomaTypeWrapper').hide();
+            $('#ugTypeWrapper').hide();
+            $('#pgTypeWrapper').hide();
+            $('#phdTypeWrapper').hide();
+            $('#diplomaTypeWrapper').hide();
+            $('#specializationWrapper').hide();
+            specializationSelect.clear();
+            $classInput.off('input');
+
+            if (selectedLevel === 'secondary') {
+                $('#classWrapper').show();
+                $classInput.empty();
+
+                $.each(classOptions, function (index, cls) {
+                    $classInput.append($('<option>').val(cls).text(cls));
+                });
+
+            } else if (selectedLevel === 'senior_secondary') {
+                debugger
+                const select = document.getElementById('multiClassSelect');
+                for (let i = 0; i < select.options.length; i++) {
+                    select.options[i].selected = true;
+                }
+                $('#multiClassSelect').trigger('change');
+                $('#multiClassWrapper').show();
+                $('#streamWrapper').show();
+
+            } else if (selectedLevel === 'ug') {
+                $('#ugTypeWrapper').show();
+                $('#specializationWrapper').show();
+            } else if (selectedLevel === 'pg') {
+                $('#pgTypeWrapper').show();
+                $('#specializationWrapper').show();
+            } else if (selectedLevel === 'diploma') {
+                $('#diplomaTypeWrapper').show();
+                $('#specializationWrapper').show();
+            } else if (selectedLevel === 'phd') {
+                $('#phdTypeWrapper').show();
+                $('#specializationWrapper').show();
+            }
+        });
+    });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+
+        var table = $('#classtable').DataTable();
+        $('#institutionfilter').change(function () {
+            let fav = $(this).val();
+            if (fav === "school") {
+                $('#educationfiltercl').hide();
+                $('#educationfiltersc').show();
+            } else if (fav === "college") {
+                $('#educationfiltersc').hide();
+                $('#educationfiltercl').show();
+            } else {
+                $('#educationfiltercl').hide();
+                $('#educationfiltersc').hide();
+                $('#educationfiltersc').val('');
+                $('#educationfiltercl').val('');
+                table.columns().every(function () {
+                    this.search('');
+                });
+            }
+            table.column(1).search(fav).draw();
+        })
+
+        $('#educationfiltersc').change(function () {
+            let fav = $(this).val();
+            if (fav) {
+                table.column(2).search('^' + fav + '$', true, false).draw(); // exact match
+            } else {
+                table.column(2).search('').draw(); // clear filter
+            }
+        });
+        $('#educationfiltercl').change(function () {
+            let fav = $(this).val();
+            table.column(2).search(fav).draw();
+        })
+
+        $('.showstream').on('click', function () {
+            let classid = $(this).data('classid');
+            Swal.fire({
+                title: 'Please wait...',
+                text: 'Processing your request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.get('/Admin/GetStreamByClassId?classid=' + classid, function (data) {
+                if (data && data.length > 0) {
+                    let html = '';
+                    let sr = 1;
+                    data.forEach(function (item) {
+                        html += `<tr>
+                                    <td>${sr++}</td>
+                                    <td>${item.ClassName}</td>
+                                    <td>${item.ClassStream}</td>
+                                </tr>`;
+                    });
+
+                    $('#streambody').html(html);
+                    Swal.close();
+                    $('#StreamModal').modal('show');
+                } else {
+                    Swal.fire('No data found', '', 'info');
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+<script>
+    $(document).ready(function () {
+
+        $('#classForm').submit(function (e) {
+            e.preventDefault();
+            debugger
+            Swal.fire({
+                title: 'Please wait...',
+                text: 'Processing your request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            function getFirstFilledValue(selectors) {
+                for (let selector of selectors) {
+                    let val = $(selector).val();
+
+                    // If multi-select (array with values)
+                    if (Array.isArray(val) && val.length > 0) {
+                        return val; // full array
+                    }
+
+                    // If single value field (string) and not empty
+                    if (typeof val === 'string' && val.trim().length > 0) {
+                        return val; // clean string
+                    }
+                }
+                return null;
+            }
+
+            const formData = {
+                InstitutionType: $('#institutionType').val(),
+                EducationLevel: $('#educationLevel').val(),
+                Class: getFirstFilledValue([
+                    '#classInput',
+                    '#multiClassSelect',
+                    '#diplomaType',
+                    '#ugType',
+                    '#pgType',
+                    '#phdType'
+                ]),
+                Stream: getFirstFilledValue([
+                    '#specializationInput',
+                    '#streamInput'
+                ])
+            };
+
+            $.ajax({
+                url: '/Admin/AddClass',
+                type: 'POST',
+                data: JSON.stringify(formData),
+                contentType: 'application/json',
+                beforeSend: function () {
+                    Swal.fire({
+                        title: 'Please wait...',
+                        text: 'Submitting class information',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire('Success!', response.message, 'success').then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function () {
+                    Swal.fire('Error', 'Server error occurred.', 'error');
+                }
+            });
+        });
+
+    });
+
+
+    function resetForm() {
+        $('#ClassForm')[0].reset();
+        $('#ClassId').val('');
+        $('#btnSubmit').text('Add Class');
+    }
+    //delete class
+    function deleteClass(ClassId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This class will be deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                // Show loading spinner
+                Swal.fire({
+                    title: 'Deleting...',
+                    text: 'Please wait',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Perform deletion
+                $.post('/admin/deleteclass', { ClassId: ClassId }, function (res) {
+                    if (res.success) {
+                        Swal.fire('Deleted!', res.message, 'success').then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', res.message, 'error');
+                    }
+                }).fail(function () {
+                    Swal.fire('Error', 'Server error occurred.', 'error');
+                });
+            }
+        });
+    }
+
+
+    function editClass(id) {
+        Swal.fire({
+            title: 'Please wait...',
+            text: 'Processing your request...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        $.get('/Admin/GetClassById?id=' + id, function (data) {
+            if (data) {
+                $('#EditClassId').val(data.ClassId);
+                $('#EditClassName').val(data.ClassName);
+                $('#EditDescription').val(data.ClassDescription);
+
+                Swal.close();
+                $('#editClassModal').modal('show');
+            }
+        });
+    }
+
+    //$('#editClassForm').on('submit', function (e) {
+    //    Swal.fire({
+    //        title: 'Please wait...',
+    //        text: 'Processing your request...',
+    //        allowOutsideClick: false,
+    //        allowEscapeKey: false,
+    //        didOpen: () => {
+    //            Swal.showLoading();
+    //        }
+    //    });
+    //    e.preventDefault();
+
+    //    var formData = new FormData(this);
+
+    //    $.ajax({
+    //        url: '/Admin/UpdateClass',
+    //        type: 'POST',
+    //        data: formData,
+    //        processData: false,
+    //        contentType: false,
+    //        beforeSend: function () {
+    //            Swal.fire({
+    //                title: 'Updating...',
+    //                text: 'Please wait while we update the class.',
+    //                allowOutsideClick: false,
+    //                didOpen: () => {
+    //                    Swal.showLoading();
+    //                }
+    //            });
+    //        },
+    //        success: function (res) {
+    //            if (res.success) {
+    //                $('#editClassModal').modal('hide');
+    //                Swal.fire('Updated!', 'Class updated successfully.', 'success').then(() => {
+    //                    location.reload();
+    //                });
+    //            } else {
+    //                Swal.fire('Error', 'Something went wrong.', 'error');
+    //            }
+    //        },
+    //        error: function () {
+    //            Swal.fire('Error', 'Server error occurred.', 'error');
+    //        }
+    //    });
+    //});
+
+
+
+
+</script>
+
+
+

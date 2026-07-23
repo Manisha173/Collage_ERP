@@ -1,0 +1,76 @@
+﻿
+@{
+    ViewBag.Title = "RoomList";
+    Layout = "~/Views/Shared/_wardenLayout.cshtml";
+    var data = ViewData["roomlist"] as List<College_ERP.Models.Warden.RoomListModel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title d-flex">
+                        <div class="h4">Room List</div>
+                        <div class="m-auto">
+                            <div class="form-group" style="min-width: 300px;">
+                                <select id="filterstatus" class="form-select">
+                                    <option disabled selected>--Select Floor--</option>
+                                    @if(data!=null)
+                                    {   for (int i = 0; i <= data[0].totalfloors; i++)
+                                            {
+                                        <option value="@i" > @(i == 0 ? "Ground" : i) </option>
+                                            }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="problemTable" class="table table-bordered dt-responsive nowrap w-100">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Floor</th>
+                                    <th>Room Number</th>
+                                    <th>Room Facilitate</th>
+                                    <th>No Of Bed</th>
+                                    <th>Fees (Per Person)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (data != null)
+                                {
+                                    int sr = 1;
+                                    foreach (var item in data)
+                                    {
+                                        <tr>
+                                            <td>@sr</td>
+                                            <td>@item.floor</td>
+                                            <td>@item.RoomNumber</td>
+                                            <td>@item.RoomFacilitate</td>
+                                            <td>@item.BedCount</td>
+                                            <td>₹ @item.FeesPerPerson.ToString("N0")</td>
+                                        </tr>
+                                        sr++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#problemTable').DataTable();
+
+        $('#filterstatus').change(function () {
+            let filval = $(this).val();
+            table.column(1).search(filval).draw();
+        })
+    })
+</script>

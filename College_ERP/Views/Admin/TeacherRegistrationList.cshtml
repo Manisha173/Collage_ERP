@@ -1,0 +1,244 @@
+﻿
+@{
+    ViewBag.Title = "TeacherRegistrationList";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.2/css/buttons.dataTables.css" />
+
+<style>
+    .filter-section {
+        background: white;
+        border-radius: 12px;
+        padding: 10px 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .filter-select {
+        padding: 12px 20px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+        min-width: 200px;
+    }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-select:hover {
+            border-color: #667eea;
+        }
+</style>
+<div class="content-page">
+    <div class="container-fluid">
+
+
+
+        <nav class="my-3" aria-label="breadcrumb"
+             style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+            <ol class="breadcrumb bg-light rounded p-2">
+                <li class="breadcrumb-item ">
+                    <a class="text-decoration-none text-primary" href="/admin/teacherRegistration"> Register Teacher </a>
+                </li>
+                <li class="breadcrumb-item active text-dark" aria-current="page">
+                    Teacher List
+                </li>
+                <li class="breadcrumb-item">
+                    <a class="text-decoration-none text-primary" href="/admin/adddesignation"> Add Teacher Designation </a>
+                </li>
+            </ol>
+        </nav>
+        <!-- Academic Year Filter -->
+        <div class="filter-section" id="filterCard">
+            <label class="filter-label" for="academicYearSelect">Academic Year:</label>
+
+            <select id="academicYearSelect" class="filter-select">
+                <option value="">-- Select Academic Year --</option>
+                <option value="2026-27">2026-27</option>
+                <option value="2025-26">2025-26</option>
+                <option value="2024-25">2024-25</option>
+                <option value="2023-24">2023-24</option>
+                <option value="2022-23">2022-23</option>
+                <option value="2021-22">2021-22</option>
+                <option value="2020-21">2020-21</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <div class="col-12 table-responsive">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3 border-bottom pb-1">Registered Teachers</h4>
+                        <table id="teacherTable" class="table table-bordered dt-responsive table-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Employee ID</th>
+                                    <th>Reg no.</th>
+                                    <th> Name</th>
+                                    <th>Designation</th>
+                                    <th>Email</th>
+                                    <th>Mobile No.</th>
+                                    <th>Exp</th>
+                                    <th>Subject</th>
+                                    <th>Joining </th>
+                                    <th>Username </th>
+                                    <th>Password </th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Count > 0)
+                                {
+                                    int srNo = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@srNo</td>
+                                            <td>@item.EmployeeId</td>
+                                            <td>@item.RegistrationNo</td>
+                                            <td><a href="/admin/teacherProfile?id=@item.TeacherId" target="_blank" title="Show Profile">@item.TeacherName</a></td>
+                                            <td>@item.designationName</td>
+                                            <td>@item.TeacherEmail</td>
+                                            <td>@item.TeacherMobile</td>
+                                            <td>@item.Experience</td>
+                                            <td>@(item.Subject ?? "N/A")</td>
+                                            <td>@(Convert.ToDateTime(item.JoinDate).ToString("dd-MMM-yyyy") ?? "N/A")</td>
+                                            <td>@item.username</td>
+                                            <td>@item.password</td>
+                                            <td class="d-flex">
+                                                <a class="btn btn-sm p-0" title="Update Teacher" href="/admin/TeacherRegistration?id=@item.TeacherId"> <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></a>
+                                                <button class="btn btn-sm p-0" title="Delete Teacher"><i data-feather="trash-2" onclick="deleteTeacher(@item.TeacherId)" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+                                            </td>
+                                        </tr>
+                                        srNo++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+
+    function initializeDataTable() {
+        debugger
+        let table = $('#teacherTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![9].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![9].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+
+    $(document).ready(function () {
+        initializeDataTable()
+    })
+
+    function deleteTeacher(TeacherId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the teacher record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Admin/DeleteTeacher',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ TeacherId: TeacherId }),
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+
+            }
+        });
+    }
+</script>
+<script>
+    document.getElementById("academicYearSelect").addEventListener("change", function () {
+
+        let academicYear = this.value;
+
+        if (academicYear) {
+            let year = academicYear.split('-')[0]; // 2026
+
+            window.location.href = "/Admin/TeacherRegistrationList?academicYear=" + year;
+        }
+    });
+</script>
+
+
+

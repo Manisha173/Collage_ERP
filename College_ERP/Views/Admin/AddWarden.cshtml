@@ -1,0 +1,638 @@
+﻿
+@{
+    ViewBag.Title = "AddWarden";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var warden = ViewData["warden"] as List<College_ERP.Models.Admin.warden>;
+    var data = ViewBag.warden as List<College_ERP.Models.Admin.warden>;
+}
+
+
+<div class="content-page">
+    <div class="content">
+
+        <!-- container-fluid -->
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/HostelBlockOverview"> Hostel Block Overview </a>
+                    </li>
+                    <li class="breadcrumb-item ">  <a class="text-decoration-none text-primary" href="/admin/addblock">Add Block</a> </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Warden
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addroomnumber"> Add Room </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addStudentInHostel"> Add Student In Hostel </a>
+                    </li>
+                    
+                </ol>
+            </nav>
+
+            <div class="d-flex align-items-sm-center flex-sm-row flex-column"></div>
+
+            <!--Modal for update warden-->
+            <div class="modal fade" id="editSectionModal" tabindex="-1" aria-labelledby="editSectionModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+
+                        <!-- Modal Header -->
+                        <div class="modal-header d-flex justify-content-between">
+                            <h5 class="modal-title" id="editSectionModalLabel">Edit Warden Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            </button>
+                        </div>
+
+                        <!-- Modal Body (Form) -->
+                        <form enctype="multipart/form-data" method="Post" id="editWardenForm">
+                            <div class="modal-body overflow-auto" style="max-height: 80vh;">
+
+                                <input type="hidden" id="wardenId" name="Id" />
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="EmployeeId2" class="form-label">Employee Id</label>
+                                            <input type="text" id="EmployeeId2" class="form-control" name="EmployeeId" placeholder="Enter Employee Id" >
+                                        </div>
+                                        <!-- Warden Name -->
+                                        <div class="mb-3">
+                                            <label for="Name2" class="form-label">Warden Name</label>
+                                            <input type="text" id="Name2" class="form-control" name="Name" placeholder="Enter Warden Name" required>
+                                        </div>
+
+                                        <!-- Email -->
+                                        <div class="mb-3">
+                                            <label for="EmailId1" class="form-label">Email Id</label>
+                                            <input type="email" id="EmailId1" class="form-control" name="EmailId" placeholder="Enter Email" required>
+                                        </div>
+
+                                        <!-- Date of Birth -->
+                                        <div class="mb-3">
+                                            <label for="DOB1" class="form-label">Date of Birth</label>
+                                            <input type="date" id="DOB1" class="form-control" name="DOB" max="2007-12-31" required>
+                                        </div>
+
+                                        <!-- Document Upload -->
+                                        <div class="mb-3">
+                                            <label for="Documents" class="form-label">Document</label>
+                                            <input type="file" id="Documents" class="form-control" name="Documents">
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Select Block</label>
+                                            <select name="BlockId" id="BlockName1" class="form-select">
+                                                @if (ViewBag.BlockList != null)
+                                                {
+                                                    foreach (var item in ViewBag.BlockList)
+                                                    {
+                                                        <option value="@item.HostelId">@item.BlockName</option>
+                                                    }
+                                                }
+                                            </select>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <!-- Mobile Number -->
+                                        <div class="mb-3">
+                                            <label for="MobileNo1" class="form-label">Mobile Number</label>
+                                            <input type="number" id="MobileNo1" class="form-control" name="MobileNo" placeholder="Enter Mobile Number" required>
+                                        </div>
+
+                                        <!-- State -->
+                                        <div class="mb-3">
+                                            <label for="st_Id1" class="form-label">State</label>
+                                            <select id="st_Id1" name="st_Id" class="form-select" required>
+                                                <option value="">-- Select State --</option>
+                                                @if (ViewBag.state != null)
+                                                {
+                                                    foreach (var item in ViewBag.state)
+                                                    {
+                                                        <option @(ViewBag?.updata?.State == item.st_Id ? "selected" : "") value="@item.st_Id">@item.stateName</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <!-- City -->
+                                        <div class="mb-3">
+                                            <label for="city_Id1" class="form-label">City</label>
+                                            <select id="city_Id1" name="city_Id" class="form-select" required>
+                                                <option value="">-- Select City --</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label d-block">Gender</label>
+                                            <select class="form-select" id="gender" name="Gender">
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                            </select>
+
+                                        </div>
+                                        <!-- Document -->
+                                        <div class=" mb-3">
+                                            <label for="ProfilePic" class="form-label">Profile Picture</label>
+                                            <input type="file" id="ProfilePic" name="ProfilePic" class="form-control">
+                                        </div>
+
+                                    </div>
+                                    <!-- Address -->
+                                    <div class="col-lg-12 mb-3">
+                                        <label for="Address1" class="form-label mb-0">Address</label>
+                                        <textarea id="Address1" class="form-control mt-0" name="Address" placeholder="Enter Address" rows="3" required></textarea>
+                                    </div>
+                                    <div class="col-lg-12 text-center">
+                                        <button type="submit" id="btnSubmit" class="btn btn-primary ">Update Warden</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Warden</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form enctype="multipart/form-data" method="Post" id="addWarden">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="EmployeeId" class="form-label">Employee Id</label>
+                                        <input type="text" id="EmployeeId" name="EmployeeId" class="form-control" placeholder="Enter Employee Id">
+                                    </div>
+                                    <!-- Warden Name -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="Name" class="form-label">Warden Name</label>
+                                        <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Warden Name">
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="EmailId" class="form-label">Email Id</label>
+                                        <input type="email" id="EmailId" name="EmailId" class="form-control" placeholder="Enter Email" required>
+                                    </div>
+
+
+                                    <!-- DOB -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="DOB" class="form-label">Date Of Birth</label>
+                                        <input type="date" id="DOB" name="DOB" class="form-control" max="2007-12-31" required>
+                                    </div>
+
+
+
+                                    <!-- Mobile Number -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="MobileNo" class="form-label">Mobile Number</label>
+                                        <input type="text" id="MobileNo" name="MobileNo" class="form-control" placeholder="Enter Your Mobile No." maxlength="10" pattern="[6-9][0-9]{9}" required>
+                                    </div>
+
+                                    <!-- State -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="st_Id" class="form-label">State</label>
+                                        <select id="st_Id" name="st_Id" class="form-select">
+                                            <option value="">-- Select State --</option>
+                                            @if (ViewBag.state != null)
+                                            {
+                                                foreach (var item in ViewBag.state)
+                                                {
+                                                    if (ViewBag?.updata?.State != null)
+                                                    {
+                                                        <option @(ViewBag?.updata.State == item.st_Id ? "selected" : "") value="@item.st_Id">@item.stateName</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@item.st_Id">@item.stateName</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <!-- City -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="city_Id" class="form-label">City</label>
+                                        <select id="city_Id" name="city_Id" class="form-select">
+                                            <option value="">-- Select City --</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Document -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="Documents" class="form-label">Document</label>
+                                        <input type="file" id="Documents" name="Documents" class="form-control">
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="ProfilePic" class="form-label">Profile Pic</label>
+                                        <input type="file" id="ProfilePic" name="ProfilePic" class="form-control">
+                                    </div>
+
+                                    <!-- Gender -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label d-block">Gender</label>
+                                        <select class="form-select" name="Gender">
+                                            <option value="" selected disabled>--select Gender--</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                    </div>
+
+
+                                    <!-- Block Name -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="BlockId" class="form-label">Block Name</label>
+                                        <select name="BlockId" id="BlockId" class="form-select">
+                                            <option value="0" disabled selected>--Select Block--</option>
+                                            @if (ViewBag.BlockList != null)
+                                            {
+                                                foreach (var item in ViewBag.BlockList)
+                                                {
+                                                    <option value="@item.HostelId">@item.BlockName</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                    <!-- Address -->
+                                    <div class="col-md-12 mb-3">
+                                        <label for="Address" class="form-label ">Address</label>
+                                        <textarea id="Address" name="Address" class="form-control" placeholder="Enter Address" rows="5"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="row mt-4">
+                                    <div class="col-12 text-center">
+                                        <button type="submit" data-action="add" id="btnSubmit" class="btn btn-primary px-4">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+
+                        <div class="card-header">
+                            <h5 class="card-title mb-0 d-flex justify-content-between">
+                                <span>Warden List</span><!-- Button trigger modal -->
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                    Add Warden
+                                </button>
+                            </h5>
+                        </div><!-- end card header -->
+
+                        <div class="card-body table-responsive">
+                            <table id="wardenTable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Employee Id</th>
+                                        <th>Name</th>
+                                        <th>Mobile Number</th>
+                                        <th>Email</th>
+                                        <th>State</th>
+                                        <th>Block Assign</th>
+                                        <th>Username</th>
+                                        <th>Password</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td>@item.EmployeeId</td>
+                                                <td><a href="/admin/WardenProfile?id=@item.Id" title="Show Profile" target="_blank">@item.Name</a></td>
+                                                <td>@item.MobileNo</td>
+                                                <td>@item.EmailId</td>
+                                                <td>@item.stateName</td>
+                                                <td>@item.BlockName</td>
+                                                <td>@item.username</td>
+                                                <td>@item.password</td>
+                                                <td>
+                                                    <button class="btn btn-sm editBtn p-0" data-blockid="@item.BlockId" data-blockname="@item.BlockName" onclick="editsection(@item.Id)"> <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>
+                                                    <button class="btn btn-sm p-0"><i data-feather="trash-2" onclick="deleteCompany(@item.Id)" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+                                                </td>
+
+                                            </tr>
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div> <!-- container-fluid -->
+
+</div> <!-- content -->
+
+
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.editBtn').click(function () {
+            debugger
+            let blid = $(this).data('blockid');
+            let blnm = $(this).data('blockname');
+            $('#BlockName1').prepend(`<option value="${blid}" selected>${blnm}</option>`);
+        });
+    });
+
+    function initializeDataTable() {
+        debugger
+        let table = $('#wardenTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![6].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![6].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+    $(document).ready(function () {
+        initializeDataTable()
+        $('#addWarden').on('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: "Please Wait..!",
+                html: "Your request are under process.",
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            })
+            var formData = new FormData($('#addWarden')[0]);
+            $.ajax({
+                url: '/Admin/wardenRegistration',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (responce) {
+                    if (responce.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: responce.message,
+                            didClose: () => {
+
+                                location.reload();
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: responce.message
+                        });
+                    }
+                },
+
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'error',
+                        text: 'Something went wrong with the request'
+                    });
+                }
+            });
+        });
+    });
+
+    $("#st_Id").on("change", function () {
+        $("#city_Id").html(`<option selected disabled>--select city--</option>`);
+        let id = $(this).val();
+        $.ajax({
+            url: '/Admin/GetCityById',
+            type: 'get',
+            data: { id: id },
+            success: function (response) {
+                if (response && response.length > 0) {
+                    $.each(response, function (index, item) {
+                        $("#city_Id").append(`<option value='${item.city_Id}'>${item.City_Name}</option>`);
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'error',
+                    text: 'Something went wrong with the request'
+                });
+            }
+        });
+    });
+
+    function deleteCompany(Id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the  record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Please Wait..!",
+                    html: "Your request are under process.",
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                })
+                $.ajax({
+                    url: '/Admin/DeleteWarden',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ Id: Id }),
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+
+            }
+        });
+    }
+
+
+    $("#st_Id1").on("change", function () {
+        $("#city_Id1").html(`<option selected disabled>--select city--</option>`);
+        let id = $(this).val();
+        $.ajax({
+            url: '/Admin/GetCityById',
+            type: 'get',
+            data: { id: id },
+            success: function (response) {
+                if (response && response.length > 0) {
+                    $.each(response, function (index, item) {
+                        $("#city_Id1").append(`<option value='${item.city_Id}'>${item.City_Name}</option>`);
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong while fetching cities.'
+                });
+            }
+        });
+    });
+
+    function editsection(id) {
+        Swal.fire({
+            title: "Please Wait..!",
+            html: "Your request are under process.",
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        })
+
+        $.get('/Admin/GetWardenById?id=' + id, function (data) {
+            if (data) {
+                $('#wardenId').val(data.Id);
+                $('#EmployeeId2').val(data.EmployeeId);
+                $('#Name2').val(data.Name);
+                $('#EmailId1').val(data.EmailId);
+                $('#DOB1').val(data.DOBstring);
+                $('#MobileNo1').val(data.MobileNo);
+                $('#st_Id1').val(data.st_Id);
+                $('#Address1').val(data.Address);
+                $('#BlockName1').val(data.BlockId);
+                $("#gender").val(data.Gender)
+
+
+                $.get('/Admin/GetCityById?Id=' + data.st_Id, function (cities) {
+                    $('#city_Id1').empty().append('<option value="">-- Select City --</option>');
+                    $.each(cities, function (i, city) {
+                        let selected = city.city_Id === data.city_Id ? 'selected' : '';
+                        $('#city_Id1').append('<option value="' + city.city_Id + '" ' + selected + '>' + city.City_Name + '</option>');
+                    });
+
+                    $('#city_Id1').val(data.city_Id);
+                });
+
+
+                $('#documentPreview').text('Current Document: ' + data.Document);
+
+                Swal.close();
+                $('#editSectionModal').modal('show');
+            }
+        });
+    }
+
+    $('#editWardenForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        // Show loader before AJAX
+        Swal.fire({
+            title: 'Updating...',
+            text: 'Please wait while we update the warden details.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/UpdateWardens',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                Swal.close(); // Close the loading modal
+                if (res.success) {
+                    $('#editSectionModal').modal('hide');
+                    Swal.fire('Updated!', res.message, 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', res.message, 'error');
+                }
+            },
+            error: function () {
+                Swal.close(); // Close loader in case of error too
+                Swal.fire('Error', 'An unexpected error occurred.', 'error');
+            }
+        });
+    });
+
+
+
+
+</script>

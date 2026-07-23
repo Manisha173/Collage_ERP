@@ -1,0 +1,459 @@
+﻿
+@{
+    ViewBag.Title = "AddCollegeFee";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<style>
+    td{
+        white-space:nowrap;
+    }
+</style>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-1" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/registrationfee"> Registration Fee</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">Add College Fee</li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/adddiscountfee">Add Discount on Fee</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/allfeerecords">Fee Statement</a>
+                    </li>
+                </ol>
+            </nav>
+
+        </div>
+    </div>
+
+    <!--add Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Add College Fee</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="collegefeeForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" id="FeeId" name="FeeId" value="0" />
+
+                                <div class="mb-3">
+                                    <label>Class Name</label>
+                                    <select id="ClassId" name="ClassName" class="form-select">
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Sports Fee</label>
+                                    <input type="number" id="SportsFee" name="SportsFee" class="form-control" placeholder="Sports Fee" required />
+
+                                </div>
+                                <div class="mb-3">
+                                    <label>Activity Fee</label>
+                                    <input type="number" id="ActivityFee" name="ActivityFee" class="form-control" placeholder="Activity Fee" required />
+
+                                </div>
+                                <div class="mb-3">
+                                    <label>Annual Charges</label>
+                                    <input type="number" id="AnnualCharge" name="AnnualCharge" class="form-control" placeholder="Annual Charge" required />
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Admission Fee</label>
+                                    <input type="number" id="AdmissionFee" name="AdmissionFee" class="form-control" placeholder="Admission Fee" required />
+
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label>Billing Period </label>
+                                    <select id="BillingPeriod" name="BillingPeriod" class="form-select">
+                                        <option selected value="">Select Billing Period</option>
+                                        <option value="yearly">Yearly</option>
+                                        <option value="monthly">Monthly</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Building Fee</label>
+                                    <input type="number" id="BuildingFee" name="BuildingFee" class="form-control" required placeholder="Building Fee" />
+                                </div>
+                                <div class="mb-3">
+                                    <label>Library Fee</label>
+                                    <input type="number" id="LibraryFee" name="LibraryFee" class="form-control" required placeholder="Library Fee" />
+
+                                </div>
+                                <div class="mb-3">
+                                    <label>Tution Fee</label>
+                                    <input type="number" id="TutionFee" name="TutionFee" class="form-control" required placeholder="TutionFee" />
+
+                                </div>
+                                <div class="mb-3">
+                                    <label>Total Fee</label>
+                                    <input type="number" id="TotalFee" name="TotalFee" class="form-control" readonly placeholder="Total Fee" />
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Add College Fee</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit   College Fee Modal -->
+    <div class="modal fade" id="editCollegeFeeModal" tabindex="-1" aria-labelledby="editCollegeFeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <form id="editCollegeFeeForm" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editCollegeFeeModalLabel">Edit College Fee</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                        <input type="hidden" id="EditFeeId" name="FeeId" />
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Select Class</label>
+                                <select name="ClassName" id="EditClassId" class="form-select" required>
+                                    <option value="0" disabled selected>-- Select Class --</option>
+                                    @foreach (var item in ViewBag.ClassList)
+                                    {
+                                        <option value="@item.ClassId">@item.ClassName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Billing Period </label>
+                                <select id="EditBillingPeriod" name="BillingPeriod" class="form-select">
+                                    <option selected value="">Select Billing Period</option>
+                                    <option value="yearly">Yearly</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="EditAdmissionFee" class="form-label">Admission Fee</label>
+                                <input type="text" id="EditAdmissionFee" name="AdmissionFee" class="form-control" placeholder="Admission Fee" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="EditBuildingFee" class="form-label">Building Fee</label>
+                                <input type="text" id="EditBuildingFee" name="BuildingFee" class="form-control" placeholder="Building Fee" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="EditTutionFee" class="form-label">Tution Fee</label>
+                                <input type="text" id="EditTutionFee" name="TutionFee" class="form-control" placeholder="Tuition Fee" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="EditSportsFee" class="form-label">Sports Fee</label>
+                                <input type="text" id="EditSportsFee" name="SportsFee" class="form-control" placeholder="Sports Fee" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="EditLibraryFee" class="form-label">Library Fee</label>
+                                <input type="text" id="EditLibraryFee" name="LibraryFee" class="form-control" placeholder="Library Fee" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="EditActivityFee" class="form-label">Activity Fee</label>
+                                <input type="text" id="EditActivityFee" name="ActivityFee" class="form-control" placeholder="Activity Fee" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="EditAnnualCharge" class="form-label">Annual Charge</label>
+                                <input type="text" id="EditAnnualCharge" name="AnnualCharge" class="form-control" placeholder="Annual Charge" />
+                            </div>
+
+
+                            <div class="col-md-6 mb-3">
+                                <label for="EditTotalFee" class="form-label">Total Fee</label>
+                                <input type="text" id="EditTotalFee" name="TotalFee" class="form-control" readonly placeholder="Total Fee" />
+                            </div>
+                        </div>
+                        <div class="text-center my-2">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-12 table-responsive">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span>College Fee List</span><!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                           Add College Fee
+                        </button>
+                    </h4>
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Class Name</th>
+                                <th>Admission Fee</th>
+                                <th>Building Fee</th>
+                                <th>Tution Fee</th>
+                                <th>Sports Fee</th>
+                                <th>Library Fee</th>
+                                <th>Activity Fee</th>
+                                <th>Annual Charge</th>
+                                <th>Total Fee </th>
+
+                                <th style="width:150px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int sr = 1;
+                            }
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@sr</td>
+                                    <td>@item.ClassName</td>
+                                    <td>₹ @item.AdmissionFee.ToString("N2")</td>
+                                    <td>₹ @item.BuildingFee.ToString("N2")</td>
+                                    <td>₹ @item.TutionFee.ToString("N2")</td>
+                                    <td>₹ @item.SportsFee.ToString("N2")</td>
+                                    <td>₹ @item.LibraryFee.ToString("N2")</td>
+                                    <td>₹ @item.ActivityFee.ToString("N2")</td>
+                                    <td>₹ @item.AnnualCharge.ToString("N2")</td>
+                                    <td>₹ @item.TotalFee.ToString("N2") @((item.BillingPeriod?.ToLower() == "monthly") ? "/month" : (item.BillingPeriod?.ToLower() == "yearly") ? "/year" : "")</td>
+
+
+                                    <td>
+                                        <button class="btn btn-sm p-0" onclick="editCollegeFee(@item.FeeId)"><i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>
+                                        @*<button class="btn btn-sm" onclick="deleteCollegeFee(@item.FeeId)"><i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"> </i></button>*@
+
+
+                                    </td>
+                                </tr>
+                                sr++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script>
+     $(document).ready(function () {
+     var data =  @Html.Raw(Json.Encode(ViewData["classlist"]));
+     console.log(data);
+     var dropdown = $('#ClassId');
+     dropdown.empty();
+     dropdown.append('<option value="">Select Class</option>');
+
+     $.each(data, function (i, classItem) {
+         dropdown.append('<option value="' + classItem.ClassId + '">' + classItem.ClassName + '</option>');
+     });
+     });
+     //calculateTotalFee
+    function calculateTotalFee(prefix = '') {
+        let total = 0;
+        const fields = [
+            `${prefix}AdmissionFee`,
+            `${prefix}BuildingFee`,
+            `${prefix}TutionFee`,
+            `${prefix}SportsFee`,
+            `${prefix}LibraryFee`,
+            `${prefix}ActivityFee`,
+            `${prefix}AnnualCharge`,
+            `${prefix}ElectricianFee`
+        ];
+
+        fields.forEach(id => {
+            const val = parseFloat($(`#${id}`).val()) || 0;
+            total += val;
+        });
+
+        $(`#${prefix}TotalFee`).val(total.toFixed(2));
+    }
+   
+    $('#AdmissionFee, #BuildingFee, #TutionFee, #SportsFee, #LibraryFee, #ActivityFee, #AnnualCharge, #ElectricityFee').on('input', function () {
+        calculateTotalFee('');
+    });
+
+    
+    $('#EditAdmissionFee, #EditBuildingFee, #EditTutionFee, #EditSportsFee, #EditLibraryFee, #EditActivityFee, #EditAnnualCharge, #EditElectricianFee').on('input', function () {
+        calculateTotalFee('Edit');
+    });
+
+//insert
+    $('#btnSubmit').on('click', function (e) {
+     e.preventDefault();
+
+        var formData = new FormData($('#collegefeeForm')[0]);
+        //loader
+        Swal.fire({
+            title: 'Submitting...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+     $.ajax({
+         url: '/Admin/AddCollegeFee',
+         type: 'POST',
+         data: formData,
+         contentType: false,
+         processData: false,
+         success: function (res) {
+             Swal.close(); // Hide loader
+             if (res.success) {
+
+                 Swal.fire({
+                     icon: 'success',
+                     title: 'Success',
+                     text: res.message, didClose: () => {
+                         location.href ='/admin/AddCollegeFee'
+                     }
+                 });
+             } else {
+                 Swal.close(); // Hide loader
+                 Swal.fire({
+                     icon: 'error',
+                     title: 'Error',
+                     text: res.message
+                 });
+             }
+         },
+         error: function (xhr) {
+
+             Swal.fire({
+                 icon: 'error',
+                 title: 'Error',
+                 text: 'Something went wrong: ' + xhr.responseText
+             });
+         }
+     });
+ });
+
+ //   function deleteCollegeFee(FeeId) {
+ //    Swal.fire({
+ //        title: 'Are you sure?',
+ //        text: 'This will permanently delete the subject record.',
+ //        icon: 'warning',
+ //        showCancelButton: true,
+ //        confirmButtonText: 'Yes, delete it!',
+ //        cancelButtonText: 'Cancel'
+ //    }).then((result) => {
+ //        if (result.isConfirmed) {
+ //            $.ajax({
+ //                url: '/Admin/DeleteCollegeFee',
+ //                type: 'POST',
+ //                contentType: 'application/json; charset=utf-8',
+ //                data: JSON.stringify({ FeeId: FeeId }),
+ //                success: function (response) {
+ //                    if (response.success) {
+ //                        Swal.fire('Deleted!', response.message, 'success')
+ //                            .then(() => location.reload());
+ //                    } else {
+ //                        Swal.fire('Error', response.message, 'error');
+ //                    }
+ //                },
+ //                error: function () {
+ //                    Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+ //                }
+ //            });
+
+ //        }
+ //    });
+ //}
+
+
+
+    function editCollegeFee(id) {
+        $.get('/Admin/GetCollegeFeeById?id=' + id, function (data) {
+            if (data) {
+                $("#EditFeeId").val(data.FeeId);
+                $("#EditClassId").val(data.ClassName);
+                $("#EditBillingPeriod").val(data.BillingPeriod);
+                $("#EditAdmissionFee").val(data.AdmissionFee);
+                $("#EditBuildingFee").val(data.BuildingFee);
+                $("#EditTutionFee").val(data.TutionFee);
+                $("#EditSportsFee").val(data.SportsFee);
+                $("#EditLibraryFee").val(data.LibraryFee);
+                $("#EditActivityFee").val(data.ActivityFee);
+                $("#EditAnnualCharge").val(data.AnnualCharge);
+                $("#EditElectricianFee").val(data.ElectricianFee);
+                $("#EditTotalFee").val(data.TotalFee);
+
+
+                $('#editCollegeFeeModal').modal('show');
+            }
+        });
+    }
+
+    $('#editCollegeFeeForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+        //loader
+        Swal.fire({
+            title: 'Updating College Fee...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/UpdateCollegeFee',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                Swal.close(); // Hide loader
+                if (res.success) {
+                    $('#editCollegeFeeModal').modal('hide');
+                    Swal.fire('Updated!', 'College Fee updated successfully.', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.close(); // Hide loader
+                    Swal.fire('Error', 'Something went wrong.', 'error');
+                }
+            }
+        });
+    });
+
+</script>
+
+
+
+
+
+
+
+
+

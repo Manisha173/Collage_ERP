@@ -1,0 +1,579 @@
+﻿
+
+
+@model List<College_ERP.Models.Admin.EventCategory>
+@{
+    ViewBag.Title = "addeventcategories";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <nav class="mt-2 mb-1" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addcirculars">Circulars</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                      Events
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- Teacher Form -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+
+                        <!--<div class="card-header">-->
+                        @*<h5 class="card-title mb-0">Input Type</h5>*@
+                        <!--</div>--><!-- end card header -->
+
+                          
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add Events</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form enctype="multipart/form-data" method="Post" id="form">
+
+                                                <div class="row">
+
+                                                    <div class="col-lg-6">
+
+                                                        <!--Award Title-->
+                                                        <div class="mb-3">
+                                                            <label for="CategoryName" class="form-label">Event Name</label>
+                                                            <input type="text" id="CategoryName" name="CategoryName" class="form-control" placeholder="Category Name" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="fromdate" class="form-label">From Date</label>
+                                                            <input type="date" id="fromdate" name="fromdate" class="form-control" required >
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+
+                                                        <div class="mb-3">
+                                                            <label for="CategoryImage" class="form-label">Image</label>
+                                                            <input type="file" id="CategoryImage" name="CategoryImage" accept="image/*" class="form-control" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="todate" class="form-label">To Date</label>
+                                                            <input type="date" id="todate" name="todate" class="form-control" required>
+                                                        </div>
+
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="mb-3">
+                                                            <label for="CategoryDescription" class="form-label">Description</label>
+                                                            <textarea placeholder="write description here.." class="form-control" id="CategoryDescription" name="CategoryDescription" rows="5" spellcheck="false"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12 text-center">
+                                                        <input type="submit" value="Submit" class="btn btn-md btn-primary btn_submit" />
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 class="d-flex justify-content-between">
+                                                <span>Events</span><!-- Button trigger modal -->
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    Add Events
+                                                </button>
+                                            </h4>
+                                            <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>SR</th>
+                                                        <th>Event Name</th>
+                                                        <th>From Date</th>
+                                                        <th>To Date</th>
+                                                        <th>Description</th>
+                                                        <th>Image</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model != null)
+                                                    {
+                                                        int count = 1;
+                                                        foreach (var item in Model)
+                                                        {
+                                                            <tr>
+                                                                <td>@count</td>
+                                                                <td>@item.CategoryName</td>
+
+                                                                <td>@item.fromdate</td>
+                                                                <td>@item.todate</td>
+                                                                <td>
+                                                                    <a role="button" class="btn-info btn-sm view-description-btn"
+                                                                            data-description="@item.CategoryDescription">
+                                                                        View
+                                                                    </a>
+                                                                </td>
+                                                                <td><a href="@item.CategoryImg" target="_blank" >View</a></td>
+                                                                <td>
+                                                                    <a role="button" class="edit-category p-0"
+                                                                       data-id="@item.Id"
+                                                                       data-name="@item.CategoryName"
+                                                                       data-description="@item.CategoryDescription"
+                                                                       data-image="@item.CategoryImg"
+                                                                        data-fromdate="@item.fromdate"
+                                                                        data-todate="@item.todate"
+                                                                       >
+                                                                        <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i>
+                                                                    </a>
+                                                                    <a href="/admin/delete"
+                                                                       class="delete-category p-0"
+                                                                       data-id="@item.Id">
+                                                                        <i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i>
+                                                                    </a>
+
+                                                                </td>
+                                                            </tr>
+                                                            count++;
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+
+                                            <!--description-->
+                                            <!-- Description View Modal -->
+                                            <div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="descriptionModalLabel">Description</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p id="modalDescriptionText"></p>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- container-fluid -->
+
+    </div> <!-- content -->
+ 
+
+</div>
+
+<!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="editCategoryForm" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCategoryModalLabel">Edit Event</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <input type="hidden" id="EditCategoryId" name="Id" />
+                        <div class="col-md-6 mb-3">
+                            <label for="EditCategoryName" class="form-label">Event Name</label>
+                            <input type="text" id="EditCategoryName" name="CategoryName" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="Editfromdate" class="form-label">From Date</label>
+                            <input type="date" id="Editfromdate" name="fromdate" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="Edittodate" class="form-label">To Date</label>
+                            <input type="date" id="Edittodate" name="todate" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="EditCategoryImage" class="form-label">Image</label>
+                            <input type="file" id="EditCategoryImage" name="CategoryImage" class="form-control" accept="image/*" />
+                        </div>
+                        <div class=" col-md-12 mb-3">
+                            <label for="EditCategoryDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="EditCategoryDescription" name="CategoryDescription" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mb-3">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fromDate = document.getElementById('fromdate');
+        const toDate = document.getElementById('todate');
+
+        // Set today as minimum for From Date
+        const today = new Date().toISOString().split('T')[0];
+        fromDate.setAttribute('min', today);
+
+        // When From Date changes
+        fromDate.addEventListener('change', function () {
+            const selectedFrom = fromDate.value;
+
+            if (selectedFrom) {
+                toDate.setAttribute('min', selectedFrom);
+
+                // If To Date is before the new From Date, reset it
+                if (toDate.value && toDate.value < selectedFrom) {
+                    toDate.value = '';
+                }
+            }
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const fromDate = document.getElementById('Editfromdate');
+        const toDate = document.getElementById('Edittodate');
+
+        // Set today as minimum for From Date
+        const today = new Date().toISOString().split('T')[0];
+        fromDate.setAttribute('min', today);
+
+        // When From Date changes
+        fromDate.addEventListener('change', function () {
+            const selectedFrom = fromDate.value;
+
+            if (selectedFrom) {
+                toDate.setAttribute('min', selectedFrom);
+
+                // If To Date is before the new From Date, reset it
+                if (toDate.value && toDate.value < selectedFrom) {
+                    toDate.value = '';
+                }
+            }
+        });
+    });
+    $(document).ready(function () {
+        $('.view-description-btn').on('click', function () {
+            var description = $(this).data('description');
+            $('#modalDescriptionText').text(description);
+
+            var modal = new bootstrap.Modal(document.getElementById('descriptionModal'));
+            modal.show();
+        });
+    });
+
+    $(document).on('click', '.edit-category', function (e) {
+        e.preventDefault();
+        debugger;
+
+        const id = $(this).data('id');
+        const name = $(this).data('name');
+        const description = $(this).data('description');
+        const rawFromDate = $(this).data('fromdate'); // '05-06-2025'
+        const rawToDate = $(this).data('todate');     // '10-06-2025'
+
+        function convertToISODate(dateStr) {
+            const parts = dateStr.split('-'); // ['05', '06', '2025']
+            if (parts.length !== 3) return '';
+            return `${parts[2]}-${parts[1]}-${parts[0]}`; // '2025-06-05'
+        }
+
+        const fromDate = convertToISODate(rawFromDate);
+        const toDate = convertToISODate(rawToDate);
+
+        $('#EditCategoryId').val(id);
+        $('#EditCategoryName').val(name);
+        $('#EditCategoryDescription').val(description);
+        $('#Editfromdate').val(fromDate);
+        $('#Edittodate').val(toDate);
+
+        $('#editCategoryModal').modal('show');
+    });
+
+
+    $(document).on('submit', '#editCategoryForm', function (e) {
+        e.preventDefault();
+
+        let formData = new FormData(this);
+        const Id = $('#EditCategoryId').val();
+        const EditCategoryName = $('#EditCategoryName').val();
+        const EditCategoryDescription = $('#EditCategoryDescription').val();
+        var categoryImage = $('#CategoryImage')[0].files[0];
+        var fromdate = $('#Editfromdate').val();
+        var todate = $('#Edittodate').val();
+
+        formData.append("CategoryName", EditCategoryName);
+        formData.append("CategoryDescription", EditCategoryDescription);
+        formData.append("CategoryImage", categoryImage);
+        formData.append("fromdate", fromdate);
+        formData.append("todate", todate);
+        formData.append("Id", Id);
+
+        // Show loading alert
+        Swal.fire({
+            title: 'Please wait...',
+            didOpen: () => {
+                Swal.showLoading();
+            },
+            allowOutsideClick: false
+        });
+
+        $.ajax({
+            url: '/admin/UpdateCategory',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                Swal.close(); // Close loading alert
+                if (res.status) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Category updated successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        $('#editCategoryModal').modal('hide');
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: res.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.close(); // Close loading alert
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Something went wrong: ' + error,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+
+
+
+    $(document).on('click', '.delete-category', function (e) {
+        e.preventDefault();
+        var Id = $(this).data("id");
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do You want to Delete This record",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Please wait...',
+                    allowOutsideClick: false,
+                    allowEscapeKey:false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    allowOutsideClick: false
+                });
+                $.ajax({
+                    url: '/admin/DeleteCategory',
+                    type: 'GET',
+                    data: { 'id': Id },
+                    success: function (res) {
+                        console.log(res);
+                        if (res.status) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Category Deleted successfully!',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('form')[0].reset();
+                                    window.location.href = "/admin/addeventcategories";
+                                }
+                            });
+
+                        }
+                        else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Failed to Delete',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+
+                })
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $(document).on('submit', '#form', function (e) {
+            e.preventDefault();
+            debugger
+
+            var categoryName = $('#CategoryName').val().trim();
+            var CategoryDescription = $('#CategoryDescription').val().trim();
+            var categoryImage = $('#CategoryImage')[0].files[0];
+            var fromDate = $('#fromdate').val();
+            var toDate = $('#todate').val();
+
+            if (categoryName === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Required!',
+                    text: 'Please enter a category name.'
+                });
+                return;
+            }
+            if (fromDate === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Required!',
+                    text: 'Please enter a from Date.'
+                });
+                return;
+            }
+            if (!toDate) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Required!',
+                    text: 'Please select a to Date.'
+                });
+                return;
+            }
+
+            if (CategoryDescription === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Required!',
+                    text: 'Please enter a category description.'
+                });
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append("CategoryName", categoryName);
+            formData.append("CategoryDescription", CategoryDescription);
+            formData.append("CategoryImage", categoryImage);
+            formData.append("FromDate", fromDate);
+            formData.append("ToDate", toDate);
+
+            // Show loading alert
+            Swal.fire({
+                title: 'Please wait...',
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+                allowOutsideClick: false
+            });
+
+            $.ajax({
+                url: "/admin/eventcategories",
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    Swal.close();  // close loading
+
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Event category added successfully!',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $('form')[0].reset();
+                                window.location.href = "/admin/addeventcategories";
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: res.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close(); // close loading
+
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong: ' + error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+
+        });
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,219 @@
+﻿
+@{
+    ViewBag.Title = "StudentReportCard";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var classes = ViewData["classes"] as List<College_ERP.Models.Admin.ClassModel>;
+    var exams = ViewData["exams"] as List<College_ERP.Models.Admin.ExamModel>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/ScheduleExam">Schedule Exam </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/ExamMarkSheet">Exam Marksheet</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/StudentNumberAllocation">Student Number Allocation</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Student Report Card
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        <div class="row mx-3">
+            <div class="col-md-3">
+                <select class="form-select" id="classId" name="classId">
+                    <option selected value="">Select Class</option>
+                    @if (ViewData["classes"] != null)
+                    {
+                        foreach (var clas in classes)
+                        {
+                            <option value="@clas.ClassId">@clas.ClassName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="sectionId" name="sectionId">
+                    <option selected value="">Select Section</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="academicYear" name="academicYear">
+                    <option selected value="">Select Academic Year</option>
+                    @{
+                        for (int i = 0; i <= 3; i++)
+                        {
+                            <option value="@(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)">
+                                @(DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i+1)).Year)
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="examId" name="examId">
+                    <option selected value="">Select Exam Name</option>
+                    @if (ViewData["exams"] != null)
+                    {
+                        foreach (var exam in exams)
+                        {
+                            <option value="@exam.ExamId">@exam.ExamName</option>
+                        }
+                    }
+                </select>
+            </div>
+
+        </div>
+
+
+
+        <div class="row mx-3 mt-3">
+            <table id="datatable" cellpadding="1" cellspacing="1" class="table table-bordered dt-responsive nowrap w-100">
+                <thead>
+                    <tr>
+                        <th>SR</th>
+                        <th>Student Names</th>
+                        <th>Gender</th>
+                        <th>Student Email</th>
+                        <th>Father's Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+        //bind section
+    $(document).ready(function () {
+        $('#classId').on('change', function () {
+            var classId = $(this).val();
+            var sectionDropdown = $('#sectionId');
+            sectionDropdown.empty().append('<option value="">Loading.......</option>');
+
+            if (classId !== "") {
+                $.ajax({
+                    url: '@Url.Action("GetSectionsByClass", "Admin")',
+                    type: 'GET',
+                    data: { classId: classId },
+                    success: function (sections) {
+                        sectionDropdown.empty().append('<option value="">Select Section</option>');
+                        $.each(sections, function (i, section) {
+                            sectionDropdown.append(`<option value="${section.SectionId}">${section.SectionName}</option>`);
+                        });
+                    },
+                    error: function () {
+                        Swal.fire("Error", "Error fetching sections.", "error");
+
+                        sectionDropdown.empty().append('<option value="">Select Section</option>');
+                    }
+                });
+            } else {
+                sectionDropdown.empty().append('<option value="">Select Section</option>');
+            }
+        });
+
+//fetch students
+        function fetchStudentsByClassAndSection(classId, sectionId) {
+        if (classId !== "" && sectionId !== "") {
+            $.ajax({
+                url: '@Url.Action("GetStudentsByClassAndSection", "Admin")',
+                type: 'GET',
+                data: {
+                    classId: classId,
+                    sectionId: sectionId
+                },
+                success: function (students) {
+                    console.log("Students:",typeof students);
+                    if (Array.isArray(students) && students.length > 0) {
+                        var tbody = $('#datatable tbody');
+                        tbody.empty(); // Clear existing rows
+
+                        $.each(students, function (i, student) {
+                            var row = `
+                            <tr>
+                            <td>${i + 1}</td>
+                                <td>
+                                    <input type="hidden" name="Students[${i}].studentId" value="${student.StudentId}" />
+                                    ${student.StudentName}
+                                </td>
+                                <td>
+                                  ${student.Gender}
+                                </td>
+                                <td>
+                                    ${student.StudentEmail}
+                                </td>
+                                <td>
+                                   ${student.FatherName}
+                                </td>
+                                 <td>
+                                  <a role="button" target="_blank" class="btn btn-sm btn-warning show-result" data-studentid="${student.StudentId}" data-studentname="${student.StudentName}"> Show Result</a>
+                                 </td>
+                            </tr>`;
+                            tbody.append(row);
+                        });
+                    } else {
+                        $('#datatable tbody').empty();
+                        $('#datatable tbody').append(`
+                            <tr class="error-row">
+                                <td colspan="6" class="text-center text-danger">
+                                    No students found for the selected class.
+                                </td>
+                            </tr>
+                        `);
+                    }
+                },
+                error: function () {
+                    Swal.fire("Error", "Error fetching students.", "error");
+                }
+            });
+        }
+        }
+
+        $(document).ready(function () {
+
+            $('#sectionId').on('change', function () {
+                var classId = $('#classId').val();
+                var sectionId = $('#sectionId').val();
+                fetchStudentsByClassAndSection(classId, sectionId);
+        });
+
+        $('#classId').on('change', function () {
+            $('#datatable tbody').empty();
+            $('#datatable tbody').append(`
+                <tr class="error-row">
+                    <td colspan="6" class="text-center text-danger">
+                        No students found for the selected class.
+                    </td>
+                </tr>
+            `);
+
+        });
+        });
+
+         $(document).on('click', '.show-result', function () {
+     var studentId = $(this).data('studentid');
+     var academicYear = $('#academicYear').val();
+     var examId = $('#examId').val();
+
+     if (!academicYear || !examId) {
+         Swal.fire("Missing Fields", "Please select Academic Year and Exam Name.", "warning");
+         return;
+     }
+
+     window.location.href = `/Admin/ReportCard?studentId=${studentId}&examId=${examId}&academicYear=${academicYear}`;
+ });
+
+  });
+</script>

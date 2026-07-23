@@ -1,0 +1,998 @@
+﻿@{
+    ViewBag.Title = "AddNotice";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var clasList = ViewData["ClassList"] as List<College_ERP.Models.Admin.ClassModel>;
+}
+<style>
+    .modal-dialog-scrollable .modal-body {
+        max-height: calc(100vh - 200px); 
+        overflow-y: auto;
+    }
+
+</style>
+<div class="content-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex my-2 justify-content-between">
+                        <span class="fs-5 fw-bold">Notice List</span>
+                        <select class="form-select" id="userTypeFilter" onchange="filterByUserType()" style="width: 200px;">
+                            <option value="all">All Users</option>
+                            <option value="Student">Student</option>
+                            <option value="Teacher">Teacher</option>
+                            <option value="Warden">Warden</option>
+                            <option value="Security">Security</option>
+                            <option value="Driver">Driver</option>
+                            <option value="Librarian">Librarian</option>
+                            <option value="Parent">Parent</option>
+                        </select>
+
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNoticeModal">
+                            Add Notice
+                        </button>
+                        <!--table-->
+                        <!-- insert Modal -->
+                        <div class="modal fade" data-bs-backdrop="static" id="addNoticeModal" tabindex="-1" aria-labelledby="addNoticeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <!--start form-->
+                                    <form id="noticeform" class="noticeform" enctype="multipart/form-data" method="post">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Add Notice</h5>
+                                            <button type="button" id="closeModal" class="btn-close closeModal" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Radio buttons -->
+                                            <div class="row mb-3 ms-5">
+                                                <div class="col-sm-4">
+                                                    <label><input type="radio" name="NoticeFor" value="Staff" checked /> Staff</label>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label><input type="radio" name="NoticeFor" value="Student" /> Student</label>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label><input type="radio" name="NoticeFor" value="All" /> Send to All</label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Staff Dropdown -->
+                                            <div class="row mb-3 staffDropdownDiv" id="staffDropdownDiv" style="display:none;">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Select Department:</label>
+                                                    <select id="StaffDepartmentDropdown" class="form-select StaffDepartmentDropdown">
+                                                        <option selected value="">Select Department</option>
+                                                        <option value="Teacher">Teacher</option>
+                                                        <option value="Warden">Warden</option>
+                                                        <option value="Security">Security</option>
+                                                        <option value="BusDriver">Bus Driver</option>
+                                                        <option value="Librarian">Librarian</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Select Staff:</label>
+                                                    <select id="IndividualStaffDropdown" name="ReceiverId" class="form-select IndividualStaffDropdown">
+                                                        <option selected value="">-- Select Staff --</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Student Dropdowns -->
+                                            <div class="row mb-3 studentDropdownDiv" style="display: none;" id="studentDropdownDiv">
+                                                <div class="col-md-3 mx-auto">
+                                                    <label class="form-label">Select Class:</label>
+                                                    <select  name="ClassId" class="form-select Class" required>
+                                                        <option selected disabled>--Select Class--</option>
+                                                        @if (clasList != null && clasList.Count > 0)
+                                                        {
+                                                            foreach (var item in clasList)
+                                                            {
+                                                                <option value="@item.ClassId">@item.ClassName</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3 mx-auto">
+                                                    <label class="form-label">Select Section:</label>
+                                                    <select  class="form-select mb-2 Section">
+                                                        <option selected value="0">--Select Section--</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-3 mx-auto">
+                                                    <label class="form-label">Select Academic Year:</label>
+                                                    <select name="academicyear" class="form-select academicyear" >
+                                                        <option value="" selected>Select Academic Year</option>
+                                                        @{
+                                                            for (int i = 0; i <= 3; i++)
+                                                            {
+                                                                var yearValue = DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year;
+                                                                <option value="@yearValue">@yearValue</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3 mx-auto">
+                                                    <label class="form-label">Students:</label>
+                                                    <select id="studentList" class="form-select mb-2 studentList">
+                                                        <option selected value="0">Select Student</option>
+                                                    </select>
+                                                </div>
+
+                                            </div>
+
+                                            <!-- All Staff Checkbox List -->
+                                            <div id="allStaffDiv" class="mb-3 allStaffDiv" style="display:none;">
+                                                <label class="form-label">Select Departments to Send:</label>
+                                                <div id="staffCheckboxList" class="d-flex flex-wrap gap-2 border rounded ps-3 p-2 staffCheckboxList" style="max-height: 200px; overflow-y: auto;"></div>
+                                            </div>
+                                            <!--radio buttons of student parent and both-->
+                                            <div class="col-md-12 mt-3 mb-3 studentTypeDiv" id="studentTypeDiv" style="display: none;">
+                                                <label class="form-label">Send Notice To:</label><br />
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" name="studentType" value="Student" checked>
+                                                    <label class="form-check-label">Student</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" name="studentType" value="Parent">
+                                                    <label class="form-check-label">Parent</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" name="studentType" value="Both">
+                                                    <label class="form-check-label">Both</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <label class="form-label">Notice Title</label>
+                                                    <input type="text" name="Title" class="form-control" placeholder="Enter Notice Title" required />
+
+
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label">Notice Attachment</label>
+                                                    <input type="file" name="Attachment" class="form-control" required />
+                                                </div>
+                                                <div class="col-12 mt-2">
+                                                    <label class="form-label">Notice Description</label>
+                                                    <textarea id="description" name="Description" class="form-control description"></textarea>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="text-center mb-3">
+                                            <button type="button" onclick="submitNotice()" class="btn btn-primary submitNoticeBtn" id="submitNoticeBtn">Submit</button>
+                                        </div>
+                                    </form>
+                                    <!--end form-->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Modal -->
+                        <!-- edit Modal -->
+                        <div class="modal fade" data-bs-backdrop="static" id="editNoticeModal" tabindex="-1" aria-labelledby="editNoticeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <!--start form-->
+                                    <form id="editnoticeform" class="noticeform" enctype="multipart/form-data" method="post">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Edit Notice</h5>
+                                            <button type="button" id="closeeditModal" class="btn-close closeModal" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Radio buttons -->
+                                            <div class="row mb-3 ms-5">
+                                                <div class="col-sm-4">
+                                                    <label><input type="radio" name="NoticeFor" value="Staff" checked /> Staff</label>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label><input type="radio" name="NoticeFor" value="Student" /> Student</label>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label><input type="radio" name="NoticeFor" value="All" /> Send to All</label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Staff Dropdown -->
+                                            <div class="row mb-3 staffDropdownDiv" id="staffDropdownDiv" style="display:none;">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Select Department:</label>
+                                                    <select id="StaffDepartmentDropdown" class="form-select StaffDepartmentDropdown">
+                                                        <option selected value="">Select Department</option>
+                                                        <option value="Teacher">Teacher</option>
+                                                        <option value="Warden">Warden</option>
+                                                        <option value="Security">Security</option>
+                                                        <option value="BusDriver">Bus Driver</option>
+                                                        <option value="Librarian">Librarian</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Select Staff:</label>
+                                                    <select id="IndividualStaffDropdown" class="form-select IndividualStaffDropdown">
+                                                        <option selected value="">-- Select Staff --</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Student Dropdowns -->
+                                          
+                                            <div class="row mb-3 studentDropdownDiv" style="display: none;" id="studentDropdownDiv">
+                                                <div class="col-md-3 mx-auto">
+                                                    <label class="form-label">Select Class:</label>
+                                                    <select id="Class" name="ClassId" class="form-select Class" required>
+                                                        <option selected disabled>--Select Class--</option>
+                                                        @if (clasList != null && clasList.Count > 0)
+                                                        {
+                                                            foreach (var item in clasList)
+                                                            {
+                                                                <option value="@item.ClassId">@item.ClassName</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3 mx-auto">
+                                                    <label class="form-label">Select Section:</label>
+                                                    <select id="SectionId" name="SectionId" class="form-select mb-2 Section">
+                                                        <option selected value="0">--Select Section--</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-3 mx-auto">
+                                                    <label class="form-label">Select Academic Year:</label>
+                                                    <select name="academicyear"  class="form-select academicyear" id="academicyear">
+                                                        <option value="" selected>Select Academic Year</option>
+                                                        @{
+                                                            for (int i = 0; i <= 3; i++)
+                                                            {
+                                                                var yearValue = DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year;
+                                                                <option value="@yearValue">@yearValue</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3 mx-auto">
+                                                    <label class="form-label">Students:</label>
+                                                    <select id="studentListss"  class="form-select mb-2 studentList">
+                                                        <option selected value="0">Select Student</option>
+                                                    </select>
+                                                </div>
+
+                                            </div>
+
+                                            <!-- All Staff Checkbox List -->
+                                            <div id="allStaffDiv" class="mb-3 allStaffDiv" style="display:none;">
+                                                <label class="form-label">Select Departments to Send:</label>
+                                                <div id="staffCheckboxList" class="d-flex flex-wrap gap-2 border rounded ps-3 p-2 staffCheckboxList" style="max-height: 200px; overflow-y: auto;"></div>
+                                            </div>
+                                            <!--radio buttons of student parent and both-->
+                                            <div class="col-md-12 mt-3 mb-3 studentTypeDiv" id="studentTypeDiv" style="display: none;">
+                                                <label class="form-label">Send Notice To:</label><br />
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" name="studentType" value="Student" checked>
+                                                    <label class="form-check-label">Student</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" name="studentType" value="Parent">
+                                                    <label class="form-check-label">Parent</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="radio" name="studentType" value="Both">
+                                                    <label class="form-check-label">Both</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <input type="hidden" id="NoticeId" name="NoticeId" />
+                                                @*<input type="hidden" name="UserType" id="UserType" />
+                                                <input type="hidden" name="ReceiverId" id="ReceiverId" />
+                                                <input type="hidden" name="IsSentToBothStudentParent" id="IsSentToBothStudentParent" />*@
+
+                                                <div class="col-6">
+                                                    <label class="form-label">Notice Title</label>
+                                                    <input type="text" name="Title" class="form-control" placeholder="Enter Notice Title" required />
+
+
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label">Notice Attachment</label>
+                                                    <input type="file" name="Attachment" class="form-control" />
+                                                </div>
+                                                <div class="col-12 mt-2">
+                                                    <label class="form-label">Notice Description</label>
+                                                    <textarea id="Description" name="Description" class="form-control description" required></textarea>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="text-center mb-3">
+                                            <button type="submit" class="btn btn-primary" id="editNoticeBtn">Update</button>
+                                        </div>
+                                    </form>
+                                    <!--end form-->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Modal -->
+                    </div>
+                    <!--table-->
+                    <div class="row">
+                        <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>User Type</th>
+                                    <th>Receiver Name</th>
+                                    <th>Title</th>
+                                    <th>Attachment</th>
+                                    <th>Description</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="noticeTableBody">
+                                @if (Model != null)
+                                {
+                                    int srNo = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr data-usertype="@item.UserType">
+                                            <td>@srNo</td>
+
+                                            <td>@item.UserType</td>
+                                            <td>@item.ReceiverName</td>
+                                            <td>@item.Title</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(item.Attachments))
+                                                {
+                                                    <a href="@Url.Content( item.Attachments)" target="_blank">View</a>
+                                                }
+                                                else
+                                                {
+                                                    <span>No Certificate Uploaded</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a role="button" class="text-primary" onclick="viewDesc(`@item.Description`)"> View </a>
+                                            </td>
+
+
+
+
+
+                                            <td>
+                                                <button class="btn btn-sm p-0">
+                                                    <i data-feather="edit" onclick="editNotice(@item.NoticeId)" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i>
+                                                </button>
+                                                <button class="btn btn-sm p-0"><i data-feather="trash-2" onclick="deleteNotice(@item.NoticeId)" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+
+                                            </td>
+                                        </tr>
+                                        srNo++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center">No data available</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <!--Description Modal-->
+                        <div class="modal fade" id="viewDescriptionModal" tabindex="-1" aria-labelledby="viewDescriptionModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-primary text-light">
+                                        <h5 class="modal-title" id="viewDescriptionModalLabel">Notice Description</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p id="DescriptionContent" style="white-space: pre-line;"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end description modal-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('.closeModal').on('click', function () {
+            $('.noticeform')[0].reset();
+            $('.description').summernote('reset');
+        });
+    });
+    $(document).ready(function () {
+        $('#closeeditModal').on('click', function () {
+            $('#editnoticeform')[0].reset();
+            $("input[name='NoticeFor']:checked").trigger('change');
+            $('.description').summernote('reset');
+        });
+    });
+    //load students
+    async function fetchAndBindStudents(classId, sectionId, academicYear) {
+
+
+        if (!classId || !sectionId || !academicYear || academicYear === "Select academic year") {
+            $('.studentList').html('<option selected value="0">Select Student</option>');
+            return;
+        }
+
+        await $.ajax({
+            url: '/Admin/GetStudentsByClassSection',
+            type: 'GET',
+            data: {
+                classId: classId,
+                sectionId: sectionId,
+                academicYear: academicYear
+            },
+            success: function (students) {
+                const $studentList = $('.studentList');
+                $studentList.empty().append('<option selected value="0">Select Student</option>');
+
+                if (students.length > 0) {
+                    $.each(students, function (i, student) {
+                        $studentList.append(`<option value="${student.StudentId}">${student.StudentName}</option>`);
+                    });
+                    Swal.close();
+                } else {
+                    Swal.close();
+                    $studentList.append('<option disabled>No students found</option>');
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Failed to fetch student list.'
+                });
+            }
+        });
+    }
+   
+    function filterByUserType() {
+        var selectedType = document.getElementById('userTypeFilter').value;
+        var rows = document.querySelectorAll('#noticeTableBody tr');
+
+        rows.forEach(row => {
+            var userType = row.getAttribute('data-usertype');
+
+            if (selectedType === 'all' || userType === selectedType) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    window.viewDesc = function (description) {
+        $('#DescriptionContent').html(description);
+        $('#viewDescriptionModal').modal('show');
+    };
+
+ 
+        //select radio button
+        function checkStudentDropdowns() {
+            const classSelected = $('.Class').val();
+            const sectionSelected = $('.Section').val();
+            const yearSelected = $('.academicyear').val();
+
+            if (classSelected && sectionSelected && yearSelected) {
+                $('.studentTypeDiv').show();
+            } else {
+                $('.studentTypeDiv').hide();
+            }
+        }
+
+        $('.Class, .Section, .academicyear').on('change', checkStudentDropdowns);
+       //summernote
+        $(document).ready(function () {
+
+            $('.description').summernote({
+                height: 100,
+                placeholder: 'Enter Description...'
+            });
+            //select section
+            $('.Class').on('change', function () {
+                var classId = $(this).val();
+                var sectionDropdown = $('.Section');
+                sectionDropdown.empty().append('<option value="">----Loading----</option>');
+
+                if (classId !== "") {
+                    $.ajax({
+                        url: '@Url.Action("GetSectionsByClass", "Admin")',
+                        type: 'GET',
+                        data: { classId: classId },
+                        success: function (sections) {
+                            sectionDropdown.empty().append('<option value="">----Select Section----</option>');
+                            $.each(sections, function (i, section) {
+                                sectionDropdown.append(`<option value="${section.SectionId}">${section.SectionName}</option>`);
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Error fetching sections!',
+                            });
+                            sectionDropdown.empty().append('<option value="">----Select Section----</option>');
+                        }
+
+                    });
+                } else {
+                    sectionDropdown.empty().append('<option value="">----Select Section----</option>');
+                }
+            });
+            //radio buttons
+            $("input[name='NoticeFor']").change(function () {
+                let selected = $(this).val();
+                $(".staffDropdownDiv, .studentDropdownDiv, .allStaffDiv").hide();
+
+                if (selected === "Staff") {
+                    $(".staffDropdownDiv").show();
+                    $('.studentTypeDiv').hide();
+                } else if (selected === "Student") {
+                    $(".studentDropdownDiv").show();
+                    $('.Section').empty().append('<option value="">--Select Section--</option>');
+                } else if (selected === "All") {
+                    $(".allStaffDiv").show();
+                    $('.studentTypeDiv').hide();
+                    loadStaffCheckboxes();
+                }
+            });
+
+            $("input[name='NoticeFor']:checked").trigger('change');
+            //staff dropdown
+            $('.StaffDepartmentDropdown').change(function () {
+                Swal.fire({
+                    title: 'Please wait!',
+                    text: 'process your request...',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                let department = $(this).val();
+                if (!department) return;
+                loadStaffDropdown(department);
+            });
+
+            // Bind class/section change events to load students
+            $('.Class, .Section, .academicyear').on('change', async function () {
+               
+                debugger;
+                const classId = $('.Class').val();
+                const sectionId = $('.Section').val();
+                const academicYear = $('.academicyear').val();
+               await fetchAndBindStudents(classId, sectionId, academicYear);
+            });
+
+
+            function loadStaffDropdown(department) {
+                $.ajax({
+                    url: '/Admin/GetStaffByDepartment',
+                    type: 'GET',
+                    data: { department: department },
+                    success: function (data) {
+                        let $dropdown = $('.IndividualStaffDropdown');
+                        $dropdown.empty().append('<option value="">-- Select Staff --</option>');
+                        if (data.length > 0) {
+                            $.each(data, function (i, staff) {
+                                $dropdown.append(`<option value="${staff.StaffId}">${staff.Name}</option>`);
+                            });
+                            Swal.close();
+                        } else {
+                            Swal.close();
+                            $dropdown.append('<option disabled>No staff found</option>');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'OOPS!',
+                            text: 'Error fetching data....!'
+                        });
+                    }
+                });
+            }
+        //staff checkbox
+            function loadStaffCheckboxes() {
+                var $container = $('.staffCheckboxList');
+                $container.empty();
+                const departments = [
+                    { key: "Teacher", label: "Teacher" },
+                    { key: "Warden", label: "Warden" },
+                    { key: "Security", label: "Security" },
+                    { key: "BusDriver", label: "Bus Driver" },
+                    { key: "Librarian", label: "Librarian" },
+                    { key: "Student", label: "Student" },
+                    { key: "Parent", label: "Parent" }
+                ];
+
+                $.each(departments, function (_, dept) {
+                    let checkboxHtml = `
+                        <div class="form-check me-3">
+                            <input class="form-check-input chk_${dept.key}" type="checkbox" id="chk_${dept.key}" name="staffDepartments" value="${dept.key}" checked>
+                            <label class="form-check-label" for="chk_${dept.key}">${dept.label}</label>
+                        </div>`;
+                    $container.append(checkboxHtml);
+                });
+            }
+
+        });
+
+        //insert
+    function submitNotice() {
+        $('.Class, .Section, .academicyear').on('change', async function () {
+            debugger;
+            const classId = $('.Class').val();
+            const sectionId = $('.Section').val();
+            const academicYear = $('.academicyear').val();
+            await fetchAndBindStudents(classId, sectionId, academicYear);
+        });
+
+        var formData = new FormData();
+
+        var noticeFor = $("input[name='NoticeFor']:checked").val();
+        var userType = noticeFor;
+        if (noticeFor === "Staff") {
+            userType = $(".StaffDepartmentDropdown").val().trim();
+        }
+
+        var receiverId = null;
+        if (noticeFor === "Staff") {
+            receiverId = $(".IndividualStaffDropdown").val() || null;
+        } else if (noticeFor === "Student") {
+            receiverId = $(".studentList").val().trim() || null;
+        }
+
+        var allTeacherStatus = $(".chk_Teacher").is(':checked');
+        var allWardenStatus = $(".chk_Warden").is(':checked');
+        var allSecurityStatus = $(".chk_Security").is(':checked');
+        var allDriverStatus = $(".chk_BusDriver").is(':checked');
+        var allLibrarianStatus = $(".chk_Librarian").is(':checked');
+        var allStudentStatus = $(".chk_Student").is(':checked');
+        var allParentStatus = $(".chk_Parent").is(':checked');
+
+        var isSentToBothStudentParent = 0;
+        if (noticeFor === "Student") {
+            var studentType = $("input[name='studentType']:checked").val();
+            if (studentType === "Student") isSentToBothStudentParent = 1;
+            else if (studentType === "Parent") isSentToBothStudentParent = 2;
+            else if (studentType === "Both") isSentToBothStudentParent = 3;
+        }
+
+        var title = $("input[placeholder='Enter Notice Title']").val();
+        var description = $(".description").val();
+        var attachmentFile = $("input[type='file']")[0].files[0];
+
+        formData.append("ReceiverId", receiverId);
+        formData.append("UserType", userType);
+        formData.append("Title", title);
+        formData.append("Description", description);
+        formData.append("Attachment", attachmentFile);
+        formData.append("AllTeacherStatus", allTeacherStatus);
+        formData.append("AllWardenStatus", allWardenStatus);
+        formData.append("AllSecurityStatus", allSecurityStatus);
+        formData.append("AllDriverStatus", allDriverStatus);
+        formData.append("AllLibrarianStatus", allLibrarianStatus);
+        formData.append("AllStudentStatus", allStudentStatus);
+        formData.append("AllParentStatus", allParentStatus);
+        formData.append("IsSentToBothStudentParent", isSentToBothStudentParent);
+
+        // Show SweetAlert loader
+        Swal.fire({
+            title: 'Sending notice...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/admin/addnotice',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                Swal.close(); // Hide loader
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Your notice has been added successfully.',
+                    icon: 'success',
+                }).then(() => location.reload());
+
+                $('.noticeform')[0].reset();
+                $('.description').summernote('reset');
+                $('#addNoticeModal').modal('hide');
+            },
+            error: function () {
+                Swal.close(); // Hide loader
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Failed to add notice. Try again.',
+                });
+            }
+        });
+    }
+
+
+    //delete
+    function deleteNotice(NoticeId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the notice record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show loader before making the AJAX request
+                Swal.fire({
+                    title: 'Deleting...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '/Admin/DeleteNotice',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ NoticeId: NoticeId }),
+                    success: function (response) {
+                        Swal.close(); // Hide loader
+
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.close(); // Hide loader
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+
+    //get by id
+    function editNotice(id) {
+        Swal.fire({
+            title: 'Please wait!',
+            text: 'process your request...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        $('.Class, .Section, .academicyear').on('change', async function () {
+            debugger;
+            const classId = $('.Class').val();
+            const sectionId = $('#SectionId').val();
+            const academicYear = $('.academicyear').val();
+            await fetchAndBindStudents(classId, sectionId, academicYear);
+        });
+        $.ajax({
+            type: "POST",
+            url: '/Admin/GetNoticeById',
+            data: { id: id },
+            success: function (data) {
+                console.log(data);
+                if (data) {
+                    $("#NoticeId").val(data.NoticeId);
+                    // Title
+                    $("input[name='Title']").val(data.Title);
+                    console.log('des', data.Description)
+                    // Summernote Description
+                    $('#Description').summernote('code', data.Description);                 
+
+                    // Set NoticeFor radio
+                    $("input[name='NoticeFor'][value='" + data.UserType + "']").prop('checked', true).trigger('change');
+
+                    // Staff
+                    if (data.UserType === 'Teacher' || data.UserType === 'Warden' || data.UserType === 'Security' || data.UserType === 'BusDriver' || data.UserType === 'Librarian') {
+                        $("#staffDropdownDiv").show();
+                        $(".StaffDepartmentDropdown").val(data.UserType).trigger('change');
+
+                        console.log("ReceiverId:", data.ReceiverId);
+
+                        setTimeout(function () {
+                            $(".IndividualStaffDropdown").val(data.ReceiverId)
+
+                        }, 500);
+                    }
+                  
+                    // Student
+                    else if (data.UserType === 'Student') {
+                        $(".studentDropdownDiv").show();
+                      
+                        $(".Class").val(data.ClassId).trigger('change');
+
+                        setTimeout(function () {
+                            $(".Section").val(data.SectionId).trigger('change');                                           
+                            $(".academicyear").val(data.AcademicYear).trigger('change');
+                            console.log('student', data.ReceiverId)
+                            fetchAndBindStudents(data.ClassId, data.SectionId, data.AcademicYear)
+                                .then(() => {
+                                    $('.studentList').val(data.ReceiverId);
+                                });
+
+                        }, 500);
+
+                    }
+
+
+
+                    // All
+                    else if (data.UserType === 'All') {
+                        $(".allStaffDiv").show();
+
+                        // First uncheck all checkboxes
+                        $(".chk_Teacher").prop("checked", false);
+                        $(".chk_Warden").prop("checked", false);
+                        $(".chk_Security").prop("checked", false);
+                        $(".chk_BusDriver").prop("checked", false);
+                        $(".chk_Librarian").prop("checked", false);
+                        $(".chk_Student").prop("checked", false);
+                        $(".chk_Parent").prop("checked", false);
+
+                        // Then selectively check only the ones that are true
+                        if (data.AllTeacherStatus === true || data.AllTeacherStatus === "true" || data.AllTeacherStatus === 1) {
+                            $(".chk_Teacher").prop("checked", true);
+                        }
+                        if (data.AllWardenStatus === true || data.AllWardenStatus === "true" || data.AllWardenStatus === 1) {
+                            $(".chk_Warden").prop("checked", true);
+                        }
+                        if (data.AllSecurityStatus === true || data.AllSecurityStatus === "true" || data.AllSecurityStatus === 1) {
+                            $(".chk_Security").prop("checked", true);
+                        }
+                        if (data.AllDriverStatus === true || data.AllDriverStatus === "true" || data.AllDriverStatus === 1) {
+                            $(".chk_BusDriver").prop("checked", true);
+                        }
+                        if (data.AllLibrarianStatus === true || data.AllLibrarianStatus === "true" || data.AllLibrarianStatus === 1) {
+                            $(".chk_Librarian").prop("checked", true);
+                        }
+                        if (data.AllStudentStatus === true || data.AllStudentStatus === "true" || data.AllStudentStatus === 1) {
+                            $(".chk_Student").prop("checked", true);
+                        }
+                        if (data.AllParentStatus === true || data.AllParentStatus === "true" || data.AllParentStatus === 1) {
+                            $(".chk_Parent").prop("checked", true);
+                        }
+                    }
+
+
+
+                    // Set studentType radio
+                    $("input[name='studentType'][value='" + data.IsSentToBothStudentParent + "']").prop("checked", true);
+                    Swal.close();
+                    // Show Modal
+                    $('#editNoticeModal').modal('show');
+                }
+            }
+        });
+    }
+  
+    $('#editnoticeform').submit(function (e) {
+      
+        e.preventDefault();
+        debugger;
+        var formData = new FormData(this);
+
+        var noticeFor = $("input[name='NoticeFor']:checked").val();
+        var userType = noticeFor;
+
+        if (noticeFor === "Staff") {
+            userType = $(".StaffDepartmentDropdown").val();
+        }
+
+        var receiverId = null;
+        if (noticeFor === "Staff") {
+            receiverId = $(".IndividualStaffDropdown").val() || null;
+        } else if (noticeFor === "Student") {
+            receiverId = $("#studentListss").val() || null;
+        } else if (noticeFor === "All") {
+            receiverId = "0";
+        }
+
+        var allTeacherStatus = false;
+        var allWardenStatus = false;
+        var allSecurityStatus = false;
+        var allDriverStatus = false;
+        var allLibrarianStatus = false;
+        var allStudentStatus = false;
+        var allParentStatus = false;
+
+        if (noticeFor === "All") {
+            allTeacherStatus = $(".chk_Teacher").is(':checked');
+            allWardenStatus = $(".chk_Warden").is(':checked');
+            allSecurityStatus = $(".chk_Security").is(':checked');
+            allDriverStatus = $(".chk_BusDriver").is(':checked');
+            allLibrarianStatus = $(".chk_Librarian").is(':checked');
+            allStudentStatus = $(".chk_Student").is(':checked');
+            allParentStatus = $(".chk_Parent").is(':checked');
+        }
+
+        var isSentToBothStudentParent = 0;
+        if (noticeFor === "Student") {
+            var studentType = $("input[name='studentType']:checked").val();
+            if (studentType === "Student") isSentToBothStudentParent = 1;
+            else if (studentType === "Parent") isSentToBothStudentParent = 2;
+            else if (studentType === "Both") isSentToBothStudentParent = 3;
+        }
+
+        formData.append("UserType", userType);
+        formData.append("ReceiverId", receiverId);
+        formData.append("IsSentToBothStudentParent", isSentToBothStudentParent);
+
+        if (noticeFor === "All") {
+            formData.append("AllTeacherStatus", allTeacherStatus);
+            formData.append("AllWardenStatus", allWardenStatus);
+            formData.append("AllSecurityStatus", allSecurityStatus);
+            formData.append("AllDriverStatus", allDriverStatus);
+            formData.append("AllLibrarianStatus", allLibrarianStatus);
+            formData.append("AllStudentStatus", allStudentStatus);
+            formData.append("AllParentStatus", allParentStatus);
+        }
+
+        // 🔄 Show SweetAlert loader
+        Swal.fire({
+            title: 'Updating notice...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/UpdateNotice',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                Swal.close(); // Hide loader
+
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload();
+                    });
+                    $('#editNoticeModal').modal('hide');
+                    loadNotices();
+                } else {
+                    Swal.fire("Failed", response.message, "error");
+                }
+            },
+            error: function () {
+                Swal.close(); // Hide loader
+                Swal.fire("Error", "Something went wrong while updating the notice.", "error");
+            }
+        });
+    });
+
+
+
+</script>
+

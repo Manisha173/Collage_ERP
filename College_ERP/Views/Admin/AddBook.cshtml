@@ -1,0 +1,927 @@
+﻿
+@{
+    ViewBag.Title = "AddBook";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var categories = ViewData["categories"] as List<College_ERP.Models.Admin.BookCategoryModel>;
+    var data = ViewData["BookList"] as List<College_ERP.Models.Admin.BookModel>;
+}
+
+<style>
+    .custom-file-upload {
+        border: 1px solid #1e7644;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        margin-top: 2px;
+        width: 115px;
+        background: #1e7644;
+        color: white;
+    }
+
+
+    .filter-section {
+        background: white;
+        border-radius: 12px;
+        padding: 10px 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .filter-select {
+        padding: 12px 20px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+        min-width: 200px;
+    }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-select:hover {
+            border-color: #667eea;
+        }
+</style>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/admin/LibraryOverview"> Library Overview</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/admin/AddLibrarian"> Librarian Registration</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Book
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/admin/ordermanagement"> Order Management</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/admin/OrderHistory"> Order History</a>
+                    </li>
+
+                </ol>
+            </nav>
+
+            <!-- Academic Year Filter -->
+            <div class="filter-section" id="filterCard">
+                <label class="filter-label" for="academicYearSelect">Academic Year:</label>
+
+                <select id="academicYearSelect" class="filter-select">
+                    <option value="">-- Select Academic Year --</option>
+                    <option value="2026-27">2026-27</option>
+                    <option value="2025-26">2025-26</option>
+                    <option value="2024-25">2024-25</option>
+                    <option value="2023-24">2023-24</option>
+                    <option value="2022-23">2022-23</option>
+                    <option value="2021-22">2021-22</option>
+                    <option value="2020-21">2020-21</option>
+                </select>
+            </div>
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <div class="card py-0 my-0">
+                        <div class="card-body py-0">
+                            <div class="row mb-1">
+                                <div class="col-sm-3">
+                                    <label for="category" class="form-label">Search Book By Category</label>
+                                    <select id="category" class="form-select">
+                                        <option value="">--Select Category--</option>
+                                        @if (ViewData["categories"] != null)
+                                        {
+                                            foreach (var category in categories)
+                                            {
+                                                <option value="@category.id">@category.categoryName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="isbnno" class="form-label">Search Book By ISBN</label>
+                                    <input type="text" id="isbnno" class="form-control" placeholder="Enter ISBN Number" />
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="issnno" class="form-label">Search Book By ISSN</label>
+                                    <input type="text" id="issnno" class="form-control" placeholder="Enter ISSN Number" />
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="accession" class="form-label">Search Book By Accession</label>
+                                    <input type="text" id="accession" class="form-control" placeholder="Enter Accession Number" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="py-0 card-header border-bottom-0 d-flex justify-content-between">
+                            <h4 class="card-title">Book List</h4>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#BookModal">
+                                Add Book
+                            </button>
+                        </div>
+                        <div class="card-body py-2  table-responsive">
+                            <table id="bookTable" class="table table-bordered ">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Title</th>
+                                        <th>Sub Title</th>
+                                        <th>Category</th>
+                                        <th>Author</th>
+                                        <th>ISBN No.</th>
+                                        <th>ISSN Print</th>
+                                        <th>Accession No.</th>
+                                        <th>Book Count</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="BookTableBody">
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td><a href="/admin/ShowBookDetailsPage?id=@item.id" title="Show Details">@item.title</a></td>
+                                                <td>@item.subTitle</td>
+                                                <td>@item.categoryName</td>
+                                                <td>@item.author</td>
+                                                <td>@item.isbn</td>
+                                                <td>@item.issnPrint</td>
+                                                <td>@item.accessionNumber</td>
+                                                <td>@(item.numberOfCopies - item.bookCount)</td>
+                                                <td class="text-center">
+
+                                                    <a role="button" title="Update" data-id="@item.id" class="btn btn-sm updateBook p-0"> <i class="text-warning fa-solid fa-pen-to-square" style="width:22px; height:22px;"></i></a>
+                                                </td>
+                                            </tr>
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal To Add Book-->
+<div class="modal fade" id="BookModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Book</h1>
+                <button type="button" class="btn-close" id="CloseModalAddBook"></button>
+            </div>
+            <div class="modal-body">
+                <form class="addBookForm">
+                    <div class="row">
+                        <div class="col-sm-4 mb-2">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" name="title" id="title" placeholder="Enter book title" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="subTitle" class="form-label">Sub Title</label>
+                            <input type="text" class="form-control" name="subTitle" id="subTitle" placeholder="Enter subtitle" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="author" class="form-label">Author</label>
+                            <input type="text" class="form-control" name="author" id="author" placeholder="Enter author name" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="volume" class="form-label">Volume</label>
+                            <input type="text" class="form-control" name="volume" id="volume" placeholder="Enter volume number" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="edition" class="form-label">Edition</label>
+                            <input type="text" class="form-control" name="edition" id="edition" placeholder="Enter edition" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="isbn" class="form-label">ISBN</label>
+                            <input type="text" class="form-control isbnCheck" name="isbn" data-actiontype="Add" id="isbn" placeholder="Enter ISBN number" required>
+                            <input type="hidden" name="IsISBN" class="isISBN" />
+                            <span class="text-danger checkISBN" style="font-size:14px;"></span>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="publication" class="form-label">Publication</label>
+                            <input type="text" class="form-control" name="publication" id="publication" placeholder="Enter publisher name" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="issnPrint" class="form-label">ISSN Print</label>
+                            <input type="text" class="form-control issnPrintCheck" data-actiontype="Add" name="issnPrint" id="issnPrint" placeholder="Enter ISSN (Print)" required>
+                            <input type="hidden" name="IsISSN" class="isISSN" />
+                            <span class="text-danger checkISSN" style="font-size:14px;"></span>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="placeOfPublication" class="form-label">Place of Publication</label>
+                            <input type="text" class="form-control" name="placeOfPublication" id="placeOfPublication" placeholder="Enter place of publication" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="deweyDecimalClass" class="form-label">Dewey Decimal Class</label>
+                            <input type="text" class="form-control deweyDecimalClass" name="deweyDecimalClass" id="deweyDecimalClass" list="deweyOptions" oninput="filterDeweyValue()" placeholder="Select Dewey Decimal Class" required>
+                            <datalist id="deweyOptions">
+                                <option value="000 – General Works">
+                                <option value="100 – Philosophy & Psychology">
+                                <option value="200 – Religion">
+                                <option value="300 – Social Sciences">
+                                <option value="400 – Language">
+                                <option value="500 – Natural Sciences & Mathematics">
+                                <option value="600 – Technology (Applied Sciences)">
+                                <option value="700 – The Arts">
+                                <option value="800 – Literature & Rhetoric">
+                                <option value="900 – History & Geography">
+                            </datalist>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="yearOfPublication" class="form-label">Year of Publication</label>
+                            <input type="number" class="form-control" name="yearOfPublication" id="yearOfPublication" placeholder="Enter year of publication" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="printingDate" class="form-label">Printing Date</label>
+                            <input type="date" class="form-control" name="printingDate" id="printingDate" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="numberOfCopies" class="form-label">Number of Copies</label>
+                            <input type="number" class="form-control" name="numberOfCopies" id="numberOfCopies" placeholder="Enter number of copies" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="isIssuable" class="form-label">Is Issuable</label>
+                            <select class="form-select" name="isIssuable" id="isIssuable" required>
+                                <option value="">Select option</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="numberOfPages" class="form-label">Number of Pages</label>
+                            <input type="number" class="form-control" name="numberOfPages" id="numberOfPages" placeholder="Enter number of pages" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="purchasingDate" class="form-label">Purchasing Date</label>
+                            <input type="date" class="form-control" name="purchasingDate" id="purchasingDate" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="source" class="form-label">Source</label>
+                            <input type="text" class="form-control" name="source" id="source" placeholder="Enter source" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" step="0.01" class="form-control" name="price" id="price" placeholder="Enter price" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="supplier" class="form-label">Supplier</label>
+                            <input type="text" class="form-control" name="supplier" id="supplier" placeholder="Enter supplier name" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="accessionNumber" class="form-label">Accession No.</label>
+                            <input type="text" class="form-control accessionNumberCheck" data-actiontype="Add" name="accessionNumber" id="accessionNumber" placeholder="Enter accession number" required>
+                            <input type="hidden" name="IsAccession" class="isAccession" />
+                            <span class="text-danger checkAccession" style="font-size:14px;"></span>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="bookLocation" class="form-label">Book Location</label>
+                            <input type="text" class="form-control" name="bookLocation" id="bookLocation" placeholder="Enter book location" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="category" class="form-label">Category</label>
+                            <div class="input-group">
+                                <select id="categoryName" name="categoryId" class="form-select" required>
+                                    <option value="">--Select Category--</option>
+                                    @if (ViewData["categories"] != null)
+                                    {
+                                        foreach (var category in categories)
+                                        {
+                                            <option value="@category.id">@category.categoryName</option>
+                                        }
+                                    }
+                                </select>
+                                <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#exampleModal" type="button" id="addCategoryBtn">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Enter subject" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="bookLanguages" class="form-label">Book Languages</label>
+                            <input type="text" class="form-control" name="bookLanguages" id="bookLanguages" placeholder="Enter book language(s)" required>
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="bookRemarks" class="form-label">Book Remarks</label>
+                            <textarea class="form-control" name="bookRemarks" id="bookRemarks" placeholder="Enter remarks about the book" required></textarea>
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="bookContent" class="form-label">Book Content</label>
+                            <textarea class="form-control" name="bookContent" id="bookContent" placeholder="Enter content/summary of the book" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 text-center">
+                        <button type="submit" class="btn btn-primary addBookBtn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal to Add Category-->
+<div class="modal fade" tabindex="-1" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title">Add Book Category</h5>
+                <button type="button" class="btn-close" id="categoryModalCloseBtn" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addBookCategoryForm">
+                    <label class="form-label">Category Name</label>
+                    <input type="text" class="form-control" name="CategoryName" required placeholder="Add Book Category" />
+
+                    <div class="text-center my-3">
+                        <input type="submit" class="btn btn-primary" id="addCategory" value="Submit" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal To Update Book-->
+<div class="modal fade" id="UpdateBookModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Update Book Details</h1>
+                <button type="button" class="btn-close" id="CloseModalUpdateBook"></button>
+            </div>
+            <div class="modal-body">
+                <form class="addBookForm">
+                    <input type="hidden" name="id" id="id" />
+                    <div class="row">
+                        <div class="col-sm-4 mb-2">
+                            <label for="titleup" class="form-label">Title</label>
+                            <input type="text" class="form-control" name="title" id="titleup" placeholder="Enter book title" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="subTitleup" class="form-label">Sub Title</label>
+                            <input type="text" class="form-control" name="subTitle" id="subTitleup" placeholder="Enter subtitle" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="authorup" class="form-label">Author</label>
+                            <input type="text" class="form-control" name="author" id="authorup" placeholder="Enter author name" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="volumeup" class="form-label">Volume</label>
+                            <input type="text" class="form-control" name="volume" id="volumeup" placeholder="Enter volume number" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="editionup" class="form-label">Edition</label>
+                            <input type="text" class="form-control" name="edition" id="editionup" placeholder="Enter edition" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="isbnup" class="form-label">ISBN</label>
+                            <input type="text" class="form-control isbnCheck" name="isbn" id="isbnup" data-actiontype="Update" placeholder="Enter ISBN number" required>
+                            <input type="hidden" name="IsISBN" class="isISBN" />
+                            <span class="text-danger checkISBN" style="font-size:14px;"></span>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="publicationup" class="form-label">Publication</label>
+                            <input type="text" class="form-control" name="publication" id="publicationup" placeholder="Enter publisher name" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="issnPrintup" class="form-label">ISSN Print</label>
+                            <input type="text" class="form-control issnPrintCheck" name="issnPrint" data-actiontype="Update" id="issnPrintup" placeholder="Enter ISSN (Print)" required>
+                            <input type="hidden" name="IsISSN" class="isISSN" />
+                            <span class="text-danger checkISSN" style="font-size:14px;"></span>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="placeOfPublicationup" class="form-label">Place of Publication</label>
+                            <input type="text" class="form-control" name="placeOfPublication" id="placeOfPublicationup" placeholder="Enter place of publication" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="deweyDecimalClassup" class="form-label">Dewey Decimal Class</label>
+                            <input type="text" class="form-control deweyDecimalClassup" name="deweyDecimalClass" id="deweyDecimalClassup" list="deweyOptions" oninput="filterDeweyValue()" placeholder="Select Dewey Decimal Class" required>
+                            <datalist id="deweyOptions">
+                                <option value="000 – General Works">
+                                <option value="100 – Philosophy & Psychology">
+                                <option value="200 – Religion">
+                                <option value="300 – Social Sciences">
+                                <option value="400 – Language">
+                                <option value="500 – Natural Sciences & Mathematics">
+                                <option value="600 – Technology (Applied Sciences)">
+                                <option value="700 – The Arts">
+                                <option value="800 – Literature & Rhetoric">
+                                <option value="900 – History & Geography">
+                            </datalist>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="yearOfPublicationup" class="form-label">Year of Publication</label>
+                            <input type="number" class="form-control" name="yearOfPublication" id="yearOfPublicationup" placeholder="Enter year of publication" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="printingDateup" class="form-label">Printing Date</label>
+                            <input type="date" class="form-control" name="printingDate" id="printingDateup" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="numberOfCopiesup" class="form-label">Number of Copies</label>
+                            <input type="number" class="form-control" name="numberOfCopies" id="numberOfCopiesup" placeholder="Enter number of copies" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="isIssuableup" class="form-label">Is Issuable</label>
+                            <select class="form-select" name="isIssuable" id="isIssuableup" required>
+                                <option value="">Select option</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="numberOfPagesup" class="form-label">Number of Pages</label>
+                            <input type="number" class="form-control" name="numberOfPages" id="numberOfPagesup" placeholder="Enter number of pages" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="purchasingDateup" class="form-label">Purchasing Date</label>
+                            <input type="date" class="form-control" name="purchasingDate" id="purchasingDateup" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="sourceup" class="form-label">Source</label>
+                            <input type="text" class="form-control" name="source" id="sourceup" placeholder="Enter source" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="priceup" class="form-label">Price</label>
+                            <input type="number" step="0.01" class="form-control" name="price" id="priceup" placeholder="Enter price" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="supplierup" class="form-label">Supplier</label>
+                            <input type="text" class="form-control" name="supplier" id="supplierup" placeholder="Enter supplier name" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="accessionNumberup" class="form-label">Accession No.</label>
+                            <input type="text" class="form-control accessionNumberCheck" data-actiontype="Update" name="accessionNumber" id="accessionNumberup" placeholder="Enter accession number" required>
+                            <input type="hidden" name="IsAccession" class="isAccession" />
+                            <span class="text-danger checkAccession" style="font-size:14px;"></span>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="bookLocationup" class="form-label">Book Location</label>
+                            <input type="text" class="form-control" name="bookLocation" id="bookLocationup" placeholder="Enter book location" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="categoryNameup" class="form-label">Category</label>
+                            <div class="input-group">
+                                <select id="categoryNameup" name="categoryId" class="form-select" required>
+                                    <option value="">--Select Category--</option>
+                                    @if (ViewData["categories"] != null)
+                                    {
+                                        foreach (var category in categories)
+                                        {
+                                            <option value="@category.id">@category.categoryName</option>
+                                        }
+                                    }
+                                </select>
+                                <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#exampleModal" type="button" id="addCategoryBtn">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="subjectup" class="form-label">Subject</label>
+                            <input type="text" class="form-control" name="subject" id="subjectup" placeholder="Enter subject" required>
+                        </div>
+                        <div class="col-sm-4 mb-2">
+                            <label for="bookLanguagesup" class="form-label">Book Languages</label>
+                            <input type="text" class="form-control" name="bookLanguages" id="bookLanguagesup" placeholder="Enter book language(s)" required>
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="bookRemarksup" class="form-label">Book Remarks</label>
+                            <textarea class="form-control" name="bookRemarks" id="bookRemarksup" placeholder="Enter remarks about the book" required></textarea>
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <label for="bookContentup" class="form-label">Book Content</label>
+                            <textarea class="form-control" name="bookContent" id="bookContentup" placeholder="Enter content/summary of the book" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 text-center">
+                        <button type="submit" class="btn btn-primary addBookBtn">Update</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/assets/libs/jquery/jquery.min.js"></script>*@
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+    function filterDeweyValue() {
+        const inputs = document.getElementsByClassName('deweyDecimalClass');
+        for (let input of inputs) {
+            const value = input.value;
+            const match = value.match(/^(\d{3})/);
+            if (match) {
+                input.value = match[1];
+            }
+        }
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById("purchasingDate").setAttribute('max', today);
+    });
+    function initializeDataTable() {
+        debugger
+        let table = $('#bookTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+    $(document).ready(function () {
+        initializeDataTable();
+        $('#categoryModalCloseBtn').on('click', function () {
+            $('#addBookCategoryForm')[0].reset();
+            $('#exampleModal').modal('hide');
+            $('#BookModal').modal('show');
+
+        })
+
+        $('#CloseModalAddBook').on('click', function () {
+            $('.addBookForm').each(function () {
+                this.reset();
+            });
+            $('#BookModal').modal('hide')
+        })
+        $('#CloseModalUpdateBook').on('click', function () {
+            $('.addBookForm').each(function () {
+                this.reset();
+            });
+            $('#UpdateBookModal').modal('hide')
+        })
+
+        $("#addBookCategoryForm").on('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            let formdata = new FormData(this);
+            $.ajax({
+                url: '/admin/AddBookCategory', type: 'post', data: formdata, contentType: false, processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                }
+            });
+        });
+
+        $('.isbnCheck').on('blur', function () {
+            debugger
+            var isbnValue = $(this).val();
+            var actiontype = $(this).data('actiontype');
+
+            $.ajax({
+                url: '/admin/checkisbn',
+                type: 'get',
+                data: { isbn: isbnValue, actiontype: actiontype },
+                success: function (response) {
+                    console.log('Server response:', response);
+                    if (response) {
+                        $('.isISBN').val(true);
+                        $('.checkISBN').text('This ISBN number already exist');
+                        $('.addBookBtn').prop('disabled', true);
+                    }
+                    else {
+                        $('.isISBN').val(false);
+                        $('.checkISBN').text('');
+                        $('.addBookBtn').prop('disabled', false);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        $('.issnPrintCheck').on('blur', function () {
+            debugger
+            var issnPrint = $(this).val();
+            var actiontype = $(this).data('actiontype');
+
+            $.ajax({
+                url: '/admin/CheckISSN',
+                type: 'get',
+                data: { issn: issnPrint, actiontype: actiontype },
+                success: function (response) {
+                    console.log('Server response:', response);
+                    if (response) {
+                        $('.isISSN').val(true);
+                        $('.checkISSN').text('This ISSN print already exist');
+                        $('.addBookBtn').prop('disabled', true);
+                    }
+                    else {
+                        $('.isISSN').val(false);
+                        $('.checkISSN').text('');
+                        $('.addBookBtn').prop('disabled', false);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+        $('.accessionNumberCheck').on('blur', function () {
+            debugger
+            var accession = $(this).val();
+            var actiontype = $(this).data('actiontype');
+
+            $.ajax({
+                url: '/admin/CheckAccession',
+                type: 'get',
+                data: { accession: accession, actiontype: actiontype },
+                success: function (response) {
+                    console.log('Server response:', response);
+                    if (response) {
+                        $('.isAccession').val(true);
+                        $('.checkAccession').text('This Accession number already exist');
+                        $('.addBookBtn').prop('disabled', true);
+                    }
+                    else {
+                        $('.isAccession').val(false);
+                        $('.checkAccession').text('');
+                        $('.addBookBtn').prop('disabled', false);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        $('.addBookForm').on('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing your request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            var formData = new FormData(this);
+            $.ajax({
+                url: '/admin/AddBook',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            didClose: () => { location.reload(true); }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again.'
+                    });
+                }
+            });
+        });
+
+
+
+        $('#category').on('change', function () {
+            let filterval = $(this).val();
+            let filterType = "category";
+            GetFilteredBooks(filterval, filterType);
+        })
+        let debounceTimer;
+
+        $('#isbnno').on('input', function () {
+            clearTimeout(debounceTimer);
+            debugger
+            debounceTimer = setTimeout(() => {
+                let filterval = $(this).val();
+                let filterType = "isbn";
+                GetFilteredBooks(filterval, filterType);
+            }, 1000);
+        });
+        $('#issnno').on('input', function () {
+            clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(() => {
+                let filterval = $(this).val();
+                let filterType = "issn";
+                GetFilteredBooks(filterval, filterType);
+            }, 1000);
+        });
+        function GetFilteredBooks(filterval, filterType) {
+            debugger
+            $.ajax({
+                url: '/admin/FilterForBook', type: 'get', data: { filter: filterval, filterType: filterType },
+                success: function (res) {
+                    let $tbody = $('#BookTableBody');
+                    $tbody.empty();
+                    if (res && res.length > 0) {
+                        let count = 1;
+                        res.forEach(book => {
+                            let row = `
+    <tr>
+        <td>${count}</td>
+       <td><a href="/admin/ShowBookDetailsPage?id=${book.id}" title="Show Details">${book.title}</a></td>
+        <td>${book.subTitle}</td>
+        <td>${book.categoryName}</td>
+        <td>${book.author}</td>
+        <td>${book.isbn}</td>
+        <td>${book.issnPrint}</td>
+        <td>${book.accessionNumber}</td>
+        <td>${book.numberOfCopies - book.bookCount}</td>
+       <td class="text-center">
+            <a role="button" title="Update" data-id="${book.id}" class="btn btn-sm updateBook p-0"> <i  class="text-warning fa-solid fa-pen-to-square" style="width:22px; height:22px;"></i></a>
+            </td>
+        </tr>`;
+                            count++;
+                            $tbody.append(row);
+                        });
+                    } else {
+                        $tbody.html(`
+<tr>
+        <td colspan="8" style="text-align:center;">No records found</td>
+</tr>`);
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire('Error', 'Server Issue Try Again Later', 'error');
+                }
+            })
+        }
+    });
+    $(document).on('click', '.updateBook', function () {
+        debugger
+        Swal.fire({
+            title: 'Please wait!',
+            text: 'Processing your request...',
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        var id = $(this).data('id');
+
+        $.ajax({
+            url: '/admin/GetBookById',
+            type: 'get',
+            data: { id: id },
+            success: function (res) {
+                console.log('Data', res);
+                if (res && res.length > 0) {
+                    const book = res[0];
+                    $('#id').val(book.id);
+                    $('#titleup').val(book.title);
+                    $('#subTitleup').val(book.subTitle);
+                    $('#authorup').val(book.author);
+                    $('#volumeup').val(book.volume);
+                    $('#editionup').val(book.edition);
+                    $('#isbnup').val(book.isbn);
+                    $('#publicationup').val(book.publication);
+                    $('#issnPrintup').val(book.issnPrint);
+                    $('#placeOfPublicationup').val(book.placeOfPublication);
+                    $('#deweyDecimalClassup').val(book.deweyDecimalClass);
+                    $('#yearOfPublicationup').val(book.yearOfPublication);
+                    $('#printingDateup').val(book.printingDate);
+                    $('#numberOfCopiesup').val(book.numberOfCopies);
+                    $('#isIssuableup').val(String(book.isIssuable));
+                    $('#numberOfPagesup').val(book.numberOfPages);
+                    $('#purchasingDateup').val(book.purchasingDate);
+                    $('#sourceup').val(book.source);
+                    $('#priceup').val(book.price);
+                    $('#supplierup').val(book.supplier);
+                    $('#accessionNumberup').val(book.accessionNumber);
+                    $('#bookLocationup').val(book.bookLocation);
+                    $('#categoryNameup').val(book.categoryId);
+                    $('#subjectup').val(book.subject);
+                    $('#bookLanguagesup').val(book.bookLanguages);
+                    $('#bookRemarksup').val(book.bookRemarks);
+                    $('#bookContentup').val(book.bookContent);
+                    Swal.close();
+                    $('#UpdateBookModal').modal('show');
+                }
+                else {
+                    Swal.fire('Error', 'Failed to fetch data', 'error');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr);
+                Swal.fire('Error', 'Server error! Please Try Again', 'error');
+            }
+        });
+    });
+</script>
+<script>
+    document.getElementById("academicYearSelect").addEventListener("change", function () {
+
+        let academicYear = this.value;
+
+        if (academicYear) {
+            let year = academicYear.split('-')[0]; // 2026
+
+            window.location.href = "/Admin/AddBook?academicYear=" + year;
+        }
+    });
+</script>

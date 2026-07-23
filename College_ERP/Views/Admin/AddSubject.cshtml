@@ -1,0 +1,641 @@
+﻿
+@{
+    ViewBag.Title = "AddSubject";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addclass">Add Class</a>
+                    </li>
+                    <li class="breadcrumb-item "><a class="text-decoration-none text-primary" href="/admin/addsection">Add Section</a></li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Subject
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/addsyllabus">Add Syllabus</a>
+                    </li>
+                </ol>
+            </nav>
+
+
+            <!-- Edit Subject Modal -->
+            <div class="modal fade" id="editSubjectModal" tabindex="-1" aria-labelledby="editSubjectModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <form id="editSubjectForm" enctype="multipart/form-data">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editSubjectModalLabel">Edit Subject</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="EditSubjectId" name="SubjectId" />
+                                <input type="hidden" id="editclass" name="ClassId" />
+                                <div class="row">
+                                   
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Select Class</label>
+                                            <select id="EditClassId" class="form-select" disabled>
+                                                <option value="0" disabled selected>-- Select Class --</option>
+                                                @foreach (var item in ViewBag.ClassList)
+                                                {
+                                                    <option value="@item.ClassId">@item.ClassName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="EditSubject" class="form-label">Subject </label>
+                                            <input type="text" id="EditSubject" name="Subject" class="form-control" />
+                                        </div>
+                                    </div>
+                                    @*<div class="col-md-6">
+            <div class="mb-3">
+                <label for="EditDescription" class="form-label">Description </label>
+                <textarea type="text" id="EditDescription" name="Description" class="form-control"></textarea>
+            </div>
+        </div>*@
+
+
+                                </div>
+                            </div>
+                            <div class="text-center mb-3">
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--end modal-->
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add Subject</h1>
+                            <button type="button" class="btn-close" id="closebtnaddmodal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" id="subjectForm">
+                                <input type="hidden" id="SubjectId" name="SubjectId" value="0" />
+
+                                <!-- Only These Two Fields Visible by Default -->
+                                <div class="row mb-3">
+                                    <!-- Institution Type -->
+                                    <div class="col-sm-4">
+                                        <label for="institutionType" class="form-label">Institution Type</label>
+                                        <select name="institutionType" id="institutionType" class="form-select">
+                                            <option selected disabled>--Select Institution Type--</option>
+                                            <option value="school">School</option>
+                                            <option value="college">College</option>
+                                        </select>
+                                    </div>
+                                    <!-- Education Level -->
+                                    <div class="col-sm-4">
+                                        <label for="educationLevel" class="form-label">Education Level</label>
+                                        <select name="educationLevel" id="educationLevel" class="form-select">
+                                            <option selected disabled>--Select Education Level--</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="form-label">Class Name</label>
+                                        <select id="baseClassDropdown" name="ClassId" class="form-select">
+                                            <option value="0" disabled selected>-- Select Class --</option>
+                                           
+                                        </select>
+                                    </div>
+
+                                    <!--Stream-->
+                                    <div class="col-sm-4 mt-2" id="streamWrapper" style="display:none;">
+                                        <label for="streamInput" class="form-label">Stream</label>
+                                        <select id="streamInput" name="stream" placeholder="Select Stream" class="form-select">
+                                            <option value="">--Select Stream--</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4 mt-2">
+                                        <label class="form-label">Subject</label>
+                                        <select type="text" name="Subject" id="subjectselect" multiple class="subject-input">
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mt-2" id="optsubject" style="display:none;">
+                                        <label class="form-label">Optional Subject</label>
+                                        <select type="text" id="subjectselectopt" multiple class="subject-input">
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="text-center mt-3">
+                                    <button type="submit" id="btnSubmit" class="btn btn-primary">Add Subject</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title mb-3 d-flex justify-content-between">
+                                <span>Subject List</span>
+                                <span class="w-50">
+                                    <select id="academicFilter" class="form-select w-50">
+                                        <option value="" selected>--Search By Class--</option>
+                                        @if (ViewBag.ClassList != null)
+                                        {
+                                            foreach (var ay in ViewBag.ClassList)
+                                            {
+                                                <option value="@ay.ClassName">@ay.ClassName</option>
+                                            }
+                                        }
+                                    </select>
+                                </span>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Add Subject
+                                </button>
+                            </h4>
+                            <table id="subjectTable" class="table table-bordered dt-responsive nowrap w-100">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Class</th>
+                                        <th>Stream</th>
+                                        <th>Subject Name</th>
+                                        @*<th>Description</th>*@
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Count > 0)
+                                    {
+                                        int srNo = 1;
+                                        foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@srNo</td>
+                                                <td>@item.ClassId</td>
+                                                <td>@(!string.IsNullOrEmpty(item.classstream) ? item.classstream:"N/A")</td>
+                                                <td>@item.Subject @(item.optionsub==1?"(optional)":"")</td>
+
+
+                                                @*<td>
+                                                    <a role="button" class="text-primary" onclick="viewDesc('@item.Description')"> View </a>
+                                                </td>*@
+
+
+                                                <td>
+                                                    <button class="btn btn-sm p-0" onclick="editSubject(@item.SubjectId)"> <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>
+                                                    <button class="btn btn-sm p-0"><i data-feather="trash-2" onclick="deleteSubject(@item.SubjectId)" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+
+
+                                                </td>
+                                            </tr>
+                                            srNo++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Description Modal-->
+            <div class="modal fade" id="viewDescriptionModal" tabindex="-1" aria-labelledby="viewDescriptionModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary">
+                            <h5 class="modal-title text-light " id="viewDescriptionModalLabel">Subject Description</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="awardDescriptionContent" style="white-space: pre-line;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--end-->
+        </div>
+    </div>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        new TomSelect('#subjectselect,#subjectselectopt', {
+            plugins: ['remove_button'],
+            create: true,
+            placeholder: 'Enter Subject',
+            onItemAdd() {
+                this.setTextboxValue('');
+                this.refreshOptions();
+            },
+            render: {
+                option: (data, escape) =>
+                    `<div class="d-flex"><span>${escape(data.value)}</span></div>`,
+                item: (data, escape) =>
+                    `<div>${escape(data.value)}</div>`
+            }
+        });
+        new TomSelect('#subjectselectopt', {
+            plugins: ['remove_button'],
+            create: true,
+            placeholder: 'Enter Subject',
+            onItemAdd() {
+                this.setTextboxValue('');
+                this.refreshOptions();
+            },
+            render: {
+                option: (data, escape) =>
+                    `<div class="d-flex"><span>${escape(data.value)}</span></div>`,
+                item: (data, escape) =>
+                    `<div>${escape(data.value)}</div>`
+            }
+        });
+
+        const educationOptions = {
+            school: [
+                { value: "secondary", text: "Secondary (Class Nursery – 10)" },
+                { value: "senior_secondary", text: "Senior Secondary (Class 11 – 12)" }
+            ],
+            college: [
+                { value: "diploma", text: "Diploma" },
+                { value: "ug", text: "Undergraduate (UG)" },
+                { value: "pg", text: "Postgraduate (PG)" },
+                { value: "phd", text: "Doctorate (Ph.D.)" }
+            ]
+        };
+        $('#institutionType').on('change', function () {
+            $('#streamWrapper').hide();
+            $('#optsubject').hide();
+            const selectedType = $(this).val();
+            const $educationLevel = $('#educationLevel');
+            $educationLevel.empty();
+            $.get('/Admin/GetEducationLevelByInstitution?institution=' + selectedType, function (data) {
+                if (data && data.length > 0) {
+                    $.each(data, function (index, item) {
+                        $educationLevel.append($('<option>', {
+                            value: item,
+                            text: item
+                        }));
+                    });
+                }
+            });
+            $educationLevel.empty().append('<option selected disabled>--Select Education Level--</option>');
+
+            //if (educationOptions[selectedType]) {
+            //    $.each(educationOptions[selectedType], function (index, item) {
+            //        $educationLevel.append($('<option>', {
+            //            value: item.value,
+            //            text: item.text
+            //        }));
+            //    });
+            //}
+            if (selectedType === "college") {
+                $('#streamWrapper').show();
+            }
+        });
+        let streamFlag = false;
+
+        $('#educationLevel').on('change', function () {
+            debugger
+            const selectedLevel = $(this).val();
+
+            $('#streamWrapper').hide();
+            $('#optsubject').hide();
+
+            if (selectedLevel !== 'secondary') {
+                $('#streamWrapper').show();
+                $('#optsubject').show();
+                streamFlag = true;
+
+            }
+
+            const $classdropdown = $('#baseClassDropdown');
+            $classdropdown.empty();
+            $classdropdown.html(`<option value="0" disabled selected>-- Select Class --</option>`);
+            $.get('/admin/GetClassByEducationLevel?educationlevel=' + selectedLevel, function (data) {
+                if (data && data.length > 0) {
+                    $.each(data, function (index, item) {
+                        $classdropdown.append($('<option>', {
+                            value: item.ClassId,
+                            text: item.ClassName
+                        }));
+                    });
+                }
+            });
+        });
+        $('#baseClassDropdown').on('change', function () {
+            debugger
+            if (streamFlag) {
+                let id = $(this).val();
+                const $streamdrp = $('#streamInput');
+                $streamdrp.empty();
+                $streamdrp.html(`<option value="0" disabled selected>-- Select Stream --</option>`);
+                $.get('/admin/GetStreamByClassId?classid=' + id, function (data) {
+                    if (data && data.length > 0) {
+                        $.each(data, function (index, item) {
+                            $streamdrp.append($('<option>', {
+                                value: item.Classstreamid,
+                                text: item.ClassStream
+                            }));
+                        });
+                    }
+                });
+            }
+        });
+        $('#closebtnaddmodal').on('click', function () {
+            $('#subjectContainer').empty();
+            $('#exampleModal').modal('hide');
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#exampleModal').on('hidden.bs.modal', function () {
+            $(this).find('form')[0].reset();
+
+            $(this).find('select').val(0).trigger('change');
+            $(this).find('input[type=hidden], input[type=file]').val('');
+        });
+    });
+
+
+
+    $(document).ready(function () {
+        var data =  @Html.Raw(Json.Encode(ViewData["classlist"]));
+        //console.log(data);
+        var dropdown = $('#ClassId');
+        dropdown.empty();
+        dropdown.append('<option value="">----Select Class----</option>');
+
+        $.each(data, function (i, classItem) {
+            dropdown.append('<option value="' + classItem.ClassId + '">' + classItem.ClassName + '</option>');
+        });
+    });
+
+
+    function viewDesc(description) {
+        $('#awardDescriptionContent').text(description);
+        $('#viewDescriptionModal').modal('show');
+    }
+
+    $('#btnSubmit').on('click', function (e) {
+        e.preventDefault();
+        debugger
+        var formData = {
+            ClassId: $('#baseClassDropdown').val(),
+            classStreamId: $('#streamInput').val(),
+            Subjects: $('#subjectselect').val(),
+            optionalsubject: $('#subjectselectopt').val()
+        };
+
+        // Show loading SweetAlert
+        Swal.fire({
+            title: 'Submitting...',
+            text: 'Please wait while we save the subject.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/AddSubject',
+            type: 'POST',
+            data: JSON.stringify(formData),
+            contentType: 'application/json',
+            success: function (res) {
+                Swal.close(); // Close loader
+
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: res.message,
+                        didClose: () => {
+                            location.href = '/admin/addsubject';
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: res.message
+                    });
+                }
+            },
+            error: function (xhr) {
+                Swal.close(); // Close loader on error
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong: ' + xhr.responseText
+                });
+            }
+        });
+    });
+
+
+    function deleteSubject(SubjectId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the subject record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                // Show loading alert
+                Swal.fire({
+                    title: 'Deleting...',
+                    text: 'Please wait while the subject is being deleted.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '/Admin/DeleteSubject',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ SubjectId: SubjectId }),
+                    success: function (response) {
+                        Swal.close(); // Close loader
+
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.close(); // Close loader on error
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+
+
+
+    function editSubject(id) {
+        Swal.fire({
+            title: 'Please wait...',
+            text: 'Processing your request...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        $.get('/Admin/GetSubjectById?id=' + id, function (data) {
+            if (data) {
+                $("#EditSubjectId").val(data.SubjectId);
+                $("#EditClassId").val(data.ClassId);
+                $("#editclass").val(data.ClassId);
+                $("#EditDescription").val(data.Description);
+                $("#EditSubject").val(data.Subject);
+                Swal.close();
+                $('#editSubjectModal').modal('show');
+            }
+        });
+    }
+
+    $('#editSubjectForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        // Show loading SweetAlert
+        Swal.fire({
+            title: 'Updating...',
+            text: 'Please wait while we update the subject.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/UpdateSubject',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                Swal.close(); // Close the loader
+
+                if (res.success) {
+                    $('#editSubjectModal').modal('hide');
+
+                    Swal.fire('Updated!', 'Subject updated successfully.', 'success')
+                        .then(() => {
+                            location.reload();
+                        });
+                } else {
+                    Swal.fire('Error', 'Something went wrong.', 'error');
+                }
+            },
+            error: function () {
+                Swal.close(); // Close loader on error
+
+                Swal.fire('Error', 'Server error occurred.', 'error');
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        var table = $('#subjectTable').DataTable({
+            "columnDefs": [
+                { "width": "50px", "targets": 0 }
+            ]
+        });
+        $('#academicFilter').change(function () {
+            let filterval = $(this).val();
+            table.column(1).search(filterval).draw();
+        });
+    });
+</script>
+
+@*<script>
+    let index = 1;
+
+    // Update all rows' class inputs on dropdown change
+    $('#baseClassDropdown').on('change', function () {
+        let selectedClass = $(this).find('option:selected').text();
+
+        // Update all class input fields in generated rows
+        $('.class-input').val(selectedClass);
+    });
+
+    // Add new subject row with class (readonly)
+    $('#addRow').on('click', function () {
+        const selectedClass = $('#baseClassDropdown').find('option:selected').text();
+
+        if (!selectedClass) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Selection',
+                text: 'Please select a class first.'
+            });
+            return;
+        }
+
+        const newRow = `
+            <div class="row subject-row mb-3">
+                <div class="col-md-6 mt-2">
+                    <label>Class Name</label>
+                    <input type="text" class="form-control class-input" value="${selectedClass}" readonly />
+                </div>
+                <div class="col-md-6 position-relative">
+                    <label class="d-flex justify-content-between align-items-center">
+                        Subject
+                        <button type="button" class="btn btn-sm btn-outline-danger removeRow" title="Delete">
+                            <i class="fas fa-trash-alt" style="font-size: 0.8rem;"></i>
+                        </button>
+                    </label>
+                    <input type="text" name="sb[${index}].Subject" class="form-control subject-input" placeholder="Enter Subject" />
+                </div>
+            </div>`;
+        $('#subjectContainer').append(newRow);
+        index++;
+    });
+
+    // Remove a subject row
+    $(document).on('click', '.removeRow', function () {
+        $(this).closest('.subject-row').remove();
+        reindexSubjects();
+    });
+
+    // Reindex subject input names
+    function reindexSubjects() {
+        index = 1; // first subject is sb[0]
+        $('#subjectContainer .subject-input').each(function () {
+            $(this).attr('name', `sb[${index}].Subject`);
+            index++;
+        });
+    }
+    
+</script>*@

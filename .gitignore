@@ -1,0 +1,93 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/College_ERP/v17
+/.vs/College_ERP/FileContentIndex
+/.vs/College_ERP/CopilotIndices/0.2.1657.32929
+## Ignore Visual Studio temporary files, build results, and
+## user-specific files
+
+# Build results
+[Bb]in/
+[Oo]bj/
+*.dll
+*.exe
+*.zip
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.VC.db
+
+# ASP.NET temporary files
+*.Cache
+*.dbmdl
+*.bak
+
+# IIS Express
+.vs/
+.vscode/
+*.vspscc
+*.vssscc
+*.launch.json
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+# Uncomment if using npm
+# node_modules/
+
+# Logs
+*.log
+
+# Web publish
+publish/
+*.Publish.xml
+
+# Resharper
+_ReSharper*/
+*.DotSettings.user
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Rider
+.idea/
+
+# Others
+*.tmp
+*.temp
+*.pid
+*.swp
+*.swn
+
+# Entity Framework Migrations history
+Migrations/
+/College_ERP/bin/College_ERP.pdb
+/College_ERP/bin/College_ERP.dll
+/College_ERP/obj/Debug/College_ERP.csproj.AssemblyReference.cache
+/College_ERP/obj/Debug/College_ERP.csproj.CoreCompileInputs.cache
+/College_ERP/obj/Debug/College_ERP.dll
+/College_ERP/obj/Debug/College_ERP.pdb
+
+*.htm
+*.config
+/College_ERP/bin/College_ERP.dll
+/College_ERP/bin/College_ERP.pdb
+/College_ERP/obj/Debug/College_ERP.dll
+/College_ERP/obj/Debug/College_ERP.pdb
+/.vs/College_ERP/config/applicationhost.config
+/College_ERP/bin/College_ERP.dll
+/College_ERP/bin/College_ERP.pdb
+/College_ERP/obj/Debug/College_ERP.dll
+/College_ERP/obj/Debug/College_ERP.pdb
+/College_ERP/bin/College_ERP.dll
+/College_ERP/bin/College_ERP.pdb
+/College_ERP/obj/Debug/College_ERP.dll
+/College_ERP/obj/Debug/College_ERP.pdb
+*.csv

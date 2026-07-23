@@ -1,0 +1,152 @@
+﻿@model List<College_ERP.Models.Admin.EventCategory>
+@{
+    ViewBag.Title = "addevent";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+<!-- ============================================================== -->
+<!-- Start Page Content here -->
+<!-- ============================================================== -->
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+                <div class="flex-grow-1">
+                    <h4 class="fs-18 fw-semibold m-0">Add New Event</h4>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="eventForm" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-lg-6">
+
+                                        <!-- Event Category -->
+                                        <div class="mb-3">
+                                            <label for="eventCategory" class="form-label">Event Category</label>
+                                            <select id="eventCategory" name="EventCategory" class="form-select">
+                                                <option selected disabled>Select Category</option>
+                                                @foreach (var category in ViewBag.EventCategories as List<College_ERP.Models.Admin.EventCategory>)
+                                                {
+                                                    <option value="@category.Id">@category.CategoryName</option>
+                                                }
+                                            </select>
+
+                                        </div>
+
+                                        <!-- Event Title -->
+                                        <div class="mb-3">
+                                            <label for="eventTitle" class="form-label">Event Title</label>
+                                            <input type="text" id="eventTitle" name="EventTitle" class="form-control" placeholder="Enter event title">
+                                        </div>
+
+                                        <!-- Heading Day -->
+                                        <div class="mb-3">
+                                            <label for="headingDay" class="form-label">Heading</label>
+                                            <input type="text" id="headingDay" name="HeadingDay" class="form-control" placeholder="Enter Heading">
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="col-lg-6">
+
+                                        <!-- Event Date -->
+                                        <div class="mb-3">
+                                            <label for="eventDate" class="form-label">Event Date</label>
+                                            <input type="date" id="eventDate" name="EventDate" class="form-control">
+                                        </div>
+
+                                        <!-- Event Image -->
+                                        <div class="mb-3">
+                                            <label for="eventImage" class="form-label">Event Image</label>
+                                            <input type="file" id="eventImage" name="EventImage" class="form-control" accept="image/*">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="Day" class="form-label">Day</label>
+                                            <select id="Day" name="Day" class="form-select">
+                                                <option selected disabled>Select Day</option>
+                                                <option value="Monday">Monday</option>
+                                                <option value="Tuesday">Tuesday</option>
+                                                <option value="Wednesday">Wednesday</option>
+                                                <option value="Thursday">Thursday</option>
+                                                <option value="Friday">Friday</option>
+                                                <option value="Saturday">Saturday</option>
+                                                <option value="Sunday">Sunday</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Description -->
+                                    <div class="col-lg-12">
+                                        <div class="mb-3">
+                                            <label for="eventDescription" class="form-label">Event Description</label>
+                                            <textarea class="form-control" id="eventDescription" name="EventDescription" rows="5" placeholder="Write about the event..."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- Submit Button -->
+                                    <div class="col-lg-12 text-center">
+                                        <input type="submit" value="Submit" class="btn btn-md btn-primary" />
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div> <!-- card-body -->
+                    </div> <!-- card -->
+                </div> <!-- col -->
+            </div> <!-- row -->
+
+        </div> <!-- container-fluid -->
+    </div> <!-- content -->
+</div>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#eventForm').submit(function (e)
+            {
+                e.preventDefault();
+
+                var formData = new FormData(this);
+                var eventImage = $('#eventImage')[0].files[0];
+                formData.append("EventImage", eventImage);
+
+                $.ajax({
+                    url: '/admin/eventadd', 
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function () {
+                      
+                        $('input[type="submit"]').prop('disabled', true).val('Processing...');
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            $('#eventForm')[0].reset();
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        toastr.error('An error occurred: ' + error);
+                    },
+                    complete: function () {
+                        $('input[type="submit"]').prop('disabled', false).val('Submit');
+                    }
+                });
+            });
+        });
+    </script>
+
+

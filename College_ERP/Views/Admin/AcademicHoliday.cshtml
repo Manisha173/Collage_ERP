@@ -1,0 +1,257 @@
+﻿
+@{
+    ViewBag.Title = "AcademicHoliday";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <h4 class="mt-3">Add Academic Holiday</h4>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <form method="post" id="vacationForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" id="VacationId" name="VacationId" value="0" />
+
+                                <div class="mb-3">
+                                    <label>Vacation Name</label>
+                                    <input type="text" id="VacationName" name="VacationName" class="form-control">
+
+                                </div>
+                                <div class="mb-3">
+                                    <label>Day</label>
+                                    <select id="Day" name="Day" class="form-select" aria-label="Default select example">
+                                        <option selected disabled>--Select Day--</option>
+                                        <option value="1">Sunday</option>
+                                        <option value="2">Monday</option>
+                                        <option value="3">Tuesday</option>
+                                        <option value="4">Wednesday</option>
+                                        <option value="5">Thrusday</option>
+                                        <option value="6">Friday</option>
+                                        <option value="7">Saturday</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Class Name</label>
+                                    <select id="Class" name="ClassName" class="form-select" multiple aria-label="Default select example">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+
+
+                                <div class="mb-3">
+                                    <label> Vacation Type </label>
+                                    <select id="VacationType" name="VacationType" class="form-select" aria-label="Default select example">
+                                        <option selected disabled>---Select Vacation Type---</option>
+                                        <option value="1">Summer Vacation</option>
+                                        <option value="2">Winter Vacation</option>
+                                        <option value="3">Emergency Holiday</option>
+                                        <option value="4">Ganesh Chaturthi </option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Date</label>
+                                    <input type="date" id="Date" name="Date" class="form-control" />
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Image</label>
+                                    <input type="file" id="Image" name="Image" class="form-control" />
+
+                                </div>
+
+
+
+
+                            </div>
+
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Add Holiday</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Subject List</h4>
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SRNo</th>
+                                <th>Vacation Name</th>
+                                <th>Vacation Type</th>
+                                <th>Day</th>
+                                <th>Date</th>
+                                <th>Class Name </th>
+                                <th>Image </th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Count > 0)
+                            {
+                                int srNo = 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@srNo</td>
+                                        <td>@item.VacationName </td>
+                                        <td>@item.VacationType</td>
+                                        <td>@item.Day</td>
+                                        <td>@item.Date</td>
+                                        <td>@item.ClassName</td>
+
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Images))
+                                            {
+                                                <a href="@Url.Content("~/Upload/" + item.Images)" target="_blank">View</a>
+                                            }
+                                            else
+                                            {
+                                                <span>No Image Uploaded</span>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            <a href="/admin/AddVacation?vacId=@item.VacationId" title="Update" class="btn btn-sm"> <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></a>
+                                            <button class="btn btn-sm"><i data-feather="trash-2" onclick="deleteVacation(@item.VacationId)" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+                                        </td>
+                                    </tr>
+                                    srNo++;
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center">No data available</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var data =  @Html.Raw(Json.Encode(ViewData["classlist"]));
+        console.log(data);
+        var dropdown = $('#Class');
+        dropdown.empty();
+        dropdown.append('<option value="">----Select Class----</option>');
+
+        $.each(data, function (i, classItem) {
+            dropdown.append('<option value="' + classItem.ClassId + '">' + classItem.ClassName + '</option>');
+        });
+    });
+
+    $('#btnSubmit').on('click', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData($('#vacationForm')[0]);
+
+        $.ajax({
+            url: '/Admin/AcademicHoliday',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+
+                if (res.success) {
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: res.message, didClose: () => {
+                            location.href ='/admin/AcademicHoliday'
+                        }
+                    });
+                } else {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: res.message
+                    });
+                }
+            },
+            error: function (xhr) {
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong: ' + xhr.responseText
+                });
+            }
+        });
+    });
+
+    function deleteSubject(VacationId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the subject record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Admin/DeleteAcademicVacation',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ VacationId: VacationId }),
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+
+            }
+        });
+    }
+
+    //GetById
+    @*$(document).ready(function () {
+        var data = @Html.Raw(Json.Encode(ViewData["dataById"]));
+        debugger
+        console.log(data[0].ClassId)
+        if (data != null) {
+            $("#VacationId").val(data[0].SubjectId);
+            $("#Description").val(data[0].Description);
+            $("#Subject").val(data[0].Subject);
+
+            $('#ClassId option').each(function () {
+                if ($(this).val() == data[0].ClassId) {
+                    $(this).prop('selected', true);
+                }
+            });
+            $("#btnSubmit").text("Update Subject");
+        }
+    });*@
+
+
+
+</script>
+

@@ -1,0 +1,229 @@
+﻿
+@{
+    ViewBag.Title = "ApplyLeave";
+    Layout = "~/Views/Shared/_teacherLayout.cshtml";
+    var data = ViewData["leaveRequestList"] as List<College_ERP.Models.Teacher.LeaveRequestModel>;
+}
+<style>
+    th {
+        text-align: center !important;
+    }
+
+    td {
+        text-align: center !important;
+    }
+</style>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+           
+            <div class="row mt-2">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="py-0 card-header border-bottom-0 d-flex justify-content-between">
+                            <h4 class="card-title mb-0">Leave List</h4>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ApplyLeaveModal">
+                                Apply Leave
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Reason</th>
+                                        <th>From Date</th>
+                                        <th>To Date</th>
+                                        <th>Attachment</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (data != null)
+                                    {
+                                        int count = 1;
+                                        foreach (var item in data)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td>@item.reason</td>
+                                                <td>@item.fromDateString</td>
+                                                <td>@item.toDateString</td>
+                                                <td class="text-center"><a href="@item.attachmentName" target="_blank" title="Show Attachment">View</a></td>
+                                                <td class="text-center">
+                                                    @if (item.approvalStatus == 0)
+                                                    {
+                                                        <span class="badge bg-warning">Pending</span>
+                                                    }
+                                                    else if (item.approvalStatus == 1)
+                                                    {
+                                                        <span class="badge bg-primary">Approved</span>
+                                                    }
+                                                    else if (item.approvalStatus == 2)
+                                                    {
+                                                        <a href="#" title="Show Reason" data-showremark="@item.remark" class="badge bg-danger showReason">Rejected</a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            count++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Task Modal-->
+<div class="modal fade" id="ApplyLeaveModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="ApplyLeaveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="ApplyLeaveModalLabel">Add Exam TimeTable</h1>
+                <button type="button" class="btn-close" id="CloseModalApplyLeave"></button>
+            </div>
+            <div class="modal-body">
+                <form class="ApplyLeaveForm">
+                    <div class="row">
+                        <div class="col-sm-4 mb-2">
+                            <label for="leaveType" class="form-label">Leave Type</label>
+                            <select id="leaveType" class="form-select" name="leaveType" required>
+                                <option value="">--Select Leave Type--</option>
+                                <option value="sick">Sick Leave</option>
+                                <option value="casual">Casual Leave</option>
+                                <option value="earned">Earned Leave</option>
+                                <option value="maternity">Maternity Leave</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-4 mb-2">
+                            <label for="fromDate" class="form-label">From Date</label>
+                            <input type="date" id="fromDate" name="fromDate" min="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" required />
+                        </div>
+
+                        <div class="col-sm-4 mb-2">
+                            <label for="toDate" class="form-label">To Date</label>
+                            <input type="date" id="toDate" name="toDate" class="form-control" required />
+                        </div>
+
+                        <div class="col-sm-4 mb-2">
+                            <label for="attachment" class="form-label">Attachment (Optional)</label>
+                            <input type="file" name="attachment" id="attachment" class="form-control" />
+                        </div>
+
+                        <div class="col-sm-4 mb-2">
+                            <label for="reason" class="form-label">Reason for Leave</label>
+                            <textarea name="reason" id="reason" class="form-control" rows="1" placeholder="Enter reason for leave..."></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Update Task Modal-->
+<div class="modal fade" id="RemarkModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="RemarkModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="RemarkModalLabel">Reason</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               <div id="remarkshow" class="py-3">
+
+               </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('#CloseModalApplyLeave').on('click', function () {
+            $('.ApplyLeaveForm')[0].reset();
+            $('#ApplyLeaveModal').modal('hide');
+        });
+
+        $('.ApplyLeaveForm').on('submit', function (e) {
+            debugger
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Please Wait!',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                text: 'Processing your request...',
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            var data = new FormData(this);
+            var fileUpload = document.getElementById("attachment");
+            if (fileUpload.files.length > 0) {
+                for (var i = 0; i < fileUpload.files.length; i++) {
+                    data.append("attachment", fileUpload.files[i]);
+                }
+            }
+            $.ajax({
+                url: '/teacher/ApplyLeave',
+                type: 'post',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            didClose: () => { location.reload(true); }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again.'
+                    });
+                }
+            });
+        });
+
+        $('.showReason').on('click', function () {
+            debugger
+            let remark = $(this).data('showremark');
+            $('#remarkshow').text(remark);
+            $('#RemarkModal').modal('show');
+            
+        });
+    });
+</script>
+
+<script>
+    $('#fromDate').on('change', function () {
+        var fromDate = $(this).val();
+        var $toDate = $('#toDate');
+        $toDate.attr('min', fromDate);
+
+        if ($toDate.val() < fromDate) {
+            $toDate.val(fromDate);
+        }
+    });
+</script>

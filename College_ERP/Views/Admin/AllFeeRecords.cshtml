@@ -1,0 +1,1058 @@
+﻿@model College_ERP.Models.Admin.FeeStatementViewModel
+@{
+    ViewBag.Title = "AllFeeRecords";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var clasList = ViewData["ClassList"] as List<College_ERP.Models.Admin.ClassModel>;
+}
+
+<style>
+    .custom-alert {
+        background-color: #ffe6e6; /* very light red */
+        border-left: 5px solid #ff4d4d; /* bright red border for alert effect */
+        color: #a94442; /* dark red text */
+        padding: 12px 16px;
+        margin: 0 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(255, 0, 0, 0.1);
+        position: relative;
+        max-width: 500px;
+    }
+    .form-check-inline {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 10px 15px;
+        margin-right: 15px;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s, background-color 0.3s;
+    }
+
+    .form-check:checked + .form-check-label {
+        font-weight: bold;
+        color: teal;
+    }
+
+    .form-check:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+    }
+
+    .form-check {
+        margin-top: 0.3rem;
+        margin-right: 0.5rem;
+    }
+    input[type="radio"] {
+        appearance: none; 
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        width: 18px;
+        height: 18px;
+        border: 1px solid grey;
+        border-radius: 50%;
+        outline: none;
+        cursor: pointer;
+        position: relative;
+    }
+
+        input[type="radio"]:checked::before {
+            content: "";
+            display: block;
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+        }
+
+        input[type="radio"]:focus {
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+        }
+</style>
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-1" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item "><a class="text-decoration-none text-primary" href="/admin/registrationfee"> Registration Fee</a></li>
+
+                    <li class="breadcrumb-item "><a class="text-decoration-none text-primary" href="/admin/addcollegefee">Add College Fee</a></li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/adddiscountfee">Add Discount on Fee</a>
+                    </li>
+
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Fee Statement
+                    </li>
+                </ol>
+            </nav>
+
+
+        </div>
+    </div>
+    <!-- add Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Fee Statement</h1>
+
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Tabs Navigation -->
+                    <ul class="nav nav-tabs mb-2" id="formTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="form1-tab" data-bs-toggle="tab" data-bs-target="#form1" type="button" role="tab">
+                                School Fee
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="form2-tab" data-bs-toggle="tab" data-bs-target="#form2" type="button" role="tab">
+                                Bus Fee
+                            </button>
+                        </li>
+                    </ul>
+                    <!-- Tabs Content -->
+                    <div class="tab-content mt-3">
+                        <div class="tab-pane fade show active" id="form1" role="tabpanel">
+                            <div class="row mb-1 ">
+                                <div class="custom-alert mx-auto" id="alertmsgfee" style="display:none;">
+                                    ⚠️ Fees have already been fully paid for this student.
+                                </div>
+                            </div>
+                            <form method="post" id="feeRecordsForm" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="hidden" id="FeeId" name="FeeId" />
+                                        <input type="hidden" id="HiddenRemainingFees" />
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Class Name</label>
+                                            <select id="ClassId" name="ClassId" class="form-select class" required>
+                                                <option selected value="">Select Class</option>
+                                                @if (clasList != null && clasList.Count > 0)
+                                                {
+                                                    foreach (var item in clasList)
+                                                    {
+                                                        <option value="@item.ClassId">@item.ClassName</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Section Name</label>
+                                            <select id="SectionId" name="SectionId" class="form-select sections" required>
+                                                <option selected value="">Select Section</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Academic Year</label>
+                                            <select id="AcademicYear" name="AcademicYear" class="form-select academicyear" required>
+                                                @{
+                                                    for (int i = 0; i <= 3; i++)
+                                                    {
+                                                        var yearValue = DateTime.Now.AddYears(-i).Year + "-" + DateTime.Now.AddYears((-i + 1)).Year;
+                                                        <option value="@yearValue" @(i == 0 ? "selected" : "")>@yearValue</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Student Name</label>
+                                            <select id="StudentId" name="StudentId" class="form-select student" required>
+                                                <option selected value="">Select Student</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class=" col-md-6 mb-3">
+                                        <label class="form-label">Billing Period </label>
+                                        <input type="text" id="BillingPeriod" name="BillingPeriod" class="form-control" placeholder="Billing Period" readonly />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Amount</label>
+                                            <input type="number" id="Amount" name="Amount" class="form-control amount" placeholder="Amount" required readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3 d-none" id="monthDropdownContainer">
+                                        <label class="form-label">Select Month</label>
+                                        <select id="BillingMonth" name="BillingMonth" class="form-select">
+                                            <option value="">Select Month</option>
+                                            @{
+                                                var months = System.Globalization.DateTimeFormatInfo.InvariantInfo.MonthNames;
+                                                for (int i = 0; i < 12; i++)
+                                                {
+                                                    if (!string.IsNullOrEmpty(months[i]))
+                                                    {
+                                                        <option value="@months[i]">@months[i]</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6 fees-extra d-none">
+                                        <div class="mb-3">
+                                            <label class="form-label">Fees Paid</label>
+                                            <input type="number" id="FeesPaid" name="FeesPaid" class="form-control" placeholder="Enter Paid Fees" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 fees-extra d-none">
+                                        <div class="mb-3">
+                                            <label class="form-label">Remaining Fees</label>
+                                            <input type="number" id="RemainingFees" name="RemainingFees" class="form-control" placeholder="Remaining Fees" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Payment Mode</label>
+                                            <select id="PaymentMode" name="PaymentMode" class="form-select paymentmode" required>
+                                                <option selected value="">Select Payment Mode</option>
+                                                <option value="online">Online</option>
+                                                <option value="offline">Offline</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6 transactid d-none">
+                                        <div class="mb-3">
+                                            <label class="form-label">Transaction Id</label>
+                                            <input type="text" id="transactionid" name="transactionid" class="form-control" placeholder="Transaction Id" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Fee Slip</label>
+                                            <input type="file" id="FeeSlip" name="FeeSlip" class="form-control feeslip" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Payment Date</label>
+                                            <input type="date" id="PaymentDate" name="PaymentDate" class="form-control paymentdate" max="" required>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- bus fee tab -->
+                        <div class="tab-pane fade" id="form2" role="tabpanel">
+                            <form id="busFeeForm">
+                                <div class="row">
+
+                                    <!-- Radio Buttons -->
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" checked type="radio" name="feeOption" id="byBusNo" value="bus" />
+                                            <label class="form-check-label" for="byBusNo">By Bus No</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="feeOption" id="byClass" value="class" />
+                                            <label class="form-check-label" for="byClass">Student By Class</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Bus No Dropdown -->
+                                    <div class="col-md-6 mb-3" id="busNoDiv" style="display: none;">
+                                        <label for="busNo" class="form-label">Select Bus No</label>
+                                        <select class="form-select" id="busNo" name="busId">
+                                            <option value="">-- Select Bus No --</option>
+                                            <!-- Dynamically bind options via JS -->
+                                        </select>
+                                    </div>
+
+                                    <!-- Student Dropdown -->
+                                    <div class="col-md-6 mb-3" id="studentDiv" style="display: none;">
+                                        <label for="student" class="form-label">Select Student</label>
+                                        <select class="form-select" id="student" name="studentId">
+                                            <option value="">-- Select Student --</option>
+                                        </select>
+                                    </div>
+                                    <!-- Billing Months -->
+                                    <div class="col-md-6 mb-3" id="billingMonthDiv" style="display: none;">
+                                        <label for="billingMonths" class="form-label">Billing Months</label>
+                                        <select id="billingMonths" class="form-select" name="billingMonth[]" multiple>
+                                            <option value="Jan">January</option>
+                                            <option value="Feb">February</option>
+                                            <option value="Mar">March</option>
+                                            <option value="Apr">April</option>
+                                            <option value="May">May</option>
+                                            <option value="Jun">June</option>
+                                            <option value="Jul">July</option>
+                                            <option value="Aug">August</option>
+                                            <option value="Sep">September</option>
+                                            <option value="Oct">October</option>
+                                            <option value="Nov">November</option>
+                                            <option value="Dec">December</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Readonly Fee -->
+                                    <div class="col-md-6 mb-3" id="feeDiv" style="display: none;">
+                                        <label for="busFee" class="form-label">Bus Fee</label>
+                                        <input type="text" id="busFee" class="form-control" name="feeAmount" readonly />
+                                    </div>
+
+                                    <!-- Attachment -->
+                                    <div class="col-md-6 mb-3" id="attachmentDiv" style="display: none;">
+                                        <label for="attachment" class="form-label">Fee Slip</label>
+                                        <input type="file" id="attachment" name="feeSlips" class="form-control" />
+                                    </div>
+                                    <!--payment date-->
+                                    <div class="col-md-6 mb-3 " id="paymentdateDiv" style="display: none;">
+                                        <label class="form-label">Payment Date</label>
+                                        <input type="date" id="PaymentDated" value="@DateTime.Now.ToString("yyyy-MM-dd")" name="paymentDated" class="form-control paymentdated" max="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+                                    </div>
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Table-->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center mb-3">
+                        <!-- Left side: Heading -->
+                        <div class="col-md-4 col-sm-12 mb-2">
+                            <h4 class="card-title mb-0">Fee Statement</h4>
+                        </div>
+
+                        <!-- Middle: Filter -->
+                        <div class="col-md-4 col-sm-12 mb-2">
+                            <div class="d-flex align-items-center justify-content-md-center gap-2">
+                                <label for="feeFilterSelect" class="form-label mb-0"><strong>Filter By:</strong></label>
+                                <select id="feeFilterSelect" class="form-select" style="width: 200px;">
+
+                                    <option value="school">School Fee</option>
+                                    <option value="bus">Bus Fee</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Right side: Button -->
+                        <div class="col-md-4 col-sm-12 mb-2 text-md-end text-sm-start">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                Fee Statement
+                            </button>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="table-responsive">
+                        <table id="datatablefeestatement" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Student Name</th>
+                                    <th>Father's Name</th>
+                                    <th>Class </th>
+                                    <th>Academic Year</th>
+                                    <th>Billing Month</th>
+                                    <th>Remaining Fee</th>
+                                    <th>Fee Paid</th>
+                                    <th>Total Fee</th>
+                                    <th>Payment Date</th>
+                                    <th>Transaction History</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            @{
+                                int sr = 1;
+                            }
+                            <tbody id="feeTableBody">
+                                @foreach (var item in Model.AcademicFeeRecords)
+                                {
+                                    <tr class="school-fee-row">
+                                        <td>@sr</td>
+                                        <td>@item.StudentName</td>
+                                        <td>@item.FatherName</td>
+                                        <td>@item.ClassName - @item.SectionName</td>
+                                        <td>@item.AcademicYear</td>
+                                        <td>N/A</td>
+                                        <td>₹ @(item.RemainingFees?.ToString("N2") ?? "0.00")</td>
+                                        <td>
+                                            @(item.BillingPeriod == "yearly"
+                                              ? $"₹ {item.FeesPaid?.ToString("N2") ?? "0.00"}"
+                                               : $"₹ {item.Amount.ToString("N2")}")
+                                        </td>
+                                        <td>₹ @item.Amount.ToString("N2") @((item.BillingPeriod?.ToLower() == "monthly") ? "/month" : (item.BillingPeriod?.ToLower() == "yearly") ? "/year" : "")</td>
+                                        <td>@item.PaymentDate.ToString("dd-MMM-yyyy")</td>
+                                        <td>
+                                            <a href="/admin/StudentTransactionHistory?studentid=@item.StudentId" target="_blank" class="btn btn-sm btn-warning showHistory">Show History</a>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm" title="Update Fee Statement" onclick="editFeeRecord(@item.FeeId)"><i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+                                        </td>
+                                    </tr>
+                                    sr++;
+                                }
+                                @foreach (var item in Model.BusFeeRecords)
+                                {
+                                    <tr  class="bus-fee-row">
+                                        <td>@sr</td>
+                                        <td>@item.studentName</td>
+                                        <td>@item.fatherName</td>
+                                        <td>@item.className - @item.sectionName</td>
+                                        <td>@item.academicYear</td>
+                                        <td>@item.billingMonth</td>
+                                        <td>N/A</td>
+                                        <td>₹ @item.feeAmount.ToString("N2")</td>
+                                        <td>₹ @item.feeAmount.ToString("N2")</td>
+                                        <td>@(string.IsNullOrEmpty(item.paymentDated) ? "N/A" : item.paymentDated)</td>
+
+                                        <td>
+                                            <a href="/admin/StudentFeesTransactionHistory?studentid=@item.studentId"
+                                               target="_blank" class="btn btn-sm btn-warning">Show History</a>
+                                        </td>
+                                        <td>
+                                            <a href="@item.feeSlip" target="_blank" class="btn btn-sm btn-success">View Slip</a>
+                                        </td>
+                                    </tr>
+                                    sr++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        let baseFee = 0;
+        //select 2
+        $('#billingMonths').select2({
+            placeholder: "Select Billing Months",
+            width: '100%'
+        });
+        // On radio change
+        $('input[name="feeOption"]').on('change', function () {
+            const selected = $(this).val();
+            if (selected === 'bus') {
+                $('#busNoDiv').show();
+                $('#studentDiv').show();
+                $('#feeDiv, #attachmentDiv,#billingMonthDiv,#paymentdateDiv').hide();
+                $('#student').empty().append('<option value="">-- Select Student --</option>');
+                $('#busFee').val('');
+                baseFee = 0;
+
+                // Fetch bus numbers
+                $.get('/admin/GetBusNumbers', function (data) {
+                    console.log("Bus data:", data);
+                    $('#busNo').empty().append('<option value="">-- Select Bus No --</option>');
+                    $.each(data, function (i, bus) {
+                        $('#busNo').append(`<option value="${bus.Id}" data-charge="${bus.BusCharges}">${bus.BusNo} (${bus.Type})</option>`);
+
+                    });
+                });
+            }
+            else {
+                $('#busNoDiv, #feeDiv, #attachmentDiv,#studentDiv,#billingMonthDiv,#paymentdateDiv').hide();
+            }
+        });
+        $('input[name="feeOption"]:checked').change(); 
+
+        // On Bus No change
+        $('#busNo').on('change', function () {
+            const busId = $('#busNo').val();
+            const fee = $('#busNo option:selected').data('charge');
+
+            if (busId) {
+                $('#feeDiv').show();
+                $('#attachmentDiv').show();
+                $('#billingMonthDiv').show();
+                $('#paymentdateDiv').show();
+                $('#busFee').val(fee);
+
+                if ($('#billingMonths').hasClass("select2-hidden-accessible")) {
+                    $('#billingMonths').select2('destroy');
+                }
+
+                $('#billingMonths').select2({
+                    placeholder: "Select Billing Months",
+                    width: '100%',
+                    dropdownParent: $('#form2')
+                });
+
+                // Fetch students by bus ID
+                $.get('/admin/GetStudentsByBusId?bussNo=' + busId, function (data) {
+
+                    $('#student').empty().append('<option value="">-- Select Student --</option>');
+                    $.each(data, function (i, student) {
+                        $('#student').append(`<option value="${student.studentId}">${student.studentName}</option>`);
+                    });
+                });
+            } else {
+                $('#feeDiv, #attachmentDiv,#studentDiv,#billingMonthDiv,#paymentdateDiv').hide();
+                $('#busFee').val('');
+            }
+        });
+
+        //Submit form
+        $('#busFeeForm').on('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            $.ajax({
+                url: '/admin/SubmitBusFee',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: res.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            $('#busFeeForm')[0].reset();
+                            $('#student').empty();
+                            $('#busFee').val('');
+                            $("#billingMonths").change()
+                        });;
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: res.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        })
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Error submitting bus fee. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'Close'
+                    });
+                }
+
+            });
+        });
+    });
+    $(document).ready(function () {
+        // Function to apply fee filter
+        function applyFeeFilter(type) {
+            if (type === 'school') {
+                $('.school-fee-row').show();
+                $('.bus-fee-row').hide();
+            } else if (type === 'bus') {
+                $('.school-fee-row').hide();
+                $('.bus-fee-row').show();
+            }
+        }
+
+        // On page load, apply default filter
+        const defaultFilter = $('#feeFilterSelect').val();
+        applyFeeFilter(defaultFilter);
+
+        // On dropdown change
+        $('#feeFilterSelect').on('change', function () {
+            const selectedFilter = $(this).val();
+            applyFeeFilter(selectedFilter);
+        });
+    });
+
+</script>
+
+<script>
+    function initializeDataTable() {
+        debugger
+        let table = $('#datatablefeestatement').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8, 9].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![8, 9].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+        const paymentDateInput = document.getElementById("PaymentDate");
+        const paymentDateInputt = document.getElementById("PaymentDated");
+        //paymentDateInputt.value = today;
+        //paymentDateInputt.max = today;
+        paymentDateInput.value = today;
+        paymentDateInput.max = today;
+    });
+    $(document).ready(function () {
+        initializeDataTable()
+
+        $('.btn-close').on('click', function () {
+            $('#alertmsgfee').css('display', 'none');
+            $('#feeRecordsForm')[0].reset();
+            $('#busFeeForm')[0].reset();
+        });
+
+        $('.paymentmode').change(function () {
+            if ($(this).val() == "online") {
+                $('.transactid').removeClass('d-none');
+            } else if ($(this).val() == 'offline') {
+                $('.transactid').addClass('d-none');
+            }
+        });
+
+    });
+    //date restriction
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('PaymentDate').setAttribute('max', today);
+    //select section
+    $('#ClassId').on('change', function () {
+        debugger
+        var classId = $(this).val();
+        var sectionDropdown = $('#SectionId');
+        sectionDropdown.empty().append('<option value="">Loading......</option>');
+
+        if (classId !== "") {
+            $.ajax({
+                url: '@Url.Action("GetSectionsByClass", "Admin")',
+                type: 'GET',
+                data: { classId: classId },
+                success: function (sections) {
+                    sectionDropdown.empty().append('<option value="">Select Section</option>');
+                    $.each(sections, function (i, section) {
+                        sectionDropdown.append(`<option value="${section.SectionId}">${section.SectionName}</option>`);
+                    });
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Error fetching sections!',
+                    });
+                    sectionDropdown.empty().append('<option value="">Select Section</option>');
+                }
+
+            });
+        } else {
+            sectionDropdown.empty().append('<option value="">Select Section</option>');
+        }
+    });
+    //load students
+    async function fetchAndBindStudents(classId, sectionId, academicYear) {
+        Swal.fire({
+            title: 'Loading Student...',
+            text: 'Please wait while we fetch the details.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        });
+
+        if (!classId || !sectionId || !academicYear || academicYear === "Select academic year") {
+            $('#StudentId').html('<option selected value="0">Select Student</option>');
+            Swal.close();
+            return;
+        }
+
+        try {
+            const students = await $.ajax({
+                url: '/Admin/GetStudentsByClassSection',
+                type: 'GET',
+                data: {
+                    classId: classId,
+                    sectionId: sectionId,
+                    academicYear: academicYear
+                }
+            });
+
+            const $studentList = $('#StudentId');
+            $studentList.empty().append('<option selected value="0">Select Student</option>');
+
+            if (students.length > 0) {
+                $.each(students, function (i, student) {
+                    $studentList.append(`<option value="${student.StudentId}">${student.StudentName}</option>`);
+                });
+            } else {
+                $studentList.append('<option disabled>No students found</option>');
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Failed to fetch student list.'
+            });
+            return;
+        }
+
+        Swal.close();
+    }
+
+    $('#ClassId, #SectionId, #AcademicYear').on('change', async function () {
+        debugger;
+
+        const classId = $('#ClassId').val();
+        const sectionId = $('#SectionId').val();
+        const academicYear = $('#AcademicYear').val();
+        await fetchAndBindStudents(classId, sectionId, academicYear);
+    });
+
+    $('#btnSubmit').on('click', function (e) {
+        debugger
+        e.preventDefault();
+        const stId = $('#StudentId').val();
+        if (!stId || stId === "0") {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Student Selected',
+                text: 'Please select a student before proceeding.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+        var form = $('#feeRecordsForm')[0];
+        var formData = new FormData(form);
+        var feeId = $('#FeeId').val();
+        formData.set('FeeId', feeId);
+
+        // Check button text to determine action
+        var buttonText = $('#btnSubmit').text().trim();
+        var isUpdate = (buttonText === 'Update Fee Record');
+
+        Swal.fire({
+            title: 'Please wait...',
+            text: isUpdate ? 'Updating fee statement...' : 'Saving fee statement...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => Swal.showLoading()
+        });
+        const studentId = $('#StudentId').val();
+        if (!studentId || studentId === "0") {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Student Selected',
+                text: 'Please select a student before proceeding.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: isUpdate ? '/Admin/UpdateFeeRecord' : '/Admin/AllFeeRecords',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                Swal.close();
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: res.message,
+                        didClose: () => location.href = '/admin/AllFeeRecords'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: res.message
+                    });
+                }
+            },
+            error: function (xhr) {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong: ' + xhr.responseText
+                });
+            }
+        });
+    });
+
+    //get by id
+    function editFeeRecord(feeId) {
+        Swal.fire({
+            title: 'Please wait...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => Swal.showLoading()
+        });
+        $.ajax({
+            url: '/Admin/GetAllFeeRecordById',
+            type: 'GET',
+            data: { id: feeId },
+            success: function (data) {
+                    $('#FeeId').val(data.FeeId);
+                    $('#AcademicYear').val(data.AcademicYear);
+                    $('#Amount').val(data.Amount);
+
+                    $('#BillingPeriod').val(data.BillingPeriod);
+                    $('#FeesPaid').val(data.FeesPaid);
+                    $('#RemainingFees').val(data.RemainingFees);
+                    $('#BillingMonth').val(data.BillingMonth);
+                    $('#PaymentMode').val(data.PaymentMode);
+                    const rawDate = data.PaymentDate;
+                    const timestamp = parseInt(rawDate.replace(/\/Date\((\d+)\)\//, '$1'));
+                    const date = new Date(timestamp);
+                    const formattedDate = date.toISOString().split('T')[0];
+                    $('#PaymentDate').val(formattedDate);
+                    if (data.PaymentMode === "online") {
+                        $('#transactionid').val(data.transactionid);
+                        $('.transactid').removeClass('d-none');
+                    }
+
+
+                    $('#ClassId').val(data.ClassId).trigger('change');
+
+                    // Wait for section and student dropdowns to be populated
+                    $.ajax({
+                        url: '@Url.Action("GetSectionsByClass", "Admin")',
+                        type: 'GET',
+                        data: { classId: data.ClassId },
+                        success: function (sections) {
+                            const sectionDropdown = $('#SectionId');
+                            sectionDropdown.empty().append('<option value="">----Select Section----</option>');
+                            $.each(sections, function (i, section) {
+                                sectionDropdown.append(`<option value="${section.SectionId}">${section.SectionName}</option>`);
+                            });
+
+                            $('#SectionId').val(data.SectionId).trigger('change');
+
+                            fetchAndBindStudents(data.ClassId, data.SectionId, data.AcademicYear).then(() => {
+                                $('#StudentId').val(data.StudentId);
+                            });
+                        },
+                        error: function () {
+                            Swal.fire("Error", "Failed to fetch section list", "error");
+                        }
+                    });
+
+                $('#btnSubmit').text('Update Fee Record');
+
+                    $('#staticBackdrop').modal('show');
+            },
+            error: function () {
+                Swal.fire("Error", "Failed to fetch fee record", "error");
+            }
+        });
+    }
+    //update
+//$('#btnSubmit').on('click', function (e) {
+//    e.preventDefault();
+
+//    var form = $('#feeRecordsForm')[0];
+//    var formData = new FormData(form);
+
+//    var feeId = $('#FeeId').val();
+
+//    formData.set('FeeId', feeId);
+
+//    Swal.fire({
+//        title: 'Please wait...',
+//        text: 'Saving fee record...',
+//        allowOutsideClick: false,
+//        allowEscapeKey: false,
+//        didOpen: () => Swal.showLoading()
+//    });
+
+//    $.ajax({
+//        url: '/Admin/UpdateFeeRecord',
+//        type: 'POST',
+//        data: formData,
+//        contentType: false,
+//        processData: false,
+//        success: function (res) {
+//            Swal.close();
+//            if (res.success) {
+//                Swal.fire({
+//                    icon: 'success',
+//                    title: 'Success',
+//                    text: res.message,
+//                    didClose: () => location.href = '/admin/AllFeeRecords'
+//                });
+//            } else {
+//                Swal.fire({
+//                    icon: 'error',
+//                    title: 'Error',
+//                    text: res.message
+//                });
+//            }
+//        },
+//        error: function (xhr) {
+//            Swal.close();
+//            Swal.fire({
+//                icon: 'error',
+//                title: 'Error',
+//                text: 'Something went wrong: ' + xhr.responseText
+//            });
+//        }
+//    });
+//});
+
+    $(document).ready(function () {
+        let totalAmount = 0;
+        $('#FeesPaid').on('input', function () {
+            debugger;
+            totalAmount = parseFloat($('#HiddenRemainingFees').val()) > 0 ? parseFloat($('#HiddenRemainingFees').val()) : parseFloat($('#Amount').val());
+            let tootalamount = totalAmount;
+            let paid = parseFloat($(this).val()) || 0;
+
+            if (paid > totalAmount) {
+                Swal.fire("Warning", "Paid amount cannot exceed the total or remaining fee.", "warning");
+                $(this).val('');
+                $('#RemainingFees').val(tootalamount);
+                return;
+            }
+
+            let remaining = totalAmount - paid;
+            $('#RemainingFees').val(remaining >= 0 ? remaining.toFixed(2) : 0);
+        });
+
+    });
+    $(document).ready(function () {
+        function handleBillingPeriodUI() {
+            var period = $('#BillingPeriod').val().toLowerCase();
+
+            if (period === 'yearly') {
+                $('.fees-extra').removeClass('d-none');
+                $('#monthDropdownContainer').addClass('d-none');
+                $('#BillingMonth').val('');
+            } else if (period === 'monthly') {
+                $('.fees-extra').addClass('d-none');
+                //$('#FeesPaid, #RemainingFees').val('');
+                $('#FeePaid').val($('#Amount'));
+                $('#monthDropdownContainer').removeClass('d-none');
+            } else {
+                $('.fees-extra').addClass('d-none');
+                $('#monthDropdownContainer').addClass('d-none');
+                $('#BillingMonth').val('');
+            }
+        }
+
+        // Re-check when class changes and billing period is set dynamically
+        $("#ClassId").on("change", function () {
+            let id = $(this).val();
+            $.get("/admin/GetTotalFeeByClassId", { id: id }).done((res) => {
+                $("#Amount").val(res.Amount);
+                $("#BillingPeriod").val(res.BillingPeriod);
+                handleBillingPeriodUI();
+            }).fail(() => {
+                Swal.fire("Error", res.message, "error")
+            });
+        });
+
+        $('#BillingPeriod').on('input', handleBillingPeriodUI);
+
+        $('#StudentId').on('change', function () {
+            let studentId = $(this).val();
+
+            if (studentId) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/admin/GetStudentRemainingFee',
+                    data: { studentId: studentId },
+                    success: function (res) {
+                        if (res.success) {
+                            $('#RemainingFees').val(res.remainingFee ?? 0);
+                            if (parseFloat(res.remainingFee || 0) === 0) {
+                                $('#alertmsgfee').css('display', 'block');
+                                $('#btnSubmit').prop('disabled', true);
+                                $('#FeesPaid').prop('readonly', true);
+                            } else {
+                                $('#FeesPaid').prop('readonly', false);
+                                $('#btnSubmit').prop('disabled', false);
+                                $('#alertmsgfee').css('display', 'none');
+                            }
+
+                            $('#HiddenRemainingFees').val(res.remainingFee ?? 0);
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Oops!',
+                            text: 'Something went wrong.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+
+                    }
+                });
+            } else {
+                $('#FeesPaid').val('');
+                $('#RemainingFee').val('');
+            }
+        });
+    });
+
+</script>

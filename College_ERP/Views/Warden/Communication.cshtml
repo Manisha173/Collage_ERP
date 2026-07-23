@@ -1,0 +1,350 @@
+﻿
+@{
+    ViewBag.Title = "Communication";
+    Layout = "~/Views/Shared/_wardenLayout.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title d-flex justify-content-between">
+                        <span>Communication List</span>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Add Communication
+                        </button>
+                    </h4>
+                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Title</th>
+                                <th>Attachment</th>
+                                <th>Description</th>
+                                <th style="width:150px !important;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                int srNo = 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@srNo</td>
+
+                                        <td>@item.Title</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.Attachment))
+                                            {
+                                                <a href="@Url.Content(item.Attachment)" target="_blank">View</a>
+                                            }
+                                            else
+                                            {
+                                                <span>No Certificate Uploaded</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a role="button" class="text-primary" onclick="viewDesc(`@item.Description`)"> View </a>
+                                        </td>
+
+
+
+                                        <!--end description modal-->
+                                        <td>
+                                            <button class="btn btn-sm editComm p-0" data-id="@item.CommunicationId">
+                                                <i data-feather="edit" class="text-warning cursor-pointer"  style="width:22px; height:22px;"></i>
+                                            </button>
+                                            <button class="btn btn-sm p-0"><i data-feather="trash-2" onclick="deleteComm(@item.CommunicationId)" class="text-danger cursor-pointer"  style="width:22px; height:22px;"></i></button>
+
+
+                                        </td>
+                                    </tr>
+                                    srNo++;
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+
+                    <!--Description Modal-->
+                    <div class="modal fade" id="viewDescriptionModal" tabindex="-1" aria-labelledby="viewDescriptionModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-light">
+                                    <h5 class="modal-title" id="viewDescriptionModalLabel">Communication Description</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p id="DescriptionContent" style="white-space: pre-line;"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Start -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header  bg-primary text-light">
+                        <h5 class="modal-title" >Add Communication</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="communicationForm" method="post" enctype="multipart/form-data">
+                            <div id="mealRowsContainer">
+                                <!-- Initial Meal Row -->
+                                <div class="meal-row border rounded p-3 mb-3">
+                                    <div class="row">
+
+                                        <div class="col-md-6 mb-3">
+                                            <label>Title</label>
+                                            <input type="text" id="Title" name="Title" class="form-control Title" placeholder="Enter Title" required/>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Attachment</label>
+                                            <input type="file" id="Attachments" name="Attachments" class="form-control Attachment" required />
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            <label>Description</label>
+                                            <textarea id="description" name="description" class="form-control Description" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="text-center">
+                                <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal End -->
+        <!-- Edit Communication Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-light">
+                        <h5 class="modal-title">Edit Communication</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editCommunicationForm" method="post" enctype="multipart/form-data">
+                            <input type="hidden" id="EditCommunicationId" name="CommunicationId" />
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Title</label>
+                                    <input type="text" id="EditTitle" name="Title" class="form-control" placeholder="Enter Title" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Attachment</label>
+                                    <input type="file" id="EditAttachments" name="Attachments" class="form-control" />
+                                    
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label>Description</label>
+                                    <textarea id="EditDescription" name="description" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" id="btnEditSubmit" class="btn btn-primary">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--end edit modal-->
+    </div>
+</div>
+<script>
+
+    
+
+    $(document).ready(function () {
+        // Summernote for Add Modal
+        $('#description').summernote({
+            height: 200,
+            placeholder: 'Enter Description...'
+        });
+
+        // Summernote for Edit Modal
+        $('#EditDescription').summernote({
+            height: 200,
+            placeholder: 'Enter Description...'
+        });
+
+        // Insert Communication (Add Modal)
+        $('#communicationForm').on('submit', function (e) {
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing your request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            e.preventDefault();
+
+            $('#description').val($('#description').summernote('code'));
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '/warden/Communication',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.close();
+                        Swal.fire('Success', response.message, 'success').then(() => {
+                            $('#exampleModal').modal('hide');
+                            $('#communicationForm')[0].reset();
+                            $('#description').summernote('reset');
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire('Error', xhr.responseText, 'error');
+                }
+            });
+        });
+
+        // Edit Communication - Fill Modal Data
+        $(document).on('click', '.editComm', function () {
+            var id = $(this).data('id');
+
+            $.ajax({
+                url: '/warden/GetCommunicationById',
+                type: 'GET',
+                data: { id: id },
+                success: function (response) {
+                    if (response.success) {
+                        $('#EditCommunicationId').val(response.data.CommunicationId);
+                        $('#EditTitle').val(response.data.Title);
+                        $('#EditDescription').summernote('code', response.data.Description);
+
+                        if (response.data.Attachment) {
+                            $('#currentAttachment').html(`<a href="/Upload/${response.data.Attachment}" target="_blank">View Current Attachment</a>`);
+                        } else {
+                            $('#currentAttachment').html('<span>No Attachment</span>');
+                        }
+
+                        $('#editModal').modal('show');
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function () {
+                    Swal.fire('Error', 'Failed to fetch data.', 'error');
+                }
+            });
+        });
+
+        // Update Communication (Edit Modal)
+        $('#editCommunicationForm').on('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing your request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            $('#EditDescription').val($('#EditDescription').summernote('code'));
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '/warden/UpdateCommunication',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.close();
+                        Swal.fire('Updated', response.message, 'success').then(() => {
+                            $('#editModal').modal('hide');
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire('Error', xhr.responseText, 'error');
+                }
+            });
+        });
+
+        // Delete Communication
+        window.deleteComm = function (id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this deletion!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading while AJAX runs
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing your request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/warden/DeleteCommunication',
+                        type: 'POST',
+                        data: { communicationId: id },
+                        success: function (response) {
+                            Swal.close();  // Close the loading modal first
+                            if (response.success) {
+                                Swal.fire('Deleted!', response.message, 'success').then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire('Error', response.message, 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.close(); // Close loading on error as well
+                            Swal.fire('Error', 'Failed to delete communication.', 'error');
+                        }
+                    });
+                }
+            });
+        };
+
+
+        window.viewDesc = function (description) {
+            $('#DescriptionContent').html(description);
+            $('#viewDescriptionModal').modal('show');
+        };
+    });
+
+
+</script>

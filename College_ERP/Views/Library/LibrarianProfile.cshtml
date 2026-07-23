@@ -1,0 +1,915 @@
+﻿
+@{
+    ViewBag.Title = "LibrarianProfile";
+    Layout = "~/Views/Shared/_libraryLayout.cshtml";
+}
+
+<style>
+    :root {
+        --primary: #0f766e;
+        --secondary: #134e4a;
+        --accent: #115e59;
+        --light: #042f2e;
+        --dark: #042f2e;
+        --success: #0d9488;
+        --teal-50: #f0fdfa;
+        --teal-100: #ccfbf1;
+        --teal-200: #99f6e4;
+        --teal-300: #5eead4;
+        --teal-400: #2dd4bf;
+        --teal-500: #14b8a6;
+        --teal-600: #0d9488;
+        --teal-700: #0f766e;
+        --teal-800: #115e59;
+        --teal-900: #134e4a;
+        --teal-950: #042f2e;
+    }
+
+
+
+    .content-page {
+        background: transparent;
+    }
+
+    /* Main Profile Card */
+    .main-profile-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(15, 118, 110, 0.1);
+        overflow: hidden;
+        position: relative;
+        margin-top: 1rem;
+    }
+
+        .main-profile-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--teal-400), var(--secondary));
+        }
+
+    /* Librarian Overview */
+    .librarian-overview {
+        background: linear-gradient(135deg, var(--teal-50), white);
+        padding: 2.5rem;
+        border-bottom: 1px solid var(--teal-100);
+    }
+
+    .profile-image-container {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 4px solid var(--teal-200);
+        box-shadow: 0 8px 25px rgba(15, 118, 110, 0.2);
+        object-fit: cover;
+        transition: all 0.3s ease;
+    }
+
+        .profile-image:hover {
+            transform: scale(1.05);
+            border-color: var(--teal-300);
+        }
+
+    .profile-badge {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        background: var(--primary);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3);
+    }
+
+    .status-indicator {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--success);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .status-indicator.active {
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator i {
+            font-size: 8px;
+        }
+
+    @@keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.7);
+        }
+
+        70% {
+            box-shadow: 0 0 0 10px rgba(13, 148, 136, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(13, 148, 136, 0);
+        }
+    }
+
+    .librarian-basic-info {
+        margin-top: 1rem;
+    }
+
+    .librarian-name {
+        color: var(--secondary);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .employee-id {
+        color: var(--accent);
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .librarian-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+        .librarian-badges .badge {
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+    .bg-success {
+        background: var(--success) !important;
+    }
+
+    .bg-primary {
+        background: var(--primary) !important;
+    }
+
+    /* Quick Stats */
+    .quick-stats {
+        margin-top: 1rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 4px 15px rgba(15, 118, 110, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(15, 118, 110, 0.15);
+        }
+
+    .stat-icon {
+        background: linear-gradient(135deg, var(--teal-100), var(--teal-200));
+        color: var(--primary);
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .stat-info h6 {
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-info p {
+        color: var(--secondary);
+        font-weight: 500;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    /* Profile Sections */
+    .profile-sections {
+        padding: 0;
+    }
+
+    .info-section {
+        border-bottom: 1px solid var(--teal-100);
+    }
+
+        .info-section:last-child {
+            border-bottom: none;
+        }
+
+    .section-header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 1.5rem 2.5rem;
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .section-title h4 {
+        font-weight: 700;
+        margin: 0;
+        font-size: 1.3rem;
+        flex: 1;
+    }
+
+    .section-actions {
+        margin-left: auto;
+    }
+
+    .edit-btn {
+        background: var(--teal-400);
+        border: none;
+        color: white;
+        border-radius: 20px;
+        padding: 6px 15px;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+        .edit-btn:hover {
+            background: var(--teal-500);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(45, 212, 191, 0.3);
+        }
+
+    .section-content {
+        padding: 2rem 2.5rem;
+    }
+
+    /* Info Items */
+    .info-item {
+        background: var(--teal-50);
+        border-radius: 10px;
+        padding: 1rem;
+        border-left: 4px solid var(--primary);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+        .info-item:hover {
+            background: var(--teal-100);
+            transform: translateX(5px);
+            border-left-color: var(--teal-600);
+        }
+
+        .info-item label {
+            display: block;
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+            .info-item label i {
+                color: var(--primary);
+            }
+
+        .info-item span {
+            color: var(--secondary);
+            font-weight: 500;
+            font-size: 1rem;
+            display: block;
+        }
+
+        .info-item .highlight {
+            color: var(--primary);
+            font-weight: 700;
+            background: var(--teal-100);
+            padding: 2px 8px;
+            border-radius: 5px;
+        }
+
+    .document-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+
+        .document-link:hover {
+            color: var(--teal-600);
+            text-decoration: underline;
+            transform: translateX(5px);
+        }
+
+    /* Professional Cards */
+    .professional-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 6px 20px rgba(15, 118, 110, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+        .professional-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(15, 118, 110, 0.15);
+        }
+
+        .professional-card .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+            .professional-card .card-header i {
+                font-size: 1.5rem;
+            }
+
+            .professional-card .card-header h5 {
+                margin: 0;
+                font-weight: 600;
+            }
+
+        .professional-card .card-content {
+            padding: 1.5rem;
+        }
+
+        .professional-card .info-item {
+            background: var(--teal-50);
+            margin-bottom: 1rem;
+            border-left: 3px solid var(--teal-300);
+        }
+
+            .professional-card .info-item:last-child {
+                margin-bottom: 0;
+            }
+
+    /* Performance Cards */
+    .performance-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(15, 118, 110, 0.1);
+        margin-bottom: 1rem;
+    }
+
+        .performance-card h6 {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+    .performance-meter {
+        position: relative;
+    }
+
+    .meter-bar {
+        background: var(--teal-100);
+        height: 25px;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+
+    .meter-fill {
+        height: 100%;
+        border-radius: 12px;
+        transition: width 1s ease;
+        position: relative;
+    }
+
+        .meter-fill.excellent {
+            background: linear-gradient(90deg, var(--success), var(--teal-500));
+        }
+
+        .meter-fill.good {
+            background: linear-gradient(90deg, var(--teal-400), var(--teal-600));
+        }
+
+    .meter-text {
+        color: var(--secondary);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* Achievements */
+    .achievements {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(15, 118, 110, 0.1);
+    }
+
+        .achievements h6 {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+    .achievement-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .achievement-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--teal-50);
+        border-radius: 8px;
+        border-left: 4px solid var(--primary);
+        transition: all 0.3s ease;
+    }
+
+        .achievement-item:hover {
+            background: var(--teal-100);
+            transform: translateX(10px);
+        }
+
+        .achievement-item i {
+            font-size: 1.2rem;
+        }
+
+        .achievement-item span {
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+    /* Error States */
+    .image-error {
+        background: linear-gradient(135deg, var(--teal-50), var(--teal-100));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 3rem;
+        border: 2px dashed var(--teal-200);
+        border-radius: 50%;
+        width: 200px;
+        height: 200px;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .librarian-overview {
+            padding: 1.5rem;
+        }
+
+        .section-content {
+            padding: 1.5rem;
+        }
+
+        .profile-image {
+            width: 150px;
+            height: 150px;
+        }
+
+        .stat-card {
+            margin-bottom: 1rem;
+        }
+
+        .professional-card {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .section-actions {
+            margin-left: 0;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .profile-image {
+            width: 120px;
+            height: 120px;
+        }
+
+        .stat-card {
+            padding: 1rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+
+        .librarian-badges {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    /* Animation */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .info-section {
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+        .info-section:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .info-section:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .info-section:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .info-section:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+</style>
+
+<div class="content-page">
+    <div class="content container-fluid pt-4">
+        <!-- Main Profile Card -->
+        <div class="main-profile-card">
+            <!-- Librarian Overview Section -->
+            <div class="librarian-overview">
+                <div class="row align-items-center">
+                    <div class="col-md-3 text-center">
+                        <div class="profile-image-container">
+                            <img src="@Model.ProfileName"
+                                 class="profile-image"
+                                 alt="Librarian Photo"
+                                 onerror="handleImageError(this)" />
+                            <div class="profile-badge">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="status-indicator active">
+                                <i class="fas fa-circle"></i>
+                                <span>Active</span>
+                            </div>
+                        </div>
+                        <div class="librarian-basic-info mt-0">
+                            <div class="librarian-badges">
+                                <span class="badge bg-success">
+                                    <i class="fas fa-book-open me-1"></i>Head Librarian
+                                </span>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9">
+                        <div class="quick-stats">
+                            <div class="row ms-2">
+                                <div class="librarian-basic-info">
+                                    <h4 class="librarian-name">@Model.Name</h4>
+                                    <p class="employee-id">Employee ID: @Model.EmployeeId</p>
+                                   
+                                </div>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="stat-card">
+                                        <div class="stat-icon">
+                                            <i class="fas fa-birthday-cake"></i>
+                                        </div>
+                                        <div class="stat-info">
+                                            <h6>DOB</h6>
+                                            <p>@Model.DOB.ToString("dd-MMM-yyyy")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-card">
+                                        <div class="stat-icon">
+                                            <i class="fas fa-phone"></i>
+                                        </div>
+                                        <div class="stat-info">
+                                            <h6>Mobile Number</h6>
+                                            <p>@Model.MobileNo</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="stat-card">
+                                        <div class="stat-icon">
+                                            <i class="fas fa-award"></i>
+                                        </div>
+                                        <div class="stat-info">
+                                            <h6>Department</h6>
+                                            <p>Main Library</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Information Sections -->
+                <div class="profile-sections mt-3">
+                    <!-- Personal Information -->
+                    <div class="info-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <h4><i class="fas fa-user me-2"></i>Personal Information</h4>
+                            </div>
+                            <div class="section-actions">
+
+                                <a role="button" title="Update" data-id="@Model.Id" class="btn btn-sm btn-primary px-3 updateLibrarian edit-btn">Edit</a>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label><i class="fas fa-id-badge me-2"></i>Employee ID</label>
+                                        <span>@Model.EmployeeId</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label><i class="fas fa-user me-2"></i>Full Name</label>
+                                        <span>@Model.Name</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label><i class="fas fa-envelope me-2"></i>Email Address</label>
+                                        <span>@Model.Email</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label><i class="fas fa-calendar me-2"></i>Date of Birth</label>
+                                        <span>@Model.DOB.ToString("dd-MMM-yyyy")</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label><i class="fas fa-venus-mars me-2"></i>Gender</label>
+                                        <span>@Model.Gender</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label><i class="fas fa-id-card me-2"></i>Aadhar Number</label>
+                                        <span>@Model.AdharNo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="info-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <h4><i class="fas fa-address-book me-2"></i>Contact Information</h4>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label><i class="fas fa-phone me-2"></i>Mobile Number</label>
+                                        <span>@Model.MobileNo</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label><i class="fas fa-map-marker-alt me-2"></i>State</label>
+                                        <span>@Model.StateName</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label><i class="fas fa-city me-2"></i>City</label>
+                                        <span>@Model.CityName</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label><i class="fas fa-file-alt me-2"></i>Document</label>
+                                        <span>
+                                            <a href="@Model.DocumentName" class="document-link" target="_blank" title="View Document">
+                                                <i class="fas fa-eye me-1"></i>View Document
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="info-item">
+                                        <label><i class="fas fa-home me-2"></i>Address</label>
+                                        <span>@Model.Address</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.mobileval').on('input', function () {
+            let m = $(this).val().replace(/\D/g, '').slice(0, 10);
+            $(this).val(m);
+            $('.mobileError').text(
+                m.length < 10 ? 'Mobile number must be 10 digits.' :
+                    !/^[6-9]/.test(m) ? 'Mobile number must start with 6, 7, 8, or 9.' : ''
+            );
+        });
+    });
+    $(function () {
+        $('.adharval').on('input', function () {
+            let a = $(this).val().replace(/\D/g, '').slice(0, 12);
+            $(this).val(a);
+            $('.adharError').text(
+                a.length < 12 ? 'Aadhaar number must be 12 digits.' : ''
+            );
+        });
+    });
+</script>
+<script>
+
+    // Handle image error
+    function handleImageError(img) {
+        img.style.display = "none"
+
+        const placeholder = document.createElement("div")
+        placeholder.className = "profile-image image-error"
+        placeholder.innerHTML = '<i class="fas fa-user-graduate"></i>'
+
+        img.parentNode.insertBefore(placeholder, img.nextSibling)
+    }
+
+    // Add interactive effects
+    document.addEventListener("DOMContentLoaded", () => {
+        // Animate performance bars
+        const performanceBars = document.querySelectorAll(".meter-fill")
+        performanceBars.forEach((bar) => {
+            const width = bar.style.width
+            bar.style.width = "0%"
+            setTimeout(() => {
+                bar.style.width = width
+            }, 500)
+        })
+
+        // Add hover effects to cards
+        const cards = document.querySelectorAll(".stat-card, .professional-card, .performance-card")
+        cards.forEach((card) => {
+            card.addEventListener("mouseenter", function () {
+                this.style.transform = "translateY(-8px)"
+            })
+
+            card.addEventListener("mouseleave", function () {
+                this.style.transform = "translateY(0)"
+            })
+        })
+
+        // Add click effects to buttons
+        const buttons = document.querySelectorAll(".btn")
+        buttons.forEach((button) => {
+            button.addEventListener("click", function (e) {
+                // Create ripple effect
+                const ripple = document.createElement("span")
+                const rect = this.getBoundingClientRect()
+                const size = Math.max(rect.width, rect.height)
+                const x = e.clientX - rect.left - size / 2
+                const y = e.clientY - rect.top - size / 2
+
+                ripple.style.width = ripple.style.height = size + "px"
+                ripple.style.left = x + "px"
+                ripple.style.top = y + "px"
+                ripple.style.position = "absolute"
+                ripple.style.borderRadius = "50%"
+                ripple.style.background = "rgba(255, 255, 255, 0.3)"
+                ripple.style.transform = "scale(0)"
+                ripple.style.animation = "ripple 0.6s linear"
+                ripple.style.pointerEvents = "none"
+
+                this.style.position = "relative"
+                this.style.overflow = "hidden"
+                this.appendChild(ripple)
+
+                setTimeout(() => {
+                    ripple.remove()
+                }, 600)
+            })
+        })
+
+        // Add loading animation to main card
+        const mainCard = document.querySelector(".main-profile-card")
+        mainCard.style.opacity = "0"
+        mainCard.style.transform = "translateY(50px)"
+
+        setTimeout(() => {
+            mainCard.style.transition = "all 0.8s ease"
+            mainCard.style.opacity = "1"
+            mainCard.style.transform = "translateY(0)"
+        }, 200)
+
+        // Status indicator animation
+        const statusIndicator = document.querySelector(".status-indicator")
+        if (statusIndicator) {
+            setInterval(() => {
+                statusIndicator.style.transform = "scale(1.05)"
+                setTimeout(() => {
+                    statusIndicator.style.transform = "scale(1)"
+                }, 200)
+            }, 3000)
+        }
+
+        // Achievement items hover effect
+        const achievementItems = document.querySelectorAll(".achievement-item")
+        achievementItems.forEach((item) => {
+            item.addEventListener("mouseenter", function () {
+                this.style.transform = "translateX(15px)"
+                this.style.background = "var(--teal-100)"
+            })
+
+            item.addEventListener("mouseleave", function () {
+                this.style.transform = "translateX(0)"
+                this.style.background = "var(--teal-50)"
+            })
+        })
+
+
+    })
+
+    // Add CSS for ripple animation
+    const style = document.createElement("style")
+    style.textContent = `
+  @@keyframes ripple {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+`
+    document.head.appendChild(style)
+
+    // Print functionality
+    function printProfile() {
+        window.print()
+    }
+
+</script>
+

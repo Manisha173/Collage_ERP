@@ -1,0 +1,393 @@
+﻿@{
+    ViewBag.Title = "Add Circular";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Circulars
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a class="text-decoration-none text-primary" href="/admin/addeventcategories">Events</a>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add Circular</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body mb-0">
+                            <div class="card">
+                                <div class="card-body">
+                                    <form method="post" enctype="multipart/form-data" id="circularForm">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="title" class="form-label">Circular Title</label>
+                                                <input type="text" id="title" name="CircularTitle" class="form-control" required placeholder="Enter Circuar Title" />
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label for="date" class="form-label">Circular Date</label>
+                                                <input type="date" id="date" name="CircularDate" class="form-control" required />
+                                            </div>
+                                            <div class="col-md-12 mb-3">
+                                                <label for="attachment" class="form-label">Upload Attachment (PDF/Doc)</label>
+                                                <input type="file" id="attachment" name="Attachment" class="form-control" />
+                                            </div>
+
+                                            <div class="col-md-12 mb-3">
+                                                <label for="description" class="form-label">Circular Description</label>
+                                                <textarea id="description" name="CircularDescription" class="form-control" rows="4" placeholder="Description"></textarea>
+                                            </div>
+
+                                            <div class="col-12 text-center">
+                                                <button id="btnSubmit" type="submit" class="btn btn-primary">Add Circular</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title mb-3 d-flex justify-content-between">
+                                <span>Circulars</span>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Add Circulars
+                                </button>
+                            </h4>
+                            <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Circular Title</th>
+                                        <th>Circular Date</th>
+                                        <th>Attachment</th>
+                                        <th>Description</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Count > 0)
+                                    {
+                                        int srNo = 1;
+                                        foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@srNo</td>
+
+                                                <td>@item.CircularTitle</td>
+                                                <td>@(item.CircularDate?.ToString("dd-MMM-yyyy"))</td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(item.UploadAttachment))
+                                                    {
+                                                        // Ensure the path starts with '/'
+                                                        var attachmentPath = item.UploadAttachment.StartsWith("/")
+                                                            ? item.UploadAttachment
+                                                            : "/Upload/" + item.UploadAttachment;
+
+                                                        <a href="@Url.Content(attachmentPath)" target="_blank">View</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>No Certificate Uploaded</span>
+                                                    }
+                                                </td>
+
+
+
+                                                <td>
+                                                    <a href="#" class="text-primary" onclick="viewDesc('@item.CircularDescription')"> View </a>
+
+                                                </td>
+
+
+                                                <!--end description modal-->
+                                                <td>
+                                                    <button class="btn btn-sm p-0"> <i data-feather="edit" onclick="editCircular(@item.CircularId)" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></button>
+                                                    <button class="btn btn-sm p-0"><i data-feather="trash-2" onclick="deleteCircular(@item.CircularId)" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+                                                </td>
+                                            </tr>
+                                            srNo++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Description Modal-->
+        <div class="modal fade" id="viewDescriptionModal" tabindex="-1" aria-labelledby="viewDescriptionModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewDescriptionModalLabel">Circular Description</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="DescriptionContent" style="white-space: pre-line;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit   Circular Modal -->
+        <div class="modal fade" id="editCircularModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="editCircularModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form id="editCircularForm" enctype="multipart/form-data">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editCircularModalLabel">Edit Circulars</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <input type="hidden" id="EditCircularId" name="CircularId" />
+
+                                <div class="col-sm-6 mb-3">
+                                    <label for="EditCircularTitle" class="form-label">Circular Title</label>
+                                    <input type="text" id="EditCircularTitle" name="CircularTitle" class="form-control" />
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <label for="EditCircularDate" class="form-label">Circular Date</label>
+                                    <input type="date" id="EditCircularDate" name="CircularDate" class="form-control" />
+                                </div>
+
+
+
+                                <div class="col-sm-12 mb-3">
+                                    <label for="EditUploadAttachment" class="form-label">Upload Attachment</label>
+                                    <input type="file" id="EditUploadAttachment" name="Attachment" class="form-control" accept="image/*" />
+
+
+                                </div>
+                                <div class="col-sm-12 mb-3">
+                                    <label for="EditDescription" class="form-label">Circular Description</label>
+                                    <textarea id="EditDescription" name="CircularDescription" class="form-control" rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center my-2">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end modal-->
+<script>
+   
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const today = new Date().toISOString().split('T')[0];
+
+        const circularDate = document.getElementById('date');
+        const editCircularDate = document.getElementById('EditCircularDate');
+
+        if (circularDate) {
+            circularDate.setAttribute('min', today);
+        }
+
+        if (editCircularDate) {
+            editCircularDate.setAttribute('min', today);
+        }
+    });
+
+    function viewDesc(description) {
+        $('#DescriptionContent').text(description);
+        $('#viewDescriptionModal').modal('show');
+    }
+
+    $('#circularForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData($('#circularForm')[0]);
+
+        // Show loading alert
+        Swal.fire({
+            title: 'Submitting...',
+            text: 'Please wait while we process your request.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/AddCirculars',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                Swal.close(); // Close loading alert
+
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: res.message,
+                        didClose: () => {
+                            location.href = '/admin/addcirculars';
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: res.message
+                    });
+                }
+            },
+            error: function (xhr) {
+                Swal.close(); // Close loading alert
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong: ' + xhr.responseText
+                });
+            }
+        });
+    });
+
+
+    function deleteCircular(CircularId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the teacher record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'please wait!',
+                    text: 'Please wait while we process your request...',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                $.ajax({
+                    url: '/Admin/DeleteCircular',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ CircularId: CircularId }),
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.close();
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.close();
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+
+            }
+        });
+    }
+
+
+    function editCircular(id) {
+        Swal.fire({
+            title: 'please wait!',
+            text: 'Please wait while we process your request...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        $.get('/Admin/GetCircularById?id=' + id, function (data) {
+            if (data) {
+                $('#EditCircularId').val(data.CircularId);
+                $('#EditCircularTitle').val(data.CircularTitle);
+                $('#EditCircularDate').val(data.CircularDate);
+                $('#EditDescription').val(data.CircularDescription);
+
+              
+                Swal.close();
+                $('#editCircularModal').modal('show');
+            }
+        });
+    }
+
+    $('#editCircularForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        // Show loading alert
+        Swal.fire({
+            title: 'Updating...',
+            text: 'Please wait while the circular is being updated.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/UpdateCircular',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                Swal.close(); // Close the loading alert
+
+                if (res.success) {
+                    $('#editCircularModal').modal('hide');
+                    Swal.fire('Updated!', 'Circular updated successfully.', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', res.message || 'Something went wrong.', 'error');
+                }
+            },
+            error: function (xhr) {
+                Swal.close(); // Close the loading alert
+                Swal.fire('Error', 'Something went wrong: ' + xhr.responseText, 'error');
+            }
+        });
+    });
+
+</script>
+
+
+
+
+
+

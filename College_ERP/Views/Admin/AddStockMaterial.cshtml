@@ -1,0 +1,428 @@
+﻿
+@{
+    ViewBag.Title = "AddStockMaterial";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var categories = ViewData["categories"] as List<College_ERP.Models.Admin.InventoryCategory>;
+    var stlist = ViewData["stockList"] as List<College_ERP.Models.Admin.StockMaterial>;
+}
+
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddMaterial">Add Material</a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        Add Stock Material
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/AddPurchase"> Add Purchase</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addStudentInHostel"> Add Short Material </a>
+                    </li>
+
+                </ol>
+            </nav>
+
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add Stock Material</h1>
+                   
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="addstockmaterialform">
+                        <div class="row px-5">
+                            <div class="col-sm-3">
+                                <label class="form-label pt-1"><strong>Category Name</strong></label>
+                            </div>
+                            <div class="col-md-9">
+                                <select data-action="add" id="categoryName" name="categoryName" class="catename form-select" required>
+                                    <option value="">--Select Category--</option>
+                                    @if (ViewData["categories"] != null)
+                                    {
+                                        foreach (var category in categories)
+                                        {
+                                            <option value="@category.CategoryId">@category.CategoryName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Material Name</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select id="materialName" name="materialName" class="form-select" required>
+                                    <option value="">--Select Material--</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Quantity</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" id="quantity" name="quantity" class="form-control" required placeholder="Enter Quantity" />
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span>Stock List</span>
+                        <div class="w-25">
+                            <select id="catfilter" class="form-select">
+                                <option selected value="">--Search By Category--</option>
+                                @if (ViewData["categories"] != null)
+                                {
+                                    foreach (var category in categories)
+                                    {
+                                        <option value="@category.CategoryName">@category.CategoryName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Add Stock Material
+                        </button>
+                    </h4>
+                    <table id="stockMaterialTable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Category Name</th>
+                                <th>Material Name</th>
+                                <th>Quantity</th>
+                                <th>Created At</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (stlist != null)
+                            {
+                                int count = 1;
+                                foreach (var item in stlist)
+                                {
+                                    <tr>
+                                        <td>@count</td>
+                                        <td data-ctid="@item.categoryId">@item.categoryName</td>
+                                        <td data-matid="@item.materialId">@item.materialName</td>
+                                        <td>@item.quantity</td>
+                                        <td>@item.createdAt.ToString("dd-MMM-yyyy")</td>
+                                        <td class="text-center">
+                                            <a role="button" title="Update" data-id="@item.stockMaterialId" class="btn btn-sm updateMat p-0"> <i data-feather="edit" class="text-warning" style="width:22px; height:22px;"></i></a>
+                                            <a role="button" class="btn btn-sm deletemat p-0" data-id="@item.stockMaterialId" title="Delete"><i data-feather="trash-2" class="text-danger" style="width:22px; height:22px;"></i></a>
+
+                                        </td>
+                                    </tr>
+                                    count++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal to Update Stock Material-->
+    <div class="modal fade" tabindex="-1" id="updateModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title">
+                        <span>Update Stock Material</span><!-- Button trigger modal -->
+
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="addstockmaterialform">
+                        <input type="hidden" value="0" name="stockMaterialId" id="stockMaterialId" />
+                        <div class="row px-5">
+                            <div class="col-sm-3">
+                                <label class="form-label pt-1"><strong>Category Name</strong></label>
+                            </div>
+                            <div class="col-md-9">
+                                <select data-action="update" id="mdcategoryName" name="categoryName" class="catename form-select" required>
+                                    <option value="">--Select Category--</option>
+                                    @if (ViewData["categories"] != null)
+                                    {
+                                        foreach (var category in categories)
+                                        {
+                                            <option value="@category.CategoryId">@category.CategoryName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Material Name</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <select name="materialName" id="updatematerialname" class="mtname form-select" required>
+                                    <option value="">--Select Material--</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3 px-5">
+                            <div class="col-md-3">
+                                <label class="form-label pt-1"><strong>Quantity</strong></label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="text" id="stquantity" name="quantity" class="form-control" required placeholder="Enter Quantity" />
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" id="btnSubmit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+
+    function initializeDataTable() {
+        debugger
+        let table = $('#stockMaterialTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![5].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![5].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+
+
+    $(document).ready(function () {
+        var ttbl = initializeDataTable();
+
+        $('#catfilter').on('change', function () {
+            debugger
+            var filval = $(this).val();
+            ttbl.column(1).search(filval).draw();
+        });
+
+
+
+        async function getmaterialbycatId(id, action) {
+            await $.ajax({
+                url: '/admin/GetMaterial', type: 'get', data: { id: id },
+                success: function (res) {
+                    if (res) {
+                        console.log(res);
+                        let mattag = action == "update" ? $("#updatematerialname") : $("#materialName")
+                        mattag.empty();
+                        let materialop = '<option value="">--Select Material--</option>';
+                        $.each(res, function (index, item) {
+                            materialop += '<option value="' + item.materialId + '">' + item.materialName + '</option>';
+                        });
+                        mattag.append(materialop);
+                    } else {
+                        Swal.fire({ title: 'Warning', text: 'No Material Found Related to this category!', icon: 'warning' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({ title: 'Error', text: 'Server Error', icon: 'error' });
+                }
+            });
+        }
+        $(".catename").change(async function () {
+            let id = $(this).val();
+            let action = $(this).attr("data-action")
+            await getmaterialbycatId(id, action)
+        });
+
+        $(".addstockmaterialform").on('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Please Wait!',
+                text: 'Processing Your Request...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            debugger
+            let formdata = new FormData(this);
+            $.ajax({
+                url: '/admin/AddStockMaterial', type: 'post', data: formdata, contentType: false, processData: false,
+                success: function (res) {
+                    if (res.status) {
+                        Swal.fire({
+                            title: 'Success', text: res.message, icon: 'success',
+                            didClose: () => { location.reload(true); }
+                        });
+                    }
+                    else {
+                        Swal.fire({ title: 'Error', text: res.message, icon: 'error' });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Server Error. Try Again Later!', icon: 'error'
+                    });
+                    console.log(xhr)
+                }
+            });
+        })
+
+        $(".deletemat").on('click', function () {
+            let id = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to delete this item?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                customClass: {
+                    confirmButton: 'mx-2 btn btn-danger',
+                    cancelButton: 'mx-2 btn btn-light'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Please Wait!',
+                        text: 'Processing Your Request...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/admin/DeleteStock',
+                        type: 'get',
+                        data: { id: id },
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status) {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: res.message,
+                                    icon: 'success',
+                                    didClose: () => {
+                                        location.reload(true);
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: res.message,
+                                    icon: 'warning'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Server Error. Try Again Later!',
+                                icon: 'error'
+                            });
+                            console.log(xhr);
+                        }
+                    });
+                } else {
+                    Swal.fire('Cancelled', 'Your item is safe.', 'info');
+                }
+            });
+        });
+
+
+        $(".updateMat").on('click', function () {
+            debugger;
+
+            let row = $(this).closest('tr');
+            let tds = row.find('td');
+            let matid = $(tds[2]).data('matid');
+
+            let id = $(this).data('id');
+
+            let catid = $(tds[1]).data('ctid');
+            let quantity = $(tds[3]).text().trim()
+            console.log(quantity)
+
+            $("#materialId").val(id);
+            $("#stockMaterialId").val(id);
+            $("#stquantity").val(quantity);
+
+            $("#mdcategoryName").val(catid)
+            getmaterialbycatId(catid, "update").then(() => {
+                $("#updatematerialname").val(matid)
+            })
+            $("#updateModal").modal('show');
+        });
+    })
+</script>

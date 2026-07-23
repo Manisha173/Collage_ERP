@@ -1,0 +1,416 @@
+﻿
+@{
+    ViewBag.Title = "AddBlock";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<style>
+    .custom-file-upload {
+        border: 1px solid #1e7644;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        margin-top: 2px;
+        width: 115px;
+        background: #1e7644;
+        color: white;
+    }
+
+
+    .filter-section {
+        background: white;
+        border-radius: 12px;
+        padding: 10px 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .filter-select {
+        padding: 12px 20px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+        min-width: 200px;
+    }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-select:hover {
+            border-color: #667eea;
+        }
+</style>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+
+            <nav class="my-3" aria-label="breadcrumb"
+                 style="--bs-breadcrumb-divider: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Cpath d=\'M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z\' fill=\'%236c757d\'/%3E%3C/svg%3E');">
+                <ol class="breadcrumb bg-light rounded p-2">
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/HostelBlockOverview"> Hostel Block Overview </a>
+                    </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">  Add Block </li>
+                    <li class="breadcrumb-item active text-dark" aria-current="page">
+                        <a class="text-decoration-none text-primary" href="/admin/addwarden"> Add Warden</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addroomnumber"> Add Room </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a class="text-decoration-none text-primary" href="/admin/addStudentInHostel"> Add Student In Hostel </a>
+                    </li>
+                </ol>
+            </nav>
+            <div class="filter-section" id="filterCard">
+                <label class="filter-label" for="academicYearSelect">Academic Year:</label>
+
+                <select id="academicYearSelect" class="filter-select">
+                    <option value="">-- Select Academic Year --</option>
+                    <option value="2026-27">2026-27</option>
+                    <option value="2025-26">2025-26</option>
+                    <option value="2024-25">2024-25</option>
+                    <option value="2023-24">2023-24</option>
+                    <option value="2022-23">2022-23</option>
+                    <option value="2021-22">2021-22</option>
+                    <option value="2020-21">2020-21</option>
+                </select>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Block</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" id="addBlockForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="hidden" id="HostelId" name="HostelId" value="0" />
+
+                                        <div class="mb-3">
+                                            <label>Block Name</label>
+                                            <input type="text" id="BlockName" placeholder="Enter block name" name="BlockName" class="form-control" required />
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label>Block Type</label>
+                                            <select id="blockType" name="blockType" class="form-select" required>
+                                                <option selected disabled>--Select Block Type--</option>
+                                                <option value="student">Student</option>
+                                                <option value="staff">Staff</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+
+                                        <div class="mb-3">
+                                            <label>Total Floor In Block</label>
+                                            <input type="number" id="TotalFlourInBlock" placeholder="Enter total floor of block" name="TotalFlourInBlock" class="form-control" required />
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+
+                                        <div class="mb-3">
+                                            <label>Total Rooms In Block</label>
+                                            <input type="number" id="TotalRoomInBlock" placeholder="Enter total number of room" name="TotalRoomInBlock" class="form-control" required />
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+
+                                        <div class="mb-3">
+                                            <label>Select Type</label>
+                                            <select id="GenderType" name="GenderType" class="form-select" required>
+                                                <option value="male" selected>Male</option>
+                                                <option value="female">Female</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <button type="submit" id="btnSubmit" class="btn btn-primary">Add Block</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title mb-3 d-flex justify-content-between">
+                                <span> Block List</span> <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                    Add Block
+                                </button>
+                            </h4>
+                            <table id="blockTable" class="table table-bordered dt-responsive nowrap w-100">
+                                <thead>
+                                    <tr>
+                                        <th>SR</th>
+                                        <th>Block Name</th>
+                                        <th>Gender</th>
+                                        <th>Block Type</th>
+                                        <th>Total Floor</th>
+                                        <th>Total Room</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int sr = 1;
+                                    }
+
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@sr</td>
+                                            <td>@item.BlockName</td>
+                                            <td>@item.GenderType</td>
+                                            <td>@item.blockType</td>
+                                            <td>@item.TotalFlourInBlock</td>
+                                            <td>@item.TotalRoomInBlock</td>
+                                            <td>
+                                                <a href="/admin/AddBlock?hostelId=@item.HostelId" title="Update" class="btn btn-sm p-0"> <i data-feather="edit" class="text-warning cursor-pointer" style="width:22px; height:22px;"></i></a>
+                                                <button class="btn btn-sm p-0" onclick="deleteBlock(@item.HostelId)"><i data-feather="trash-2" class="text-danger cursor-pointer" style="width:22px; height:22px;"></i></button>
+
+                                            </td>
+                                        </tr>
+                                        sr++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+    function initializeDataTable() {
+        debugger
+        let table = $('#blockTable').DataTable({
+            ordering: false,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![3].includes(idx);
+                        } // exclude last column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: function (idx, data, node) {
+                            return ![3].includes(idx);
+                        } // exclude last column
+                    },
+                    customize: function (doc) {
+                        doc.defaultStyle.fontSize = 6;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.content[1].table.widths =
+                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    }
+                }
+            ]
+        });
+        return table;
+    }
+
+    $(document).ready(function () {
+        initializeDataTable();
+    })
+
+    $('#btnSubmit').on('click', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData($('#addBlockForm')[0]);
+
+        // 🔄 Show SweetAlert loader
+        Swal.fire({
+            title: 'Submitting...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '/Admin/AddBlock',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                Swal.close(); // Hide loader
+
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: res.message,
+                        didClose: () => {
+                            location.href = '/admin/AddBlock';
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: res.message
+                    });
+                }
+            },
+            error: function (xhr) {
+                Swal.close(); // Hide loader
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong: ' + xhr.responseText
+                });
+            }
+        });
+    });
+
+    function deleteBlock(HostelId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the block record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 🔄 Show loader
+                Swal.fire({
+                    title: 'Deleting...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '/Admin/DeleteBlock',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({ HostelId: HostelId }),
+                    success: function (response) {
+                        Swal.close(); // Close loader
+
+                        if (response.success) {
+                            Swal.fire('Deleted!', response.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.close(); // Close loader
+
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+
+ //GetById
+ $(document).ready(function () {
+     var data = @Html.Raw(Json.Encode(ViewData["dataById"]));
+     debugger
+     console.log(data[0])
+     if (data != null) {
+         $("#HostelId").val(data[0].HostelId);
+         $("#BlockName").val(data[0].BlockName);
+         $("#TotalRoomInBlock").val(data[0].TotalRoomInBlock);
+         $("#TotalFlourInBlock").val(data[0].TotalFlourInBlock);
+         $("#GenderType").val(data[0].GenderType);
+         $('#blockType').val(data[0].blockType);
+         $("#btnSubmit").text("Update Block");
+         $("#staticBackdropLabel").text("Update Block")
+         $("#staticBackdrop").modal("show")
+
+     }
+
+     $("#staticBackdrop").on("hide.bs.modal", function () {
+         $("#btnSubmit").text("Add Block");
+         $("#staticBackdropLabel").text("Add Block")
+         $("#addBlockForm")[0].reset();
+     })
+
+ });
+
+</script>
+<script>
+    document.getElementById("academicYearSelect").addEventListener("change", function () {
+
+        let academicYear = this.value;
+
+        if (academicYear) {
+            let year = academicYear.split('-')[0]; // 2026
+
+            window.location.href = "/Admin/AddBlock?academicYear=" + year;
+        }
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
