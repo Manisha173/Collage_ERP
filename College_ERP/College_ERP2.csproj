@@ -596,7 +596,6 @@
     <Content Include="Views\SuperAdmin\CompanyRegistration.cshtml" />
     <Content Include="Views\SuperAdmin\CompanyList.cshtml" />
     <Content Include="Views\SuperAdmin\CreateAdmin.cshtml" />
-    <Content Include="Views\SuperAdmin\AdminList.cshtml" />
     <Content Include="Views\Admin\StudentAward.cshtml" />
     <Content Include="Views\Admin\SchoolAward.cshtml" />
     <Content Include="Views\Admin\StudentRegistration.cshtml" />

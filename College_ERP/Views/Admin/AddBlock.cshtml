@@ -223,21 +223,26 @@
 <script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
 <script>
     function initializeDataTable() {
-        debugger
+        debugger;
+
+        // Specify the 6 columns you want to export
+        const exportColumns = [0, 1, 2, 3, 4, 5];
+
+        // PDF column widths (must match exportColumns length)
+        const pdfColumnWidths = ['*', '*', '*', '*', '*', '*'];
+
         let table = $('#blockTable').DataTable({
             ordering: false,
             autoWidth: false,
             pageLength: 10,
             lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
-            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">',
             buttons: [
                 {
                     extend: 'excel',
                     text: 'Export Excel',
                     exportOptions: {
-                        columns: function (idx, data, node) {
-                            return ![3].includes(idx);
-                        } // exclude last column
+                        columns: exportColumns
                     }
                 },
                 {
@@ -246,19 +251,36 @@
                     orientation: 'landscape',
                     pageSize: 'A4',
                     exportOptions: {
-                        columns: function (idx, data, node) {
-                            return ![3].includes(idx);
-                        } // exclude last column
+                        columns: exportColumns
                     },
                     customize: function (doc) {
+
+                        // Default font and alignment
                         doc.defaultStyle.fontSize = 6;
+                        doc.defaultStyle.alignment = 'center';
+
+                        // Header style
                         doc.styles.tableHeader.fontSize = 7;
-                        doc.content[1].table.widths =
-                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                        doc.styles.tableHeader.bold = true;
+                        doc.styles.tableHeader.alignment = 'center';
+
+                        // Set column widths
+                        doc.content[1].table.widths = pdfColumnWidths;
+
+                        // Center align all cells
+                        var body = doc.content[1].table.body;
+
+                        for (var i = 0; i < body.length; i++) {
+                            for (var j = 0; j < body[i].length; j++) {
+                                body[i][j].alignment = 'center';
+                                body[i][j].margin = [2, 4, 2, 4];
+                            }
+                        }
                     }
                 }
             ]
         });
+
         return table;
     }
 

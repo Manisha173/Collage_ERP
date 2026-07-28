@@ -37,6 +37,7 @@ namespace College_ERP.ApiService
             if (res != null)
             {
                 int userid = _home.GetUserId(username);
+                var role = _home.GetRoleByUserId(userid);
 
                 string accessToken = JwtTokenHelper.GenerateAccessToken(userid, res);
 
@@ -49,6 +50,8 @@ namespace College_ERP.ApiService
                     status = true,
                     access_token = accessToken,
                     refresh_token = refreshToken,
+                    id=userid,
+                    Role= role,
                     expires_in = 1800
                 });
 

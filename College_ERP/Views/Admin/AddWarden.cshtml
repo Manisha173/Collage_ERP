@@ -375,21 +375,26 @@
     });
 
     function initializeDataTable() {
-        debugger
+        debugger;
+
+        // Export 9 columns (0 to 8)
+        const exportColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
+        // PDF column widths (must match exportColumns length)
+        const pdfColumnWidths = ['*', '*', '*', '*', '*', '*', '*', '*', '*'];
+
         let table = $('#wardenTable').DataTable({
             ordering: false,
             autoWidth: false,
             pageLength: 10,
             lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
-            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">',
             buttons: [
                 {
                     extend: 'excel',
                     text: 'Export Excel',
                     exportOptions: {
-                        columns: function (idx, data, node) {
-                            return ![6].includes(idx);
-                        } // exclude last column
+                        columns: exportColumns
                     }
                 },
                 {
@@ -398,19 +403,36 @@
                     orientation: 'landscape',
                     pageSize: 'A4',
                     exportOptions: {
-                        columns: function (idx, data, node) {
-                            return ![6].includes(idx);
-                        } // exclude last column
+                        columns: exportColumns
                     },
                     customize: function (doc) {
+
+                        // Default font settings
                         doc.defaultStyle.fontSize = 6;
+                        doc.defaultStyle.alignment = 'center';
+
+                        // Header settings
                         doc.styles.tableHeader.fontSize = 7;
-                        doc.content[1].table.widths =
-                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                        doc.styles.tableHeader.bold = true;
+                        doc.styles.tableHeader.alignment = 'center';
+
+                        // Set column widths
+                        doc.content[1].table.widths = pdfColumnWidths;
+
+                        // Center all cells
+                        var body = doc.content[1].table.body;
+
+                        for (var i = 0; i < body.length; i++) {
+                            for (var j = 0; j < body[i].length; j++) {
+                                body[i][j].alignment = 'center';
+                                body[i][j].margin = [2, 4, 2, 4];
+                            }
+                        }
                     }
                 }
             ]
         });
+
         return table;
     }
     $(document).ready(function () {
