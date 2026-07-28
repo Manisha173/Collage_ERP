@@ -149,7 +149,7 @@ namespace College_ERP.Models.SuperAdmin
                     list.EmailId = rdr["EmailId"]?.ToString();
                     list.stateName = rdr["stateName"]?.ToString();
                     list.State =Convert.ToInt32(rdr["state"] ?? 0);
-                    list.City = Convert.ToInt32(rdr["state"] ?? 0);
+                    list.City = Convert.ToInt32(rdr["city"] ?? 0);
                     list.City_Name = rdr["City_Name"]?.ToString();
                     list.Website = rdr["Website"]?.ToString();
                     list.School_Logo = rdr["School_Logo"]?.ToString();
