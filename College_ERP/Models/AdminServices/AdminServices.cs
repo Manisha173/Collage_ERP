@@ -10801,7 +10801,7 @@ namespace College_ERP.Models.AdminServices
             }
         }
 
-        public List<ExcelAttendanceRecordModel> GetAttendaceRecordById(int userid,string department, string empcode, string startDate, string endDate)
+        public List<ExcelAttendanceRecordModel>          GetAttendaceRecordById(int userid,string department, string empcode, string startDate, string endDate)
         {
             List<ExcelAttendanceRecordModel> attendanceList = new List<ExcelAttendanceRecordModel>();
 

@@ -3409,15 +3409,11 @@ namespace College_ERP.Controllers
             int userid = homeService.GetUserId(username);
             var query = new List<ExcelAttendanceRecordModel>();
 
-            ViewBag.Department = adminservices
-     .GetAttendaceRecordByExcel(userid)
-     .Select(e => e.DepartmentName).Distinct();
+            ViewBag.Department = adminservices.GetAttendaceRecordByExcel(userid).Select(e => e.DepartmentName).Distinct();
 
             if (!string.IsNullOrWhiteSpace(department))
             {
-                query = adminservices
-     .GetAttendaceRecordByExcel(userid)
-     .ToList();
+                query = adminservices.GetAttendaceRecordByExcel(userid).ToList();
             }
 
             // only filter by department if the parameter is non‐empty
