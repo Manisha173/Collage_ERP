@@ -180,3 +180,33 @@
         });
     });
 </script>
+
+<script>
+    $(document).ready(function () {
+
+        @if (TempData["Message"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '@TempData["Message"]',
+                confirmButtonColor: '#28a745'
+            });
+            </text>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '@TempData["Error"]',
+                confirmButtonColor: '#dc3545'
+            });
+            </text>
+        }
+
+    });
+</script>
