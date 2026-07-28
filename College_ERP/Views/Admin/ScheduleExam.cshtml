@@ -316,45 +316,64 @@
         });
     });
 
-    function initializeDataTable() {
-        debugger
-        let table = $('#examTable').DataTable({
-            ordering: false,
-            autoWidth: false,
-            pageLength: 10,
-            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
-            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
-            buttons: [
-                {
-                    extend: 'excel',
-                    text: 'Export Excel',
-                    exportOptions: {
-                        columns: function (idx, data, node) {
-                            return ![4].includes(idx);
-                        } // exclude last column
-                    }
+ function initializeDataTable() {
+    debugger;
+
+    // Specify the columns you want to export
+    // Example: Export columns 0,1,2,3 and exclude column 4 (Action)
+    const exportColumns = [0, 1, 2, 3,4];
+
+    let table = $('#examTable').DataTable({
+        ordering: false,
+        autoWidth: false,
+        pageLength: 10,
+        lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+        dom: '<"top"lBf>rt<"bottom"ip><"clear">',
+        buttons: [
+            {
+                extend: 'excel',
+                text: 'Export Excel',
+                exportOptions: {
+                    columns: exportColumns
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                text: 'Export PDF',
+                orientation: 'landscape',
+                pageSize: 'A4',
+                exportOptions: {
+                    columns: exportColumns
                 },
-                {
-                    extend: 'pdfHtml5',
-                    text: 'Export PDF',
-                    orientation: 'landscape',
-                    pageSize: 'A4',
-                    exportOptions: {
-                        columns: function (idx, data, node) {
-                            return ![4].includes(idx);
-                        } // exclude last column
-                    },
-                    customize: function (doc) {
-                        doc.defaultStyle.fontSize = 6;
-                        doc.styles.tableHeader.fontSize = 7;
-                        doc.content[1].table.widths =
-                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                customize: function (doc) {
+
+                    // Default font size and alignment
+                    doc.defaultStyle.fontSize = 6;
+                    doc.defaultStyle.alignment = 'center';
+
+                    // Header style
+                    doc.styles.tableHeader.fontSize = 7;
+                    doc.styles.tableHeader.alignment = 'center';
+                    doc.styles.tableHeader.bold = true;
+
+                    // Equal width for all exported columns
+                    doc.content[1].table.widths = Array(exportColumns.length).fill('*');
+
+                    // Center all table cells
+                    var body = doc.content[1].table.body;
+
+                    for (var i = 0; i < body.length; i++) {
+                        for (var j = 0; j < body[i].length; j++) {
+                            body[i][j].alignment = 'center';
+                        }
                     }
                 }
-            ]
-        });
-        return table;
-    };
+            }
+        ]
+    });
+
+    return table;
+}
 
     $(document).ready(function () {
         var table = initializeDataTable();
