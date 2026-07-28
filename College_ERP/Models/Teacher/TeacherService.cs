@@ -1354,20 +1354,26 @@ namespace College_ERP.Models.Teacher
                 cmd.Parameters.AddWithValue("@action", "selectExamTimeTableForTeacher");
                 cmd.Parameters.AddWithValue("@teacherId", teacherid);
                 cmd.Parameters.AddWithValue("@scheduledid", scheduledid);
-                connection.Open();
-                SqlDataReader res = cmd.ExecuteReader();
-                while (res.Read())
+                if (connection.State == ConnectionState.Closed)
                 {
-                    list.Add(new AddExamTimeTableModel
+                    connection.Open();
+                }
+                SqlDataReader res = cmd.ExecuteReader();
+                if (res.HasRows)
+                {
+                    while (res.Read())
                     {
-                        id = Convert.ToInt32(res["id"]),
-                        classId = Convert.ToInt32(res["classId"]),
-                        className = res["classname"].ToString(),
-                        academicYear = res["academicYear"].ToString(),
-                        attachmentName = res["attachment"].ToString(),
-                        description = res["description"].ToString(),
-                        examName = res["examname"].ToString(),
-                    });
+                        list.Add(new AddExamTimeTableModel
+                        {
+                            id = Convert.ToInt32(res["id"]),
+                            classId = Convert.ToInt32(res["classId"]),
+                            className = res["classname"].ToString(),
+                            academicYear = res["academicYear"].ToString(),
+                            attachmentName = res["attachment"].ToString(),
+                            description = res["description"].ToString(),
+                            examName = res["examname"].ToString(),
+                        });
+                    }
                 }
                 return list;
             }
