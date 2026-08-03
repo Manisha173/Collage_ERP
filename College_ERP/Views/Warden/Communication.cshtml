@@ -294,7 +294,7 @@
         });
 
         // Delete Communication
-        window.deleteComm = function (id) {
+       deleteComm = function (id) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this deletion!",
@@ -340,7 +340,7 @@
         };
 
 
-        window.viewDesc = function (description) {
+        viewDesc = function (description) {
             $('#DescriptionContent').html(description);
             $('#viewDescriptionModal').modal('show');
         };

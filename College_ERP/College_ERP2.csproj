@@ -531,6 +531,10 @@
     <Content Include="assets\libs\simplebar\simplebar.min.js" />
     <Content Include="assets\libs\waypoints\lib\jquery.waypoints.min.js" />
     <Content Include="assets\ProjectJs\admin.js" />
+    <Content Include="assets\summernote\summernote.min.css" />
+    <Content Include="assets\summernote\summernote.min.js" />
+    <Content Include="assets\tom-select\tom-select.complete.min.js" />
+    <Content Include="assets\tom-select\tom-select.css" />
     <Content Include="Content\apexcharts.com\samples\assets\github-data.js" />
     <Content Include="Content\apexcharts.com\samples\assets\irregular-data-series.js" />
     <Content Include="Content\apexcharts.com\samples\assets\ohlc.js" />

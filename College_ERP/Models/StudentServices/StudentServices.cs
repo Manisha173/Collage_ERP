@@ -389,6 +389,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.Parameters.AddWithValue("@action", "selectexamtimetableforstudent");
                 cmd.Parameters.AddWithValue("@studentid", studentid);
                 cmd.Parameters.AddWithValue("@scheduledid", scheduledid);
+               
                 connection.Open();
                 SqlDataReader res = cmd.ExecuteReader();
                 if (res.HasRows)

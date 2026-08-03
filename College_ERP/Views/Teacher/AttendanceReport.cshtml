@@ -33,7 +33,7 @@
                     <h4 class="card-title mb-3 border-bottom">Attendance</h4>
                     <form id="attendance-filter-form" class="mb-2">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="fw-bold">Class</label>
                                 <select id="class-dropdown" name="ClassId" class="form-select " required>
                                     @if (classList != null && classList.Count > 0)
@@ -45,19 +45,19 @@
                                     }
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="fw-bold">Section</label>
                                 <select id="section-dropdown" name="SectionId" class="form-select " required></select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="fw-bold">Subject</label>
                                 <select id="subject-dropdown" name="SubjectId" class="form-select submitStudentFormForFilter" required></select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="fw-bold">Date</label>
                                 <input type="date" id="current-date" value="@DateTime.Now.ToString("yyyy-MM-dd")" name="attendanceDate" class="form-control submitStudentFormForFilter" required />
                             </div>
-                            <div class="col-md-3 mt-3">
+                            <div class="col-md-2 mt-3">
 
                                 <!--academic year-->
                                 <select name="academicyear" class="form-select submitStudentFormForFilter" id="academicyear">

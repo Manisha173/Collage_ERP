@@ -3201,7 +3201,8 @@ namespace College_ERP.Models.AdminServices
                         BankAccountNumber = rdr["BankAccountNumber"] != DBNull.Value ? Convert.ToInt64(rdr["BankAccountNumber"]) : 0,
                         ReenterBankAccountNumber = rdr["ReenterBankAccountNumber"] != DBNull.Value ? Convert.ToInt64(rdr["ReenterBankAccountNumber"]) : 0,
 
-                        IfscCode = rdr["IFSCCode"]?.ToString()
+                        IfscCode = rdr["IFSCCode"]?.ToString(),
+                        userid = Convert.ToInt32(rdr["userid"])
 
                     };
                 }
