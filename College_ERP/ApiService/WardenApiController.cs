@@ -220,7 +220,7 @@ namespace College_ERP.ApiService
         }
 
         [Route("api/DeleteWardenCommunication")]
-        [HttpDelete]
+        [HttpPost]
 
         public IHttpActionResult DeleteWardenCommunication(int communicationId)
         {

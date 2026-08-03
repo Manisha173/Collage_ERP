@@ -15,6 +15,7 @@ namespace College_ERP.Models.Login
         public int Id { get; set; }
 
         public int UserId { get; set; }
+        public string Username { get; set; }
 
         public string RefreshToken { get; set; }
 

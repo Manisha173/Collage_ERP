@@ -704,7 +704,7 @@ namespace College_ERP.ApiService
             }
         }
         [Route("api/deletenotes")]
-        [HttpDelete]
+        [HttpPost]
         public IHttpActionResult DeleteNotes(int id)
         {
             try

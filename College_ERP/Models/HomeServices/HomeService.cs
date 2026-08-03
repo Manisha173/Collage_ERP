@@ -114,6 +114,7 @@ namespace College_ERP.Models.HomeServices
                     {
                         Id = Convert.ToInt32(dr["Id"]),
                         UserId = Convert.ToInt32(dr["UserId"]),
+                        Username = dr["Username"].ToString(),
                         RefreshToken = dr["RefreshToken"].ToString(),
                         ExpiryDate = Convert.ToDateTime(dr["ExpiryDate"]),
                         IsRevoked = Convert.ToBoolean(dr["IsRevoked"])
@@ -155,7 +156,7 @@ namespace College_ERP.Models.HomeServices
                     con.Close();
             }
         }
-        public string GetRoleByUserId(int userId)
+        public string GetRoleByUserId(string username)
         {
             try
             {
@@ -165,7 +166,7 @@ namespace College_ERP.Models.HomeServices
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 cmd.Parameters.AddWithValue("@Action", "GetRoleByUserid");
-                cmd.Parameters.AddWithValue("@UserId", userId);
+                cmd.Parameters.AddWithValue("@username", username);
 
                 if (con.State == ConnectionState.Closed)
                     con.Open();
