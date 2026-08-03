@@ -1,0 +1,490 @@
+﻿@{
+    ViewBag.Title = "Result";
+    Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
+}
+
+<style>
+    :root {
+        --res-navy: #1c3f66;
+        --res-navy-dark: #16324f;
+        --res-muted: #6b7280;
+        --res-green: #2e9e4f;
+    }
+
+    .res-header {
+        background: var(--res-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: .9rem;
+    }
+
+        .res-header a {
+            color: #fff;
+        }
+
+        .res-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .res-score {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        padding: 1rem 1.25rem .5rem;
+        color: var(--res-navy);
+        font-weight: 600;
+    }
+
+    /* Form section */
+    .res-form-wrap {
+        max-width: 600px;
+        margin: 1.5rem auto;
+        padding: 0 1.25rem;
+    }
+
+    .res-field {
+        border: 1px solid #d7dbe1;
+        border-radius: 6px;
+        padding: .55rem .9rem .6rem;
+        margin-bottom: 1rem;
+        position: relative;
+        cursor: pointer;
+        background: #fafbfc;
+    }
+
+        .res-field.active {
+            border-color: var(--res-green);
+        }
+
+        .res-field label {
+            position: absolute;
+            top: -9px;
+            left: 10px;
+            background: #fff;
+            padding: 0 5px;
+            font-size: .72rem;
+            font-weight: 600;
+            color: var(--res-muted);
+        }
+
+        .res-field.active label {
+            color: var(--res-green);
+        }
+
+        .res-field .res-field-value {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: .95rem;
+            color: #1e2433;
+        }
+
+            .res-field .res-field-value.placeholder {
+                color: #8b93a1;
+            }
+
+    .res-submit-btn {
+        background: var(--res-navy);
+        border: none;
+        color: #fff;
+        width: 100%;
+        padding: .75rem;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+        .res-submit-btn:hover {
+            background: var(--res-navy-dark);
+            color: #fff;
+        }
+
+    /* Picker modal (Academic Year / Exam Schedule) */
+    #pickerModal .modal-content {
+        border-radius: 8px;
+        border: none;
+        overflow: hidden;
+    }
+
+    #pickerModal .modal-header {
+        border: none;
+        padding: 1.1rem 1.25rem .5rem;
+    }
+
+    #pickerModal .modal-title {
+        font-weight: 600;
+        font-size: 1.15rem;
+    }
+
+    #pickerModal .modal-body {
+        padding: 0;
+        max-height: 320px;
+        overflow-y: auto;
+    }
+
+    .picker-option {
+        display: flex;
+        align-items: center;
+        gap: .9rem;
+        padding: .7rem 1.25rem;
+        cursor: pointer;
+    }
+
+        .picker-option:hover {
+            background: #f7f9fc;
+        }
+
+        .picker-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--res-navy);
+            margin: 0;
+        }
+
+        .picker-option span {
+            font-size: .95rem;
+            color: #1e2433;
+        }
+
+    #pickerModal .modal-footer {
+        border: none;
+        padding: .6rem 1.25rem 1rem;
+        justify-content: flex-end;
+        gap: 1.5rem;
+    }
+
+        #pickerModal .modal-footer button {
+            background: transparent;
+            border: none;
+            color: var(--res-navy);
+            font-weight: 600;
+            font-size: .9rem;
+            padding: .3rem .2rem;
+        }
+
+    /* Result accordion */
+    .res-results-wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 1.25rem 2rem;
+    }
+
+    .subject-card {
+        border: 1px solid #e5e8ee;
+        border-radius: 8px;
+        margin-bottom: .9rem;
+        overflow: hidden;
+    }
+
+    .subject-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: .85rem 1.1rem;
+        background: #fff;
+        cursor: pointer;
+        transition: background .15s ease;
+    }
+
+        .subject-card-header .subject-name {
+            font-weight: 600;
+            color: #1e2433;
+            font-size: .95rem;
+        }
+
+        .subject-card-header .grade-badge {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--res-green);
+            color: #fff;
+            font-size: .78rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: .6rem;
+        }
+
+        .subject-card-header .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .subject-card-header .chevron {
+            color: #8b93a1;
+            margin-left: .6rem;
+            transition: transform .15s ease;
+        }
+
+    .subject-card.expanded .subject-card-header {
+        background: var(--res-navy);
+    }
+
+        .subject-card.expanded .subject-card-header .subject-name {
+            color: #fff;
+        }
+
+        .subject-card.expanded .subject-card-header .chevron {
+            color: #fff;
+            transform: rotate(180deg);
+        }
+
+    .subject-card-body {
+        display: none;
+        padding: .3rem 1.1rem .6rem;
+    }
+
+    .subject-card.expanded .subject-card-body {
+        display: block;
+    }
+
+    .subject-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: .55rem 0;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+        .subject-row:last-child {
+            border-bottom: none;
+        }
+
+        .subject-row .row-left {
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            color: #333;
+            font-size: .9rem;
+        }
+
+            .subject-row .row-left i {
+                color: var(--res-navy);
+                width: 18px;
+                text-align: center;
+            }
+
+        .subject-row .row-value {
+            font-weight: 600;
+            color: #1e2433;
+            font-size: .92rem;
+        }
+</style>
+
+<div class="content-page bg-white">
+
+    <div class="res-header">
+        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+        <h5>Results</h5>
+    </div>
+
+    <div class="res-score">
+        <i class="fa-solid fa-trophy"></i>
+        <span>Your Score: <span id="scoreValue">0%</span></span>
+    </div>
+
+    <!-- Filter form -->
+    <div class="res-form-wrap" id="resultForm">
+        <div class="res-field" id="academicYearField" onclick="openPicker('academicYear')">
+            <label>Academic Year</label>
+            <div class="res-field-value placeholder" id="academicYearValue">
+                <span>Select Academic Year</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+        </div>
+
+        <div class="res-field" id="examScheduleField" onclick="openPicker('examSchedule')">
+            <label>Exam Schedule</label>
+            <div class="res-field-value placeholder" id="examScheduleValue">
+                <span>Select Exam Schedule</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+        </div>
+
+        <button type="button" class="res-submit-btn" onclick="viewResult()">View Result</button>
+    </div>
+
+    <!-- Results (subjects accordion) -->
+    <div class="res-results-wrap" id="resultsWrap" style="display:none;"></div>
+
+</div>
+
+<!-- Generic Picker Modal -->
+<div class="modal fade" id="pickerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:380px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pickerModalTitle"></h5>
+            </div>
+            <div class="modal-body" id="pickerModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" id="pickerCancelBtn">Cancel</button>
+                <button type="button" id="pickerOkBtn">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var pickerModalEl = document.getElementById('pickerModal');
+    var pickerModal = null;
+
+    function getPickerModal() {
+        if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+            console.error('Bootstrap JS not loaded.');
+            return null;
+        }
+        return bootstrap.Modal.getOrCreateInstance(pickerModalEl);
+    }
+
+    // Data sources
+    var academicYears = ['2026-2027', '2025-2026', '2024-2025', '2023-2024', '2022-2023', '2021-2022', '2020-2021', '2019-2020', '2018-2019'];
+    var examSchedules = ['BA Exam', 'Pre Exam'];
+
+    var selected = { academicYear: '', examSchedule: '' };
+    var tempSelected = '';
+    var currentField = '';
+
+    window.openPicker = function (field) {
+        currentField = field;
+        tempSelected = selected[field];
+
+        var title = field === 'academicYear' ? 'Academic Year' : 'Exam Schedule';
+        var options = field === 'academicYear' ? academicYears : examSchedules;
+
+        document.getElementById('pickerModalTitle').textContent = title;
+
+        var bodyHtml = '';
+        options.forEach(function (opt) {
+            var checked = opt === tempSelected ? 'checked' : '';
+            bodyHtml += '' +
+                '<label class="picker-option">' +
+                '<input type="radio" name="pickerOption" value="' + opt + '" ' + checked + '>' +
+                '<span>' + opt + '</span>' +
+                '</label>';
+        });
+        document.getElementById('pickerModalBody').innerHTML = bodyHtml;
+
+        // handle radio change
+        document.querySelectorAll('input[name="pickerOption"]').forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                tempSelected = this.value;
+            });
+        });
+
+        pickerModal = getPickerModal();
+        if (pickerModal) pickerModal.show();
+    };
+
+    document.getElementById('pickerOkBtn').addEventListener('click', function () {
+        if (!tempSelected) { if (pickerModal) pickerModal.hide(); return; }
+
+        selected[currentField] = tempSelected;
+
+        var fieldEl = document.getElementById(currentField + 'Field');
+        var valueEl = document.getElementById(currentField + 'Value');
+
+        fieldEl.classList.add('active');
+        valueEl.classList.remove('placeholder');
+        valueEl.innerHTML = '<span>' + tempSelected + '</span><i class="fa-solid fa-chevron-down"></i>';
+
+        if (pickerModal) pickerModal.hide();
+    });
+
+    document.getElementById('pickerCancelBtn').addEventListener('click', function () {
+        if (pickerModal) pickerModal.hide();
+    });
+
+    // Sample result data — replace with data from your controller / API
+    var resultData = {
+        score: '86.67%',
+        subjects: [
+            {
+                name: 'Ancient History',
+                grade: 'A',
+                theoryMarks: 55,
+                totalMarks: 100,
+                obtainedMarks: 85,
+                practicalMarks: 30,
+                totalTheory: 70
+            },
+            {
+                name: 'Civics',
+                grade: 'A',
+                theoryMarks: 50,
+                totalMarks: 100,
+                obtainedMarks: 80,
+                practicalMarks: 30,
+                totalTheory: 70
+            },
+            {
+                name: 'History',
+                grade: 'A+',
+                theoryMarks: 65,
+                totalMarks: 100,
+                obtainedMarks: 95,
+                practicalMarks: 30,
+                totalTheory: 70
+            }
+        ]
+    };
+
+    window.viewResult = function () {
+        if (!selected.academicYear || !selected.examSchedule) {
+            alert('Please select Academic Year and Exam Schedule.');
+            return;
+        }
+
+        // TODO: call your API here using selected.academicYear / selected.examSchedule
+        renderResults(resultData);
+    };
+
+    function renderResults(data) {
+        document.getElementById('scoreValue').textContent = data.score;
+
+        var wrap = document.getElementById('resultsWrap');
+        wrap.innerHTML = '';
+
+        data.subjects.forEach(function (subj, idx) {
+            var card = document.createElement('div');
+            card.className = 'subject-card' + (idx === data.subjects.length - 1 ? ' expanded' : '');
+            card.innerHTML = '' +
+                '<div class="subject-card-header" data-index="' + idx + '">' +
+                    '<span class="subject-name">' + subj.name + '</span>' +
+                    '<div class="header-right">' +
+                        '<span class="grade-badge">' + subj.grade + '</span>' +
+                        '<i class="fa-solid fa-chevron-down chevron"></i>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="subject-card-body">' +
+                    '<div class="subject-row"><span class="row-left"><i class="fa-solid fa-book-open"></i>Theory Marks</span><span class="row-value">' + subj.theoryMarks + '</span></div>' +
+                    '<div class="subject-row"><span class="row-left"><i class="fa-solid fa-layer-group"></i>Total Marks</span><span class="row-value">' + subj.totalMarks + '</span></div>' +
+                    '<div class="subject-row"><span class="row-left"><i class="fa-solid fa-medal"></i>Obtained Marks</span><span class="row-value">' + subj.obtainedMarks + '</span></div>' +
+                    '<div class="subject-row"><span class="row-left"><i class="fa-solid fa-flask"></i>Practical Marks</span><span class="row-value">' + subj.practicalMarks + '</span></div>' +
+                    '<div class="subject-row"><span class="row-left"><i class="fa-solid fa-pen-to-square"></i>Total Theory</span><span class="row-value">' + subj.totalTheory + '</span></div>' +
+                '</div>';
+            wrap.appendChild(card);
+        });
+
+        wrap.style.display = 'block';
+
+        // Accordion behavior — one open at a time
+        wrap.querySelectorAll('.subject-card-header').forEach(function (header) {
+            header.addEventListener('click', function () {
+                var card = header.closest('.subject-card');
+                var isExpanded = card.classList.contains('expanded');
+
+                wrap.querySelectorAll('.subject-card').forEach(function (c) {
+                    c.classList.remove('expanded');
+                });
+
+                if (!isExpanded) card.classList.add('expanded');
+            });
+        });
+    }
+})();
+</script>

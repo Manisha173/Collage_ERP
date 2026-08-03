@@ -365,6 +365,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LibraryController.cs" />
+    <Compile Include="Controllers\ParentController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\SuperAdminController.cs" />
     <Compile Include="Controllers\TeacherController.cs" />
@@ -720,9 +721,23 @@
     <Content Include="Views\Admin\DriverProfile.cshtml" />
     <Content Include="Views\Admin\AdminProfile.cshtml" />
     <Content Include="Views\Admin\StudentFeesTransactionHistory.cshtml" />
+    <Content Include="Views\Shared\_ParentLayoutPage.cshtml" />
+    <Content Include="Views\Parent\Dashboard.cshtml" />
+    <Content Include="Views\Parent\Timetable.cshtml" />
+    <Content Include="Views\Parent\Assignment.cshtml" />
+    <Content Include="Views\Parent\Parentcommunication.cshtml" />
+    <Content Include="Views\Parent\Announcement.cshtml" />
+    <Content Include="Views\Parent\Result.cshtml" />
+    <Content Include="Views\Parent\ExamSchedule.cshtml" />
+    <Content Include="Views\Parent\Fees.cshtml" />
+    <Content Include="Views\Parent\Hostel.cshtml" />
+    <Content Include="Views\Parent\Transport.cshtml" />
+    <Content Include="Views\Parent\Notice.cshtml" />
+    <Content Include="Views\Parent\Profile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\Parent\" />
     <Folder Include="Upload\" />
   </ItemGroup>
   <ItemGroup>

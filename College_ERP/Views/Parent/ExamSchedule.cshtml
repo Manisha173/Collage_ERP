@@ -1,0 +1,129 @@
+﻿@{
+    ViewBag.Title = "ExamSchedule";
+    Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+    :root {
+        --exs-navy: #1c3f66;
+        --exs-muted: #6b7280;
+    }
+
+    .exs-header {
+        background: var(--exs-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+        .exs-header a {
+            color: #fff;
+        }
+
+        .exs-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .exs-card {
+        margin: 1.25rem;
+        padding: 1.1rem 1.25rem;
+        border-bottom: 1px solid #eceef2;
+    }
+
+        .exs-card h5 {
+            color: var(--exs-navy);
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: .3rem;
+        }
+
+        .exs-card p {
+            color: #333;
+            font-size: .9rem;
+            margin-bottom: .9rem;
+        }
+
+    .exs-btn-download {
+        background: #eef1f5;
+        border: none;
+        border-radius: 20px;
+        padding: .4rem 1rem;
+        font-size: .85rem;
+        font-weight: 500;
+        color: #1e2433;
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+    }
+
+        .exs-btn-download:hover {
+            background: #e2e6ec;
+        }
+</style>
+
+<div class="content-page bg-white">
+
+    <div class="exs-header">
+        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+        <h5>Exam Schedule</h5>
+    </div>
+
+    <div class="exs-card"
+         id="examTimetableCard"
+         data-title="Exam Timetable"
+         data-description="You Have Got Your Exam Date Sheet. Download It Now.">
+        <h5>Exam Timetable</h5>
+        <p>You Have Got Your Exam Date Sheet. Download It Now.</p>
+        <button type="button" class="exs-btn-download" id="downloadPdfBtn">
+            <i class="fa-solid fa-cloud-arrow-down"></i> Download
+        </button>
+    </div>
+
+</div>
+
+<script>
+(function () {
+    var downloadBtn = document.getElementById('downloadPdfBtn');
+    var card = document.getElementById('examTimetableCard');
+
+    downloadBtn.addEventListener('click', function () {
+        if (!window.jspdf) {
+            console.error('jsPDF failed to load.');
+            return;
+        }
+        var jsPDF = window.jspdf.jsPDF;
+        var doc = new jsPDF();
+
+        var title = card.dataset.title;
+        var description = card.dataset.description;
+
+        var marginLeft = 15;
+        var pageWidth = doc.internal.pageSize.getWidth();
+        var maxWidth = pageWidth - marginLeft * 2;
+        var y = 20;
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.text(title, marginLeft, y);
+        y += 12;
+
+        doc.setDrawColor(220, 220, 220);
+        doc.line(marginLeft, y, pageWidth - marginLeft, y);
+        y += 10;
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(11);
+        doc.setTextColor(30, 30, 30);
+        var lines = doc.splitTextToSize(description, maxWidth);
+        doc.text(lines, marginLeft, y);
+
+        var safeFileName = (title || 'exam_schedule').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        doc.save(safeFileName + '.pdf');
+    });
+})();
+</script>

@@ -1,0 +1,298 @@
+﻿@{
+    ViewBag.Title = "Announcement";
+    Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
+}
+
+<!-- jsPDF for client-side PDF generation of the modal contents -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+    :root {
+        --ann-navy: #1c3f66;
+        --ann-navy-dark: #16324f;
+        --ann-muted: #6b7280;
+    }
+
+    .ann-header {
+        background: var(--ann-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+        .ann-header i {
+            cursor: pointer;
+        }
+
+        .ann-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .ann-list-item {
+        display: flex;
+        align-items: flex-start;
+        gap: .9rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #eceef2;
+        cursor: pointer;
+        transition: background .12s ease;
+    }
+
+        .ann-list-item:hover {
+            background: #f7f9fc;
+        }
+
+        .ann-list-item .ann-bell {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #eef2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ann-navy);
+            flex-shrink: 0;
+        }
+
+        .ann-list-item .ann-title {
+            font-weight: 600;
+            color: #1e2433;
+            margin: 0;
+            font-size: .95rem;
+        }
+
+        .ann-list-item .ann-subtitle {
+            color: var(--ann-muted);
+            margin: 0;
+            font-size: .82rem;
+        }
+
+    /* Modal styling to match the reference design */
+    #announcementModal .modal-content {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    #announcementModal .modal-header {
+        background: var(--ann-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        border: none;
+    }
+
+        #announcementModal .modal-header .modal-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+    #announcementModal .btn-close-text {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: .04em;
+        font-size: .85rem;
+    }
+
+    #announcementModal .modal-body {
+        padding: 1.5rem;
+    }
+
+        #announcementModal .modal-body h4 {
+            font-weight: 700;
+            color: #1e2433;
+            margin-bottom: .3rem;
+        }
+
+    #announcementModal .modal-date {
+        color: var(--ann-muted);
+        font-size: .85rem;
+        margin-bottom: 1rem;
+    }
+
+    #announcementModal .btn-download {
+        background: #eef1f5;
+        border: none;
+        border-radius: 20px;
+        padding: .4rem 1rem;
+        font-size: .85rem;
+        font-weight: 500;
+        color: #1e2433;
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        margin-bottom: 1.25rem;
+    }
+
+        #announcementModal .btn-download:hover {
+            background: #e2e6ec;
+        }
+
+    #announcementModal .modal-description {
+        color: #333;
+        font-size: .92rem;
+        line-height: 1.5;
+        white-space: pre-line;
+    }
+
+    #announcementModal .ann-close-x {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 1.1rem;
+        line-height: 1;
+        padding: .25rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        opacity: .9;
+        transition: opacity .12s ease;
+    }
+
+        #announcementModal .ann-close-x:hover {
+            opacity: 1;
+        }
+</style>
+
+<div class="content-page bg-white">
+
+    <div class="ann-header">
+        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left text-light"></i></a>
+        <h5>Announcement</h5>
+    </div>
+
+
+        @*@Model
+        @foreach (var item in Model) { 
+        }*@
+
+    <div id="announcementList">
+        <div class="ann-list-item"
+             data-title="Test"
+             data-date="28 Jul 2026, 12:00 AM"
+             data-description="Test"
+             data-attachment="">
+            <div class="ann-bell"><i class="fa-solid fa-bell"></i></div>
+            <div>
+                <p class="ann-title">Test</p>
+                <p class="ann-subtitle">Test</p>
+            </div>
+        </div>
+
+        <div class="ann-list-item"
+             data-title="Holiday Notice"
+             data-date="02 Aug 2026, 09:00 AM"
+             data-description="School will remain closed on 15th August on account of Independence Day. Regular classes will resume the next working day."
+             data-attachment="">
+            <div class="ann-bell"><i class="fa-solid fa-bell"></i></div>
+            <div>
+                <p class="ann-title">Holiday Notice</p>
+                <p class="ann-subtitle">School closed on 15th August</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Detail Modal -->
+<div class="modal fade" id="announcementModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Notification Details</h5>
+                <div class="d-flex align-items-end gap-2">
+                </div>
+            </div>
+            <div class="modal-body">
+                <h4 id="modalTitle"></h4>
+                <p class="modal-date" id="modalDate"></p>
+
+                <button type="button" class="btn-download" id="downloadPdfBtn">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Download
+                </button>
+
+                <p class="modal-description" id="modalDescription"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var modalEl = document.getElementById('announcementModal');
+        var modalTitle = document.getElementById('modalTitle');
+        var modalDate = document.getElementById('modalDate');
+        var modalDescription = document.getElementById('modalDescription');
+        var downloadBtn = document.getElementById('downloadPdfBtn');
+
+        // Don't create the Modal instance until we actually need it,
+        // and guard against bootstrap not being loaded yet.
+        function getModalInstance() {
+            if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+                console.error('Bootstrap JS is not loaded on this page — modal cannot open.');
+                return null;
+            }
+            return bootstrap.Modal.getOrCreateInstance(modalEl);
+        }
+
+        // Use event delegation on document so this still works even if
+        // this markup is injected into the page after load (e.g. via AJAX).
+        document.addEventListener('click', function (e) {
+            var item = e.target.closest('.ann-list-item');
+            if (!item) return;
+
+            modalTitle.textContent = item.dataset.title || '';
+            modalDate.textContent = item.dataset.date || '';
+            modalDescription.textContent = item.dataset.description || '';
+
+            var bsModal = getModalInstance();
+            if (bsModal) bsModal.show();
+        });
+
+        downloadBtn.addEventListener('click', function () {
+            if (!window.jspdf) {
+                console.error('jsPDF failed to load.');
+                return;
+            }
+            var jsPDF = window.jspdf.jsPDF;
+            var doc = new jsPDF();
+
+            var title = modalTitle.textContent;
+            var date = modalDate.textContent;
+            var description = modalDescription.textContent;
+
+            var marginLeft = 15;
+            var pageWidth = doc.internal.pageSize.getWidth();
+            var maxWidth = pageWidth - marginLeft * 2;
+            var y = 20;
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.text(title, marginLeft, y);
+            y += 8;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(110, 110, 110);
+            doc.text(date, marginLeft, y);
+            y += 10;
+
+            doc.setDrawColor(220, 220, 220);
+            doc.line(marginLeft, y, pageWidth - marginLeft, y);
+            y += 10;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(11);
+            doc.setTextColor(30, 30, 30);
+            var lines = doc.splitTextToSize(description, maxWidth);
+            doc.text(lines, marginLeft, y);
+
+            var safeFileName = (title || 'notification').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            doc.save(safeFileName + '.pdf');
+        });
+    })();
+</script>
