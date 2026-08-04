@@ -101,6 +101,7 @@ namespace College_ERP.Controllers
 				else if (res == "teacher") { return Json(new { status = true, message = "Invalid Credential", route = redirecturl ?? "/teacher/dashboard" }); }
 				else if (res == "security") { return Json(new { status = true, message = "Invalid Credential", route = redirecturl ?? "/security/dashboard" }); }
 				else if(res== "librarian") { return Json(new { status = true, message = "Invalid Credential", route = redirecturl ?? "/library/dashboard" }); }
+				else if(res== "parent") { return Json(new { status = true, message = "Invalid Credential", route = redirecturl ?? "/parent/dashboard" }); }
 
             }
 			return Json(new { status = false,message="Invalid Credential" });

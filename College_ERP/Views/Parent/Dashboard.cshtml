@@ -1,4 +1,5 @@
-﻿@{
+﻿@using College_ERP.Models.StudentServices
+@{
     ViewBag.Title = "Dashboard";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
 }
@@ -59,8 +60,6 @@
             font-size: 1.1rem;
             opacity: 0.9;
         }
-
-
 
     .cards-grid {
         display: grid;
@@ -213,352 +212,290 @@
                     <div class="card">
 
                         <div class="col-12">
-                            <div class="row g-3">
+                            @{
+                                var student = ViewBag.StudentProfile as College_ERP.Models.StudentServices.main.StudentProfileModel;
 
-                                <div class="col-md-4">
-                                    <div class="card mb-0 custom-border">
-                                        <div class="card-body">
-                                            <a href="/Parent/Timetable">
-                                                <div class="widget-first">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
-                                                            <div class="bg-primary rounded-circle widget-size text-center">
-                                                                <i data-feather="home" class="text-light"></i>
+                                <div class="row g-3">
+
+                                    <div class="col-md-4">
+                                        <div class="card mb-0 custom-border">
+                                            <div class="card-body">
+
+                                                @if (student != null)
+                                                {
+                                                    <a href="/Parent/Timetable?classid=@student.ClassId&sectionid=@student.SectionId">
+                                                        <div class="widget-first">
+                                                            <div class="d-flex align-items-center mb-2">
+                                                                <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                                    <div class="bg-primary rounded-circle widget-size text-center">
+                                                                        <i data-feather="home" class="text-light"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <p class="mb-0 text-dark fs-15">Time Table</p>
+                                                            </div>
+
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black ps-5 ms-1 me-3"></h3>
+                                                                <div class="text-center">
+                                                                    <span class="text-dark fs-13 mb-0">View More</span>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <p class="mb-0 text-dark fs-15">Time Table</p>
-                                                    </div>
-
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black ps-5 ms-1 me-3">
-                                                            @*@if (Model != null)
-                                                            {
-                                                                @Model.totalroom
-                                                            }
-                                                            else
-                                                            {
-                                                                <span>No data</span>
-                                                            }*@
-                                                        </h3>
-                                                        <div class="text-center">
-                                                            <span class="text-dark fs-13 mb-0">View More</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <div class="col-md-4">
-                                    <div class="card mb-0 custom-border">
-                                        <div class="card-body">
-                                            <a href="/Parent/Announcement">
-                                                <div class="widget-first">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
-                                                            <div class="bg-warning rounded-circle widget-size text-center">
-                                                                <i data-feather="box" class="text-light"></i>
-                                                            </div>
-                                                        </div>
-                                                        <p class="mb-0 text-dark fs-15">Announcements</p>
-                                                    </div>
-
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
-                                                            @*@if (Model != null)
-                                                            {
-                                                                @Model.totalbeds
-                                                            }
-                                                            else
-                                                            {
-                                                                <span>No data</span>
-                                                            }*@
-                                                        </h3>
-                                                        <div class="text-center">
-                                                            <span class="text-dark fs-13 mb-0">View More</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card mb-0 custom-border">
-                                        <div class="card-body">
-                                            <a href="/Parent/Assignment">
-                                                <div class="widget-first">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <div class="p-2 border border-secondary border-opacity-10 bg-secondary-subtle rounded-pill me-2">
-                                                            <div class="bg-secondary rounded-circle widget-size text-center">
-                                                                <i data-feather="user-check" class="text-light"></i>
-                                                            </div>
-                                                        </div>
-                                                        <p class="mb-0 text-dark fs-15">Assignments</p>
-                                                    </div>
-
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
-                                                            @*@if (Model != null)
-                                                            {
-                                                                @Model.occupiedbeds
-                                                            }
-                                                            else
-                                                            {
-                                                                <span>No data</span>
-                                                            }*@
-                                                        </h3>
-                                                        <div class="text-center">
-                                                            <span class="text-dark fs-13 mb-0">View More</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <div class="card mb-0 custom-border">
-                                        <div class="card-body">
-                                            <a href="/Parent/ParentCommunication">
-                                                <div class="widget-first">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <div class="p-2 border border-danger border-opacity-10 bg-danger-subtle rounded-pill me-2">
-                                                            <div class="bg-danger rounded-circle widget-size text-center">
-                                                                <i data-feather="user" class="text-light"></i>
-                                                            </div>
-                                                        </div>
-                                                        <p class="mb-0 text-dark fs-15">Parent Communication</p>
-                                                    </div>
-
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
-                                                            @*@if (Model != null)
-                                                            {
-                                                                @Model.remainingbeds
-                                                            }
-                                                            else
-                                                            {
-                                                                <span>No data</span>
-                                                            }*@
-                                                        </h3>
-                                                        <div class="text-center">
-                                                            <span class="text-dark fs-13 mb-0">View More</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <div class="card mb-0 custom-border">
-                                        <div class="card-body">
-                                            <a href="/Parent/ExamSchedule">
-                                                <div class="widget-first">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <div class="p-2 border border-success border-opacity-10 bg-success-subtle rounded-pill me-2">
-                                                            <div class="bg-primary rounded-circle widget-size text-center">
-                                                                <i data-feather="slash" class="text-light"></i>
-                                                            </div>
-                                                        </div>
-                                                        <p class="mb-0 text-dark fs-15">Exam Schedule</p>
-                                                    </div>
-
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
-                                                            @*@if (Model != null)
-                                                            {
-                                                                @Model.nonACRoomNonAttachedBathroom
-                                                            }
-                                                            else
-                                                            {
-                                                                <span>No data</span>
-                                                            }*@
-                                                        </h3>
-                                                        <div class="text-center">
-                                                            <span class="text-dark fs-13 mb-0">View More</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <div class="card mb-0 custom-border">
-                                        <div class="card-body">
-                                            <a href="/Parent/Notice">
-                                                <div class="widget-first">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <div class="p-2 border border-warning border-opacity-10 bg-warning-subtle rounded-pill me-2">
-                                                            <div class="bg-warning rounded-circle widget-size text-center">
-                                                                <i data-feather="wind" class="text-light"></i>
-                                                            </div>
-                                                        </div>
-                                                        <p class="mb-0 text-dark fs-15">Notice</p>
-                                                    </div>
-
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
-                                                            @*@if (Model != null)
-                                                            {
-                                                                @Model.ACRoomNonAttachedBathroom
-                                                            }
-                                                            else
-                                                            {
-                                                                <span>No data</span>
-                                                            }*@
-                                                        </h3>
-                                                        <div class="text-center">
-                                                            <span class="text-dark fs-13 mb-0">View More</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <div class="card mb-0 custom-border">
-                                        <div class="card-body">
-                                            <a href="/Parent/Result">
-                                                <div class="widget-first">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <div class="p-2 border border-warning border-opacity-10 bg-warning-subtle rounded-pill me-2">
-                                                            <div class="bg-success rounded-circle widget-size text-center">
-                                                                <i data-feather="slash" class="text-light"></i>
-                                                            </div>
-                                                        </div>
-                                                        <p class="mb-0 text-dark fs-15">Result</p>
-                                                    </div>
-
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
-                                                            @*@if (Model != null)
-                                                            {
-                                                                @Model.nonACRoomAttachedBathroom
-                                                            }
-                                                            else
-                                                            {
-                                                                <span>No data</span>
-                                                            }*@
-                                                        </h3>
-                                                        <div class="text-center">
-                                                            <span class="text-dark fs-13 mb-0">View More</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card mb-0 custom-border">
-                                        <div class="card-body">
-                                            <a href="/Parent/Fees">
-                                                <div class="widget-first">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <div class="p-2 border border-warning border-opacity-10 bg-warning-subtle rounded-pill me-2">
-                                                            <div class="bg-secondary rounded-circle widget-size text-center">
-                                                                <i data-feather="wind" class="text-light"></i>
-
-                                                            </div>
-                                                        </div>
-                                                        <p class="mb-0 text-dark fs-15">Fees</p>
-                                                    </div>
-
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
-                                                            @*@if (Model != null)
-                                                            {
-                                                                @Model.ACRoomAttachedBathroom
-                                                            }
-                                                            else
-                                                            {
-                                                                <span>No data</span>
-                                                            }*@
-                                                        </h3>
-                                                        <div class="text-center">
-                                                            <span class="text-dark fs-13 mb-0">View More</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card mb-0 custom-border">
-                                        <div class="card-body">
-                                            <a href="/Parent/Transport">
-                                                <div class="widget-first">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
-                                                            <div class="bg-primary rounded-circle widget-size text-center">
-                                                                <i data-feather="mail" class="text-light"></i>
-                                                            </div>
-                                                        </div>
-                                                        <p class="mb-0 text-dark fs-15">Transport</p>
-                                                    </div>
-
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
-                                                            @*@if (Model != null)
-                                                            {
-                                                                @Model.communication
-                                                            }
-                                                            else
-                                                            {
-                                                                <span>No data</span>
-                                                            }*@
-                                                        </h3>
-                                                        <div class="text-center">
-                                                            <span class="text-dark fs-13 mb-0">View More</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card mb-0 custom-border">
-                                        <div class="card-body">
-                                            <a href="/Parent/Hostel">
-                                                <div class="widget-first">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
-                                                            <div class="bg-secondary rounded-circle widget-size text-center">
-                                                                <i data-feather="bell" class="text-light"></i>
-                                                            </div>
-                                                        </div>
-                                                        <p class="mb-0 text-dark fs-15">Hostel</p>
-                                                    </div>
-
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1" id="noticeCount">
-
-                                                            <!---notice-->
-                                                        </h3>
-                                                        <div class="text-center">
-                                                            <span class="text-dark fs-13 mb-0">View More</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </a>
+                                                    </a>
+                                                }
+                                            </div>
                                         </div>
                                     </div>
 
-                                </div>
-                            </div>
 
+                                    <div class="col-md-4">
+                                        <div class="card mb-0 custom-border">
+                                            <div class="card-body">
+
+                                                @if (student != null)
+                                                {
+                                                    <a href="/Parent/Announcement?studentid=@student.StudentId">
+                                                        <div class="widget-first">
+                                                            <div class="d-flex align-items-center mb-2">
+                                                                <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                                    <div class="bg-warning rounded-circle widget-size text-center">
+                                                                        <i data-feather="box" class="text-light"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <p class="mb-0 text-dark fs-15">Announcements</p>
+                                                            </div>
+
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                                </h3>
+                                                                <div class="text-center">
+                                                                    <span class="text-dark fs-13 mb-0">View More</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mb-0 custom-border">
+                                            <div class="card-body">
+                                                <a href="/Parent/Assignment?studentid=@student.StudentId">
+                                                    <div class="widget-first">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <div class="p-2 border border-secondary border-opacity-10 bg-secondary-subtle rounded-pill me-2">
+                                                                <div class="bg-secondary rounded-circle widget-size text-center">
+                                                                    <i data-feather="user-check" class="text-light"></i>
+                                                                </div>
+                                                            </div>
+                                                            <p class="mb-0 text-dark fs-15">Assignments</p>
+                                                        </div>
+
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                            </h3>
+                                                            <div class="text-center">
+                                                                <span class="text-dark fs-13 mb-0">View More</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="card mb-0 custom-border">
+                                            <div class="card-body">
+                                                <a href="/Parent/ParentCommunication?studentid=@student.StudentId">
+                                                    <div class="widget-first">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <div class="p-2 border border-danger border-opacity-10 bg-danger-subtle rounded-pill me-2">
+                                                                <div class="bg-danger rounded-circle widget-size text-center">
+                                                                    <i data-feather="user" class="text-light"></i>
+                                                                </div>
+                                                            </div>
+                                                            <p class="mb-0 text-dark fs-15">Parent Communication</p>
+                                                        </div>
+
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                            </h3>
+                                                            <div class="text-center">
+                                                                <span class="text-dark fs-13 mb-0">View More</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="card mb-0 custom-border">
+                                            <div class="card-body">
+                                                <a href="/Parent/ExamSchedule?classid=@student.ClassId">
+                                                    <div class="widget-first">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <div class="p-2 border border-success border-opacity-10 bg-success-subtle rounded-pill me-2">
+                                                                <div class="bg-primary rounded-circle widget-size text-center">
+                                                                    <i data-feather="slash" class="text-light"></i>
+                                                                </div>
+                                                            </div>
+                                                            <p class="mb-0 text-dark fs-15">Exam Schedule</p>
+                                                        </div>
+
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                            </h3>
+                                                            <div class="text-center">
+                                                                <span class="text-dark fs-13 mb-0">View More</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="card mb-0 custom-border">
+                                            <div class="card-body">
+                                                <a href="/Parent/Notice?studentid=@student.StudentId">
+                                                    <div class="widget-first">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <div class="p-2 border border-warning border-opacity-10 bg-warning-subtle rounded-pill me-2">
+                                                                <div class="bg-warning rounded-circle widget-size text-center">
+                                                                    <i data-feather="wind" class="text-light"></i>
+                                                                </div>
+                                                            </div>
+                                                            <p class="mb-0 text-dark fs-15">Notice</p>
+                                                        </div>
+
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                            </h3>
+                                                            <div class="text-center">
+                                                                <span class="text-dark fs-13 mb-0">View More</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="card mb-0 custom-border">
+                                            <div class="card-body">
+                                                <a href="/Parent/Result?studentId=@student.StudentId&academicYear=@student.AcademicYear">
+                                                    <div class="widget-first">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <div class="p-2 border border-warning border-opacity-10 bg-warning-subtle rounded-pill me-2">
+                                                                <div class="bg-success rounded-circle widget-size text-center">
+                                                                    <i data-feather="slash" class="text-light"></i>
+                                                                </div>
+                                                            </div>
+                                                            <p class="mb-0 text-dark fs-15">Result</p>
+                                                        </div>
+
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                            </h3>
+                                                            <div class="text-center">
+                                                                <span class="text-dark fs-13 mb-0">View More</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mb-0 custom-border">
+                                            <div class="card-body">
+                                                <a href="/Parent/Fees?studentid=@student.StudentId">
+                                                    <div class="widget-first">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <div class="p-2 border border-warning border-opacity-10 bg-warning-subtle rounded-pill me-2">
+                                                                <div class="bg-secondary rounded-circle widget-size text-center">
+                                                                    <i data-feather="wind" class="text-light"></i>
+
+                                                                </div>
+                                                            </div>
+                                                            <p class="mb-0 text-dark fs-15">Fees</p>
+                                                        </div>
+
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                            </h3>
+                                                            <div class="text-center">
+                                                                <span class="text-dark fs-13 mb-0">View More</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mb-0 custom-border">
+                                            <div class="card-body">
+                                                <a href="/Parent/Transport?studentid=@student.StudentId">
+                                                    <div class="widget-first">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                                <div class="bg-primary rounded-circle widget-size text-center">
+                                                                    <i data-feather="mail" class="text-light"></i>
+                                                                </div>
+                                                            </div>
+                                                            <p class="mb-0 text-dark fs-15">Transport</p>
+                                                        </div>
+
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1">
+                                                            </h3>
+                                                            <div class="text-center">
+                                                                <span class="text-dark fs-13 mb-0">View More</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card mb-0 custom-border">
+                                            <div class="card-body">
+                                                <a href="/Parent/Hostel?studentid=@student.StudentId">
+                                                    <div class="widget-first">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <div class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-pill me-2">
+                                                                <div class="bg-secondary rounded-circle widget-size text-center">
+                                                                    <i data-feather="bell" class="text-light"></i>
+                                                                </div>
+                                                            </div>
+                                                            <p class="mb-0 text-dark fs-15">Hostel</p>
+                                                        </div>
+
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h3 style="margin-top: -20px;" class="mb-0 fs-22 text-black me-3 ps-5 ms-1" id="noticeCount">
+
+                                                                <!---notice-->
+                                                            </h3>
+                                                            <div class="text-center">
+                                                                <span class="text-dark fs-13 mb-0">View More</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
 
@@ -572,4 +509,3 @@
 
     </div> <!-- container-fluid -->
 </div> <!-- content -->
-

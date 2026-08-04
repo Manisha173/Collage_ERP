@@ -1,7 +1,232 @@
-﻿@{ 
+﻿@{
     ViewBag.Title = "Transport";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
 }
-<div>
-    this is Transport Page
+
+<style>
+    :root {
+        --trp-navy: #1c3f66;
+        --trp-muted: #6b7280;
+        --trp-ink: #1e2433;
+        --trp-green: #2e9e4f;
+        --trp-dark-badge: #2b2f36;
+    }
+
+    .trp-header {
+        background: var(--trp-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+        .trp-header a {
+            color: #fff;
+        }
+
+        .trp-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .trp-wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.25rem;
+    }
+
+    /* Map */
+    .trp-map-card {
+        border: 1px solid #eceef2;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 1.75rem;
+        position: relative;
+    }
+
+        .trp-map-card iframe {
+            width: 100%;
+            height: 220px;
+            border: 0;
+            display: block;
+        }
+
+    .trp-map-link {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #fff;
+        border-radius: 6px;
+        padding: .35rem .7rem;
+        font-size: .82rem;
+        font-weight: 600;
+        color: #4285F4;
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,.15);
+        text-decoration: none;
+    }
+
+        .trp-map-link:hover {
+            color: #4285F4;
+            text-decoration: none;
+        }
+
+    /* Driver info */
+    .trp-driver-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .trp-driver-avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 12px;
+        border: 1px solid #e5e8ee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        overflow: hidden;
+        background: #fff;
+    }
+
+        .trp-driver-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .trp-driver-avatar i {
+            font-size: 2rem;
+            color: var(--trp-navy);
+        }
+
+    .trp-driver-details {
+        display: flex;
+        flex-direction: column;
+        gap: .55rem;
+    }
+
+    .trp-detail-item {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+    }
+
+    .trp-icon-badge {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        background: var(--trp-dark-badge);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .78rem;
+        flex-shrink: 0;
+    }
+
+    .trp-detail-item span {
+        font-weight: 600;
+        color: var(--trp-ink);
+        font-size: .92rem;
+    }
+
+    .trp-detail-item a {
+        font-weight: 600;
+        color: var(--trp-ink);
+        font-size: .92rem;
+        text-decoration: none;
+    }
+
+        .trp-detail-item a:hover {
+            color: var(--trp-navy);
+        }
+
+    /* Verified */
+    .trp-verified {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        color: var(--trp-green);
+        font-weight: 600;
+        font-size: .92rem;
+        margin-bottom: 1rem;
+    }
+
+        .trp-verified i {
+            font-size: 1rem;
+        }
+
+    /* Drop point */
+    .trp-drop-point {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        color: var(--trp-navy);
+        font-weight: 600;
+        font-size: .95rem;
+    }
+
+        .trp-drop-point i {
+            color: var(--trp-navy);
+        }
+</style>
+
+<div class="content-page bg-white">
+
+    <div class="trp-header">
+        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+        <h5>Transport</h5>
+    </div>
+
+    <div class="trp-wrap">
+
+        <!-- Map -->
+        <div class="trp-map-card">
+            <a href="https://www.google.com/maps?q=Noida,Uttar+Pradesh" target="_blank" rel="noopener" class="trp-map-link">
+                Maps <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:.7rem;"></i>
+            </a>
+            <iframe loading="lazy"
+                    allowfullscreen
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps?q=Noida,Uttar+Pradesh,India&output=embed">
+            </iframe>
+        </div>
+
+        <!-- Driver info -->
+        <div class="trp-driver-row" id="driverInfo"
+             data-driver-name="Rakesh"
+             data-driver-phone="8965412301">
+            <div class="trp-driver-avatar">
+                <img src="/images/driver-icon.png" alt="Driver" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-user-tie\'></i>';">
+            </div>
+            <div class="trp-driver-details">
+                <div class="trp-detail-item">
+                    <span class="trp-icon-badge"><i class="fa-solid fa-user"></i></span>
+                    <span class="trp-val-name">Rakesh</span>
+                </div>
+                <div class="trp-detail-item">
+                    <span class="trp-icon-badge"><i class="fa-solid fa-phone"></i></span>
+                    <a href="tel:8965412301" class="trp-val-phone">8965412301</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verified -->
+        <div class="trp-verified">
+            <i class="fa-solid fa-circle-check"></i> Verified
+        </div>
+
+        <!-- Drop Point -->
+        <div class="trp-drop-point">
+            <i class="fa-solid fa-location-dot"></i> Drop Point:- Sector 62, H-132
+        </div>
+
+    </div>
 </div>

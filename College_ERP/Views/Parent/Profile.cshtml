@@ -1,7 +1,273 @@
-﻿@{ 
+﻿@{
     ViewBag.Title = "Profile";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
 }
-<div>
-    This is Profile Page
+
+
+<style>
+    :root {
+        --prf-navy: #1c3f66;
+        --prf-navy-dark: #16324f;
+        --prf-muted: #6b7280;
+        --prf-ink: #1e2433;
+    }
+
+    .prf-header {
+        background: var(--prf-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+        .prf-header a {
+            color: #fff;
+        }
+
+        .prf-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .prf-hero {
+        background: linear-gradient(135deg, var(--prf-navy), var(--prf-navy-dark));
+        padding: 1.75rem 1.25rem 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .prf-avatar {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: #f5a623;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        overflow: hidden;
+        border: 3px solid rgba(255,255,255,.25);
+    }
+
+        .prf-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .prf-avatar i {
+            font-size: 2rem;
+            color: #fff;
+        }
+
+    .prf-hero-info .prf-name {
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin: 0;
+    }
+
+    .prf-hero-info .prf-email {
+        color: rgba(255,255,255,.75);
+        font-size: .88rem;
+        margin: .2rem 0 0;
+    }
+
+    .prf-wrap {
+        max-width: 900px;
+        margin: -1.25rem auto 0;
+        padding: 0 1.25rem 1.75rem;
+        position: relative;
+    }
+
+    .prf-card {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(20,20,40,.05);
+        padding: 1.15rem 1.25rem;
+        margin-top: 1.25rem;
+    }
+
+    .prf-card-title {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        color: var(--prf-navy);
+        font-weight: 700;
+        font-size: 1rem;
+        margin: 0 0 .9rem;
+    }
+
+        .prf-card-title i {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: #eef2f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .95rem;
+        }
+
+    .prf-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: .65rem 0;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+        .prf-row:last-child {
+            border-bottom: none;
+        }
+
+        .prf-row .row-left {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            color: var(--prf-muted);
+            font-size: .85rem;
+            flex-shrink: 0;
+        }
+
+            .prf-row .row-left i {
+                color: var(--prf-navy);
+                width: 16px;
+                text-align: center;
+            }
+
+        .prf-row .row-value {
+            font-weight: 600;
+            color: var(--prf-ink);
+            font-size: .92rem;
+            text-align: right;
+            word-break: break-word;
+        }
+
+            .prf-row .row-value.empty {
+                color: #b0b6c0;
+                font-weight: 400;
+                font-style: italic;
+            }
+</style>
+
+<div class="content-page bg-white">
+
+    <div class="prf-header">
+        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+        <h5>Profile</h5>
+    </div>
+
+    <!-- Hero: avatar + name + email -->
+    <div class="prf-hero">
+        <div class="prf-avatar" id="parentAvatar">
+            <img src="" alt="Parent" style="display:none;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="prf-hero-info">
+            <p class="prf-name" id="parentName">Rohit Pandit</p>
+            <p class="prf-email" id="parentEmail">test234@gmail.com</p>
+        </div>
+    </div>
+
+    <div class="prf-wrap">
+
+        <!-- Father Information -->
+        <div class="prf-card">
+            <p class="prf-card-title"><i class="fa-solid fa-user-tie"></i> Father Information</p>
+
+            <div class="prf-row">
+                <span class="row-left"><i class="fa-solid fa-signature"></i>Father Name</span>
+                <span class="row-value" id="fatherName">rohit pandit</span>
+            </div>
+            <div class="prf-row">
+                <span class="row-left"><i class="fa-solid fa-briefcase"></i>Occupation</span>
+                <span class="row-value" id="fatherOccupation">Businessman</span>
+            </div>
+            <div class="prf-row">
+                <span class="row-left"><i class="fa-solid fa-phone"></i>Mobile Number</span>
+                <span class="row-value" id="fatherMobile">9965231056</span>
+            </div>
+            <div class="prf-row">
+                <span class="row-left"><i class="fa-solid fa-building"></i>Office Address</span>
+                <span class="row-value" id="fatherOfficeAddress">—</span>
+            </div>
+            <div class="prf-row">
+                <span class="row-left"><i class="fa-solid fa-graduation-cap"></i>Qualification</span>
+                <span class="row-value" id="fatherQualification">MBA</span>
+            </div>
+        </div>
+
+        <!-- Mother Information -->
+        <div class="prf-card">
+            <p class="prf-card-title"><i class="fa-solid fa-person-dress"></i> Mother Information</p>
+
+            <div class="prf-row">
+                <span class="row-left"><i class="fa-solid fa-signature"></i>Mother Name</span>
+                <span class="row-value" id="motherName">smriti irani</span>
+            </div>
+            <div class="prf-row">
+                <span class="row-left"><i class="fa-solid fa-briefcase"></i>Occupation</span>
+                <span class="row-value" id="motherOccupation">House Wife</span>
+            </div>
+            <div class="prf-row">
+                <span class="row-left"><i class="fa-solid fa-phone"></i>Mobile Number</span>
+                <span class="row-value" id="motherMobile">9623556980</span>
+            </div>
+            <div class="prf-row">
+                <span class="row-left"><i class="fa-solid fa-building"></i>Office Address</span>
+                <span class="row-value" id="motherOfficeAddress">—</span>
+            </div>
+            <div class="prf-row">
+                <span class="row-left"><i class="fa-solid fa-graduation-cap"></i>Qualification</span>
+                <span class="row-value" id="motherQualification">—</span>
+            </div>
+        </div>
+
+    </div>
 </div>
+
+<script>
+(function () {
+    // Fill empty-looking values with an "empty" styled placeholder instead of leaving blank
+    document.querySelectorAll('.row-value').forEach(function (el) {
+        var text = el.textContent.trim();
+        if (text === '' || text === '—') {
+            el.textContent = 'Not Provided';
+            el.classList.add('empty');
+        }
+    });
+
+    // If you fetch data from the API (e.g. /Parent/ParentDetails?studentId=..),
+    // populate the fields like this:
+    //
+    // fetch('/Parent/ParentDetails?studentId=' + studentId)
+    //     .then(res => res.json())
+    //     .then(res => {
+    //         var d = res.data[0];
+    //         document.getElementById('parentName').textContent = d.FatherName;
+    //         document.getElementById('parentEmail').textContent = d.ParentEmail;
+    //         document.getElementById('fatherName').textContent = d.FatherName || 'Not Provided';
+    //         document.getElementById('fatherOccupation').textContent = d.FatherOccupation || 'Not Provided';
+    //         document.getElementById('fatherMobile').textContent = d.FatherNo || 'Not Provided';
+    //         document.getElementById('fatherOfficeAddress').textContent = d.FatherOfficeAddress || 'Not Provided';
+    //         document.getElementById('fatherQualification').textContent = d.FatherQualification || 'Not Provided';
+    //         document.getElementById('motherName').textContent = d.MotherName || 'Not Provided';
+    //         document.getElementById('motherOccupation').textContent = d.MotherOccupation || 'Not Provided';
+    //         document.getElementById('motherMobile').textContent = d.MotherNo || 'Not Provided';
+    //         document.getElementById('motherOfficeAddress').textContent = d.MotherOfficeAddress || 'Not Provided';
+    //         document.getElementById('motherQualification').textContent = d.MotherQualification || 'Not Provided';
+    //
+    //         if (d.FatherPhoto) {
+    //             var img = document.querySelector('#parentAvatar img');
+    //             img.src = d.FatherPhoto;
+    //             img.style.display = 'block';
+    //             img.nextElementSibling.style.display = 'none';
+    //         }
+    //     });
+})();
+</script>
