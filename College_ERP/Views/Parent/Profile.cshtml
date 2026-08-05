@@ -1,8 +1,11 @@
-﻿@{
+﻿@using College_ERP.Models.ParentServices;
+@{
     ViewBag.Title = "Profile";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
 }
-
+@{
+    var parent = ViewBag.Parent as College_ERP.Models.ParentServices.main.ParentProfileModel;
+}
 
 <style>
     :root {
@@ -161,16 +164,15 @@
         <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
         <h5>Profile</h5>
     </div>
-
     <!-- Hero: avatar + name + email -->
     <div class="prf-hero">
         <div class="prf-avatar" id="parentAvatar">
-            <img src="" alt="Parent" style="display:none;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <img src="@parent.FatherPhoto" alt="Parent" style="display:none;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
             <i class="fa-solid fa-user"></i>
         </div>
         <div class="prf-hero-info">
-            <p class="prf-name" id="parentName">Rohit Pandit</p>
-            <p class="prf-email" id="parentEmail">test234@gmail.com</p>
+            <p class="prf-name" id="parentName">@parent.FatherName</p>
+            <p class="prf-email" id="parentEmail">@parent.FatherNo</p>
         </div>
     </div>
 
@@ -182,23 +184,23 @@
 
             <div class="prf-row">
                 <span class="row-left"><i class="fa-solid fa-signature"></i>Father Name</span>
-                <span class="row-value" id="fatherName">rohit pandit</span>
+                <span class="row-value" id="fatherName">@parent.FatherName</span>
             </div>
             <div class="prf-row">
                 <span class="row-left"><i class="fa-solid fa-briefcase"></i>Occupation</span>
-                <span class="row-value" id="fatherOccupation">Businessman</span>
+                <span class="row-value" id="fatherOccupation">@parent.FatherOccupation</span>
             </div>
             <div class="prf-row">
                 <span class="row-left"><i class="fa-solid fa-phone"></i>Mobile Number</span>
-                <span class="row-value" id="fatherMobile">9965231056</span>
+                <span class="row-value" id="fatherMobile">@parent.FatherNo</span>
             </div>
             <div class="prf-row">
                 <span class="row-left"><i class="fa-solid fa-building"></i>Office Address</span>
-                <span class="row-value" id="fatherOfficeAddress">—</span>
+                <span class="row-value" id="fatherOfficeAddress">@parent.FatherOfficeAddress</span>
             </div>
             <div class="prf-row">
                 <span class="row-left"><i class="fa-solid fa-graduation-cap"></i>Qualification</span>
-                <span class="row-value" id="fatherQualification">MBA</span>
+                <span class="row-value" id="fatherQualification">@parent.FatherQualification</span>
             </div>
         </div>
 
@@ -207,24 +209,24 @@
             <p class="prf-card-title"><i class="fa-solid fa-person-dress"></i> Mother Information</p>
 
             <div class="prf-row">
-                <span class="row-left"><i class="fa-solid fa-signature"></i>Mother Name</span>
+                <span class="row-left"><i class="fa-solid fa-signature"></i>@parent.MotherName</span>
                 <span class="row-value" id="motherName">smriti irani</span>
             </div>
             <div class="prf-row">
                 <span class="row-left"><i class="fa-solid fa-briefcase"></i>Occupation</span>
-                <span class="row-value" id="motherOccupation">House Wife</span>
+                <span class="row-value" id="motherOccupation">@parent.MotherOccupation</span>
             </div>
             <div class="prf-row">
                 <span class="row-left"><i class="fa-solid fa-phone"></i>Mobile Number</span>
-                <span class="row-value" id="motherMobile">9623556980</span>
+                <span class="row-value" id="motherMobile">@parent.MotherNo</span>
             </div>
             <div class="prf-row">
                 <span class="row-left"><i class="fa-solid fa-building"></i>Office Address</span>
-                <span class="row-value" id="motherOfficeAddress">—</span>
+                <span class="row-value" id="motherOfficeAddress">@parent.MotherOfficeAddress</span>
             </div>
             <div class="prf-row">
                 <span class="row-left"><i class="fa-solid fa-graduation-cap"></i>Qualification</span>
-                <span class="row-value" id="motherQualification">—</span>
+                <span class="row-value" id="motherQualification">@parent.MotherQualification</span>
             </div>
         </div>
 
@@ -232,42 +234,14 @@
 </div>
 
 <script>
-(function () {
-    // Fill empty-looking values with an "empty" styled placeholder instead of leaving blank
-    document.querySelectorAll('.row-value').forEach(function (el) {
-        var text = el.textContent.trim();
-        if (text === '' || text === '—') {
-            el.textContent = 'Not Provided';
-            el.classList.add('empty');
-        }
-    });
-
-    // If you fetch data from the API (e.g. /Parent/ParentDetails?studentId=..),
-    // populate the fields like this:
-    //
-    // fetch('/Parent/ParentDetails?studentId=' + studentId)
-    //     .then(res => res.json())
-    //     .then(res => {
-    //         var d = res.data[0];
-    //         document.getElementById('parentName').textContent = d.FatherName;
-    //         document.getElementById('parentEmail').textContent = d.ParentEmail;
-    //         document.getElementById('fatherName').textContent = d.FatherName || 'Not Provided';
-    //         document.getElementById('fatherOccupation').textContent = d.FatherOccupation || 'Not Provided';
-    //         document.getElementById('fatherMobile').textContent = d.FatherNo || 'Not Provided';
-    //         document.getElementById('fatherOfficeAddress').textContent = d.FatherOfficeAddress || 'Not Provided';
-    //         document.getElementById('fatherQualification').textContent = d.FatherQualification || 'Not Provided';
-    //         document.getElementById('motherName').textContent = d.MotherName || 'Not Provided';
-    //         document.getElementById('motherOccupation').textContent = d.MotherOccupation || 'Not Provided';
-    //         document.getElementById('motherMobile').textContent = d.MotherNo || 'Not Provided';
-    //         document.getElementById('motherOfficeAddress').textContent = d.MotherOfficeAddress || 'Not Provided';
-    //         document.getElementById('motherQualification').textContent = d.MotherQualification || 'Not Provided';
-    //
-    //         if (d.FatherPhoto) {
-    //             var img = document.querySelector('#parentAvatar img');
-    //             img.src = d.FatherPhoto;
-    //             img.style.display = 'block';
-    //             img.nextElementSibling.style.display = 'none';
-    //         }
-    //     });
-})();
+    (function () {
+        // Fill empty-looking values with an "empty" styled placeholder instead of leaving blank
+        document.querySelectorAll('.row-value').forEach(function (el) {
+            var text = el.textContent.trim();
+            if (text === '' || text === '—') {
+                el.textContent = 'Not Provided';
+                el.classList.add('empty');
+            }
+        });
+    })();
 </script>

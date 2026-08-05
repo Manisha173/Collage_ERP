@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<College_ERP.Models.StudentServices.main.StudentAssignmentModel>
+@{
     ViewBag.Title = "Assignment";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
 }
@@ -150,20 +151,23 @@
     </div>
 
     <div id="assignmentList">
-        <div class="asg-list-item"
-             data-title="Test"
-             data-date="04 Aug 2026, 12:00 AM"
-             data-description="Test">
-            <div class="asg-checkbox"></div>
-            <div>
-                <p class="asg-title">Test</p>
-                <p class="asg-subtitle">Test</p>
-                <p class="asg-submission">Submission 03 Aug 2026</p>
+        @foreach (var item in Model)
+        {
+            <div class="asg-list-item"
+                 data-title="@item.title"
+                 data-date="@item.assignmentDate"
+                 data-description="@item.description">
+                <div class="asg-checkbox"></div>
+                <div>
+                    <p class="asg-title">@item.title</p>
+                    <p class="asg-subtitle">@item.description</p>
+                    <p class="asg-submission">@item.completionDate</p>
+                </div>
             </div>
+        }
         </div>
-    </div>
 
-</div>
+    </div>
 
 <!-- Detail Modal -->
 <div class="modal fade" id="assignmentModal" tabindex="-1" aria-hidden="true">
@@ -188,73 +192,73 @@
 </div>
 
 <script>
-(function () {
-    var modalEl = document.getElementById('assignmentModal');
-    var modalTitle = document.getElementById('modalTitle');
-    var modalDate = document.getElementById('modalDate');
-    var modalDescription = document.getElementById('modalDescription');
-    var downloadBtn = document.getElementById('downloadPdfBtn');
+    (function () {
+        var modalEl = document.getElementById('assignmentModal');
+        var modalTitle = document.getElementById('modalTitle');
+        var modalDate = document.getElementById('modalDate');
+        var modalDescription = document.getElementById('modalDescription');
+        var downloadBtn = document.getElementById('downloadPdfBtn');
 
-    function getModalInstance() {
-        if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
-            console.error('Bootstrap JS is not loaded on this page.');
-            return null;
+        function getModalInstance() {
+            if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+                console.error('Bootstrap JS is not loaded on this page.');
+                return null;
+            }
+            return bootstrap.Modal.getOrCreateInstance(modalEl);
         }
-        return bootstrap.Modal.getOrCreateInstance(modalEl);
-    }
 
-    document.addEventListener('click', function (e) {
-        var item = e.target.closest('.asg-list-item');
-        if (!item) return;
+        document.addEventListener('click', function (e) {
+            var item = e.target.closest('.asg-list-item');
+            if (!item) return;
 
-        modalTitle.textContent = item.dataset.title || '';
-        modalDate.textContent = item.dataset.date || '';
-        modalDescription.textContent = item.dataset.description || '';
+            modalTitle.textContent = item.dataset.title || '';
+            modalDate.textContent = item.dataset.date || '';
+            modalDescription.textContent = item.dataset.description || '';
 
-        var bsModal = getModalInstance();
-        if (bsModal) bsModal.show();
-    });
+            var bsModal = getModalInstance();
+            if (bsModal) bsModal.show();
+        });
 
-    downloadBtn.addEventListener('click', function () {
-        if (!window.jspdf) {
-            console.error('jsPDF failed to load.');
-            return;
-        }
-        var jsPDF = window.jspdf.jsPDF;
-        var doc = new jsPDF();
+        downloadBtn.addEventListener('click', function () {
+            if (!window.jspdf) {
+                console.error('jsPDF failed to load.');
+                return;
+            }
+            var jsPDF = window.jspdf.jsPDF;
+            var doc = new jsPDF();
 
-        var title = modalTitle.textContent;
-        var date = modalDate.textContent;
-        var description = modalDescription.textContent;
+            var title = modalTitle.textContent;
+            var date = modalDate.textContent;
+            var description = modalDescription.textContent;
 
-        var marginLeft = 15;
-        var pageWidth = doc.internal.pageSize.getWidth();
-        var maxWidth = pageWidth - marginLeft * 2;
-        var y = 20;
+            var marginLeft = 15;
+            var pageWidth = doc.internal.pageSize.getWidth();
+            var maxWidth = pageWidth - marginLeft * 2;
+            var y = 20;
 
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(16);
-        doc.text(title, marginLeft, y);
-        y += 8;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.text(title, marginLeft, y);
+            y += 8;
 
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(10);
-        doc.setTextColor(110, 110, 110);
-        doc.text(date, marginLeft, y);
-        y += 10;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(110, 110, 110);
+            doc.text(date, marginLeft, y);
+            y += 10;
 
-        doc.setDrawColor(220, 220, 220);
-        doc.line(marginLeft, y, pageWidth - marginLeft, y);
-        y += 10;
+            doc.setDrawColor(220, 220, 220);
+            doc.line(marginLeft, y, pageWidth - marginLeft, y);
+            y += 10;
 
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(11);
-        doc.setTextColor(30, 30, 30);
-        var lines = doc.splitTextToSize(description, maxWidth);
-        doc.text(lines, marginLeft, y);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(11);
+            doc.setTextColor(30, 30, 30);
+            var lines = doc.splitTextToSize(description, maxWidth);
+            doc.text(lines, marginLeft, y);
 
-        var safeFileName = (title || 'assignment').replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        doc.save(safeFileName + '.pdf');
-    });
-})();
+            var safeFileName = (title || 'assignment').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            doc.save(safeFileName + '.pdf');
+        });
+    })();
 </script>

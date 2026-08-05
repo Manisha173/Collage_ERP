@@ -1,8 +1,13 @@
-﻿@{
+﻿@using College_ERP.Models.StudentServices
+
+@{
     ViewBag.Title = "Parentcommunication";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
 }
 
+@{
+    var communications = ViewBag.Communication as List<College_ERP.Models.StudentServices.main.stCommunicationModel>;
+}
 <style>
     :root {
         --pcm-navy: #1c3f66;
@@ -118,37 +123,70 @@
     </div>
 
     <div class="pcm-list" id="pcmList">
-        <div class="pcm-item" data-title="Test" data-message="Test" data-sender="Sonam Wangchun">
-            <p class="pcm-title">Test</p>
-            <p class="pcm-message">Test</p>
-            <div class="pcm-footer">
-                <span class="pcm-sender">Sonam Wangchun</span>
+
+        @if (communications != null && communications.Any())
+        {
+            foreach (var item in communications)
+            {
+                <div class="pcm-item"
+                     data-title="@item.title"
+                     data-message="@Html.Raw(HttpUtility.HtmlDecode(item.description).Replace("\"", "&quot;"))"
+                     data-sender="@item.teacherName">
+
+                    <p class="pcm-title">@item.title</p>
+
+                    <p class="pcm-message">
+                        @Html.Raw(item.description)
+                    </p>
+
+                    @if (!string.IsNullOrEmpty(item.attachmentName))
+                    {
+                        <div style="margin-bottom:10px;">
+                            <a href="@item.attachmentName"
+                               target="_blank"
+                               class="btn btn-sm btn-light">
+                                <i class="fa fa-paperclip"></i> View Attachment
+                            </a>
+                        </div>
+                    }
+
+                    <div class="pcm-footer">
+                        <span class="pcm-sender">@item.teacherName</span>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info text-center">
+                No communication found.
             </div>
-        </div>
+        }
+
     </div>
 
 </div>
 
 <script>
-(function () {
-    var searchInput = document.getElementById('pcmSearchInput');
-    var list = document.getElementById('pcmList');
+    (function () {
+        var searchInput = document.getElementById('pcmSearchInput');
+        var list = document.getElementById('pcmList');
 
-    searchInput.addEventListener('input', function () {
-        var query = this.value.trim().toLowerCase();
-        var items = list.querySelectorAll('.pcm-item');
+        searchInput.addEventListener('input', function () {
+            var query = this.value.trim().toLowerCase();
+            var items = list.querySelectorAll('.pcm-item');
 
-        items.forEach(function (item) {
-            var title = (item.dataset.title || '').toLowerCase();
-            var message = (item.dataset.message || '').toLowerCase();
-            var sender = (item.dataset.sender || '').toLowerCase();
+            items.forEach(function (item) {
+                var title = (item.dataset.title || '').toLowerCase();
+                var message = (item.dataset.message || '').toLowerCase();
+                var sender = (item.dataset.sender || '').toLowerCase();
 
-            var matches = title.indexOf(query) !== -1 ||
-                          message.indexOf(query) !== -1 ||
-                          sender.indexOf(query) !== -1;
+                var matches = title.indexOf(query) !== -1 ||
+                    message.indexOf(query) !== -1 ||
+                    sender.indexOf(query) !== -1;
 
-            item.style.display = matches ? '' : 'none';
+                item.style.display = matches ? '' : 'none';
+            });
         });
-    });
-})();
+    })();
 </script>

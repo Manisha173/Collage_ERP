@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<College_ERP.Models.Admin.ScheduleExamModel>
+@{
     ViewBag.Title = "ExamSchedule";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
 }
@@ -73,57 +74,180 @@
         <h5>Exam Schedule</h5>
     </div>
 
-    <div class="exs-card"
-         id="examTimetableCard"
-         data-title="Exam Timetable"
-         data-description="You Have Got Your Exam Date Sheet. Download It Now.">
-        <h5>Exam Timetable</h5>
-        <p>You Have Got Your Exam Date Sheet. Download It Now.</p>
-        <button type="button" class="exs-btn-download" id="downloadPdfBtn">
-            <i class="fa-solid fa-cloud-arrow-down"></i> Download
-        </button>
-    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Exam Id</th>
+                <th>Schedule Id</th>
+                <th>Exam Name</th>
+                <th>Academic Year</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Description</th>
+                <th>Created</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var exam in Model)
+            {
+                <tr>
+                    <td>@exam.examId</td>
+                    <td>@exam.scheduleId</td>
+                    <td>@exam.examName</td>
+                    <td>@exam.academicYear</td>
+                    <td>@exam.startExamDate.ToString("dd MMM yyyy")</td>
+                    <td>@exam.endExamDate.ToString("dd MMM yyyy")</td>
+                    <td>@exam.description</td>
+                    <td>@exam.createdAt.ToString("dd MMM yyyy")</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm viewExam"
+                                data-id="@exam.scheduleId">
+                            View Time Table
+                        </button>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
 
 </div>
 
+<div class="modal fade" id="examModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4>Exam Time Table</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <h4 id="examName"></h4>
+
+                <p>
+                    <b>Class :</b>
+                    <span id="className"></span>
+                </p>
+
+                <p>
+                    <b>Academic Year :</b>
+                    <span id="academicYear"></span>
+                </p>
+
+                <p>
+                    <b>Description :</b>
+                    <span id="description"></span>
+                </p>
+
+                <a id="attachment"
+                   class="btn btn-primary"
+                   target="_blank">
+                    Download Time Table
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <script>
-(function () {
-    var downloadBtn = document.getElementById('downloadPdfBtn');
-    var card = document.getElementById('examTimetableCard');
+    $(document).ready(function () {
 
-    downloadBtn.addEventListener('click', function () {
-        if (!window.jspdf) {
-            console.error('jsPDF failed to load.');
-            return;
+        //================ DOWNLOAD PDF ===================
+        var downloadBtn = document.getElementById("downloadPdfBtn");
+        var card = document.getElementById("examTimetableCard");
+
+        if (downloadBtn && card) {
+
+            downloadBtn.addEventListener("click", function () {
+
+                if (!window.jspdf) {
+                    console.error("jsPDF failed to load.");
+                    return;
+                }
+
+                var jsPDF = window.jspdf.jsPDF;
+                var doc = new jsPDF();
+
+                var title = card.dataset.title;
+                var description = card.dataset.description;
+
+                var marginLeft = 15;
+                var pageWidth = doc.internal.pageSize.getWidth();
+                var maxWidth = pageWidth - marginLeft * 2;
+                var y = 20;
+
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(16);
+                doc.text(title, marginLeft, y);
+
+                y += 12;
+
+                doc.line(marginLeft, y, pageWidth - marginLeft, y);
+
+                y += 10;
+
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(11);
+
+                var lines = doc.splitTextToSize(description, maxWidth);
+
+                doc.text(lines, marginLeft, y);
+
+                doc.save("exam_schedule.pdf");
+            });
+
         }
-        var jsPDF = window.jspdf.jsPDF;
-        var doc = new jsPDF();
 
-        var title = card.dataset.title;
-        var description = card.dataset.description;
+        //================ VIEW BUTTON ===================
+        $(document).on("click", ".viewExam", function () {
 
-        var marginLeft = 15;
-        var pageWidth = doc.internal.pageSize.getWidth();
-        var maxWidth = pageWidth - marginLeft * 2;
-        var y = 20;
+            var scheduleId = $(this).data("id");
 
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(16);
-        doc.text(title, marginLeft, y);
-        y += 12;
+            $.ajax({
+                url: "/Parent/GetExamTimeTable",
+                type: "GET",
+                data: {
+                    scheduleId: scheduleId
+                },
+                success: function (res) {
 
-        doc.setDrawColor(220, 220, 220);
-        doc.line(marginLeft, y, pageWidth - marginLeft, y);
-        y += 10;
+                    console.log(res);
 
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(11);
-        doc.setTextColor(30, 30, 30);
-        var lines = doc.splitTextToSize(description, maxWidth);
-        doc.text(lines, marginLeft, y);
+                    if (!res.status || res.data.length == 0) {
+                        alert("No timetable found.");
+                        return;
+                    }
 
-        var safeFileName = (title || 'exam_schedule').replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        doc.save(safeFileName + '.pdf');
+                    var item = res.data[0];
+
+                    $("#examName").text(item.examName);
+                    $("#className").text(item.className);
+                    $("#academicYear").text(item.academicYear);
+                    $("#description").text(item.description);
+
+                    if (item.attachmentName) {
+                        $("#attachment")
+                            .attr("href", "/Uploads/ExamTimeTable/" + item.attachmentName)
+                            .show();
+                    }
+                    else {
+                        $("#attachment").hide();
+                    }
+
+                    $("#examModal").modal("show");
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    alert("Error while loading timetable.");
+                }
+            });
+
+        });
+
     });
-})();
 </script>

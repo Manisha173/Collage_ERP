@@ -1,6 +1,19 @@
-﻿@{
+﻿@using College_ERP.Models.StudentServices
+@{
     ViewBag.Title = "Fees";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
+}
+@{
+    var Fees = ViewBag.FeesDetails as College_ERP.Models.StudentServices.main.FeeModel;
+}
+@{
+    var detail = Fees?.feeDetails?.FirstOrDefault();
+
+    decimal totalFee = detail?.totalFee ?? 0;
+    decimal paid = detail?.amount ?? 0;
+    decimal due = totalFee - paid;
+
+    string status = due <= 0 ? "Paid" : "Pending";
 }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -161,6 +174,7 @@
         }
 </style>
 
+
 <div class="content-page">
 
     <div class="fee-header">
@@ -186,31 +200,34 @@
              data-due="0.00"
              data-status="Paid">
             <p class="fee-card-title">Student Fee Details</p>
-            <p class="fee-academic-year">Academic Year: 2026-2027</p>
+            <p class="fee-academic-year">
+                Academic Year:
+                @(ViewBag.AcademicYear ?? "-")
+            </p>
 
             <div class="fee-row">
                 <span class="row-left"><i class="fa-solid fa-user"></i>Name:</span>
-                <span class="row-value fee-val-name">Aakash Deep</span>
+                <span class="row-value">@((string)ViewBag.StudentName ?? "-")</span>
             </div>
             <div class="fee-row">
                 <span class="row-left"><i class="fa-solid fa-file-lines"></i>Class:</span>
-                <span class="row-value fee-val-class">ba</span>
+                <span class="row-value fee-val-class">@((Fees?.className) ?? "-")</span>
             </div>
             <div class="fee-row">
                 <span class="row-left"><i class="fa-solid fa-wallet"></i>Total Fees:</span>
-                <span class="row-value fee-val-total">₹70500</span>
+                <span class="row-value fee-val-total">₹@totalFee.ToString("N0")</span>
             </div>
             <div class="fee-row">
                 <span class="row-left"><i class="fa-solid fa-money-bill-wave"></i>Paid:</span>
-                <span class="row-value fee-val-paid">₹70500</span>
+                <span class="row-value fee-val-paid">₹@paid.ToString("N0")</span>
             </div>
             <div class="fee-row">
                 <span class="row-left"><i class="fa-solid fa-circle-exclamation"></i>Due:</span>
-                <span class="row-value due-red fee-val-due">₹0.00</span>
+                <span class="row-value due-red fee-val-due">₹@due.ToString("N0")</span>
             </div>
             <div class="fee-row" style="border-bottom:none;">
                 <span class="row-left"><i class="fa-solid fa-circle-check"></i>Status:</span>
-                <span class="fee-status-badge paid fee-val-status">Paid</span>
+                <span class="fee-status-badge @(status=="Paid" ? "paid" : "pending")">@status</span>
             </div>
 
             <button type="button" class="fee-btn-download" onclick="downloadReceipt(this)">
@@ -223,92 +240,92 @@
 </div>
 
 <script>
-(function () {
-    // Search filter
-    var searchInput = document.getElementById('feeSearchInput');
-    var list = document.getElementById('feeList');
+    (function () {
+        // Search filter
+        var searchInput = document.getElementById('feeSearchInput');
+        var list = document.getElementById('feeList');
 
-    searchInput.addEventListener('input', function () {
-        var query = this.value.trim().toLowerCase();
-        var cards = list.querySelectorAll('.fee-card');
+        searchInput.addEventListener('input', function () {
+            var query = this.value.trim().toLowerCase();
+            var cards = list.querySelectorAll('.fee-card');
 
-        cards.forEach(function (card) {
-            var name = (card.dataset.name || '').toLowerCase();
-            var cls = (card.dataset.class || '').toLowerCase();
-            var year = (card.dataset.academicYear || '').toLowerCase();
+            cards.forEach(function (card) {
+                var name = (card.dataset.name || '').toLowerCase();
+                var cls = (card.dataset.class || '').toLowerCase();
+                var year = (card.dataset.academicYear || '').toLowerCase();
 
-            var matches = name.indexOf(query) !== -1 ||
-                          cls.indexOf(query) !== -1 ||
-                          year.indexOf(query) !== -1;
+                var matches = name.indexOf(query) !== -1 ||
+                    cls.indexOf(query) !== -1 ||
+                    year.indexOf(query) !== -1;
 
-            card.style.display = matches ? '' : 'none';
+                card.style.display = matches ? '' : 'none';
+            });
         });
-    });
 
-    // Download receipt as PDF
-    window.downloadReceipt = function (btn) {
-        if (!window.jspdf) {
-            console.error('jsPDF failed to load.');
-            return;
-        }
+        // Download receipt as PDF
+        window.downloadReceipt = function (btn) {
+            if (!window.jspdf) {
+                console.error('jsPDF failed to load.');
+                return;
+            }
 
-        var card = btn.closest('.fee-card');
-        var name = card.dataset.name;
-        var cls = card.dataset.class;
-        var academicYear = card.dataset.academicYear;
-        var totalFees = card.dataset.totalFees;
-        var paid = card.dataset.paid;
-        var due = card.dataset.due;
-        var status = card.dataset.status;
+            var card = btn.closest('.fee-card');
+            var name = card.dataset.name;
+            var cls = card.dataset.class;
+            var academicYear = card.dataset.academicYear;
+            var totalFees = card.dataset.totalFees;
+            var paid = card.dataset.paid;
+            var due = card.dataset.due;
+            var status = card.dataset.status;
 
-        var jsPDF = window.jspdf.jsPDF;
-        var doc = new jsPDF();
+            var jsPDF = window.jspdf.jsPDF;
+            var doc = new jsPDF();
 
-        var marginLeft = 15;
-        var pageWidth = doc.internal.pageSize.getWidth();
-        var rightX = pageWidth - marginLeft;
-        var y = 20;
-
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(16);
-        doc.text('Student Fee Receipt', marginLeft, y);
-        y += 8;
-
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(10);
-        doc.setTextColor(110, 110, 110);
-        doc.text('Academic Year: ' + academicYear, marginLeft, y);
-        y += 8;
-
-        doc.setDrawColor(220, 220, 220);
-        doc.line(marginLeft, y, rightX, y);
-        y += 10;
-
-        var rows = [
-            ['Name', name],
-            ['Class', cls],
-            ['Total Fees', 'Rs. ' + totalFees],
-            ['Paid', 'Rs. ' + paid],
-            ['Due', 'Rs. ' + due],
-            ['Status', status]
-        ];
-
-        doc.setFontSize(11);
-        rows.forEach(function (row) {
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(90, 90, 90);
-            doc.text(row[0] + ':', marginLeft, y);
+            var marginLeft = 15;
+            var pageWidth = doc.internal.pageSize.getWidth();
+            var rightX = pageWidth - marginLeft;
+            var y = 20;
 
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(30, 30, 30);
-            var textWidth = doc.getTextWidth(row[1]);
-            doc.text(row[1], rightX - textWidth, y);
+            doc.setFontSize(16);
+            doc.text('Student Fee Receipt', marginLeft, y);
+            y += 8;
 
-            y += 9;
-        });
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(110, 110, 110);
+            doc.text('Academic Year: ' + academicYear, marginLeft, y);
+            y += 8;
 
-        var safeFileName = (name || 'fee_receipt').replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        doc.save(safeFileName + '_receipt.pdf');
-    };
-})();
+            doc.setDrawColor(220, 220, 220);
+            doc.line(marginLeft, y, rightX, y);
+            y += 10;
+
+            var rows = [
+                ['Name', name],
+                ['Class', cls],
+                ['Total Fees', 'Rs. ' + totalFees],
+                ['Paid', 'Rs. ' + paid],
+                ['Due', 'Rs. ' + due],
+                ['Status', status]
+            ];
+
+            doc.setFontSize(11);
+            rows.forEach(function (row) {
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(90, 90, 90);
+                doc.text(row[0] + ':', marginLeft, y);
+
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(30, 30, 30);
+                var textWidth = doc.getTextWidth(row[1]);
+                doc.text(row[1], rightX - textWidth, y);
+
+                y += 9;
+            });
+
+            var safeFileName = (name || 'fee_receipt').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            doc.save(safeFileName + '_receipt.pdf');
+        };
+    })();
 </script>

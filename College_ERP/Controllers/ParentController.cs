@@ -1,10 +1,12 @@
-﻿using College_ERP.Models.HomeServices;
+﻿using College_ERP.Models.AdminServices;
+using College_ERP.Models.HomeServices;
 using College_ERP.Models.ParentServices;
 using College_ERP.Models.StudentServices;
 using System;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using static College_ERP.Models.ParentServices.main;
 using static College_ERP.Models.StudentServices.main;
 
 namespace College_ERP.Controllers
@@ -15,6 +17,7 @@ namespace College_ERP.Controllers
         private readonly HomeService homeService;
         private readonly StudentServices studentService;
         private readonly ParentService parentService;
+        private readonly AdminServices adminServices;
 
         private const string ActiveStudentSessionKey = "ActiveStudentId";
 
@@ -23,6 +26,7 @@ namespace College_ERP.Controllers
             homeService = new HomeService();
             studentService = new StudentServices();
             parentService = new ParentService();
+            adminServices = new AdminServices();
         }
         private int GetActiveStudentId()
         {
@@ -35,12 +39,6 @@ namespace College_ERP.Controllers
             Session[ActiveStudentSessionKey] = defaultStudentId;
             return defaultStudentId;
         }
-
-        //private ActionResult ViewWithStudent()
-        //{
-        //    ViewBag.StudentId = GetActiveStudentId();
-        //    return View();
-        //}
 
         [HttpGet]
         public JsonResult GetparentDetails()
@@ -117,20 +115,30 @@ namespace College_ERP.Controllers
 
         public ActionResult Assignment()
         {
-            ViewBag.StudentId = GetActiveStudentId();
-            return View();
+            int studentId = GetActiveStudentId();
+            var assignments = studentService.GetStudentAssignmentById(studentId);
+            return View(assignments);
         }
 
         public ActionResult Parentcommunication()
         {
-            ViewBag.StudentId = GetActiveStudentId();
+            int studentId = GetActiveStudentId();
+
+            var CommunicationDetails = studentService.GetCommunication(studentId, 2);
+
+            ViewBag.Communication = CommunicationDetails;
+
             return View();
         }
 
         public ActionResult Announcement()
         {
-            ViewBag.StudentId = GetActiveStudentId();
-            return View();
+            int studentId = GetActiveStudentId();
+            int adminId = studentService.GetAdminId(studentId);
+
+            var announcements = studentService.GetAllCirculars(adminId);
+
+            return View(announcements);
         }
         public ActionResult Result()
         {
@@ -139,31 +147,55 @@ namespace College_ERP.Controllers
         }
         public ActionResult Notice()
         {
-            ViewBag.StudentId = GetActiveStudentId();
-            return View();
+            int studentId = GetActiveStudentId();
+            int adminid = studentService.GetAdminId(studentId);
+            var Notice = studentService.GetStudentNotices("parent", studentId, adminid);
+            return View(Notice);
         }
 
         public ActionResult ExamSchedule()
         {
-            ViewBag.StudentId = GetActiveStudentId();
-            return View();
+            int studentId = GetActiveStudentId();
+            int adminId = studentService.GetAdminId(studentId);
+            var scheduleExam = adminServices.GetScheduledExam(adminId);
+
+            return View(scheduleExam);
         }
 
+        [HttpGet]
+        public JsonResult GetExamTimeTable(int scheduleId)
+        {
+            int studentId = GetActiveStudentId();
+
+            var data = studentService.GetExamTimeTableForStudent(studentId, scheduleId);
+
+            return Json(new
+            {
+                status = true,
+                data = data
+            }, JsonRequestBehavior.AllowGet);
+        }
         public ActionResult Fees()
         {
-            ViewBag.StudentId = GetActiveStudentId();
+            int studentId = GetActiveStudentId();
+
+            var fee = studentService.GetFeeRecord(studentId).FirstOrDefault();
+
+            var profile = studentService.GetStudentById(studentId);
+
+            ViewBag.StudentName = profile?.StudentName;
+
+            ViewBag.AcademicYear = profile?.AcademicYear;
+
+            ViewBag.FeesDetails = fee;
+
             return View();
         }
         public ActionResult Hostel()
         {
             int studentId = GetActiveStudentId();
 
-            var hostel = studentService.GetHostelDetails(studentId);
-
-            if (hostel == null)
-            {
-                throw new Exception("HostelDetails is NULL");
-            }
+            var hostel = studentService.GetHostelDetails(studentId).FirstOrDefault();
 
             ViewBag.HostelDetails = hostel;
 
@@ -171,12 +203,20 @@ namespace College_ERP.Controllers
         }
         public ActionResult Transport()
         {
-            ViewBag.StudentId = GetActiveStudentId();
-            return View();
+            int studentId = GetActiveStudentId();
+
+            var transport = studentService.GetTransportDetails(studentId).FirstOrDefault();
+
+            return View(transport);
         }
         public ActionResult Profile()
         {
-            ViewBag.StudentId = GetActiveStudentId();
+            int studentId = GetActiveStudentId();
+
+            var ParentDetails = parentService.ParentProfile(studentId).FirstOrDefault();
+
+            ViewBag.Parent = ParentDetails;
+
             return View();
         }
     }
