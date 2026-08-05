@@ -109,8 +109,8 @@
                                             <input type="url" id="website" class="form-control " value="@(ViewBag?.updata?.Website)" name="Website" placeholder="Enter Website Url">
                                         </div>
                                         <!--<div class="mb-2">-->
-                                            <!--Award Session-->
-                                            <!--<label for="duration" class="form-label">Duration</label>
+                                        <!--Award Session-->
+                                        <!--<label for="duration" class="form-label">Duration</label>
                                             <select id="duration" value="@(ViewBag?.updata?.Duration)" name="Duration" class="form-select " aria-label="Default select example">
                                                 <option value="" disabled>--Select Duration--</option>
                                                 <option value="3">3 Month</option>
@@ -132,32 +132,32 @@
                                     <div class="text-center mt-3">
                                         <button type="submit" id="btnSubmit" class="btn btn-primary">                                              @(ViewBag?.updata?.Id > 0 ?"Update": "Submit")  </button>
 
-                                        </div >
+                                    </div>
 
-                                        </div >
+                                </div>
 
-                                        </form >
-
-
-
-                                        </div >
+                            </form>
 
 
-                                        </div >
 
-                                        </div >
-
-                                        </div >
-
-                                        </div >
-
-                                        </div >
-                                        </div >
+                        </div>
 
 
-                                        <script src = "https://cdn.jsdelivr.net/npm/sweetalert2@11" ></script >
-                                        <script src = "~/assets/libs/jquery/jquery.min.js" ></script >
-                                        <script>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script>
                                         $(document).ready(function() {
                                         $('#companyRegistration').on('submit', function(e) {
                                         e.preventDefault();
@@ -250,48 +250,48 @@
                                         {
                                             @:$("#State").change()
                                         }
-                                        </script>
-                                        <script>
-                                            document.querySelector('.landline').addEventListener('input', function () {
-                                                let val = this.value;
+</script>
+<script>
+    document.querySelector('.landline').addEventListener('input', function () {
+        let val = this.value;
 
-                                                // Allow only digits and hyphen
-                                                val = val.replace(/[^0-9\-]/g, '');
+        // Allow only digits and hyphen
+        val = val.replace(/[^0-9\-]/g, '');
 
-                                                // Prevent multiple hyphens
-                                                const hyphenCount = (val.match(/-/g) || []).length;
-                                                if (hyphenCount > 1) {
-                                                    val = val.replace(/-+$/, ''); // remove trailing extra hyphens
-                                                }
+        // Prevent multiple hyphens
+        const hyphenCount = (val.match(/-/g) || []).length;
+        if (hyphenCount > 1) {
+            val = val.replace(/-+$/, ''); // remove trailing extra hyphens
+        }
 
-                                                // Split parts if hyphen is present
-                                                let parts = val.split('-');
+        // Split parts if hyphen is present
+        let parts = val.split('-');
 
-                                                // Enforce STD and number lengths
-                                                if (parts.length === 2) {
-                                                    parts[0] = parts[0].substring(0, 5); // STD code max 5 digits
-                                                    parts[1] = parts[1].substring(0, 8); // Number max 8 digits
-                                                    val = parts[0] + '-' + parts[1];
-                                                } else {
-                                                    val = val.substring(0, 13); // fallback hard cap
-                                                }
+        // Enforce STD and number lengths
+        if (parts.length === 2) {
+            parts[0] = parts[0].substring(0, 5); // STD code max 5 digits
+            parts[1] = parts[1].substring(0, 8); // Number max 8 digits
+            val = parts[0] + '-' + parts[1];
+        } else {
+            val = val.substring(0, 13); // fallback hard cap
+        }
 
-                                                this.value = val;
-                                            });
+        this.value = val;
+    });
 
-                                            document.querySelector('.landline').addEventListener('blur', function () {
-                                                const input = this.value.trim();
-                                                const errorSpan = this.nextElementSibling;
+    document.querySelector('.landline').addEventListener('blur', function () {
+        const input = this.value.trim();
+        const errorSpan = this.nextElementSibling;
 
-                                                // Format: STD (3–5 digits), hyphen optional, number (6–8 digits)
-                                                const landlineRegex = /^0\d{2,4}-?\d{6,8}$/;
+        // Format: STD (3–5 digits), hyphen optional, number (6–8 digits)
+        const landlineRegex = /^0\d{2,4}-?\d{6,8}$/;
 
-                                                if (input === "") {
-                                                    errorSpan.textContent = "Landline number is required.";
-                                                } else if (!landlineRegex.test(input)) {
-                                                    errorSpan.textContent = "Invalid landline number format.";
-                                                } else {
-                                                    errorSpan.textContent = "";
-                                                }
-                                            });
-                                        </script>
+        if (input === "") {
+            errorSpan.textContent = "Landline number is required.";
+        } else if (!landlineRegex.test(input)) {
+            errorSpan.textContent = "Invalid landline number format.";
+        } else {
+            errorSpan.textContent = "";
+        }
+    });
+</script>

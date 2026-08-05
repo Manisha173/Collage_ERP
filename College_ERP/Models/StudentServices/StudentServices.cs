@@ -888,5 +888,50 @@ namespace College_ERP.Models.StudentServices
         }
         #endregion
 
+        public StudentDashboardCount StudentDashboardCount(int studentId, string day)
+        {
+            StudentDashboardCount model = new StudentDashboardCount();
+
+            try
+            {
+                using (SqlCommand command = new SqlCommand("sp_StudentRegistrationManagement", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@Action", "studentdashboardcount");
+                    command.Parameters.AddWithValue("@StudentId", studentId);
+                    command.Parameters.AddWithValue("@Day", day);
+
+                    if (connection.State == ConnectionState.Closed)
+                        connection.Open();
+
+                    using (SqlDataReader sdr = command.ExecuteReader())
+                    {
+                        if (sdr.Read())
+                        {
+                            model.TimeTableCount = Convert.ToInt32(sdr["TimeTableCount"]);
+                            model.AssignmentCount = Convert.ToInt32(sdr["AssignmentCount"]);
+                            model.HostelProblemCount = Convert.ToInt32(sdr["HostelProblemCount"]);
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (connection.State == ConnectionState.Open)
+                    connection.Close();
+            }
+
+            return model;
+        }
+
+
+
+
+
     }
 }

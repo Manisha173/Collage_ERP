@@ -10928,7 +10928,7 @@ namespace College_ERP.Models.AdminServices
             }
         }
 
-        public List<ExcelAttendanceRecordModel>          GetAttendaceRecordById(int userid,string department, string empcode, string startDate, string endDate)
+        public List<ExcelAttendanceRecordModel>  GetAttendaceRecordById(int userid,string department, string empcode, string startDate, string endDate)
         {
             List<ExcelAttendanceRecordModel> attendanceList = new List<ExcelAttendanceRecordModel>();
 
@@ -12153,5 +12153,57 @@ namespace College_ERP.Models.AdminServices
             }
             return list;
         }
+
+
+        public List<AdminCommunicationList> AdminCommunicationListByWarden(int userid)
+        {
+            List<AdminCommunicationList> data = new List<AdminCommunicationList>();
+            try
+            {
+               using(SqlCommand cmd=new SqlCommand("sp_ManageCommunication", connection))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@userid", userid);
+                    cmd.Parameters.AddWithValue("@action", "showcommunicationforadmin");
+                    connection.Open();
+                    SqlDataReader sdr = cmd.ExecuteReader();
+                    if(sdr.HasRows)
+                    {
+                        while(sdr.Read())
+                        {
+                            data.Add(new AdminCommunicationList
+                            {
+                                Id = Convert.ToInt32(sdr["Id"]),
+                                Title = sdr["Title"].ToString(),
+                                Attachment = sdr["Attachment"].ToString(),
+                                Description = sdr["Description"].ToString(),
+                                WardenName = sdr["Name"].ToString(),
+                                EmailId = sdr["Email_Id"].ToString(),
+                                Mobile = sdr["MobileNo"].ToString(),
+                                BlockName = sdr["BlockName"].ToString(),
+                                BlockType = sdr["blockType"].ToString(),
+                                TotalFloorInBlock = Convert.ToInt32(sdr["TotalFlourInBlock"])
+                            });
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                    if (connection.State == ConnectionState.Open)
+                    {
+                        connection.Close();
+                    }
+            }
+            return data;
+        }
+
+
+
+
     }
 }

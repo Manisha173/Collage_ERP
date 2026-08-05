@@ -60,6 +60,41 @@ namespace College_ERP.Models.HomeServices
 
             }
         }
+        public bool IsInHostelornot(int userid)
+        {
+            try
+            {
+                bool isInHostel = false;
+
+                cmd = new SqlCommand("sp_loginmanager", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@action", "IsInHostel");
+                cmd.Parameters.AddWithValue("@userid", userid);
+
+                con.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        isInHostel = Convert.ToBoolean(reader["IsInHostel"]);
+                    }
+                }
+
+                return isInHostel;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+
+                cmd?.Dispose();
+            }
+        }
 
         #region jwt token
 

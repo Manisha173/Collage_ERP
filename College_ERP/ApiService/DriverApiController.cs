@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.ServiceModel.Channels;
 using System.Web;
 using System.Web.Http;
+using System.Xml.XPath;
 using College_ERP.Models.AdminServices;
 using College_ERP.Models.DriverServices;
 using static College_ERP.Models.DriverServices.main;
@@ -140,6 +142,32 @@ namespace College_ERP.ApiService
             }
         }
         #endregion
+
+        [Route("api/driverdashboardcount")]
+        [HttpGet]
+        public IHttpActionResult driverdashboardcount(int driverid)
+        {
+            try 
+            {
+                var result = _driver.driverdashboardcount(driverid);
+                return Ok(new
+                {
+                    status=true,
+                    StatusCode=200,
+                    Message="driver dashboard count!!",
+                    data=result
+                });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new
+                {status=false,
+                StatusCode=500,
+                Message=ex.Message
+
+                });
+            }
+        }
 
     }
 }

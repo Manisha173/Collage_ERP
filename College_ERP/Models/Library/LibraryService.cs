@@ -804,6 +804,7 @@ namespace College_ERP.Models.Library
                         list.Add(new LibrarianDetailsModel
                         {
                             Id = Convert.ToInt32(res["id"]),
+                            EmployeeId = Convert.ToInt32(res["EmployeeId"]),
                             Name = res["name"].ToString(),
                             Email = res["email"].ToString(),
                             MobileNo = Convert.ToInt64(res["mobileNo"]),

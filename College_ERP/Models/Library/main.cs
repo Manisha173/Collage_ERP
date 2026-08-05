@@ -10,6 +10,7 @@ namespace College_ERP.Models.Library
         public class LibrarianDetailsModel
         {
             public int Id { get; set; }
+            public int EmployeeId { get; set; }
             public int UserId { get; set; }
             public string Name { get; set; }
             public string Email { get; set; }

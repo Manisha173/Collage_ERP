@@ -37,6 +37,7 @@ namespace College_ERP.ApiService
             if (res != null)
             {
                 int userid = _home.GetUserId(username);
+                bool IsInHostel = _home.IsInHostelornot(userid);
                 var role = _home.GetRoleByUserId(username);
                 var userdetails = _home.GetUserResetDetailsByUsername(username);
                 string accessToken = JwtTokenHelper.GenerateAccessToken(userid, res);
@@ -52,7 +53,8 @@ namespace College_ERP.ApiService
                     refresh_token = refreshToken,
                     id=userid,
                     Role= role,
-                    name= userdetails.FullName,
+                    IsInHostel= IsInHostel,
+                    name = userdetails.FullName,
                     expires_in = 1800
                 });
 

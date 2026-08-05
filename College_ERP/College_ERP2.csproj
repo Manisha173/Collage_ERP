@@ -2327,6 +2327,7 @@
     <Content Include="Upload\receipt %2831%29.pdf" />
     <Content Include="Upload\timetable %281%29.pdf" />
     <Content Include="Upload\timetable.pdf" />
+    <Content Include="Views\Admin\communicationByWarden.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

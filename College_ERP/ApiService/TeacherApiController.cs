@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Protocols.WSTrust;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -767,6 +768,27 @@ namespace College_ERP.ApiService
         }
 
         #endregion
+
+        [Route("api/teacherdashboard-count")]
+        [HttpGet]
+        public IHttpActionResult teacherdashboardcount(int teacherid)
+        {
+            try
+            {
+                int userId = _teacher.GetAdminId(teacherid);
+                var result = _teacher.GetDashboardCounts(userId, teacherid);
+                return Ok(new
+                {
+                    status = true,
+                    message = "teacher dashboard count!",
+                    data = result
+                });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new { Status = false, message = ex.Message });
+            }
+        }
 
 
     }
