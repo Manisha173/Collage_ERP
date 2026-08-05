@@ -365,6 +365,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LibraryController.cs" />
+    <Compile Include="Controllers\ParentController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Controllers\SuperAdminController.cs" />
     <Compile Include="Controllers\TeacherController.cs" />
@@ -2016,6 +2017,7 @@
     <Content Include="Views\Admin\DriverProfile.cshtml" />
     <Content Include="Views\Admin\AdminProfile.cshtml" />
     <Content Include="Views\Admin\StudentFeesTransactionHistory.cshtml" />
+<<<<<<< HEAD
     <Content Include="Upload\06e1e25d-36eb-434a-a2aa-d685b366346205062025receipt %2830%29.pdf" />
     <Content Include="Upload\084fc28a-cd4e-49a5-801d-b28b30f99c9912062025timetable %289%29.pdf" />
     <Content Include="Upload\08ca2b95-2537-4919-8181-fdc25c30619729052025timetable %281%29.pdf" />
@@ -2331,6 +2333,26 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+=======
+    <Content Include="Views\Shared\_ParentLayoutPage.cshtml" />
+    <Content Include="Views\Parent\Dashboard.cshtml" />
+    <Content Include="Views\Parent\Timetable.cshtml" />
+    <Content Include="Views\Parent\Assignment.cshtml" />
+    <Content Include="Views\Parent\Parentcommunication.cshtml" />
+    <Content Include="Views\Parent\Announcement.cshtml" />
+    <Content Include="Views\Parent\Result.cshtml" />
+    <Content Include="Views\Parent\ExamSchedule.cshtml" />
+    <Content Include="Views\Parent\Fees.cshtml" />
+    <Content Include="Views\Parent\Hostel.cshtml" />
+    <Content Include="Views\Parent\Transport.cshtml" />
+    <Content Include="Views\Parent\Notice.cshtml" />
+    <Content Include="Views\Parent\Profile.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Models\Parent\" />
+    <Folder Include="Upload\" />
+>>>>>>> 79d185a02451862da89ab310bf0c7ad6ab16ec6e
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

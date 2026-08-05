@@ -1,0 +1,300 @@
+﻿@{
+    ViewBag.Title = "Notice";
+    Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+    :root {
+        --ntc-navy: #1c3f66;
+        --ntc-navy-dark: #16324f;
+        --ntc-muted: #6b7280;
+        --ntc-green: #2e9e4f;
+    }
+
+    .ntc-header {
+        background: var(--ntc-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+        .ntc-header a {
+            color: #fff;
+        }
+
+        .ntc-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .ntc-list-item {
+        display: flex;
+        align-items: flex-start;
+        gap: .9rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #eceef2;
+        cursor: pointer;
+        transition: background .12s ease;
+    }
+
+        .ntc-list-item:hover {
+            background: #f7f9fc;
+        }
+
+        .ntc-list-item .ntc-bell {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #eef2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ntc-navy);
+            flex-shrink: 0;
+        }
+
+        .ntc-list-item .ntc-title {
+            font-weight: 600;
+            color: #1e2433;
+            margin: 0;
+            font-size: .95rem;
+        }
+
+        .ntc-list-item .ntc-subtitle {
+            color: var(--ntc-muted);
+            margin: 0;
+            font-size: .82rem;
+        }
+
+        .ntc-list-item .ntc-date {
+            color: var(--ntc-muted);
+            margin: .15rem 0 0;
+            font-size: .78rem;
+        }
+
+    /* Modal */
+    #noticeModal .modal-content {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    #noticeModal .modal-header {
+        background: var(--ntc-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        border: none;
+    }
+
+        #noticeModal .modal-header .modal-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+    #noticeModal .btn-close-text {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: .04em;
+        font-size: .85rem;
+    }
+
+    #noticeModal .modal-body {
+        padding: 1.5rem;
+    }
+
+        #noticeModal .modal-body h4 {
+            font-weight: 700;
+            color: #1e2433;
+            margin-bottom: .3rem;
+        }
+
+    #noticeModal .modal-date {
+        color: var(--ntc-muted);
+        font-size: .85rem;
+        margin-bottom: 1rem;
+    }
+
+    #noticeModal .btn-download {
+        background: #e9f8ee;
+        border: none;
+        border-radius: 20px;
+        padding: .4rem 1rem;
+        font-size: .85rem;
+        font-weight: 500;
+        color: var(--ntc-green);
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        margin-bottom: 1.25rem;
+    }
+
+        #noticeModal .btn-download:hover {
+            background: #dcf3e4;
+        }
+
+    #noticeModal .modal-description {
+        color: #333;
+        font-size: .92rem;
+        line-height: 1.5;
+        white-space: pre-line;
+    }
+</style>
+
+<div class="content-page bg-white">
+
+    <div class="ntc-header">
+        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+        <h5>Notice</h5>
+    </div>
+
+    <div id="noticeList">
+        <div class="ntc-list-item"
+             data-title="Test Mobile"
+             data-date="29 Jul 2026, 12:00 AM"
+             data-description="Test">
+            <div class="ntc-bell"><i class="fa-solid fa-bell"></i></div>
+            <div>
+                <p class="ntc-title">Test Mobile</p>
+                <p class="ntc-subtitle">Test</p>
+                <p class="ntc-date">29 Jul 2026, 12:00 AM</p>
+            </div>
+        </div>
+
+        <div class="ntc-list-item"
+             data-title="Send To All"
+             data-date="28 Jul 2026, 12:00 AM"
+             data-description="Test">
+            <div class="ntc-bell"><i class="fa-solid fa-bell"></i></div>
+            <div>
+                <p class="ntc-title">Send To All</p>
+                <p class="ntc-subtitle">Test</p>
+                <p class="ntc-date">28 Jul 2026, 12:00 AM</p>
+            </div>
+        </div>
+
+        <div class="ntc-list-item"
+             data-title="Exam Related Notice"
+             data-date="23 Jul 2026, 12:00 AM"
+             data-description="Exam Related Notice">
+            <div class="ntc-bell"><i class="fa-solid fa-bell"></i></div>
+            <div>
+                <p class="ntc-title">Exam Related Notice</p>
+                <p class="ntc-subtitle">Exam Related Notice</p>
+                <p class="ntc-date">23 Jul 2026, 12:00 AM</p>
+            </div>
+        </div>
+
+        <div class="ntc-list-item"
+             data-title="Related To 15 August"
+             data-date="23 Jul 2026, 12:00 AM"
+             data-description="Related To 15 August">
+            <div class="ntc-bell"><i class="fa-solid fa-bell"></i></div>
+            <div>
+                <p class="ntc-title">Related To 15 August</p>
+                <p class="ntc-subtitle">Related To 15 August</p>
+                <p class="ntc-date">23 Jul 2026, 12:00 AM</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Detail Modal -->
+<div class="modal fade" id="noticeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Notice Details</h5>
+                <button type="button" class="btn-close-text" data-bs-dismiss="modal">CLOSE</button>
+            </div>
+            <div class="modal-body">
+                <h4 id="modalTitle"></h4>
+                <p class="modal-date" id="modalDate"></p>
+
+                <button type="button" class="btn-download" id="downloadPdfBtn">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Download
+                </button>
+
+                <p class="modal-description" id="modalDescription"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var modalEl = document.getElementById('noticeModal');
+    var modalTitle = document.getElementById('modalTitle');
+    var modalDate = document.getElementById('modalDate');
+    var modalDescription = document.getElementById('modalDescription');
+    var downloadBtn = document.getElementById('downloadPdfBtn');
+
+    function getModalInstance() {
+        if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+            console.error('Bootstrap JS is not loaded on this page.');
+            return null;
+        }
+        return bootstrap.Modal.getOrCreateInstance(modalEl);
+    }
+
+    document.addEventListener('click', function (e) {
+        var item = e.target.closest('.ntc-list-item');
+        if (!item) return;
+
+        modalTitle.textContent = item.dataset.title || '';
+        modalDate.textContent = item.dataset.date || '';
+        modalDescription.textContent = item.dataset.description || '';
+
+        var bsModal = getModalInstance();
+        if (bsModal) bsModal.show();
+    });
+
+    downloadBtn.addEventListener('click', function () {
+        if (!window.jspdf) {
+            console.error('jsPDF failed to load.');
+            return;
+        }
+        var jsPDF = window.jspdf.jsPDF;
+        var doc = new jsPDF();
+
+        var title = modalTitle.textContent;
+        var date = modalDate.textContent;
+        var description = modalDescription.textContent;
+
+        var marginLeft = 15;
+        var pageWidth = doc.internal.pageSize.getWidth();
+        var maxWidth = pageWidth - marginLeft * 2;
+        var y = 20;
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.text(title, marginLeft, y);
+        y += 8;
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(110, 110, 110);
+        doc.text(date, marginLeft, y);
+        y += 10;
+
+        doc.setDrawColor(220, 220, 220);
+        doc.line(marginLeft, y, pageWidth - marginLeft, y);
+        y += 10;
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(11);
+        doc.setTextColor(30, 30, 30);
+        var lines = doc.splitTextToSize(description, maxWidth);
+        doc.text(lines, marginLeft, y);
+
+        var safeFileName = (title || 'notice').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        doc.save(safeFileName + '.pdf');
+    });
+})();
+</script>

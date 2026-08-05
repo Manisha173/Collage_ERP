@@ -1,0 +1,260 @@
+﻿@{
+    ViewBag.Title = "Assignment";
+    Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+    :root {
+        --asg-navy: #1c3f66;
+        --asg-navy-dark: #16324f;
+        --asg-muted: #6b7280;
+    }
+
+    .asg-header {
+        background: var(--asg-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+        .asg-header a {
+            color: #fff;
+        }
+
+        .asg-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .asg-list-item {
+        display: flex;
+        align-items: flex-start;
+        gap: .9rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #eceef2;
+        cursor: pointer;
+        transition: background .12s ease;
+    }
+
+        .asg-list-item:hover {
+            background: #f7f9fc;
+        }
+
+        .asg-list-item .asg-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--asg-navy);
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .asg-list-item .asg-title {
+            font-weight: 600;
+            color: #1e2433;
+            margin: 0;
+            font-size: .95rem;
+        }
+
+        .asg-list-item .asg-subtitle {
+            color: var(--asg-muted);
+            margin: 0;
+            font-size: .82rem;
+        }
+
+        .asg-list-item .asg-submission {
+            color: var(--asg-muted);
+            margin: .15rem 0 0;
+            font-size: .78rem;
+        }
+
+    /* Modal */
+    #assignmentModal .modal-content {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    #assignmentModal .modal-header {
+        background: var(--asg-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        border: none;
+    }
+
+        #assignmentModal .modal-header .modal-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+    #assignmentModal .btn-close-text {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: .04em;
+        font-size: .85rem;
+    }
+
+    #assignmentModal .modal-body {
+        padding: 1.5rem;
+    }
+
+        #assignmentModal .modal-body h4 {
+            font-weight: 700;
+            color: #1e2433;
+            margin-bottom: .3rem;
+        }
+
+    #assignmentModal .modal-date {
+        color: var(--asg-muted);
+        font-size: .85rem;
+        margin-bottom: 1rem;
+    }
+
+    #assignmentModal .btn-download {
+        background: #eef1f5;
+        border: none;
+        border-radius: 20px;
+        padding: .4rem 1rem;
+        font-size: .85rem;
+        font-weight: 500;
+        color: #1e2433;
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        margin-bottom: 1.25rem;
+    }
+
+        #assignmentModal .btn-download:hover {
+            background: #e2e6ec;
+        }
+
+    #assignmentModal .modal-description {
+        color: #333;
+        font-size: .92rem;
+        line-height: 1.5;
+        white-space: pre-line;
+    }
+</style>
+
+<div class="content-page bg-white">
+
+    <div class="asg-header">
+        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+        <h5>Assignment</h5>
+    </div>
+
+    <div id="assignmentList">
+        <div class="asg-list-item"
+             data-title="Test"
+             data-date="04 Aug 2026, 12:00 AM"
+             data-description="Test">
+            <div class="asg-checkbox"></div>
+            <div>
+                <p class="asg-title">Test</p>
+                <p class="asg-subtitle">Test</p>
+                <p class="asg-submission">Submission 03 Aug 2026</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Detail Modal -->
+<div class="modal fade" id="assignmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assignment Details</h5>
+                <button type="button" class="btn-close-text" data-bs-dismiss="modal">CLOSE</button>
+            </div>
+            <div class="modal-body">
+                <h4 id="modalTitle"></h4>
+                <p class="modal-date" id="modalDate"></p>
+
+                <button type="button" class="btn-download" id="downloadPdfBtn">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Download
+                </button>
+
+                <p class="modal-description" id="modalDescription"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var modalEl = document.getElementById('assignmentModal');
+    var modalTitle = document.getElementById('modalTitle');
+    var modalDate = document.getElementById('modalDate');
+    var modalDescription = document.getElementById('modalDescription');
+    var downloadBtn = document.getElementById('downloadPdfBtn');
+
+    function getModalInstance() {
+        if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+            console.error('Bootstrap JS is not loaded on this page.');
+            return null;
+        }
+        return bootstrap.Modal.getOrCreateInstance(modalEl);
+    }
+
+    document.addEventListener('click', function (e) {
+        var item = e.target.closest('.asg-list-item');
+        if (!item) return;
+
+        modalTitle.textContent = item.dataset.title || '';
+        modalDate.textContent = item.dataset.date || '';
+        modalDescription.textContent = item.dataset.description || '';
+
+        var bsModal = getModalInstance();
+        if (bsModal) bsModal.show();
+    });
+
+    downloadBtn.addEventListener('click', function () {
+        if (!window.jspdf) {
+            console.error('jsPDF failed to load.');
+            return;
+        }
+        var jsPDF = window.jspdf.jsPDF;
+        var doc = new jsPDF();
+
+        var title = modalTitle.textContent;
+        var date = modalDate.textContent;
+        var description = modalDescription.textContent;
+
+        var marginLeft = 15;
+        var pageWidth = doc.internal.pageSize.getWidth();
+        var maxWidth = pageWidth - marginLeft * 2;
+        var y = 20;
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.text(title, marginLeft, y);
+        y += 8;
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(110, 110, 110);
+        doc.text(date, marginLeft, y);
+        y += 10;
+
+        doc.setDrawColor(220, 220, 220);
+        doc.line(marginLeft, y, pageWidth - marginLeft, y);
+        y += 10;
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(11);
+        doc.setTextColor(30, 30, 30);
+        var lines = doc.splitTextToSize(description, maxWidth);
+        doc.text(lines, marginLeft, y);
+
+        var safeFileName = (title || 'assignment').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        doc.save(safeFileName + '.pdf');
+    });
+})();
+</script>

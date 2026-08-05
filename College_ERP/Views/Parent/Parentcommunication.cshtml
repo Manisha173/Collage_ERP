@@ -1,0 +1,154 @@
+﻿@{
+    ViewBag.Title = "Parentcommunication";
+    Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
+}
+
+<style>
+    :root {
+        --pcm-navy: #1c3f66;
+        --pcm-blue-start: #1c3f66;
+        --pcm-blue-end: #4f7cff;
+        --pcm-muted: #6b7280;
+    }
+
+    .pcm-header {
+        background: var(--pcm-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+        .pcm-header a {
+            color: #fff;
+        }
+
+        .pcm-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .pcm-search-wrap {
+        padding: 1rem 1.25rem;
+        background: #f4f5f7;
+    }
+
+    .pcm-search-box {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        background: #fff;
+        border-radius: 24px;
+        padding: .6rem 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+
+        .pcm-search-box i {
+            color: var(--pcm-navy);
+        }
+
+        .pcm-search-box input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: .9rem;
+            color: #1e2433;
+        }
+
+            .pcm-search-box input::placeholder {
+                color: #9aa1ac;
+            }
+
+    .pcm-list {
+        padding: 0 1.25rem 1.25rem;
+        background: #f4f5f7;
+    }
+
+    .pcm-item {
+        background: linear-gradient(90deg, var(--pcm-blue-start), var(--pcm-blue-end));
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        margin-top: 1rem;
+        cursor: pointer;
+        transition: filter .12s ease;
+    }
+
+        .pcm-item:hover {
+            filter: brightness(1.03);
+        }
+
+        .pcm-item .pcm-title {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin: 0 0 .3rem;
+        }
+
+        .pcm-item .pcm-message {
+            color: rgba(255,255,255,.9);
+            font-size: .88rem;
+            margin: 0 0 1.4rem;
+        }
+
+        .pcm-item .pcm-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .pcm-item .pcm-sender {
+            color: #fff;
+            font-weight: 600;
+            font-size: .85rem;
+        }
+</style>
+
+<div class="content-page">
+
+    <div class="pcm-header">
+        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+        <h5>Communication</h5>
+    </div>
+
+    <div class="pcm-search-wrap">
+        <div class="pcm-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="pcmSearchInput" placeholder="Search">
+        </div>
+    </div>
+
+    <div class="pcm-list" id="pcmList">
+        <div class="pcm-item" data-title="Test" data-message="Test" data-sender="Sonam Wangchun">
+            <p class="pcm-title">Test</p>
+            <p class="pcm-message">Test</p>
+            <div class="pcm-footer">
+                <span class="pcm-sender">Sonam Wangchun</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+(function () {
+    var searchInput = document.getElementById('pcmSearchInput');
+    var list = document.getElementById('pcmList');
+
+    searchInput.addEventListener('input', function () {
+        var query = this.value.trim().toLowerCase();
+        var items = list.querySelectorAll('.pcm-item');
+
+        items.forEach(function (item) {
+            var title = (item.dataset.title || '').toLowerCase();
+            var message = (item.dataset.message || '').toLowerCase();
+            var sender = (item.dataset.sender || '').toLowerCase();
+
+            var matches = title.indexOf(query) !== -1 ||
+                          message.indexOf(query) !== -1 ||
+                          sender.indexOf(query) !== -1;
+
+            item.style.display = matches ? '' : 'none';
+        });
+    });
+})();
+</script>

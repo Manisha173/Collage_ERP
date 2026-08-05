@@ -1,0 +1,141 @@
+﻿@using College_ERP.Models.StudentServices
+@{
+    ViewBag.Title = "Hostel";
+    Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
+}
+
+@{
+    var student = ViewBag.HostelDetails as College_ERP.Models.StudentServices.main.HostelDetailModel;
+}
+
+<style>
+    :root {
+        --hst-navy: #1c3f66;
+        --hst-muted: #6b7280;
+        --hst-ink: #1e2433;
+    }
+
+    .hst-header {
+        background: var(--hst-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+        .hst-header a {
+            color: #fff;
+        }
+
+        .hst-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .hst-wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1.25rem;
+    }
+
+    .hst-card {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 10px;
+        padding: 1.1rem 1.25rem;
+        margin-bottom: 1.1rem;
+    }
+
+    .hst-card-title {
+        color: var(--hst-navy);
+        font-weight: 600;
+        font-size: 1rem;
+        margin: 0 0 .8rem;
+    }
+
+    .hst-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: .6rem 0;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+        .hst-row:last-child {
+            border-bottom: none;
+        }
+
+        .hst-row .row-left {
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            color: #333;
+            font-size: .9rem;
+        }
+
+            .hst-row .row-left i {
+                color: var(--hst-navy);
+                width: 18px;
+                text-align: center;
+                font-size: 1rem;
+            }
+
+        .hst-row .row-value {
+            font-weight: 700;
+            color: var(--hst-ink);
+            font-size: .92rem;
+        }
+</style>
+
+<div class="content-page bg-white">
+
+    <div class="hst-header">
+        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+        <h5>Hostel Details</h5>
+    </div>
+
+    <div class="hst-wrap">
+
+        <div class="hst-card">
+            <p class="hst-card-title">Accommodation Plan</p>
+            <div class="hst-row">
+                <span class="row-left"><i class="fa-solid fa-bed"></i>Room Type</span>
+                <span class="row-value">@student.roomType</span>
+            </div>
+            <div class="hst-row">
+                <span class="row-left"><i class="fa-solid fa-money-check-dollar"></i>Total Fees</span>
+                <span class="row-value">@student.totalFee</span>
+            </div>
+        </div>
+
+        <div class="hst-card">
+            <p class="hst-card-title">Warden Information</p>
+            <div class="hst-row">
+                <span class="row-left"><i class="fa-solid fa-circle-user"></i>Name</span>
+                <span class="row-value">@student.wardenName</span>
+            </div>
+            <div class="hst-row">
+                <span class="row-left"><i class="fa-solid fa-phone"></i>Contact Number</span>
+                <span class="row-value">@student.wardenMobile</span>
+            </div>
+            <div class="hst-row">
+                <span class="row-left"><i class="fa-solid fa-envelope"></i>Email</span>
+                <span class="row-value">@student.wardenEmail</span>
+            </div>
+        </div>
+
+        <div class="hst-card">
+            <p class="hst-card-title">Room Information</p>
+            <div class="hst-row">
+                <span class="row-left"><i class="fa-solid fa-key"></i>Room Number</span>
+                <span class="row-value">@student.roomNo</span>
+            </div>
+            <div class="hst-row">
+                <span class="row-left"><i class="fa-solid fa-user-group"></i>Roommates</span>
+                <span class="row-value">@student.roommates</span>
+            </div>
+        </div>
+
+    </div>
+</div>

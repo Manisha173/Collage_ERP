@@ -1,0 +1,314 @@
+﻿@{
+    ViewBag.Title = "Fees";
+    Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+    :root {
+        --fee-navy: #1c3f66;
+        --fee-muted: #6b7280;
+        --fee-ink: #1e2433;
+        --fee-green: #2e9e4f;
+        --fee-red: #d64545;
+    }
+
+    .fee-header {
+        background: var(--fee-navy);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+        .fee-header a {
+            color: #fff;
+        }
+
+        .fee-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .fee-search-wrap {
+        padding: 1rem 1.25rem;
+        background: #f4f5f7;
+    }
+
+    .fee-search-box {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        background: #fff;
+        border-radius: 24px;
+        padding: .6rem 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+
+        .fee-search-box i {
+            color: var(--fee-navy);
+        }
+
+        .fee-search-box input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: .9rem;
+            color: #1e2433;
+        }
+
+            .fee-search-box input::placeholder {
+                color: #9aa1ac;
+            }
+
+    .fee-wrap {
+        padding: 0 1.25rem 1.5rem;
+        background: #f4f5f7;
+    }
+
+    .fee-card {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 10px;
+        padding: 1.1rem 1.25rem;
+        margin-top: 1rem;
+    }
+
+    .fee-card-title {
+        color: var(--fee-navy);
+        font-weight: 600;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .fee-academic-year {
+        color: var(--fee-muted);
+        font-size: .82rem;
+        margin: .1rem 0 .8rem;
+    }
+
+    .fee-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: .6rem 0;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+        .fee-row .row-left {
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            color: #333;
+            font-size: .9rem;
+        }
+
+            .fee-row .row-left i {
+                color: var(--fee-navy);
+                width: 18px;
+                text-align: center;
+                font-size: 1rem;
+            }
+
+        .fee-row .row-value {
+            font-weight: 700;
+            color: var(--fee-ink);
+            font-size: .92rem;
+        }
+
+            .fee-row .row-value.due-red {
+                color: var(--fee-red);
+            }
+
+    .fee-status-badge {
+        display: inline-block;
+        padding: .2rem .8rem;
+        border-radius: 20px;
+        font-size: .78rem;
+        font-weight: 600;
+    }
+
+        .fee-status-badge.paid {
+            background: #e6f6ea;
+            color: var(--fee-green);
+        }
+
+        .fee-status-badge.pending {
+            background: #fdeaea;
+            color: var(--fee-red);
+        }
+
+    .fee-btn-download {
+        margin-top: 1rem;
+        background: #fff;
+        border: 1px solid var(--fee-navy);
+        color: var(--fee-navy);
+        border-radius: 20px;
+        padding: .5rem 1.1rem;
+        font-size: .8rem;
+        font-weight: 700;
+        letter-spacing: .03em;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+        .fee-btn-download:hover {
+            background: var(--fee-navy);
+            color: #fff;
+        }
+</style>
+
+<div class="content-page">
+
+    <div class="fee-header">
+        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+        <h5>Fees</h5>
+    </div>
+
+    <div class="fee-search-wrap">
+        <div class="fee-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="feeSearchInput" placeholder="Search">
+        </div>
+    </div>
+
+    <div class="fee-wrap" id="feeList">
+
+        <div class="fee-card"
+             data-name="Aakash Deep"
+             data-class="ba"
+             data-academic-year="2026-2027"
+             data-total-fees="70500"
+             data-paid="70500"
+             data-due="0.00"
+             data-status="Paid">
+            <p class="fee-card-title">Student Fee Details</p>
+            <p class="fee-academic-year">Academic Year: 2026-2027</p>
+
+            <div class="fee-row">
+                <span class="row-left"><i class="fa-solid fa-user"></i>Name:</span>
+                <span class="row-value fee-val-name">Aakash Deep</span>
+            </div>
+            <div class="fee-row">
+                <span class="row-left"><i class="fa-solid fa-file-lines"></i>Class:</span>
+                <span class="row-value fee-val-class">ba</span>
+            </div>
+            <div class="fee-row">
+                <span class="row-left"><i class="fa-solid fa-wallet"></i>Total Fees:</span>
+                <span class="row-value fee-val-total">₹70500</span>
+            </div>
+            <div class="fee-row">
+                <span class="row-left"><i class="fa-solid fa-money-bill-wave"></i>Paid:</span>
+                <span class="row-value fee-val-paid">₹70500</span>
+            </div>
+            <div class="fee-row">
+                <span class="row-left"><i class="fa-solid fa-circle-exclamation"></i>Due:</span>
+                <span class="row-value due-red fee-val-due">₹0.00</span>
+            </div>
+            <div class="fee-row" style="border-bottom:none;">
+                <span class="row-left"><i class="fa-solid fa-circle-check"></i>Status:</span>
+                <span class="fee-status-badge paid fee-val-status">Paid</span>
+            </div>
+
+            <button type="button" class="fee-btn-download" onclick="downloadReceipt(this)">
+                <i class="fa-solid fa-cloud-arrow-down"></i> DOWNLOAD RECEIPT
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+(function () {
+    // Search filter
+    var searchInput = document.getElementById('feeSearchInput');
+    var list = document.getElementById('feeList');
+
+    searchInput.addEventListener('input', function () {
+        var query = this.value.trim().toLowerCase();
+        var cards = list.querySelectorAll('.fee-card');
+
+        cards.forEach(function (card) {
+            var name = (card.dataset.name || '').toLowerCase();
+            var cls = (card.dataset.class || '').toLowerCase();
+            var year = (card.dataset.academicYear || '').toLowerCase();
+
+            var matches = name.indexOf(query) !== -1 ||
+                          cls.indexOf(query) !== -1 ||
+                          year.indexOf(query) !== -1;
+
+            card.style.display = matches ? '' : 'none';
+        });
+    });
+
+    // Download receipt as PDF
+    window.downloadReceipt = function (btn) {
+        if (!window.jspdf) {
+            console.error('jsPDF failed to load.');
+            return;
+        }
+
+        var card = btn.closest('.fee-card');
+        var name = card.dataset.name;
+        var cls = card.dataset.class;
+        var academicYear = card.dataset.academicYear;
+        var totalFees = card.dataset.totalFees;
+        var paid = card.dataset.paid;
+        var due = card.dataset.due;
+        var status = card.dataset.status;
+
+        var jsPDF = window.jspdf.jsPDF;
+        var doc = new jsPDF();
+
+        var marginLeft = 15;
+        var pageWidth = doc.internal.pageSize.getWidth();
+        var rightX = pageWidth - marginLeft;
+        var y = 20;
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.text('Student Fee Receipt', marginLeft, y);
+        y += 8;
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(110, 110, 110);
+        doc.text('Academic Year: ' + academicYear, marginLeft, y);
+        y += 8;
+
+        doc.setDrawColor(220, 220, 220);
+        doc.line(marginLeft, y, rightX, y);
+        y += 10;
+
+        var rows = [
+            ['Name', name],
+            ['Class', cls],
+            ['Total Fees', 'Rs. ' + totalFees],
+            ['Paid', 'Rs. ' + paid],
+            ['Due', 'Rs. ' + due],
+            ['Status', status]
+        ];
+
+        doc.setFontSize(11);
+        rows.forEach(function (row) {
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(90, 90, 90);
+            doc.text(row[0] + ':', marginLeft, y);
+
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(30, 30, 30);
+            var textWidth = doc.getTextWidth(row[1]);
+            doc.text(row[1], rightX - textWidth, y);
+
+            y += 9;
+        });
+
+        var safeFileName = (name || 'fee_receipt').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        doc.save(safeFileName + '_receipt.pdf');
+    };
+})();
+</script>

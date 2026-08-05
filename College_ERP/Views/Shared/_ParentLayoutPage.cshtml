@@ -1,0 +1,506 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assets/images/favicon.ico">
+
+    <!-- App css -->
+    <link href="~/assets/css/app.min.css" rel="stylesheet" />
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" />
+    <link href="~/assets/js/sweetalert/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/assets/fontawsome/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+    <script src="~/assets/libs/jquery/jquery.min.js"></script>
+
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif !important;
+            background-color: white !important;
+            color: #19476d !important;
+        }
+
+        .college-theme .btn-primary {
+            background-color: #19476d !important;
+            border-color: #19476d !important;
+            color: white !important;
+        }
+
+        .college-theme a {
+            color: #19476d !important;
+        }
+
+        .college-theme h1,
+        .college-theme h2,
+        .college-theme h3,
+        .college-theme h4 {
+            color: #19476d !important;
+        }
+
+        th {
+            background: #287f71 !important;
+            color: antiquewhite !important;
+            border-radius: 0 !important;
+            white-space: nowrap;
+        }
+
+        td {
+            white-space: nowrap;
+        }
+
+        .dt-layout-end {
+            text-align: end !important;
+            margin-bottom: 5px !important;
+        }
+
+        .dt-layout-start {
+            float: left !important;
+        }
+
+        .modal-header {
+            background: teal;
+            color: white;
+        }
+
+        .required-label::after {
+            content: " *" !important;
+            color: red !important;
+        }
+
+        a {
+            white-space: nowrap;
+        }
+
+        /* Topbar active-student name/class block */
+        .parent-name-block {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.15;
+            margin-left: .4rem;
+        }
+
+            .parent-name-block .parent-name-row {
+                display: flex;
+                align-items: center;
+                gap: .25rem;
+                font-weight: 700;
+            }
+
+            .parent-name-block .parent-class-text {
+                font-size: .72rem;
+                color: #8b93a1;
+                font-weight: 500;
+            }
+
+        .dropdown-student-class {
+            font-size: .8rem;
+            color: #8b93a1;
+        }
+
+        .stu-switch-item {
+            display: flex;
+            align-items: center;
+            gap: .9rem;
+            padding: .8rem 1.25rem;
+            cursor: pointer;
+            border-bottom: 1px solid #eceef2;
+            transition: background .12s ease;
+        }
+
+            .stu-switch-item:last-child {
+                border-bottom: none;
+            }
+
+            .stu-switch-item:hover {
+                background: #f7f9fc;
+            }
+
+            .stu-switch-item.active {
+                background: #eef4fb;
+            }
+
+            .stu-switch-item .stu-avatar {
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                overflow: hidden;
+                flex-shrink: 0;
+                border: 1px solid #e5e8ee;
+            }
+
+                .stu-switch-item .stu-avatar img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+            .stu-switch-item .stu-name {
+                font-weight: 600;
+                color: #1e2433;
+                margin: 0;
+                font-size: .92rem;
+            }
+
+            .stu-switch-item .stu-class {
+                color: #6b7280;
+                margin: 0;
+                font-size: .8rem;
+            }
+
+            .stu-switch-item .stu-check {
+                margin-left: auto;
+                color: #19476d;
+                font-size: 1.1rem;
+                display: none;
+            }
+
+            .stu-switch-item.active .stu-check {
+                display: block;
+            }
+    </style>
+
+
+</head>
+<body data-menu-color="light" data-sidebar="default">
+    <!-- Begin page -->
+    <div id="app-layout">
+
+
+        <!-- Topbar Start -->
+        <div class="topbar-custom">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between">
+                    <ul class="list-unstyled topnav-menu mb-0 d-flex align-items-center">
+                        <li>
+                            <button class="button-toggle-menu nav-link">
+                                <i data-feather="menu" class="noti-icon"></i>
+                            </button>
+                        </li>
+                        <li class="d-none d-lg-block">
+                            <h5 class="mb-0"></h5>
+                        </li>
+                    </ul>
+
+                    <ul class="list-unstyled topnav-menu mb-0 d-flex align-items-center">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                <div class="avatar rounded-circle d-inline-block overflow-hidden" style="width: 40px; height: 40px; ">
+                                    <img class="parent-avatar" src="/Upload/default-user.png" alt="Profile" style="width: 40px; height: 40px; vertical-align: top;" />
+                                </div>
+
+                                <div class="parent-name-block">
+                                    <span class="parent-name-row">
+                                        <span id="parent-name"></span>
+                                        <i data-feather="chevron-down" class="text-primary" style="width:14px;height:14px;"></i>
+                                    </span>
+                                    <span class="parent-class-text" id="active-student-class"></span>
+                                </div>
+
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow p-3" aria-labelledby="userDropdown" style="width: 250px;">
+                                <li class="text-center mb-2">
+                                    <div class="avatar rounded-circle d-inline-block overflow-hidden" style="width: 40px; height: 40px;">
+                                        <img class="parent-avatar" src="/Upload/default-user.png" alt="Profile" style="width: 40px; height: 40px; vertical-align: top;" />
+                                    </div>
+                                    <div class="fw-bold mt-2" id="dropdown-student-name"></div>
+                                    <div class="dropdown-student-class" id="dropdown-student-class"></div>
+                                    <div class="text-center mt-1">
+                                        <a href="/Parent/Profile" id="parent-profile-link">User Profile</a>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <div class="d-flex justify-content-between me-1">
+                                        <a id="switch-student-link" class="dropdown-item fw-bold w-50 text-center" href="javascript:void(0);">
+                                            <i data-feather="repeat" class="text-primary" style=" height: 20px;"></i>Change
+                                        </a>
+                                    </div>
+                                    <div class="mt-1 shadow-sm mx-1 rounded-2 bg-light">
+                                        <a class="dropdown-item fw-bold w-100 text-center" href="#" id="logoutuser">
+                                            <i data-feather="log-out" class="me-1 text-danger"></i>Logout
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+
+
+                        </li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+        <!-- end Topbar -->
+        <!-- Left Sidebar Start -->
+        <div class="app-sidebar-menu">
+            <div class="h-100" data-simplebar>
+
+                <!--- Sidemenu -->
+                <div id="sidebar-menu">
+
+                    <div class="logo-box">
+                        <a class='logo logo-light fs-3' href="/Parent/Dashboard">
+                            CollegeERP
+                        </a>
+                        <a class='logo logo-dark fs-3' href='/Parent/Dashboard'>
+                            CollegeERP
+                        </a>
+                    </div>
+
+                    <ul id="side-menu">
+
+                        <li class="menu-title">Main Menu</li>
+
+                        <li>
+                            <a href="/Parent/Dashboard">
+                                <i data-feather="home"></i>
+                                <span> Dashboard </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#sidebarAuth1" data-bs-toggle="collapse">
+                                <i data-feather="briefcase"></i>
+                                <span> Faculity Management </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="sidebarAuth1">
+                                <ul class="nav-second-level">
+                                    <li>
+                                        <a class='tp-link' href="/Parent/Timetable">Time Table </a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href="/Parent/Announcement">Announcement </a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href="/Parent/Assignment">Assignment </a>
+                                    </li>
+                                    <li>
+                                        <a class='tp-link' href="/Parent/Parentcommunication">Parent Communication </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li>
+                            <a href="/Parent/ExamSchedule">
+                                <i data-feather="edit-3"></i>
+                                <span> Scheduled Exams </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/Parent/Notice">
+                                <i data-feather="edit-3"></i>
+                                <span> Notice </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/Parent/Result">
+                                <i data-feather="calendar"></i>
+                                <span>Result</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/Parent/Fees">
+                                <i data-feather="edit-3"></i>
+                                <span> Fees </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/Parent/Transport">
+                                <i data-feather="edit-3"></i>
+                                <span> Transport </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/Parent/Hostel">
+                                <i data-feather="calendar"></i>
+                                <span>Hostel</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+        <!-- Left Sidebar End -->
+        <!-- Student Switch Modal -->
+        <div class="modal fade" id="studentSwitchModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" style="max-width:380px;">
+                <div class="modal-content" style="border:none; border-radius:10px; overflow:hidden;">
+                    <div class="modal-header" style="background:#19476d; color:#fff;">
+                        <h5 class="modal-title" style="font-weight:700;">Select Student</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-0" id="studentSwitchList" style="max-height:340px; overflow-y:auto;">
+                        <div class="text-center text-muted py-4" id="studentSwitchLoading">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @RenderBody();
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col fs-13 text-muted text-center">
+                        &copy;
+                        <script>document.write(new Date().getFullYear())</script>  <span class=""></span>   <a target="_blank" href="https://macreel.co.in/" class="text-reset fw-semibold">Macreel Infosoft pvt. ltd.</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- END wrapper -->
+    <!-- Vendor -->
+    <script src="~/assets/libs/jquery/jquery.min.js"></script>
+    <script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="~/assets/libs/node-waves/waves.min.js"></script>
+    <script src="~/assets/libs/waypoints/lib/jquery.waypoints.min.js"></script>
+    <script src="~/assets/libs/jquery.counterup/jquery.counterup.min.js"></script>
+    <script src="~/assets/libs/feather-icons/feather.min.js"></script>
+    <script src="~/assets/js/sweetalert/sweetalert2@11.js"></script>
+    <script src="~/assets/summernote/summernote.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.min.js"></script>
+    <!-- Apexcharts JS -->
+    <script src="~/assets/libs/apexcharts/apexcharts.min.js"></script>
+    <script src="~/assets/fontawsome/all.min.js"></script>
+    <!-- for basic area chart -->
+    <script src="~/Content/apexcharts.com/samples/assets/stock-prices.js"></script>
+
+    <!-- Widgets Init Js -->
+    <script src="~/assets/js/pages/crm-dashboard.init.js"></script>
+    <script src="~/assets/libs/datatable/dataTables.min.js"></script>
+
+    <!-- App js-->
+    <script src="~/assets/js/app.js"></script>
+    <script>
+        $("#logoutuser").click(function () {
+            Swal.fire({
+                icon: "info",
+                title: "Do you really want to Logout?",
+                showCancelButton: true,
+                confirmButtonText: "Logout"
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    location.href = "/home/Logout"
+                }
+            });
+        })
+
+        $(document).ready(function () {
+            $("#datatable").DataTable()
+        })
+
+        $.ajax({
+            url: '@Url.Action("GetparentDetails", "parent")',
+            type: 'GET',
+            success: function (data) {
+                if (data) {
+                    // Topbar: active student name + class
+                    $('#parent-name').text(data.activeStudentName || 'Parent');
+                    $('#active-student-class').text(data.activeStudentClass || '');
+
+                    // Dropdown header: active student name + class
+                    $('#dropdown-student-name').text(data.activeStudentName || 'Parent');
+                    $('#dropdown-student-class').text(data.activeStudentClass || '');
+
+                    feather.replace();
+
+                    $('#parent-profile-link').attr('href', '/parent/parentProfile?id=' + data.parentId);
+
+                    if (data.ProfileImage) {
+                        $('.parent-avatar').attr('src', data.ProfileImage);
+                    } else {
+                        $('.parent-avatar').attr('src', '/Upload/default-user.png');
+                    }
+
+                    $('.parent-avatar').attr('title', (data.activeStudentName || 'Parent') + ' ^');
+                }
+            },
+            error: function () {
+                $('#parent-name').text("Error loading data.");
+                $('.parent-avatar').attr('src', '/assets/images/user-default.png');
+            }
+        });
+
+        $(".parent-avatar").on("error", function () {
+            $('.parent-avatar').attr('src', '/assets/images/user-default.png');
+        })
+
+        // Open student switch modal & load children list
+        $("#switch-student-link").on("click", function () {
+            var studentModal = new bootstrap.Modal(document.getElementById('studentSwitchModal'));
+            studentModal.show();
+            loadStudentList();
+        });
+
+        function loadStudentList() {
+            $("#studentSwitchList").html('<div class="text-center text-muted py-4" id="studentSwitchLoading">Loading...</div>');
+
+            $.ajax({
+                url: '@Url.Action("GetChildren", "Parent")',
+                type: 'GET',
+                success: function (res) {
+                    if (!res || !res.data || res.data.length === 0) {
+                        $("#studentSwitchList").html('<div class="text-center text-muted py-4">No students found.</div>');
+                        return;
+                    }
+
+                    var html = '';
+                    res.data.forEach(function (stu) {
+                        var isActive = stu.isActive ? 'active' : '';
+                        var photo = stu.photo ? stu.photo : '/Upload/default-user.png';
+
+                        html += '' +
+                            '<div class="stu-switch-item ' + isActive + '" data-student-id="' + stu.studentId + '">' +
+                                '<div class="stu-avatar"><img src="' + photo + '" alt="' + stu.studentName + '" onerror="this.src=\'/Upload/default-user.png\'"></div>' +
+                                '<div>' +
+                                    '<p class="stu-name">' + stu.studentName + '</p>' +
+                                    '<p class="stu-class">' + (stu.className || '') + '</p>' +
+                                '</div>' +
+                                '<i class="fa-solid fa-circle-check stu-check"></i>' +
+                            '</div>';
+                    });
+
+                    $("#studentSwitchList").html(html);
+                },
+                error: function () {
+                    $("#studentSwitchList").html('<div class="text-center text-danger py-4">Failed to load students.</div>');
+                }
+            });
+        }
+
+        // Handle student selection (event delegation, since list is loaded dynamically)
+        $(document).on("click", ".stu-switch-item", function () {
+            var studentId = $(this).data("student-id");
+            var $item = $(this);
+
+            $.ajax({
+                url: '@Url.Action("SetActiveStudent", "Parent")',
+                type: 'POST',
+                data: { studentId: studentId },
+                success: function (res) {
+                    if (res && res.status) {
+                        location.reload(); // reload page so all data reflects new student
+                    } else {
+                        Swal.fire('Error', 'Could not switch student. Try again.', 'error');
+                    }
+                },
+                error: function () {
+                    Swal.fire('Error', 'Something went wrong.', 'error');
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
