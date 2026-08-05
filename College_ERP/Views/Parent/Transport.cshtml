@@ -1,4 +1,5 @@
-﻿@{
+﻿@model College_ERP.Models.StudentServices.main.TrasportDetailsModel
+@{
     ViewBag.Title = "Transport";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
 }
@@ -177,56 +178,151 @@
             color: var(--trp-navy);
         }
 </style>
-
-<div class="content-page bg-white">
-
-    <div class="trp-header">
-        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
-        <h5>Transport</h5>
+@if (Model == null)
+{
+    <div class="content-page bg-white">
+        <center><div class="alert alert-warning m-3">
+    No transport details found.
+</div></center>
     </div>
+        }
+        else
+        {
+        <div class="content-page bg-white">
 
-    <div class="trp-wrap">
-
-        <!-- Map -->
-        <div class="trp-map-card">
-            <a href="https://www.google.com/maps?q=Noida,Uttar+Pradesh" target="_blank" rel="noopener" class="trp-map-link">
-                Maps <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:.7rem;"></i>
-            </a>
-            <iframe loading="lazy"
-                    allowfullscreen
-                    referrerpolicy="no-referrer-when-downgrade"
-                    src="https://www.google.com/maps?q=Noida,Uttar+Pradesh,India&output=embed">
-            </iframe>
-        </div>
-
-        <!-- Driver info -->
-        <div class="trp-driver-row" id="driverInfo"
-             data-driver-name="Rakesh"
-             data-driver-phone="8965412301">
-            <div class="trp-driver-avatar">
-                <img src="/images/driver-icon.png" alt="Driver" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-user-tie\'></i>';">
+            <div class="trp-header">
+                <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+                <h5>Transport</h5>
             </div>
-            <div class="trp-driver-details">
-                <div class="trp-detail-item">
-                    <span class="trp-icon-badge"><i class="fa-solid fa-user"></i></span>
-                    <span class="trp-val-name">Rakesh</span>
+
+            <div class="trp-wrap">
+
+                <!-- Map -->
+                <div class="trp-map-card">
+
+                    <a href="https://www.google.com/maps?q=@Url.Encode(Model.Address)"
+                       target="_blank"
+                       class="trp-map-link">
+
+                        Maps
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                    </a>
+
+                    <iframe loading="lazy"
+                            allowfullscreen
+                            src="https://www.google.com/maps?q=@Url.Encode(Model.Address)&output=embed">
+                    </iframe>
+
                 </div>
-                <div class="trp-detail-item">
-                    <span class="trp-icon-badge"><i class="fa-solid fa-phone"></i></span>
-                    <a href="tel:8965412301" class="trp-val-phone">8965412301</a>
+
+                <!-- Driver info -->
+                <div class="trp-driver-row" id="driverInfo"
+                     data-driver-name="Rakesh"
+                     data-driver-phone="8965412301">
+                    <div class="trp-driver-avatar">
+
+                        <div class="trp-driver-avatar">
+
+                            @if (!string.IsNullOrEmpty(Model.DLFileName))
+                            {
+                                <img src="~/Uploads/Driver/@Model.DLFileName" alt="Driver" />
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-user-tie"></i>
+                            }
+
+                        </div>
+
+                    </div>
+                    <div class="trp-driver-details">
+
+                        <div class="trp-detail-item">
+                            <span class="trp-icon-badge bg-light">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <span>@Model.driverName</span>
+                        </div>
+
+                        <div class="trp-detail-item">
+                            <span class="trp-icon-badge bg-light">
+                                <i class="fa-solid fa-phone"></i>
+                            </span>
+
+                            <a href="tel:@Model.ContactNo">
+                                @Model.ContactNo
+                            </a>
+                        </div>
+
+                        <div class="trp-detail-item">
+                            <span class="trp-icon-badge bg-light">
+                                <i class="fa-solid fa-bus"></i>
+                            </span>
+
+                            <span>@Model.bussNo</span>
+                        </div>
+
+                        <div class="trp-detail-item">
+                            <span class="trp-icon-badge bg-light">
+                                <i class="fa-solid fa-indian-rupee-sign"></i>
+                            </span>
+
+                            <span>₹ @Model.busCharge</span>
+                        </div>
+
+                    </div>
                 </div>
+
+                <!-- Verified -->
+                <div class="trp-verified">
+                    <i class="fa-solid fa-circle-check"></i> Verified
+                </div>
+                <div class="trp-detail-item mt-3">
+
+                    <span class="trp-icon-badge bg-light">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </span>
+
+                    <span>@Model.Address</span>
+
+                </div>
+                <!-- Drop Point -->
+                <div class="trp-drop-point ms-1">
+                    <i class="fa-solid fa-location-dot">
+                        </i>  Pickup Point:- @Model.pickupPoint
+                </div>
+
+                <div class="trp-detail-item">
+
+                    <span class="trp-icon-badge bg-light">
+                        <i class="fa-solid fa-bus"></i>
+                    </span>
+
+                    <span>@Model.bussNo</span>
+
+                </div>
+
+                <div class="trp-detail-item">
+
+                    <span class="trp-icon-badge bg-light">
+                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                    </span>
+
+                    <span>₹ @Model.busCharge</span>
+
+                </div>
+
+                <div class="trp-detail-item">
+
+                    <span class="trp-icon-badge bg-light">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </span>
+
+                    <span>@Model.Address</span>
+
+                </div>
+
             </div>
         </div>
-
-        <!-- Verified -->
-        <div class="trp-verified">
-            <i class="fa-solid fa-circle-check"></i> Verified
-        </div>
-
-        <!-- Drop Point -->
-        <div class="trp-drop-point">
-            <i class="fa-solid fa-location-dot"></i> Drop Point:- Sector 62, H-132
-        </div>
-
-    </div>
-</div>
+        }

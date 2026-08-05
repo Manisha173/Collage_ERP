@@ -87,55 +87,67 @@
             font-size: .92rem;
         }
 </style>
+@{
+    if (student != null)
+            {
+    <div class="content-page bg-white">
 
-<div class="content-page bg-white">
+        <div class="hst-header">
+            <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+            <h5>Hostel Details</h5>
+        </div>
 
-    <div class="hst-header">
-        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
-        <h5>Hostel Details</h5>
+        <div class="hst-wrap">
+
+            <div class="hst-card">
+                <p class="hst-card-title">Accommodation Plan</p>
+                <div class="hst-row">
+                    <span class="row-left"><i class="fa-solid fa-bed"></i>Room Type</span>
+                    <span class="row-value">@student.roomType</span>
+                </div>
+                <div class="hst-row">
+                    <span class="row-left"><i class="fa-solid fa-money-check-dollar"></i>Total Fees</span>
+                    <span class="row-value">@student.totalFee</span>
+                </div>
+            </div>
+
+            <div class="hst-card">
+                <p class="hst-card-title">Warden Information</p>
+                <div class="hst-row">
+                    <span class="row-left"><i class="fa-solid fa-circle-user"></i>Name</span>
+                    <span class="row-value">@student.wardenName</span>
+                </div>
+                <div class="hst-row">
+                    <span class="row-left"><i class="fa-solid fa-phone"></i>Contact Number</span>
+                    <span class="row-value">@student.wardenMobile</span>
+                </div>
+                <div class="hst-row">
+                    <span class="row-left"><i class="fa-solid fa-envelope"></i>Email</span>
+                    <span class="row-value">@student.wardenEmail</span>
+                </div>
+            </div>
+
+            <div class="hst-card">
+                <p class="hst-card-title">Room Information</p>
+                <div class="hst-row">
+                    <span class="row-left"><i class="fa-solid fa-key"></i>Room Number</span>
+                    <span class="row-value">@student.roomNo</span>
+                </div>
+                <div class="hst-row">
+                    <span class="row-left"><i class="fa-solid fa-user-group"></i>Roommates</span>
+                    <span class="row-value">@student.roommates</span>
+                </div>
+            </div>
+
+        </div>
     </div>
-
-    <div class="hst-wrap">
-
-        <div class="hst-card">
-            <p class="hst-card-title">Accommodation Plan</p>
-            <div class="hst-row">
-                <span class="row-left"><i class="fa-solid fa-bed"></i>Room Type</span>
-                <span class="row-value">@student.roomType</span>
-            </div>
-            <div class="hst-row">
-                <span class="row-left"><i class="fa-solid fa-money-check-dollar"></i>Total Fees</span>
-                <span class="row-value">@student.totalFee</span>
-            </div>
+            }
+else
+            {
+        <div class="content-page bg-white">
+            <center><div class="alert alert-warning">
+    No hostel details found.
+</div></center>
         </div>
-
-        <div class="hst-card">
-            <p class="hst-card-title">Warden Information</p>
-            <div class="hst-row">
-                <span class="row-left"><i class="fa-solid fa-circle-user"></i>Name</span>
-                <span class="row-value">@student.wardenName</span>
-            </div>
-            <div class="hst-row">
-                <span class="row-left"><i class="fa-solid fa-phone"></i>Contact Number</span>
-                <span class="row-value">@student.wardenMobile</span>
-            </div>
-            <div class="hst-row">
-                <span class="row-left"><i class="fa-solid fa-envelope"></i>Email</span>
-                <span class="row-value">@student.wardenEmail</span>
-            </div>
-        </div>
-
-        <div class="hst-card">
-            <p class="hst-card-title">Room Information</p>
-            <div class="hst-row">
-                <span class="row-left"><i class="fa-solid fa-key"></i>Room Number</span>
-                <span class="row-value">@student.roomNo</span>
-            </div>
-            <div class="hst-row">
-                <span class="row-left"><i class="fa-solid fa-user-group"></i>Roommates</span>
-                <span class="row-value">@student.roommates</span>
-            </div>
-        </div>
-
-    </div>
-</div>
+            }
+}

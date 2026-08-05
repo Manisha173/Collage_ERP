@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<College_ERP.Models.StudentServices.main.CircularModel>
+@{
     ViewBag.Title = "Announcement";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
 }
@@ -165,37 +166,29 @@
         <h5>Announcement</h5>
     </div>
 
+        <div id="announcementList">
 
-        @*@Model
-        @foreach (var item in Model) { 
-        }*@
+            @foreach (var item in Model)
+            {
+                <div class="ann-list-item"
+                     data-title="@item.CircularTitle"
+                     data-date="@item.CircularDate.ToString("dd MMM yyyy, hh:mm tt")"
+                     data-description="@item.CircularDescription"
+                     data-attachment="@item.UploadAttachment">
 
-    <div id="announcementList">
-        <div class="ann-list-item"
-             data-title="Test"
-             data-date="28 Jul 2026, 12:00 AM"
-             data-description="Test"
-             data-attachment="">
-            <div class="ann-bell"><i class="fa-solid fa-bell"></i></div>
-            <div>
-                <p class="ann-title">Test</p>
-                <p class="ann-subtitle">Test</p>
-            </div>
+                    <div class="ann-bell">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+
+                    <div>
+                        <p class="ann-title">@item.CircularTitle</p>
+                        <p class="ann-subtitle">@item.CircularDescription</p>
+                    </div>
+
+                </div>
+            }
+
         </div>
-
-        <div class="ann-list-item"
-             data-title="Holiday Notice"
-             data-date="02 Aug 2026, 09:00 AM"
-             data-description="School will remain closed on 15th August on account of Independence Day. Regular classes will resume the next working day."
-             data-attachment="">
-            <div class="ann-bell"><i class="fa-solid fa-bell"></i></div>
-            <div>
-                <p class="ann-title">Holiday Notice</p>
-                <p class="ann-subtitle">School closed on 15th August</p>
-            </div>
-        </div>
-    </div>
-
 </div>
 
 <!-- Detail Modal -->
@@ -211,8 +204,14 @@
                 <h4 id="modalTitle"></h4>
                 <p class="modal-date" id="modalDate"></p>
 
+                <a id="downloadFileBtn"
+                   class="btn-download"
+                   target="_blank">
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                    Attachments
+                </a>
                 <button type="button" class="btn-download" id="downloadPdfBtn">
-                    <i class="fa-solid fa-cloud-arrow-down"></i> Download
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Download PDf
                 </button>
 
                 <p class="modal-description" id="modalDescription"></p>
@@ -293,6 +292,36 @@
 
             var safeFileName = (title || 'notification').replace(/[^a-z0-9]/gi, '_').toLowerCase();
             doc.save(safeFileName + '.pdf');
+        });
+
+        var downloadFileBtn = document.getElementById("downloadFileBtn");
+
+        document.addEventListener("click", function (e) {
+
+            var item = e.target.closest(".ann-list-item");
+            if (!item) return;
+
+            modalTitle.textContent = item.dataset.title;
+            modalDate.textContent = item.dataset.date;
+            modalDescription.textContent = item.dataset.description;
+
+            var attachment = item.dataset.attachment;
+
+            console.log("Attachment =", attachment);
+
+            if (attachment && attachment.trim() !== "") {
+
+                downloadFileBtn.href = attachment; t;
+                downloadFileBtn.target = "_blank";
+                downloadFileBtn.style.display = "inline-flex";
+
+            } else {
+
+                downloadFileBtn.removeAttribute("href");
+                downloadFileBtn.style.display = "none";
+            }
+
+            bootstrap.Modal.getOrCreateInstance(modalEl).show();
         });
     })();
 </script>

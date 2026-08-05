@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<College_ERP.Models.StudentServices.main.NoticesModel>
+@{
     ViewBag.Title = "Notice";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
 }
@@ -154,53 +155,21 @@
     </div>
 
     <div id="noticeList">
-        <div class="ntc-list-item"
-             data-title="Test Mobile"
-             data-date="29 Jul 2026, 12:00 AM"
-             data-description="Test">
-            <div class="ntc-bell"><i class="fa-solid fa-bell"></i></div>
-            <div>
-                <p class="ntc-title">Test Mobile</p>
-                <p class="ntc-subtitle">Test</p>
-                <p class="ntc-date">29 Jul 2026, 12:00 AM</p>
-            </div>
-        </div>
 
-        <div class="ntc-list-item"
-             data-title="Send To All"
-             data-date="28 Jul 2026, 12:00 AM"
-             data-description="Test">
-            <div class="ntc-bell"><i class="fa-solid fa-bell"></i></div>
-            <div>
-                <p class="ntc-title">Send To All</p>
-                <p class="ntc-subtitle">Test</p>
-                <p class="ntc-date">28 Jul 2026, 12:00 AM</p>
+        @foreach (var item in Model)
+        {
+            <div class="ntc-list-item"
+                 data-title="@item.Title"
+                 data-date="@item.CreatedOn"
+                 data-description="@item.Description">
+                <div class="ntc-bell"><i class="fa-solid fa-bell"></i></div>
+                <div>
+                    <p class="ntc-title">@item.Title</p>
+                    <p class="ntc-subtitle">@item.Description</p>
+                    <p class="ntc-date">@item.CreatedOn</p>
+                </div>
             </div>
-        </div>
-
-        <div class="ntc-list-item"
-             data-title="Exam Related Notice"
-             data-date="23 Jul 2026, 12:00 AM"
-             data-description="Exam Related Notice">
-            <div class="ntc-bell"><i class="fa-solid fa-bell"></i></div>
-            <div>
-                <p class="ntc-title">Exam Related Notice</p>
-                <p class="ntc-subtitle">Exam Related Notice</p>
-                <p class="ntc-date">23 Jul 2026, 12:00 AM</p>
-            </div>
-        </div>
-
-        <div class="ntc-list-item"
-             data-title="Related To 15 August"
-             data-date="23 Jul 2026, 12:00 AM"
-             data-description="Related To 15 August">
-            <div class="ntc-bell"><i class="fa-solid fa-bell"></i></div>
-            <div>
-                <p class="ntc-title">Related To 15 August</p>
-                <p class="ntc-subtitle">Related To 15 August</p>
-                <p class="ntc-date">23 Jul 2026, 12:00 AM</p>
-            </div>
-        </div>
+        }
     </div>
 
 </div>
