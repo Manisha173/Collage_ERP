@@ -7,94 +7,91 @@
 
 <style>
     :root {
-        --tt-accent: #3F6079;
-        --tt-accent-soft: #eef2ff;
+        --tt-navy: #1c3f66;
+        --tt-accent: #2e86de;
+        --tt-accent-soft: #eaf2fd;
         --tt-ink: #1e2433;
-        --tt-muted: #6b7280;
+        --tt-muted: #6b7684;
+        --tt-border: #eaedf3;
+        --tt-bg: #f6f8fb;
+        --tt-today: #f0b429;
+        --tt-today-soft: #fff8e8;
     }
 
-    .tt-day-card {
-        background: #fff;
-        border: 1px solid #eceef2;
-        border-radius: 12px;
-        padding: .5rem;
-        height: 100%;
-        min-height: 650px;
+    .tt-page {
+        background: var(--tt-bg);
+        padding: 1.25rem 1.25rem 2.5rem;
     }
 
-    .tt-day-header {
-        padding: .4rem .25rem .5rem;
-        margin-bottom: .5rem;
-        text-align: center;
+    .tt-section-title {
+        font-weight: 700;
+        color: var(--tt-navy);
+        font-size: 1.05rem;
+        margin: 0 0 .9rem;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
     }
 
-
-
-    .tt-class-card {
-        background: #f8f9fb;
-        border-radius: 10px;
-        padding: .55rem .65rem;
-        margin-bottom: .5rem;
-        position: relative;
-        padding-left: .8rem;
-        transition: box-shadow .15s ease, transform .15s ease;
-    }
-
-        .tt-class-card:last-child {
-            margin-bottom: 0;
+        .tt-section-title i {
+            color: var(--tt-accent);
+            font-size: .95rem;
         }
 
-        .tt-class-card::before {
+    /* ---------- Today's schedule (teacher list) ---------- */
+    .tsc-row {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        padding-bottom: .4rem;
+        margin-bottom: 2rem;
+        scrollbar-width: thin;
+    }
+
+    .tsc-card {
+        background: #fff;
+        border: 1px solid var(--tt-border);
+        border-radius: 14px;
+        box-shadow: 0 1px 2px rgba(16,24,40,.04);
+        padding: 1rem 1.1rem;
+        flex: 0 0 260px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .tsc-card::before {
             content: "";
             position: absolute;
             left: 0;
-            top: 6px;
-            bottom: 6px;
-            width: 3px;
-            border-radius: 3px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
             background: var(--tt-accent);
         }
 
-        .tt-class-card:hover {
-            box-shadow: 0 4px 12px rgba(20,20,40,.08);
-            transform: translateY(-1px);
-        }
-
-    .tt-subject {
-        font-weight: 600;
-        font-size: .85rem;
-        color: var(--tt-ink);
-        line-height: 1.2;
-        margin: 0;
-    }
-
-    .tt-time {
-        font-size: .72rem;
-        color: var(--tt-muted);
-        margin: .2rem 0 0;
-    }
-
-    /* Teacher schedule list — sits above Weekly Timetable */
-    .tsc-card {
+    .tsc-empty {
         background: #fff;
-        border: 1px solid #eceef2;
-        border-radius: 10px;
-        padding: 1rem 1.1rem;
-        margin-bottom: 1rem;
+        border: 1px dashed var(--tt-border);
+        border-radius: 14px;
+        padding: 1.5rem;
+        text-align: center;
+        color: var(--tt-muted);
+        width: 100%;
+        margin-bottom: 2rem;
     }
 
     .tsc-top {
         display: flex;
         align-items: center;
-        gap: .8rem;
+        gap: .7rem;
         margin-bottom: .8rem;
     }
 
     .tsc-avatar {
-        width: 44px;
-        height: 44px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
-        background: #e9ebf0;
+        background: var(--tt-accent-soft);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -103,8 +100,8 @@
     }
 
         .tsc-avatar i {
-            font-size: 1.6rem;
-            color: #8b93a1;
+            font-size: 1.15rem;
+            color: var(--tt-accent);
         }
 
         .tsc-avatar img {
@@ -114,26 +111,28 @@
         }
 
     .tsc-name {
-        font-weight: 600;
-        color: var(--tt-accent);
-        font-size: .95rem;
+        font-weight: 700;
+        color: var(--tt-ink);
+        font-size: .92rem;
         margin: 0;
         line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .tsc-subtitle {
-        color: var(--tt-accent);
-        font-size: .85rem;
-        margin: 0;
-        opacity: .85;
+        color: var(--tt-muted);
+        font-size: .8rem;
+        margin: .1rem 0 0;
     }
 
     .tsc-meta {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        border-top: 1px solid #eceef2;
-        padding-top: .7rem;
+        border-top: 1px dashed var(--tt-border);
+        padding-top: .65rem;
         flex-wrap: wrap;
         gap: .5rem;
     }
@@ -141,462 +140,560 @@
     .tsc-meta-item {
         display: flex;
         align-items: center;
-        gap: .4rem;
-        font-size: .82rem;
-        color: var(--tt-accent);
+        gap: .35rem;
+        font-size: .76rem;
+        font-weight: 600;
+        color: var(--tt-navy);
+        background: var(--tt-accent-soft);
+        padding: .25rem .55rem;
+        border-radius: 20px;
     }
 
         .tsc-meta-item i {
             color: var(--tt-accent);
-            font-size: .9rem;
+            font-size: .78rem;
         }
 
-    /* Highlight today's column - toggle the .tt-today class server-side */
+    /* ---------- Weekly timetable (table layout) ---------- */
+    .tt-class-info {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        background: var(--tt-accent-soft);
+        color: var(--tt-navy);
+        font-weight: 700;
+        font-size: .8rem;
+        padding: .35rem .8rem;
+        border-radius: 20px;
+        margin-bottom: 1rem;
+    }
 
-    .tt-today .tt-day-header h6 {
-        color: #4F7CFF;
+        .tt-class-info i {
+            color: var(--tt-accent);
+            font-size: .8rem;
+        }
+
+    .tt-table-scroll {
+        overflow-x: auto;
+        background: #fff;
+        border: 1px solid var(--tt-border);
+        border-radius: 14px;
+        box-shadow: 0 1px 2px rgba(16,24,40,.04);
+    }
+
+    .tt-table {
+        width: 100%;
+        min-width: 760px;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+        .tt-table th,
+        .tt-table td {
+            border: 1px solid var(--tt-border);
+            vertical-align: top;
+        }
+
+            .tt-table th:first-child,
+            .tt-table td:first-child {
+                border-left: none;
+            }
+
+            .tt-table th:last-child,
+            .tt-table td:last-child {
+                border-right: none;
+            }
+
+        .tt-table thead th {
+            background: var(--tt-navy) !important;
+            color: #fff !important;
+            padding: .75rem .5rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: .88rem;
+            letter-spacing: .2px;
+            border-top: none;
+            border-color: rgba(255,255,255,.14);
+        }
+
+    .tt-time-th {
+        background: #2b2f36 !important;
+    }
+
+    .tt-time-col {
+        background: var(--tt-accent-soft) !important;
+        color: var(--tt-navy) !important;
+        font-size: .8rem !important;
+        font-weight: 700;
+        text-align: center;
+        vertical-align: middle !important;
+        padding: .5rem .5rem !important;
+        border-right: 2px solid #dbe8fb !important;
+    }
+
+        .tt-time-col i {
+            color: var(--tt-accent);
+            display: block;
+            margin-bottom: .2rem;
+            font-size: .85rem;
+        }
+
+        .tt-time-col .tt-time-line {
+            display: block;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+
+    .tt-today-th {
+        background: var(--tt-today) !important;
+        color: #fff !important;
+    }
+
+    .tt-today-badge {
+        display: block;
+        font-size: .6rem;
+        font-weight: 700;
+        color: var(--tt-today);
+        background: #fff;
+        padding: .1rem .5rem;
+        border-radius: 20px;
+        margin: .3rem auto 0;
+        letter-spacing: .3px;
+        text-transform: uppercase;
+        width: fit-content;
+    }
+
+    .tt-table tbody td {
+        padding: .6rem;
+        border-bottom: none;
+    }
+
+    .tt-today-td {
+        background: var(--tt-today-soft);
+    }
+
+    .tt-class-card {
+        background: #f8f9fb;
+        border-radius: 10px;
+        padding: .6rem .65rem .6rem .75rem;
+        position: relative;
+        transition: box-shadow .15s ease, transform .15s ease;
+        min-height: 46px;
+        display: flex;
+        align-items: center;
+    }
+
+    .tt-today-td .tt-class-card {
+        background: #fff;
+    }
+
+    .tt-class-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 6px;
+        bottom: 6px;
+        width: 3px;
+        border-radius: 3px;
+        background: var(--tt-accent);
+    }
+
+    .tt-class-card:hover {
+        box-shadow: 0 4px 12px rgba(20,20,40,.08);
+        transform: translateY(-1px);
+    }
+
+    .tt-subject {
+        font-weight: 700;
+        font-size: .85rem;
+        color: var(--tt-ink);
+        line-height: 1.2;
+        margin: 0;
+    }
+
+    .tt-no-classes {
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--tt-muted);
+        font-size: .82rem;
+    }
+
+        .tt-no-classes i {
+            color: #c9ced8;
+        }
+
+    .tt-slot-empty {
+        height: 100%;
+        min-height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #d2d6df;
+        font-size: .9rem;
+    }
+
+    /* Desktop table vs mobile day view */
+    .tt-desktop-view {
+        display: block;
+    }
+
+    .tt-mobile-view {
+        display: none;
+    }
+
+    /* ---------- Mobile day-tab view ---------- */
+    .tt-mobile-tabs {
+        display: flex;
+        gap: .4rem;
+        overflow-x: auto;
+        padding-bottom: .3rem;
+        margin-bottom: .9rem;
+        border: none;
+        scrollbar-width: thin;
+    }
+
+        .tt-mobile-tabs .nav-link {
+            flex: 0 0 auto;
+            background: #fff;
+            border: 1px solid var(--tt-border);
+            color: var(--tt-ink);
+            font-weight: 700;
+            font-size: .8rem;
+            border-radius: 20px;
+            padding: .45rem 1rem;
+            white-space: nowrap;
+        }
+
+            .tt-mobile-tabs .nav-link.active {
+                background: var(--tt-navy) !important;
+                color: #fff !important;
+                border-color: var(--tt-navy);
+            }
+
+            .tt-mobile-tabs .nav-link.tt-mobile-today:not(.active) {
+                border-color: var(--tt-today);
+                color: #b8790a;
+                background: var(--tt-today-soft);
+            }
+
+    .tt-mobile-card {
+        background: #fff;
+        border: 1px solid var(--tt-border);
+        border-radius: 12px;
+        padding: .75rem .9rem;
+        margin-bottom: .6rem;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        box-shadow: 0 1px 2px rgba(16,24,40,.04);
+        position: relative;
+    }
+
+        .tt-mobile-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            border-radius: 3px;
+            background: var(--tt-accent);
+        }
+
+    .tt-mobile-time {
+        flex: 0 0 auto;
+        font-size: .74rem;
+        font-weight: 700;
+        color: var(--tt-navy);
+        background: var(--tt-accent-soft);
+        padding: .35rem .55rem;
+        border-radius: 8px;
+        text-align: center;
+        line-height: 1.2;
+        white-space: nowrap;
+    }
+
+    .tt-mobile-subject {
+        font-weight: 700;
+        font-size: .88rem;
+        color: var(--tt-ink);
+    }
+
+    .tt-mobile-empty {
+        background: #fff;
+        border: 1px dashed var(--tt-border);
+        border-radius: 12px;
+        padding: 1.75rem 1rem;
+        text-align: center;
+        color: var(--tt-muted);
+    }
+
+        .tt-mobile-empty i {
+            color: #c9ced8;
+        }
+
+    @@media (max-width: 767px) {
+        .tt-desktop-view {
+            display: none;
+        }
+
+        .tt-mobile-view {
+            display: block;
+        }
+
+        .tt-page {
+            padding: 1rem .85rem 2rem;
+        }
+
+        .tsc-card {
+            flex: 0 0 240px;
+        }
     }
 </style>
 
-<div class="content-page bg-gray">
-    <div class="content">
-        <div class="container-fluid mt-3">
-            <div class="col-sm-12">
-                <!-- Teacher / Class Schedule list (new section) -->
-                <div id="teacherScheduleList" class="row p-3 mt-3 mb-4">
+<div class="content-page bg-white">
+    <div class="tt-page">
 
-                    @if (Model.TodaySchedule != null && Model.TodaySchedule.Any())
-                    {
-                        foreach (var item in Model.TodaySchedule)
-                        {
-                            <div class="tsc-card p-3 col-sm-8 mx-auto">
+        <!-- Today / class schedule list -->
+        <div class="tt-section-title"><i class="fa-regular fa-calendar-check"></i> Today's Schedule</div>
 
-                                <div class="tsc-top">
+        @if (Model.TodaySchedule != null && Model.TodaySchedule.Any())
+        {
+            <div class="tsc-row" id="teacherScheduleList">
 
-                                    <div class="tsc-avatar">
-                                        <i class="fa-solid fa-user"></i>
-                                    </div>
+                @foreach (var item in Model.TodaySchedule)
+                {
+                    <div class="tsc-card">
 
-                                    <div>
+                        <div class="tsc-top">
 
-                                        <p class="tsc-name">
-                                            @item.teacherName
-                                        </p>
-
-                                        <p class="tsc-subtitle">
-                                            @item.subjectName
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="tsc-meta">
-
-                                    <div class="tsc-meta-item">
-
-                                        <i class="fa-regular fa-calendar"></i>
-
-                                        @(char.ToUpper(item.day[0]) + item.day.Substring(1))
-
-                                    </div>
-
-                                    <div class="tsc-meta-item">
-
-                                        <i class="fa-regular fa-clock"></i>
-
-                                        @item.combineTime
-
-                                    </div>
-
-                                </div>
-
+                            <div class="tsc-avatar">
+                                <i class="fa-solid fa-user"></i>
                             </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="col-md-12 text-center">
-                            No Schedule Available
+
+                            <div>
+                                <p class="tsc-name">@item.teacherName</p>
+                                <p class="tsc-subtitle">@item.subjectName</p>
+                            </div>
+
                         </div>
-                    }
 
-                </div>
+                        <div class="tsc-meta">
+
+                            <div class="tsc-meta-item">
+                                <i class="fa-regular fa-calendar"></i>
+                                @(char.ToUpper(item.day[0]) + item.day.Substring(1))
+                            </div>
+
+                            <div class="tsc-meta-item">
+                                <i class="fa-regular fa-clock"></i>
+                                @item.combineTime
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
             </div>
-            <div class="col-sm-12">
-                <div class="row px-3">
-                    <div class="col-sm-12">
-                        <h5>Weekly TimeTable</h5>
+        }
+        else
+        {
+            <div class="tsc-empty" id="teacherScheduleList">
+                No Schedule Available
+            </div>
+        }
 
-                        <div class="row mt-3 g-3">
+        <!-- Weekly timetable -->
+        <div class="tt-section-title"><i class="fa-solid fa-table-cells"></i> Weekly TimeTable</div>
 
-                            @foreach (var day in Model.WeeklyTimeTable)
+        @{
+            var weekDays = Model.WeeklyTimeTable.ToList();
+            var dayIsEmpty = weekDays
+                .Select(d => d.ttdata == null || !d.ttdata.Any())
+                .ToList();
+            int maxRows = weekDays.Any()
+                ? weekDays.Max(d => d.ttdata != null ? d.ttdata.Count : 0)
+                : 0;
+            if (maxRows == 0) { maxRows = 1; }
+
+            string classInfoLabel = "";
+            foreach (var d in weekDays)
+            {
+                if (d.ttdata != null && d.ttdata.Any())
+                {
+                    classInfoLabel = $"{d.ttdata[0].className} {d.ttdata[0].sectionName}";
+                    break;
+                }
+            }
+        }
+
+        @if (!string.IsNullOrEmpty(classInfoLabel))
+        {
+            <div class="tt-class-info">
+                <i class="fa-solid fa-graduation-cap"></i> @classInfoLabel
+            </div>
+        }
+
+        <!-- Desktop / tablet grid -->
+        <div class="tt-desktop-view">
+            <div class="tt-table-scroll">
+                <table class="tt-table">
+                    <colgroup>
+                        <col style="width:150px" />
+                        @foreach (var day in weekDays)
+                        {
+                            <col />
+                        }
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="tt-time-th">Time</th>
+                            @foreach (var day in weekDays)
                             {
                                 var today =
                                     DateTime.Now.DayOfWeek.ToString()
                                     .Equals(day.day,
                                     StringComparison.OrdinalIgnoreCase);
 
-                                <div class="col-6 col-md-4 col-lg-2 @(today ? "tt-today" : "")">
-
-                                    <div class="tt-day-card">
-
-                                        <div class="tt-day-header">
-
-                                            <h6 style="font-weight:bold">
-                                                @day.day
-                                            </h6>
-
-                                        </div>
-
-                                        @if(day.ttdata != null && day.ttdata.Any())
-                                        {
-                                            foreach (var cls in day.ttdata)
-                                            {
-                                                <div class="tt-class-card">
-
-                                                    <p class="text-dark">
-
-                                                        @($"{cls.className} {cls.sectionName}")
-
-                                                    </p>
-
-                                                    <p class="tt-subject">
-
-                                                        @cls.subjectName
-
-                                                    </p>
-
-                                                    <p class="tt-time">
-
-                                                        @cls.from - @cls.to
-
-                                                    </p>
-
-                                                </div>
-                                            }
-                                        }
-                                        else
-                                        {
-                                    <div class="d-flex align-items-center justify-content-center text-muted"
-                                         style="height:500px">
-                                        <div>
-                                            <i class="fa-regular fa-calendar-xmark fa-2x mb-2"></i>
-                                            <br />
-                                            No Classes
-                                        </div>
-                                    </div>
-                                        }
-
-                                    </div>
-
-                                </div>
+                                <th class="@(today ? "tt-today-th" : "")">
+                                    @day.day
+                                    @if (today)
+                                    {
+                                        <span class="tt-today-badge">Today</span>
+                                    }
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int row = 0; row < maxRows; row++)
+                        {
+                            string rowTime = "";
+                            for (int c = 0; c < weekDays.Count; c++)
+                            {
+                                if (!dayIsEmpty[c] && weekDays[c].ttdata.Count > row)
+                                {
+                                    rowTime = weekDays[c].ttdata[row].from + " - " + weekDays[c].ttdata[row].to;
+                                    break;
+                                }
                             }
 
-                            <!-- Monday -->
-                            <!--<div class="col-6 col-md-4 col-lg-2 tt-today">
-        <div class="tt-day-card">
-            <div class="tt-day-header">
-                <h6 style="font-weight:bold">Monday</h6>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-        </div>
-    </div>-->
-                            <!-- Tuesday -->
-                            <!--<div class="col-6 col-md-4 col-lg-2 tt-today">
-        <div class="tt-day-card">
-            <div class="tt-day-header">
-                <h6 style="font-weight:bold">Tuesday</h6>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-        </div>
-    </div>-->
-                            <!-- Wednesday -->
-                            <!--<div class="col-6 col-md-4 col-lg-2 tt-today">
-        <div class="tt-day-card">
-            <div class="tt-day-header">
-                <h6 style="font-weight:bold">Wednesday</h6>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-        </div>
-    </div>-->
-                            <!-- Thursday -->
-                            <!--<div class="col-6 col-md-4 col-lg-2 tt-today">
-        <div class="tt-day-card">
-            <div class="tt-day-header">
-                <h6 style="font-weight:bold">Thursday</h6>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-        </div>
-    </div>-->
-                            <!-- Friday -->
-                            <!--<div class="col-6 col-md-4 col-lg-2 tt-today">
-        <div class="tt-day-card">
-            <div class="tt-day-header">
-                <h6 style="font-weight:bold">Friday</h6>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-        </div>
-    </div>-->
-                            <!-- Saturday -->
-                            <!--<div class="col-6 col-md-4 col-lg-2 tt-today">
-        <div class="tt-day-card">
-            <div class="tt-day-header">
-                <h6 style="font-weight:bold">Saturday</h6>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-            <div class="tt-class-card">
-                <p class="text-dark">B.A. Section-A</p>
-                <div class="d-flex justify-content-between align-items-start">
-                    <p class="tt-subject">History</p>
-                </div>
-                <p class="tt-time">10:00 AM – 11:30 AM</p>
-            </div>
-        </div>
-    </div>-->
+                            <tr>
+                                <td class="tt-time-col">
+                                    @if (!string.IsNullOrEmpty(rowTime))
+                                    {
+                                        <i class="fa-regular fa-clock"></i>
+                                        <span class="tt-time-line">@rowTime</span>
+                                    }
+                                </td>
 
-                        </div>
-                    </div>
-                </div>
+                                @for (int c = 0; c < weekDays.Count; c++)
+                                {
+                                    var day = weekDays[c];
+                                    var today =
+                                        DateTime.Now.DayOfWeek.ToString()
+                                        .Equals(day.day,
+                                        StringComparison.OrdinalIgnoreCase);
+
+                                    if (dayIsEmpty[c])
+                                    {
+                                        if (row == 0)
+                                        {
+                                            <td rowspan="@maxRows" class="@(today ? "tt-today-td" : "")">
+                                                <div class="tt-no-classes">
+                                                    <div>
+                                                        <i class="fa-regular fa-calendar-xmark fa-2x mb-2"></i>
+                                                        <br />
+                                                        No Classes
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td class="@(today ? "tt-today-td" : "")">
+                                            @if (row < day.ttdata.Count)
+                                            {
+                                                var cls = day.ttdata[row];
+                                                <div class="tt-class-card">
+                                                    <p class="tt-subject">@cls.subjectName</p>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="tt-slot-empty">—</div>
+                                            }
+                                        </td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
+        </div>
+
+        <!-- Mobile day-tab view -->
+        <div class="tt-mobile-view">
+
+            <ul class="nav tt-mobile-tabs" role="tablist">
+                @{ int mTab = 0; }
+                @foreach (var day in weekDays)
+                {
+                    mTab++;
+                    var today =
+                        DateTime.Now.DayOfWeek.ToString()
+                        .Equals(day.day,
+                        StringComparison.OrdinalIgnoreCase);
+
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link @(mTab == 1 ? "active" : "") @(today ? "tt-mobile-today" : "")"
+                                id="tt-day-tab-@mTab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#tt-day-pane-@mTab"
+                                type="button" role="tab">
+                            @day.day
+                        </button>
+                    </li>
+                }
+            </ul>
+
+            <div class="tab-content">
+                @{ mTab = 0; }
+                @foreach (var day in weekDays)
+                {
+                    mTab++;
+
+                    <div class="tab-pane fade @(mTab == 1 ? "show active" : "")" id="tt-day-pane-@mTab" role="tabpanel">
+
+                        @if (day.ttdata != null && day.ttdata.Any())
+                        {
+                            foreach (var cls in day.ttdata)
+                            {
+                                <div class="tt-mobile-card">
+                                    <div class="tt-mobile-time">@cls.from<br />@cls.to</div>
+                                    <div class="tt-mobile-subject">@cls.subjectName</div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="tt-mobile-empty">
+                                <i class="fa-regular fa-calendar-xmark fa-2x mb-2"></i>
+                                <br />
+                                No Classes
+                            </div>
+                        }
+
+                    </div>
+                }
+            </div>
+
         </div>
     </div>
+</div>

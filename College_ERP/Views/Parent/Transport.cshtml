@@ -7,42 +7,82 @@
 <style>
     :root {
         --trp-navy: #1c3f66;
-        --trp-muted: #6b7280;
+        --trp-navy-deep: #14304f;
+        --trp-blue: #2e86de;
+        --trp-blue-soft: #eaf2fd;
+        --trp-green: #16a34a;
+        --trp-green-soft: #e8f8ee;
+        --trp-purple: #7c5cff;
+        --trp-purple-soft: #f0edff;
+        --trp-amber: #d98a17;
+        --trp-amber-soft: #fdf3e3;
         --trp-ink: #1e2433;
-        --trp-green: #2e9e4f;
-        --trp-dark-badge: #2b2f36;
+        --trp-muted: #6b7684;
+        --trp-border: #eaedf3;
+        --trp-bg: #f6f8fb;
+        --trp-radius: 14px;
+    }
+
+    .trp-page {
+        background: var(--trp-bg);
+        min-height: 100%;
+        font-family: inherit;
     }
 
     .trp-header {
-        background: var(--trp-navy);
+        background: linear-gradient(135deg, var(--trp-navy) 0%, var(--trp-navy-deep) 100%);
         color: #fff;
         padding: 1rem 1.25rem;
         display: flex;
         align-items: center;
-        gap: .75rem;
+        gap: .85rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
     }
 
         .trp-header a {
             color: #fff;
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            background: rgba(255,255,255,.14);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background .15s ease;
         }
+
+            .trp-header a:hover {
+                background: rgba(255,255,255,.24);
+                color: #fff;
+            }
 
         .trp-header h5 {
             margin: 0;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: .2px;
+            font-size: 1.05rem;
         }
 
     .trp-wrap {
-        max-width: 1200px;
+        max-width: 1080px;
         margin: 0 auto;
-        padding: 1.25rem;
+        padding: 1.25rem 1.25rem 2.5rem;
+    }
+
+    .trp-card {
+        background: #fff;
+        border: 1px solid var(--trp-border);
+        border-radius: var(--trp-radius);
+        box-shadow: 0 1px 2px rgba(16,24,40,.04);
     }
 
     /* Map */
     .trp-map-card {
-        border: 1px solid #eceef2;
-        border-radius: 10px;
         overflow: hidden;
-        margin-bottom: 1.75rem;
+        margin-bottom: 1rem;
         position: relative;
     }
 
@@ -55,45 +95,89 @@
 
     .trp-map-link {
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: 12px;
+        left: 12px;
+        z-index: 5;
         background: #fff;
-        border-radius: 6px;
-        padding: .35rem .7rem;
-        font-size: .82rem;
-        font-weight: 600;
-        color: #4285F4;
+        border-radius: 20px;
+        padding: .4rem .8rem;
+        font-size: .8rem;
+        font-weight: 700;
+        color: var(--trp-blue);
         display: inline-flex;
         align-items: center;
         gap: .4rem;
-        box-shadow: 0 1px 4px rgba(0,0,0,.15);
+        box-shadow: 0 2px 8px rgba(16,24,40,.14);
         text-decoration: none;
     }
 
         .trp-map-link:hover {
-            color: #4285F4;
+            color: var(--trp-blue);
             text-decoration: none;
+            box-shadow: 0 4px 12px rgba(16,24,40,.18);
         }
 
-    /* Driver info */
+    #transportMap {
+        width: 100%;
+        height: 280px;
+        display: block;
+    }
+
+    /* Layout grid */
+    .trp-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+        .trp-grid > .trp-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+    @@media (max-width: 767px) {
+        .trp-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .trp-panel {
+        padding: 1.15rem 1.25rem;
+    }
+
+    .trp-panel-title {
+        font-weight: 700;
+        color: var(--trp-navy);
+        font-size: .95rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Driver card */
     .trp-driver-row {
         display: flex;
-        align-items: flex-start;
-        gap: 1.1rem;
-        margin-bottom: 1.25rem;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.1rem;
+        padding-bottom: 1.1rem;
+        border-bottom: 1px dashed var(--trp-border);
     }
 
     .trp-driver-avatar {
-        width: 72px;
-        height: 72px;
-        border-radius: 12px;
-        border: 1px solid #e5e8ee;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 2px solid var(--trp-blue-soft);
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
         overflow: hidden;
-        background: #fff;
+        background: var(--trp-blue-soft);
     }
 
         .trp-driver-avatar img {
@@ -103,174 +187,174 @@
         }
 
         .trp-driver-avatar i {
-            font-size: 2rem;
+            font-size: 1.6rem;
             color: var(--trp-navy);
         }
 
-    .trp-driver-details {
+    .trp-driver-name {
+        font-weight: 700;
+        color: var(--trp-ink);
+        font-size: 1.05rem;
+        margin-bottom: .3rem;
+    }
+
+    .trp-verified-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        background: var(--trp-green-soft);
+        color: var(--trp-green);
+        font-weight: 700;
+        font-size: .74rem;
+        padding: .22rem .6rem;
+        border-radius: 20px;
+    }
+
+        .trp-verified-pill i {
+            font-size: .78rem;
+        }
+
+    .trp-detail-list {
         display: flex;
         flex-direction: column;
-        gap: .55rem;
+        gap: .7rem;
     }
 
     .trp-detail-item {
         display: flex;
         align-items: center;
-        gap: .6rem;
+        gap: .65rem;
     }
 
     .trp-icon-badge {
-        width: 26px;
-        height: 26px;
-        border-radius: 6px;
-        background: var(--trp-dark-badge);
-        color: #fff;
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: .78rem;
+        font-size: .8rem;
         flex-shrink: 0;
     }
 
-    .trp-detail-item span {
+        .trp-icon-badge.blue {
+            background: var(--trp-blue-soft);
+            color: var(--trp-blue);
+        }
+
+        .trp-icon-badge.green {
+            background: var(--trp-green-soft);
+            color: var(--trp-green);
+        }
+
+        .trp-icon-badge.purple {
+            background: var(--trp-purple-soft);
+            color: var(--trp-purple);
+        }
+
+        .trp-icon-badge.amber {
+            background: var(--trp-amber-soft);
+            color: var(--trp-amber);
+        }
+
+    .trp-detail-item .trp-label {
+        display: block;
+        font-size: .72rem;
+        color: var(--trp-muted);
         font-weight: 600;
-        color: var(--trp-ink);
-        font-size: .92rem;
+        line-height: 1.2;
     }
 
-    .trp-detail-item a {
-        font-weight: 600;
+    .trp-detail-item .trp-value,
+    .trp-detail-item a.trp-value {
+        font-weight: 700;
         color: var(--trp-ink);
         font-size: .92rem;
         text-decoration: none;
+        line-height: 1.25;
     }
 
-        .trp-detail-item a:hover {
+        .trp-detail-item a.trp-value:hover {
             color: var(--trp-navy);
         }
 
-    /* Verified */
-    .trp-verified {
-        display: flex;
-        align-items: center;
-        gap: .5rem;
-        color: var(--trp-green);
-        font-weight: 600;
-        font-size: .92rem;
-        margin-bottom: 1rem;
-    }
-
-        .trp-verified i {
-            font-size: 1rem;
-        }
-
-    /* Drop point */
-    .trp-drop-point {
-        display: flex;
-        align-items: center;
-        gap: .5rem;
-        color: var(--trp-navy);
-        font-weight: 600;
-        font-size: .95rem;
-    }
-
-        .trp-drop-point i {
-            color: var(--trp-navy);
-        }
-    #transportMap {
-        width: 100%;
-        height: 380px;
-        border-radius: 12px;
-    }
-
-    .trp-stop-list {
-        margin-top: 20px;
-        border: 1px solid #eceef2;
-        border-radius: 10px;
-        padding: 18px;
-        background: #fff;
-    }
-
-    .trp-stop-title {
-        font-weight: 700;
-        color: #1c3f66;
-        margin-bottom: 15px;
-    }
-
+    /* Stopping points timeline */
     .trp-stop-item {
         display: flex;
-        align-items: center;
-        margin-bottom: 12px;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 4px;
     }
-
-        .trp-stop-item:last-child {
-            margin-bottom: 0;
-        }
 
     .trp-stop-dot {
         width: 12px;
         height: 12px;
-        background: #2E86DE;
+        background: var(--trp-blue);
+        border: 2px solid var(--trp-blue-soft);
         border-radius: 50%;
-        margin-right: 12px;
+        margin-top: 2px;
         flex-shrink: 0;
     }
 
     .trp-stop-line {
         width: 2px;
-        height: 28px;
-        background: #2E86DE;
+        height: 26px;
+        background: var(--trp-border);
         margin-left: 5px;
-        margin-top: -5px;
-        margin-bottom: -5px;
+        margin-top: -2px;
+        margin-bottom: -2px;
     }
 
     .trp-stop-name {
         font-weight: 600;
-        color: #1e2433;
+        color: var(--trp-ink);
+        font-size: .9rem;
+        padding-top: 1px;
     }
 </style>
+
 @if (Model == null)
 {
     <div class="content-page bg-white">
-        <center><div class="alert alert-warning m-3">
-    No transport details found.
-</div></center>
+        <center>
+            <div class="alert alert-warning m-3">
+                No transport details found.
+            </div>
+        </center>
     </div>
-        }
-        else
-        {
-        <div class="content-page bg-white">
+}
+else
+{
+    <div class="trp-page content-page">
 
-            <div class="trp-header">
-                <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
-                <h5>Transport</h5>
+        <div class="trp-header">
+            <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+            <h5>Transport</h5>
+        </div>
+
+        <div class="trp-wrap">
+
+            <!-- Map -->
+            <div class="trp-card trp-map-card">
+                <a href="https://www.google.com/maps?q=@Url.Encode(Model.Address)"
+                   target="_blank"
+                   class="trp-map-link">
+                    Maps
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+                <div id="transportMap"></div>
             </div>
 
-            <div class="trp-wrap">
+            <div class="trp-grid">
 
-                <!-- Map -->
-                <div class="trp-map-card">
+                <!-- Driver + trip info -->
+                <div class="trp-card trp-panel">
 
-                    <a href="https://www.google.com/maps?q=@Url.Encode(Model.Address)"
-                       target="_blank"
-                       class="trp-map-link">
-
-                        Maps
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-
-                    </a>
-                    <div id="transportMap"></div>
-                </div>
-
-                <!-- Driver info -->
-                <div class="trp-driver-row" id="driverInfo"
-                     data-driver-name="Rakesh"
-                     data-driver-phone="8965412301">
-                    <div class="trp-driver-avatar">
+                    <div class="trp-driver-row" id="driverInfo"
+                         data-driver-name="Rakesh"
+                         data-driver-phone="8965412301">
 
                         <div class="trp-driver-avatar">
-
                             @if (!string.IsNullOrEmpty(Model.DLFileName))
                             {
                                 <img src="~/Uploads/Driver/@Model.DLFileName" alt="Driver" />
@@ -279,194 +363,162 @@
                             {
                                 <i class="fa-solid fa-user-tie"></i>
                             }
-
                         </div>
 
-                    </div>
-                    <div class="trp-driver-details">
-
-                        <div class="trp-detail-item">
-                            <span class="trp-icon-badge bg-light">
-                                <i class="fa-solid fa-user"></i>
+                        <div>
+                            <div class="trp-driver-name">@Model.driverName</div>
+                            <span class="trp-verified-pill">
+                                <i class="fa-solid fa-circle-check"></i> Verified
                             </span>
-                            <span>@Model.driverName</span>
                         </div>
+                    </div>
+
+                    <div class="trp-detail-list">
 
                         <div class="trp-detail-item">
-                            <span class="trp-icon-badge bg-light">
+                            <span class="trp-icon-badge blue">
                                 <i class="fa-solid fa-phone"></i>
                             </span>
-
-                            <a href="tel:@Model.ContactNo">
-                                @Model.ContactNo
-                            </a>
+                            <span>
+                                <span class="trp-label">Contact</span>
+                                <a class="trp-value" href="tel:@Model.ContactNo">@Model.ContactNo</a>
+                            </span>
                         </div>
 
                         <div class="trp-detail-item">
-                            <span class="trp-icon-badge bg-light">
+                            <span class="trp-icon-badge purple">
                                 <i class="fa-solid fa-bus"></i>
                             </span>
-
-                            <span>@Model.bussNo</span>
+                            <span>
+                                <span class="trp-label">Bus No.</span>
+                                <span class="trp-value">@Model.bussNo</span>
+                            </span>
                         </div>
 
                         <div class="trp-detail-item">
-                            <span class="trp-icon-badge bg-light">
+                            <span class="trp-icon-badge green">
                                 <i class="fa-solid fa-indian-rupee-sign"></i>
                             </span>
-
-                            <span>₹ @Model.busCharge</span>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="trp-stop-list">
-
-                            <div class="trp-stop-title">
-                                Stopping Points
-                            </div>
-
-                            <div id="stopList"></div>
-
-                        </div>
-                    </div>
-                    <div class="col-md-6 ps-5">
-                        <!-- Verified -->
-                        <div class="trp-verified mt-5">
-                            <i class="fa-solid fa-circle-check"></i> Verified
-                        </div>
-                        <div class="trp-detail-item mt-3">
-
-                            <span class="trp-icon-badge bg-light">
-                                <i class="fa-solid fa-map-location-dot"></i>
+                            <span>
+                                <span class="trp-label">Bus Charge</span>
+                                <span class="trp-value">₹ @Model.busCharge</span>
                             </span>
-
-                            <span>@Model.Address</span>
-
-                        </div>
-                        <!-- Drop Point -->
-                        <div class="trp-drop-point ms-1">
-                            <i class="fa-solid fa-location-dot">
-                            </i>  Pickup Point:- @Model.pickupPoint
                         </div>
 
                         <div class="trp-detail-item">
-
-                            <span class="trp-icon-badge bg-light">
-                                <i class="fa-solid fa-bus"></i>
-                            </span>
-
-                            <span>@Model.bussNo</span>
-
-                        </div>
-
-                        <div class="trp-detail-item">
-
-                            <span class="trp-icon-badge bg-light">
-                                <i class="fa-solid fa-indian-rupee-sign"></i>
-                            </span>
-
-                            <span>₹ @Model.busCharge</span>
-
-                        </div>
-
-                        <div class="trp-detail-item">
-
-                            <span class="trp-icon-badge bg-light">
+                            <span class="trp-icon-badge amber">
                                 <i class="fa-solid fa-location-dot"></i>
                             </span>
-
-                            <span>@Model.Address</span>
-
+                            <span>
+                                <span class="trp-label">Pickup Point</span>
+                                <span class="trp-value">@Model.pickupPoint</span>
+                            </span>
                         </div>
+
+                        <div class="trp-detail-item">
+                            <span class="trp-icon-badge blue">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                            </span>
+                            <span>
+                                <span class="trp-label">Address</span>
+                                <span class="trp-value">@Model.Address</span>
+                            </span>
+                        </div>
+
                     </div>
                 </div>
+
+                <!-- Stopping points -->
+                <div class="trp-card trp-panel">
+                    <div class="trp-panel-title">Stopping Points</div>
+                    <div id="stopList"></div>
+                </div>
+
             </div>
         </div>
-        }
+    </div>
+}
 
 <script>
 
-const ROUTE_POINTS = [
+    const ROUTE_POINTS = [
 
-    {
-        lat:26.8467,
-        lng:80.9462,
-        name:"Kanpur Road"
-    },
+        {
+            lat: 26.8467,
+            lng: 80.9462,
+            name: "Kanpur Road"
+        },
 
-    {
-        lat:26.8490,
-        lng:80.9480,
-        name:"Vikas Nagar"
-    },
+        {
+            lat: 26.8490,
+            lng: 80.9480,
+            name: "Vikas Nagar"
+        },
 
-    {
-        lat:26.8500,
-        lng:80.9445,
-        name:"Civil Lines"
-    },
+        {
+            lat: 26.8500,
+            lng: 80.9445,
+            name: "Civil Lines"
+        },
 
-    {
-        lat:26.8475,
-        lng:80.9420,
-        name:"Mall Road"
-    },
+        {
+            lat: 26.8475,
+            lng: 80.9420,
+            name: "Mall Road"
+        },
 
-    {
-        lat:26.8450,
-        lng:80.9435,
-        name:"Green Park"
-    }
+        {
+            lat: 26.8450,
+            lng: 80.9435,
+            name: "Green Park"
+        }
 
-];
-
-
-var map = L.map('transportMap');
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution:'© OpenStreetMap'
-}).addTo(map);
+    ];
 
 
-var latlngs=[];
+    var map = L.map('transportMap');
 
-ROUTE_POINTS.forEach(function(point,index){
-
-    latlngs.push([point.lat,point.lng]);
-
-    L.circleMarker([point.lat,point.lng],{
-
-        radius:8,
-        fillColor:"#2E86DE",
-        color:"#fff",
-        weight:2,
-        fillOpacity:1
-
-    })
-    .addTo(map)
-    .bindPopup("<b>"+(index+1)+". "+point.name+"</b>");
-
-});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
 
 
-L.polyline(latlngs,{
-    color:"#2E86DE",
-    weight:5,
-    opacity:0.9
-}).addTo(map);
+    var latlngs = [];
+
+    ROUTE_POINTS.forEach(function (point, index) {
+
+        latlngs.push([point.lat, point.lng]);
+
+        L.circleMarker([point.lat, point.lng], {
+
+            radius: 8,
+            fillColor: "#2E86DE",
+            color: "#fff",
+            weight: 2,
+            fillOpacity: 1
+
+        })
+            .addTo(map)
+            .bindPopup("<b>" + (index + 1) + ". " + point.name + "</b>");
+
+    });
 
 
-map.fitBounds(latlngs);
+    L.polyline(latlngs, {
+        color: "#2E86DE",
+        weight: 5,
+        opacity: 0.9
+    }).addTo(map);
 
 
-var stopHtml="";
+    map.fitBounds(latlngs);
 
-ROUTE_POINTS.forEach(function(point,index){
 
-    stopHtml+=`
+    var stopHtml = "";
+
+    ROUTE_POINTS.forEach(function (point, index) {
+
+        stopHtml += `
 
         <div class="trp-stop-item">
 
@@ -474,11 +526,10 @@ ROUTE_POINTS.forEach(function(point,index){
 
                 <div class="trp-stop-dot"></div>
 
-                ${
-                    index<ROUTE_POINTS.length-1
-                    ?'<div class="trp-stop-line"></div>'
-                    :''
-                }
+                ${index < ROUTE_POINTS.length - 1
+                ? '<div class="trp-stop-line"></div>'
+                : ''
+            }
 
             </div>
 
@@ -492,8 +543,8 @@ ROUTE_POINTS.forEach(function(point,index){
 
     `;
 
-});
+    });
 
-document.getElementById("stopList").innerHTML=stopHtml;
+    document.getElementById("stopList").innerHTML = stopHtml;
 
 </script>
