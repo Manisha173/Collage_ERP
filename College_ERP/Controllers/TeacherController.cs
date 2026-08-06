@@ -285,7 +285,9 @@ namespace College_ERP.Controllers
         [HttpPost]
         public ActionResult ApplyLeave(LeaveRequestModel sm)
         {
-            sm.userId = teacherService.GetUserId(User.Identity.Name);
+           int userId = teacherService.GetUserId(User.Identity.Name);
+            int adminid = teacherService.GetAdminId(userId);
+            sm.userId = adminid;
             sm.teacherId = Convert.ToInt32(homeService.GetUserId(User.Identity.Name));
             string uniqueFileName = null;
             if (sm.attachment != null && sm.attachment.ContentLength > 0)
