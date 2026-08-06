@@ -34,35 +34,65 @@
         }
 
     .prf-hero {
-        background: linear-gradient(135deg, var(--prf-navy), var(--prf-navy-dark));
-        padding: 1.75rem 1.25rem 2rem;
+        background: linear-gradient(135deg,#16324f,#1c3f66);
+        padding: 10px 30px 10px;
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 18px;
+        position: relative;
+        overflow: hidden;
     }
 
+        .prf-hero:before {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.08);
+            top: -120px;
+            right: -70px;
+        }
+
+        .prf-hero:after {
+            content: "";
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.05);
+            left: -70px;
+            bottom: -90px;
+        }
+
     .prf-avatar {
-        width: 68px;
-        height: 68px;
+        width: 25px;
+        height: 25px;
         border-radius: 50%;
-        background: #f5a623;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
         overflow: hidden;
-        border: 3px solid rgba(255,255,255,.25);
+        background: #fff;
+        padding: 4px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.18);
+        flex-shrink: 0;
     }
 
         .prf-avatar img {
             width: 100%;
             height: 100%;
+            border-radius: 50%;
             object-fit: cover;
         }
 
         .prf-avatar i {
-            font-size: 2rem;
-            color: #fff;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f5f7fb;
+            color: #1c3f66;
+            font-size: 32px;
         }
 
     .prf-hero-info .prf-name {
@@ -80,18 +110,18 @@
 
     .prf-wrap {
         max-width: 900px;
-        margin: -1.25rem auto 0;
-        padding: 0 1.25rem 1.75rem;
+        margin: -28px auto 25px;
+        padding: 0 18px;
         position: relative;
+        z-index: 10;
     }
 
     .prf-card {
         background: #fff;
-        border: 1px solid #eceef2;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(20,20,40,.05);
-        padding: 1.15rem 1.25rem;
-        margin-top: 1.25rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(28,63,102,.08);
+        padding: 22px;
+        border: none;
     }
 
     .prf-card-title {
@@ -159,27 +189,30 @@
 </style>
 
 <div class="content-page bg-white">
-
-    <div class="prf-header">
-        <a href="/Parent/Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
-        <h5>Profile</h5>
-    </div>
     <!-- Hero: avatar + name + email -->
     <div class="prf-hero">
         <div class="prf-avatar" id="parentAvatar">
             <img src="@parent.FatherPhoto" alt="Parent" style="display:none;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <i class="fa-solid fa-user"></i>
+            <center><i class="fa-solid fa-user"></i></center>
         </div>
         <div class="prf-hero-info">
-            <p class="prf-name" id="parentName">@parent.FatherName</p>
-            <p class="prf-email" id="parentEmail">@parent.FatherNo</p>
+
+            <h3 class="prf-name">
+                @parent.FatherName
+            </h3>
+
+            <p class="prf-email">
+                <i class="fa-solid fa-phone"></i>
+                @parent.FatherNo
+            </p>
+
         </div>
     </div>
 
     <div class="prf-wrap">
 
         <!-- Father Information -->
-        <div class="prf-card">
+        <div class="prf-card mt-5">
             <p class="prf-card-title"><i class="fa-solid fa-user-tie"></i> Father Information</p>
 
             <div class="prf-row">
@@ -205,7 +238,7 @@
         </div>
 
         <!-- Mother Information -->
-        <div class="prf-card">
+        <div class="prf-card mt-3">
             <p class="prf-card-title"><i class="fa-solid fa-person-dress"></i> Mother Information</p>
 
             <div class="prf-row">

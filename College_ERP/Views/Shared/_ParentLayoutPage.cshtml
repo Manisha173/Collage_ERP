@@ -14,7 +14,9 @@
     <link href="~/assets/js/sweetalert/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/assets/fontawsome/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
     <script src="~/assets/libs/jquery/jquery.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 
     <style>
@@ -220,7 +222,7 @@
                                         </a>
                                     </div>
                                     <div class="mt-1 shadow-sm mx-1 rounded-2 bg-light">
-                                        <a class="dropdown-item fw-bold w-100 text-center" href="#" id="logoutuser">
+                                        <a class="dropdown-item fw-bold w-100 text-center" href="@Url.Action("Logout","Parent")" id="logoutuser">
                                             <i data-feather="log-out" class="me-1 text-danger"></i>Logout
                                         </a>
                                     </div>
@@ -372,6 +374,7 @@
     <!-- Apexcharts JS -->
     <script src="~/assets/libs/apexcharts/apexcharts.min.js"></script>
     <script src="~/assets/fontawsome/all.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <!-- for basic area chart -->
     <script src="~/Content/apexcharts.com/samples/assets/stock-prices.js"></script>
 

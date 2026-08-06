@@ -1,4 +1,5 @@
-﻿@{
+﻿@model College_ERP.ViewModels.ParentTimeTableViewModel
+@{
     ViewBag.Title = "Timetable";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
 
@@ -18,6 +19,7 @@
         border-radius: 12px;
         padding: .5rem;
         height: 100%;
+        min-height: 650px;
     }
 
     .tt-day-header {
@@ -26,7 +28,7 @@
         text-align: center;
     }
 
-       
+
 
     .tt-class-card {
         background: #f8f9fb;
@@ -162,431 +164,439 @@
             <div class="col-sm-12">
                 <!-- Teacher / Class Schedule list (new section) -->
                 <div id="teacherScheduleList" class="row p-3 mt-3 mb-4">
-                    <div class="tsc-card p-3 col-sm-8 mx-auto">
-                        <div class="tsc-top">
-                            <div class="tsc-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div>
-                                <p class="tsc-name">Aakash Deep</p>
-                                <p class="tsc-subtitle">Lorem Ipsum Dolor Sit</p>
-                            </div>
-                        </div>
-                        <div class="tsc-meta">
-                            <div class="tsc-meta-item">
-                                <i class="fa-regular fa-calendar"></i> monday
-                            </div>
-                            <div class="tsc-meta-item">
-                                <i class="fa-regular fa-clock"></i> 10:00 AM - 11:00 AM
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="tsc-card p-3 col-sm-8 mx-auto">
-                        <div class="tsc-top">
-                            <div class="tsc-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div>
-                                <p class="tsc-name">Aakash Deep</p>
-                                <p class="tsc-subtitle">Lorem Ipsum Dolor Sit</p>
-                            </div>
-                        </div>
-                        <div class="tsc-meta">
-                            <div class="tsc-meta-item">
-                                <i class="fa-regular fa-calendar"></i> monday
-                            </div>
-                            <div class="tsc-meta-item">
-                                <i class="fa-regular fa-clock"></i> 10:00 AM - 11:00 AM
-                            </div>
-                        </div>
-                    </div>
+                    @if (Model.TodaySchedule != null && Model.TodaySchedule.Any())
+                    {
+                        foreach (var item in Model.TodaySchedule)
+                        {
+                            <div class="tsc-card p-3 col-sm-8 mx-auto">
 
-                    <div class="tsc-card p-3 col-sm-8 mx-auto">
-                        <div class="tsc-top">
-                            <div class="tsc-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div>
-                                <p class="tsc-name">Aakash Deep</p>
-                                <p class="tsc-subtitle">Lorem Ipsum Dolor Sit</p>
-                            </div>
-                        </div>
-                        <div class="tsc-meta">
-                            <div class="tsc-meta-item">
-                                <i class="fa-regular fa-calendar"></i> monday
-                            </div>
-                            <div class="tsc-meta-item">
-                                <i class="fa-regular fa-clock"></i> 10:00 AM - 11:00 AM
-                            </div>
-                        </div>
-                    </div>
+                                <div class="tsc-top">
 
-                    <div class="tsc-card p-3 col-sm-8 mx-auto">
-                        <div class="tsc-top">
-                            <div class="tsc-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div>
-                                <p class="tsc-name">Aakash Deep</p>
-                                <p class="tsc-subtitle">Lorem Ipsum Dolor Sit</p>
-                            </div>
-                        </div>
-                        <div class="tsc-meta">
-                            <div class="tsc-meta-item">
-                                <i class="fa-regular fa-calendar"></i> monday
-                            </div>
-                            <div class="tsc-meta-item">
-                                <i class="fa-regular fa-clock"></i> 11:00 AM - 12:00 PM
-                            </div>
-                        </div>
-                    </div>
+                                    <div class="tsc-avatar">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
 
-                    <div class="tsc-card p-3 col-sm-8 mx-auto">
-                        <div class="tsc-top">
-                            <div class="tsc-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div>
-                                <p class="tsc-name">Aakash Deep</p>
-                                <p class="tsc-subtitle">Lorem Ipsum Dolor Sit</p>
-                            </div>
-                        </div>
-                        <div class="tsc-meta">
-                            <div class="tsc-meta-item">
-                                <i class="fa-regular fa-calendar"></i> monday
-                            </div>
-                            <div class="tsc-meta-item">
-                                <i class="fa-regular fa-clock"></i> 11:00 AM - 12:00 PM
-                            </div>
-                        </div>
-                    </div>
+                                    <div>
 
-                    <div class="tsc-card p-3 col-sm-8 mx-auto">
-                        <div class="tsc-top">
-                            <div class="tsc-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div>
-                                <p class="tsc-name">Aakash Deep</p>
-                                <p class="tsc-subtitle">Lorem Ipsum Dolor Sit</p>
+                                        <p class="tsc-name">
+                                            @item.teacherName
+                                        </p>
+
+                                        <p class="tsc-subtitle">
+                                            @item.subjectName
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="tsc-meta">
+
+                                    <div class="tsc-meta-item">
+
+                                        <i class="fa-regular fa-calendar"></i>
+
+                                        @(char.ToUpper(item.day[0]) + item.day.Substring(1))
+
+                                    </div>
+
+                                    <div class="tsc-meta-item">
+
+                                        <i class="fa-regular fa-clock"></i>
+
+                                        @item.combineTime
+
+                                    </div>
+
+                                </div>
+
                             </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-md-12 text-center">
+                            No Schedule Available
                         </div>
-                        <div class="tsc-meta">
-                            <div class="tsc-meta-item">
-                                <i class="fa-regular fa-calendar"></i> monday
-                            </div>
-                            <div class="tsc-meta-item">
-                                <i class="fa-regular fa-clock"></i> 12:00 PM - 01:00 AM
-                            </div>
-                        </div>
-                    </div>
+                    }
+
                 </div>
             </div>
             <div class="col-sm-12">
-                    <div class="row px-3">
-                        <div class="col-sm-12">
-                            <h5>Weekly TimeTable</h5>
+                <div class="row px-3">
+                    <div class="col-sm-12">
+                        <h5>Weekly TimeTable</h5>
 
-                            <div class="row mt-3 g-3">
+                        <div class="row mt-3 g-3">
 
-                                <!-- Monday -->
-                                <div class="col-6 col-md-4 col-lg-2 tt-today">
+                            @foreach (var day in Model.WeeklyTimeTable)
+                            {
+                                var today =
+                                    DateTime.Now.DayOfWeek.ToString()
+                                    .Equals(day.day,
+                                    StringComparison.OrdinalIgnoreCase);
+
+                                <div class="col-6 col-md-4 col-lg-2 @(today ? "tt-today" : "")">
+
                                     <div class="tt-day-card">
+
                                         <div class="tt-day-header">
-                                            <h6 style="font-weight:bold">Monday</h6>
+
+                                            <h6 style="font-weight:bold">
+                                                @day.day
+                                            </h6>
+
                                         </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
+
+                                        @if(day.ttdata != null && day.ttdata.Any())
+                                        {
+                                            foreach (var cls in day.ttdata)
+                                            {
+                                                <div class="tt-class-card">
+
+                                                    <p class="text-dark">
+
+                                                        @($"{cls.className} {cls.sectionName}")
+
+                                                    </p>
+
+                                                    <p class="tt-subject">
+
+                                                        @cls.subjectName
+
+                                                    </p>
+
+                                                    <p class="tt-time">
+
+                                                        @cls.from - @cls.to
+
+                                                    </p>
+
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                    <div class="d-flex align-items-center justify-content-center text-muted"
+                                         style="height:500px">
+                                        <div>
+                                            <i class="fa-regular fa-calendar-xmark fa-2x mb-2"></i>
+                                            <br />
+                                            No Classes
                                         </div>
                                     </div>
-                                </div>
+                                        }
 
-                                <!-- Tuesday -->
-                                <div class="col-6 col-md-4 col-lg-2 tt-today">
-                                    <div class="tt-day-card">
-                                        <div class="tt-day-header">
-                                            <h6 style="font-weight:bold">Tuesday</h6>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
                                     </div>
-                                </div>
 
-                                <!-- Wednesday -->
-                                <div class="col-6 col-md-4 col-lg-2 tt-today">
-                                    <div class="tt-day-card">
-                                        <div class="tt-day-header">
-                                            <h6 style="font-weight:bold">Wednesday</h6>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                    </div>
                                 </div>
+                            }
 
-                                <!-- Thursday -->
-                                <div class="col-6 col-md-4 col-lg-2 tt-today">
-                                    <div class="tt-day-card">
-                                        <div class="tt-day-header">
-                                            <h6 style="font-weight:bold">Thursday</h6>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <!-- Monday -->
+                            <!--<div class="col-6 col-md-4 col-lg-2 tt-today">
+        <div class="tt-day-card">
+            <div class="tt-day-header">
+                <h6 style="font-weight:bold">Monday</h6>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+        </div>
+    </div>-->
+                            <!-- Tuesday -->
+                            <!--<div class="col-6 col-md-4 col-lg-2 tt-today">
+        <div class="tt-day-card">
+            <div class="tt-day-header">
+                <h6 style="font-weight:bold">Tuesday</h6>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+        </div>
+    </div>-->
+                            <!-- Wednesday -->
+                            <!--<div class="col-6 col-md-4 col-lg-2 tt-today">
+        <div class="tt-day-card">
+            <div class="tt-day-header">
+                <h6 style="font-weight:bold">Wednesday</h6>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+        </div>
+    </div>-->
+                            <!-- Thursday -->
+                            <!--<div class="col-6 col-md-4 col-lg-2 tt-today">
+        <div class="tt-day-card">
+            <div class="tt-day-header">
+                <h6 style="font-weight:bold">Thursday</h6>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+        </div>
+    </div>-->
+                            <!-- Friday -->
+                            <!--<div class="col-6 col-md-4 col-lg-2 tt-today">
+        <div class="tt-day-card">
+            <div class="tt-day-header">
+                <h6 style="font-weight:bold">Friday</h6>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+        </div>
+    </div>-->
+                            <!-- Saturday -->
+                            <!--<div class="col-6 col-md-4 col-lg-2 tt-today">
+        <div class="tt-day-card">
+            <div class="tt-day-header">
+                <h6 style="font-weight:bold">Saturday</h6>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+            <div class="tt-class-card">
+                <p class="text-dark">B.A. Section-A</p>
+                <div class="d-flex justify-content-between align-items-start">
+                    <p class="tt-subject">History</p>
+                </div>
+                <p class="tt-time">10:00 AM – 11:30 AM</p>
+            </div>
+        </div>
+    </div>-->
 
-                                <!-- Friday -->
-                                <div class="col-6 col-md-4 col-lg-2 tt-today">
-                                    <div class="tt-day-card">
-                                        <div class="tt-day-header">
-                                            <h6 style="font-weight:bold">Friday</h6>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Saturday -->
-                                <div class="col-6 col-md-4 col-lg-2 tt-today">
-                                    <div class="tt-day-card">
-                                        <div class="tt-day-header">
-                                            <h6 style="font-weight:bold">Saturday</h6>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                        <div class="tt-class-card">
-                                            <p class="text-dark">B.A. Section-A</p>
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <p class="tt-subject">History</p>
-                                            </div>
-                                            <p class="tt-time">10:00 AM – 11:30 AM</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>

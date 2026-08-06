@@ -402,6 +402,7 @@
     <Compile Include="Models\Warden\WardenService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\ParentTimeTableViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitattributes" />

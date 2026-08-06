@@ -1,8 +1,11 @@
-﻿@{
+﻿@using College_ERP.Models.Admin
+@{
     ViewBag.Title = "Result";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
 }
-
+@{
+    var exams = ViewBag.ExamList as List<ScheduleExamModel>;
+}
 <style>
     :root {
         --res-navy: #1c3f66;
@@ -290,22 +293,39 @@
     <div class="res-form-wrap" id="resultForm">
         <div class="res-field" id="academicYearField" onclick="openPicker('academicYear')">
             <label>Academic Year</label>
-            <div class="res-field-value placeholder" id="academicYearValue">
                 <span>Select Academic Year</span>
-                <i class="fa-solid fa-chevron-down"></i>
-            </div>
+                <select id="academicYear" class="form-control">
+
+                    @for (int i = DateTime.Now.Year; i >= DateTime.Now.Year - 10; i--)
+                    {
+                        <option value="@($"{i}-{i+1}")">
+                            @($"{i}-{i+1}")
+                        </option>
+                    }
+
+                </select>
         </div>
 
         <div class="res-field" id="examScheduleField" onclick="openPicker('examSchedule')">
             <label>Exam Schedule</label>
-            <div class="res-field-value placeholder" id="examScheduleValue">
                 <span>Select Exam Schedule</span>
-                <i class="fa-solid fa-chevron-down"></i>
-            </div>
+                <select id="examId" class="form-control">
+                    <option value="">Select Exam</option>
+
+                    @foreach (var exam in exams)
+                    {
+                        <option value="@exam.scheduleId">
+                            @exam.examName
+                        </option>
+                    }
+                </select>
         </div>
 
-        <button type="button" class="res-submit-btn" onclick="viewResult()">View Result</button>
-    </div>
+        <button type="button"
+                id="btnSearch"
+                class="btn btn-primary w-100"> Show Result
+        </button>
+</div>
 
     <!-- Results (subjects accordion) -->
     <div class="res-results-wrap" id="resultsWrap" style="display:none;"></div>
@@ -329,162 +349,206 @@
 </div>
 
 <script>
-(function () {
-    var pickerModalEl = document.getElementById('pickerModal');
-    var pickerModal = null;
+    function loadResult(data) {
 
-    function getPickerModal() {
-        if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
-            console.error('Bootstrap JS not loaded.');
-            return null;
-        }
-        return bootstrap.Modal.getOrCreateInstance(pickerModalEl);
+        var html = "";
+
+        $.each(data, function (i, item) {
+
+            html += `
+
+<div class="subject-card">
+
+<div class="subject-card-header">
+
+<div class="subject-name">
+
+${item.Subject}
+
+</div>
+
+<div class="header-right">
+
+<div class="grade-badge">
+
+${item.Grade}
+
+</div>
+
+<i class="fa fa-chevron-down chevron"></i>
+
+</div>
+
+</div>
+
+<div class="subject-card-body">
+
+<div class="subject-row">
+
+<div class="row-left">
+
+<i class="fa fa-book"></i>
+
+Theory Marks
+
+</div>
+
+<div class="row-value">
+
+${item.TheoryMarks}
+
+</div>
+
+</div>
+
+<div class="subject-row">
+
+<div class="row-left">
+
+<i class="fa fa-layer-group"></i>
+
+Total Marks
+
+</div>
+
+<div class="row-value">
+
+${item.TotalMarks}
+
+</div>
+
+</div>
+
+<div class="subject-row">
+
+<div class="row-left">
+
+<i class="fa fa-medal"></i>
+
+Obtained Marks
+
+</div>
+
+<div class="row-value">
+
+${item.TotalObtainedMarks}
+
+</div>
+
+</div>
+
+<div class="subject-row">
+
+<div class="row-left">
+
+<i class="fa fa-flask"></i>
+
+Practical Marks
+
+</div>
+
+<div class="row-value">
+
+${item.PracticalMarks}
+
+</div>
+
+</div>
+
+<div class="subject-row">
+
+<div class="row-left">
+
+<i class="fa fa-pencil"></i>
+
+Total Theory
+
+</div>
+
+<div class="row-value">
+
+${item.TotalTheoryMarks}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+        });
+
+        $("#resultsWrap")
+            .html(html)
+            .show();
     }
+    $(document).on("click", ".subject-card-header", function () {
 
-    // Data sources
-    var academicYears = ['2026-2027', '2025-2026', '2024-2025', '2023-2024', '2022-2023', '2021-2022', '2020-2021', '2019-2020', '2018-2019'];
-    var examSchedules = ['BA Exam', 'Pre Exam'];
+        $(this)
+            .parent()
+            .toggleClass("expanded");
 
-    var selected = { academicYear: '', examSchedule: '' };
-    var tempSelected = '';
-    var currentField = '';
-
-    window.openPicker = function (field) {
-        currentField = field;
-        tempSelected = selected[field];
-
-        var title = field === 'academicYear' ? 'Academic Year' : 'Exam Schedule';
-        var options = field === 'academicYear' ? academicYears : examSchedules;
-
-        document.getElementById('pickerModalTitle').textContent = title;
-
-        var bodyHtml = '';
-        options.forEach(function (opt) {
-            var checked = opt === tempSelected ? 'checked' : '';
-            bodyHtml += '' +
-                '<label class="picker-option">' +
-                '<input type="radio" name="pickerOption" value="' + opt + '" ' + checked + '>' +
-                '<span>' + opt + '</span>' +
-                '</label>';
-        });
-        document.getElementById('pickerModalBody').innerHTML = bodyHtml;
-
-        // handle radio change
-        document.querySelectorAll('input[name="pickerOption"]').forEach(function (radio) {
-            radio.addEventListener('change', function () {
-                tempSelected = this.value;
-            });
-        });
-
-        pickerModal = getPickerModal();
-        if (pickerModal) pickerModal.show();
-    };
-
-    document.getElementById('pickerOkBtn').addEventListener('click', function () {
-        if (!tempSelected) { if (pickerModal) pickerModal.hide(); return; }
-
-        selected[currentField] = tempSelected;
-
-        var fieldEl = document.getElementById(currentField + 'Field');
-        var valueEl = document.getElementById(currentField + 'Value');
-
-        fieldEl.classList.add('active');
-        valueEl.classList.remove('placeholder');
-        valueEl.innerHTML = '<span>' + tempSelected + '</span><i class="fa-solid fa-chevron-down"></i>';
-
-        if (pickerModal) pickerModal.hide();
     });
+    $("#btnSearch").on("click", function (e) {
 
-    document.getElementById('pickerCancelBtn').addEventListener('click', function () {
-        if (pickerModal) pickerModal.hide();
-    });
+        e.preventDefault();
 
-    // Sample result data — replace with data from your controller / API
-    var resultData = {
-        score: '86.67%',
-        subjects: [
-            {
-                name: 'Ancient History',
-                grade: 'A',
-                theoryMarks: 55,
-                totalMarks: 100,
-                obtainedMarks: 85,
-                practicalMarks: 30,
-                totalTheory: 70
-            },
-            {
-                name: 'Civics',
-                grade: 'A',
-                theoryMarks: 50,
-                totalMarks: 100,
-                obtainedMarks: 80,
-                practicalMarks: 30,
-                totalTheory: 70
-            },
-            {
-                name: 'History',
-                grade: 'A+',
-                theoryMarks: 65,
-                totalMarks: 100,
-                obtainedMarks: 95,
-                practicalMarks: 30,
-                totalTheory: 70
-            }
-        ]
-    };
+        var examId = $("#examId").val();
 
-    window.viewResult = function () {
-        if (!selected.academicYear || !selected.examSchedule) {
-            alert('Please select Academic Year and Exam Schedule.');
+        var academicYear = $("#academicYear").val();
+
+        if (examId == "") {
+
+            alert("Select Exam");
+
             return;
         }
 
-        // TODO: call your API here using selected.academicYear / selected.examSchedule
-        renderResults(resultData);
-    };
+        $.ajax({
 
-    function renderResults(data) {
-        document.getElementById('scoreValue').textContent = data.score;
+            url: "/Parent/GetReportCard",
 
-        var wrap = document.getElementById('resultsWrap');
-        wrap.innerHTML = '';
+            type: "GET",
 
-        data.subjects.forEach(function (subj, idx) {
-            var card = document.createElement('div');
-            card.className = 'subject-card' + (idx === data.subjects.length - 1 ? ' expanded' : '');
-            card.innerHTML = '' +
-                '<div class="subject-card-header" data-index="' + idx + '">' +
-                    '<span class="subject-name">' + subj.name + '</span>' +
-                    '<div class="header-right">' +
-                        '<span class="grade-badge">' + subj.grade + '</span>' +
-                        '<i class="fa-solid fa-chevron-down chevron"></i>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="subject-card-body">' +
-                    '<div class="subject-row"><span class="row-left"><i class="fa-solid fa-book-open"></i>Theory Marks</span><span class="row-value">' + subj.theoryMarks + '</span></div>' +
-                    '<div class="subject-row"><span class="row-left"><i class="fa-solid fa-layer-group"></i>Total Marks</span><span class="row-value">' + subj.totalMarks + '</span></div>' +
-                    '<div class="subject-row"><span class="row-left"><i class="fa-solid fa-medal"></i>Obtained Marks</span><span class="row-value">' + subj.obtainedMarks + '</span></div>' +
-                    '<div class="subject-row"><span class="row-left"><i class="fa-solid fa-flask"></i>Practical Marks</span><span class="row-value">' + subj.practicalMarks + '</span></div>' +
-                    '<div class="subject-row"><span class="row-left"><i class="fa-solid fa-pen-to-square"></i>Total Theory</span><span class="row-value">' + subj.totalTheory + '</span></div>' +
-                '</div>';
-            wrap.appendChild(card);
+            data: {
+
+                examId: examId,
+
+                academicYear: academicYear
+
+            },
+
+            success: function (res) {
+
+                console.log(res);
+
+                if (!res.status || res.data.length == 0) {
+
+                    alert("No Result Found");
+
+                    return;
+                }
+
+                $("#scoreValue").text(
+                    res.overallPercentage.toFixed(2) + "%"
+                );
+
+                loadResult(res.data);
+
+            },
+
+            error: function (xhr) {
+
+                console.log(xhr);
+
+                alert("Server Error");
+
+            }
+
         });
 
-        wrap.style.display = 'block';
-
-        // Accordion behavior — one open at a time
-        wrap.querySelectorAll('.subject-card-header').forEach(function (header) {
-            header.addEventListener('click', function () {
-                var card = header.closest('.subject-card');
-                var isExpanded = card.classList.contains('expanded');
-
-                wrap.querySelectorAll('.subject-card').forEach(function (c) {
-                    c.classList.remove('expanded');
-                });
-
-                if (!isExpanded) card.classList.add('expanded');
-            });
-        });
-    }
-})();
+    });
 </script>

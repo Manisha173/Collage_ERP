@@ -177,6 +177,58 @@
         .trp-drop-point i {
             color: var(--trp-navy);
         }
+    #transportMap {
+        width: 100%;
+        height: 380px;
+        border-radius: 12px;
+    }
+
+    .trp-stop-list {
+        margin-top: 20px;
+        border: 1px solid #eceef2;
+        border-radius: 10px;
+        padding: 18px;
+        background: #fff;
+    }
+
+    .trp-stop-title {
+        font-weight: 700;
+        color: #1c3f66;
+        margin-bottom: 15px;
+    }
+
+    .trp-stop-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+        .trp-stop-item:last-child {
+            margin-bottom: 0;
+        }
+
+    .trp-stop-dot {
+        width: 12px;
+        height: 12px;
+        background: #2E86DE;
+        border-radius: 50%;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+
+    .trp-stop-line {
+        width: 2px;
+        height: 28px;
+        background: #2E86DE;
+        margin-left: 5px;
+        margin-top: -5px;
+        margin-bottom: -5px;
+    }
+
+    .trp-stop-name {
+        font-weight: 600;
+        color: #1e2433;
+    }
 </style>
 @if (Model == null)
 {
@@ -208,12 +260,7 @@
                         <i class="fa-solid fa-arrow-up-right-from-square"></i>
 
                     </a>
-
-                    <iframe loading="lazy"
-                            allowfullscreen
-                            src="https://www.google.com/maps?q=@Url.Encode(Model.Address)&output=embed">
-                    </iframe>
-
+                    <div id="transportMap"></div>
                 </div>
 
                 <!-- Driver info -->
@@ -273,56 +320,180 @@
 
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="trp-stop-list">
 
-                <!-- Verified -->
-                <div class="trp-verified">
-                    <i class="fa-solid fa-circle-check"></i> Verified
+                            <div class="trp-stop-title">
+                                Stopping Points
+                            </div>
+
+                            <div id="stopList"></div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 ps-5">
+                        <!-- Verified -->
+                        <div class="trp-verified mt-5">
+                            <i class="fa-solid fa-circle-check"></i> Verified
+                        </div>
+                        <div class="trp-detail-item mt-3">
+
+                            <span class="trp-icon-badge bg-light">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                            </span>
+
+                            <span>@Model.Address</span>
+
+                        </div>
+                        <!-- Drop Point -->
+                        <div class="trp-drop-point ms-1">
+                            <i class="fa-solid fa-location-dot">
+                            </i>  Pickup Point:- @Model.pickupPoint
+                        </div>
+
+                        <div class="trp-detail-item">
+
+                            <span class="trp-icon-badge bg-light">
+                                <i class="fa-solid fa-bus"></i>
+                            </span>
+
+                            <span>@Model.bussNo</span>
+
+                        </div>
+
+                        <div class="trp-detail-item">
+
+                            <span class="trp-icon-badge bg-light">
+                                <i class="fa-solid fa-indian-rupee-sign"></i>
+                            </span>
+
+                            <span>₹ @Model.busCharge</span>
+
+                        </div>
+
+                        <div class="trp-detail-item">
+
+                            <span class="trp-icon-badge bg-light">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </span>
+
+                            <span>@Model.Address</span>
+
+                        </div>
+                    </div>
                 </div>
-                <div class="trp-detail-item mt-3">
-
-                    <span class="trp-icon-badge bg-light">
-                        <i class="fa-solid fa-map-location-dot"></i>
-                    </span>
-
-                    <span>@Model.Address</span>
-
-                </div>
-                <!-- Drop Point -->
-                <div class="trp-drop-point ms-1">
-                    <i class="fa-solid fa-location-dot">
-                        </i>  Pickup Point:- @Model.pickupPoint
-                </div>
-
-                <div class="trp-detail-item">
-
-                    <span class="trp-icon-badge bg-light">
-                        <i class="fa-solid fa-bus"></i>
-                    </span>
-
-                    <span>@Model.bussNo</span>
-
-                </div>
-
-                <div class="trp-detail-item">
-
-                    <span class="trp-icon-badge bg-light">
-                        <i class="fa-solid fa-indian-rupee-sign"></i>
-                    </span>
-
-                    <span>₹ @Model.busCharge</span>
-
-                </div>
-
-                <div class="trp-detail-item">
-
-                    <span class="trp-icon-badge bg-light">
-                        <i class="fa-solid fa-location-dot"></i>
-                    </span>
-
-                    <span>@Model.Address</span>
-
-                </div>
-
             </div>
         </div>
         }
+
+<script>
+
+const ROUTE_POINTS = [
+
+    {
+        lat:26.8467,
+        lng:80.9462,
+        name:"Kanpur Road"
+    },
+
+    {
+        lat:26.8490,
+        lng:80.9480,
+        name:"Vikas Nagar"
+    },
+
+    {
+        lat:26.8500,
+        lng:80.9445,
+        name:"Civil Lines"
+    },
+
+    {
+        lat:26.8475,
+        lng:80.9420,
+        name:"Mall Road"
+    },
+
+    {
+        lat:26.8450,
+        lng:80.9435,
+        name:"Green Park"
+    }
+
+];
+
+
+var map = L.map('transportMap');
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap'
+}).addTo(map);
+
+
+var latlngs=[];
+
+ROUTE_POINTS.forEach(function(point,index){
+
+    latlngs.push([point.lat,point.lng]);
+
+    L.circleMarker([point.lat,point.lng],{
+
+        radius:8,
+        fillColor:"#2E86DE",
+        color:"#fff",
+        weight:2,
+        fillOpacity:1
+
+    })
+    .addTo(map)
+    .bindPopup("<b>"+(index+1)+". "+point.name+"</b>");
+
+});
+
+
+L.polyline(latlngs,{
+    color:"#2E86DE",
+    weight:5,
+    opacity:0.9
+}).addTo(map);
+
+
+map.fitBounds(latlngs);
+
+
+var stopHtml="";
+
+ROUTE_POINTS.forEach(function(point,index){
+
+    stopHtml+=`
+
+        <div class="trp-stop-item">
+
+            <div>
+
+                <div class="trp-stop-dot"></div>
+
+                ${
+                    index<ROUTE_POINTS.length-1
+                    ?'<div class="trp-stop-line"></div>'
+                    :''
+                }
+
+            </div>
+
+            <div class="trp-stop-name">
+
+                ${point.name}
+
+            </div>
+
+        </div>
+
+    `;
+
+});
+
+document.getElementById("stopList").innerHTML=stopHtml;
+
+</script>

@@ -49,6 +49,9 @@
             margin-bottom: .9rem;
         }
 
+    th {
+        background: var(--exs-navy) !important;
+    }
     .exs-btn-download {
         background: #eef1f5;
         border: none;
@@ -74,44 +77,48 @@
         <h5>Exam Schedule</h5>
     </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Exam Id</th>
-                <th>Schedule Id</th>
-                <th>Exam Name</th>
-                <th>Academic Year</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Description</th>
-                <th>Created</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="row mt-5">
+        <div class="col-sm-10 mx-auto table-responsive">
+            <table class="table">
+                <thead class="table-dark text-light">
+                    <tr>
+                        <th>Exam Id</th>
+                        <th>Schedule Id</th>
+                        <th>Exam Name</th>
+                        <th>Academic Year</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Description</th>
+                        <th>Created</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-            @foreach (var exam in Model)
-            {
-                <tr>
-                    <td>@exam.examId</td>
-                    <td>@exam.scheduleId</td>
-                    <td>@exam.examName</td>
-                    <td>@exam.academicYear</td>
-                    <td>@exam.startExamDate.ToString("dd MMM yyyy")</td>
-                    <td>@exam.endExamDate.ToString("dd MMM yyyy")</td>
-                    <td>@exam.description</td>
-                    <td>@exam.createdAt.ToString("dd MMM yyyy")</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm viewExam"
-                                data-id="@exam.scheduleId">
-                            View Time Table
-                        </button>
-                    </td>
-                </tr>
-            }
+                    @foreach (var exam in Model)
+                    {
+                        <tr>
+                            <td>@exam.examId</td>
+                            <td>@exam.scheduleId</td>
+                            <td>@exam.examName</td>
+                            <td>@exam.academicYear</td>
+                            <td>@exam.startExamDate.ToString("dd MMM yyyy")</td>
+                            <td>@exam.endExamDate.ToString("dd MMM yyyy")</td>
+                            <td>@exam.description</td>
+                            <td>@exam.createdAt.ToString("dd MMM yyyy")</td>
+                            <td>
+                                <button class="btn btn-sm viewExam" style="background: #1c3f66; color:white;"
+                                        data-id="@exam.scheduleId">
+                                    View Time Table
+                                </button>
+                            </td>
+                        </tr>
+                    }
 
-        </tbody>
-    </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </div>
 
@@ -119,7 +126,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <div class="modal-header">
+            <div class="modal-header" style="background: #1c3f66 !important;">
                 <h4>Exam Time Table</h4>
             </div>
 
@@ -143,7 +150,7 @@
                 </p>
 
                 <a id="attachment"
-                   class="btn btn-primary"
+                   class="btn btn-primary" style="background: #1c3f66 !important;"
                    target="_blank">
                     Download Time Table
                 </a>
@@ -232,7 +239,7 @@
 
                     if (item.attachmentName) {
                         $("#attachment")
-                            .attr("href", "/Uploads/ExamTimeTable/" + item.attachmentName)
+                            .attr("href", item.attachmentName)
                             .show();
                     }
                     else {

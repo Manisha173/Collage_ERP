@@ -1,11 +1,15 @@
-﻿using College_ERP.Models.AdminServices;
+﻿using College_ERP.Models.Admin;
+using College_ERP.Models.AdminServices;
 using College_ERP.Models.HomeServices;
 using College_ERP.Models.ParentServices;
 using College_ERP.Models.StudentServices;
+using College_ERP.ViewModels;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using static College_ERP.Models.ParentServices.main;
 using static College_ERP.Models.StudentServices.main;
 
@@ -105,12 +109,92 @@ namespace College_ERP.Controllers
             return View();
         }
 
-        public ActionResult Timetable(int? userId)
+        public ActionResult Timetable()
         {
-            ViewBag.StudentId = GetActiveStudentId();
-            userId = ViewBag.StudentId;
+            int studentId = GetActiveStudentId();
 
-            return View();
+            var student = studentService.GetStudentById(studentId);
+
+            if (student == null)
+                return View(new ParentTimeTableViewModel());
+
+            string day = DateTime.Now.DayOfWeek.ToString();
+
+            var model = new ParentTimeTableViewModel
+            {
+                TodaySchedule = studentService.GetTodayScheduleOfStudent(
+                                    student.ClassId,
+                                    student.SectionId,
+                                    day),
+
+                WeeklyTimeTable = adminServices
+                                .ShowAllTimeTableDetails(student.ClassId,
+                                                         student.SectionId)
+                                .GroupBy(x => x.day.ToLower())
+                                .Select(g => new timetableshowModel
+                                {
+                                    day = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(g.Key),
+                                    ttdata = g.ToList()
+                                }).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public JsonResult GetTodaySchedule()
+        {
+            int studentId = GetActiveStudentId();
+
+            var student = studentService.GetStudentById(studentId);
+
+            string day = DateTime.Now.DayOfWeek.ToString();
+
+            var data = studentService.GetTodayScheduleOfStudent(
+                            student.ClassId,
+                            student.SectionId,
+                            day);
+
+            return Json(new
+            {
+                status = true,
+                data = data
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetWeeklyTimeTable()
+        {
+            int studentId = GetActiveStudentId();
+
+            var student = studentService.GetStudentById(studentId);
+
+            var data = adminServices.ShowAllTimeTableDetails(
+                            student.ClassId,
+                            student.SectionId);
+
+            string[] days =
+            {
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+    };
+
+            var list = days.Select(d => new
+            {
+                day = d,
+                ttdata = data.Where(x => x.day.Equals(d,
+                             StringComparison.OrdinalIgnoreCase)).ToList()
+            });
+
+            return Json(new
+            {
+                status = true,
+                data = list
+            }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Assignment()
@@ -142,8 +226,34 @@ namespace College_ERP.Controllers
         }
         public ActionResult Result()
         {
-            ViewBag.StudentId = GetActiveStudentId();
+            int studentId = GetActiveStudentId();
+
+            int adminId = studentService.GetAdminId(studentId);
+
+            ViewBag.ExamList = adminServices.GetScheduledExam(adminId);
+
             return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetReportCard(string academicYear, int examId)
+        {
+            int studentId = GetActiveStudentId();
+
+            double percentage;
+
+            var data = adminServices.GetStudentReportCard(
+                studentId,
+                academicYear,
+                examId,
+                out percentage);
+
+            return Json(new
+            {
+                status = true,
+                overallPercentage = percentage,
+                data = data
+            }, JsonRequestBehavior.AllowGet);
         }
         public ActionResult Notice()
         {
@@ -218,6 +328,24 @@ namespace College_ERP.Controllers
             ViewBag.Parent = ParentDetails;
 
             return View();
+        }
+
+        public ActionResult Logout()
+        {
+            Session.Clear();
+            Session.RemoveAll();
+            Session.Abandon();
+
+            FormsAuthentication.SignOut();
+
+            if (Request.Cookies[FormsAuthentication.FormsCookieName] != null)
+            {
+                HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName);
+                cookie.Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies.Add(cookie);
+            }
+
+            return RedirectToAction("Login", "Home");
         }
     }
 }
