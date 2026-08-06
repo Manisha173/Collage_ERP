@@ -161,11 +161,11 @@
             <div class="ntc-list-item"
                  data-title="@item.Title"
                  data-date="@item.CreatedOn"
-                 data-description="@item.Description">
+                 data-description="@Html.Raw(item.Description)">
                 <div class="ntc-bell"><i class="fa-solid fa-bell"></i></div>
                 <div>
                     <p class="ntc-title">@item.Title</p>
-                    <p class="ntc-subtitle">@item.Description</p>
+                    <p class="ntc-subtitle">@Html.Raw(item.Description)</p>
                     <p class="ntc-date">@item.CreatedOn</p>
                 </div>
             </div>
@@ -218,7 +218,7 @@
 
         modalTitle.textContent = item.dataset.title || '';
         modalDate.textContent = item.dataset.date || '';
-        modalDescription.textContent = item.dataset.description || '';
+        modalDescription.innerHTML = item.dataset.description || '';
 
         var bsModal = getModalInstance();
         if (bsModal) bsModal.show();
@@ -234,7 +234,7 @@
 
         var title = modalTitle.textContent;
         var date = modalDate.textContent;
-        var description = modalDescription.textContent;
+        var description = modalDescription.innerText;
 
         var marginLeft = 15;
         var pageWidth = doc.internal.pageSize.getWidth();
