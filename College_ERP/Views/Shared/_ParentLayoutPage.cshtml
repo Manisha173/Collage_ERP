@@ -222,7 +222,7 @@
                                         </a>
                                     </div>
                                     <div class="mt-1 shadow-sm mx-1 rounded-2 bg-light">
-                                        <a class="dropdown-item fw-bold w-100 text-center" href="@Url.Action("Logout","Parent")" id="logoutuser">
+                                        <a class="dropdown-item fw-bold w-100 text-center" href="#" id="logoutuser">
                                             <i data-feather="log-out" class="me-1 text-danger"></i>Logout
                                         </a>
                                     </div>
@@ -394,7 +394,7 @@
             }).then((result) => {
 
                 if (result.isConfirmed) {
-                    location.href = "/home/Logout"
+                    location.href = "/Parent/Logout"
                 }
             });
         })

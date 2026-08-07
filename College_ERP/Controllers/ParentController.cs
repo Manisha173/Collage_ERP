@@ -118,24 +118,37 @@ namespace College_ERP.Controllers
             if (student == null)
                 return View(new ParentTimeTableViewModel());
 
-            string day = DateTime.Now.DayOfWeek.ToString();
+            string today = DateTime.Now.DayOfWeek.ToString();
+
+            var timetable = adminServices.ShowAllTimeTableDetails(
+                                student.ClassId,
+                                student.SectionId);
+
+            string[] days =
+            {
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+    };
 
             var model = new ParentTimeTableViewModel
             {
                 TodaySchedule = studentService.GetTodayScheduleOfStudent(
                                     student.ClassId,
                                     student.SectionId,
-                                    day),
+                                    today),
 
-                WeeklyTimeTable = adminServices
-                                .ShowAllTimeTableDetails(student.ClassId,
-                                                         student.SectionId)
-                                .GroupBy(x => x.day.ToLower())
-                                .Select(g => new timetableshowModel
-                                {
-                                    day = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(g.Key),
-                                    ttdata = g.ToList()
-                                }).ToList()
+                WeeklyTimeTable = days.Select(day => new timetableshowModel
+                {
+                    day = day,
+                    ttdata = timetable
+                        .Where(x => x.day.Equals(day,
+                            StringComparison.OrdinalIgnoreCase))
+                        .ToList()
+                }).ToList()
             };
 
             return View(model);

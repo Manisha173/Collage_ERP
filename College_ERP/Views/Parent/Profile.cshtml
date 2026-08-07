@@ -1,4 +1,4 @@
-﻿@using College_ERP.Models.ParentServices;
+﻿@using College_ERP.Models.ParentServices
 @{
     ViewBag.Title = "Profile";
     Layout = "~/Views/Shared/_ParentLayoutPage.cshtml";
@@ -9,272 +9,523 @@
 
 <style>
     :root {
-        --prf-navy: #1c3f66;
-        --prf-navy-dark: #16324f;
-        --prf-muted: #6b7280;
-        --prf-ink: #1e2433;
+        --primary: #1c4f8f;
+        --secondary: #134e4a;
+        --accent: #1c4f8f;
+        --light: #042f2e;
+        --dark: #042f2e;
+        --success: #0d9488;
+        --teal-50: #f0fdfa;
+        --teal-100: #ccfbf1;
+        --teal-200: #99f6e4;
+        --teal-300: #5eead4;
+        --teal-400: #2dd4bf;
+        --teal-500: #14b8a6;
+        --teal-600: #0d9488;
+        --teal-700: #0f766e;
+        --teal-800: #115e59;
+        --teal-900: #134e4a;
+        --teal-950: #042f2e;
     }
 
-    .prf-header {
-        background: var(--prf-navy);
-        color: #fff;
-        padding: 1rem 1.25rem;
-        display: flex;
-        align-items: center;
-        gap: .75rem;
+    .profile-header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(28, 79, 143, 0.2);
     }
 
-        .prf-header a {
-            color: #fff;
-        }
-
-        .prf-header h5 {
-            margin: 0;
-            font-weight: 600;
-        }
-
-    .prf-hero {
-        background: linear-gradient(135deg,#16324f,#1c3f66);
-        padding: 10px 30px 10px;
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        position: relative;
-        overflow: hidden;
-    }
-
-        .prf-hero:before {
-            content: "";
-            position: absolute;
-            width: 220px;
-            height: 220px;
-            border-radius: 50%;
-            background: rgba(255,255,255,.08);
-            top: -120px;
-            right: -70px;
-        }
-
-        .prf-hero:after {
-            content: "";
-            position: absolute;
-            width: 160px;
-            height: 160px;
-            border-radius: 50%;
-            background: rgba(255,255,255,.05);
-            left: -70px;
-            bottom: -90px;
-        }
-
-    .prf-avatar {
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        overflow: hidden;
-        background: #fff;
-        padding: 4px;
-        box-shadow: 0 8px 25px rgba(0,0,0,.18);
-        flex-shrink: 0;
-    }
-
-        .prf-avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .prf-avatar i {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #f5f7fb;
-            color: #1c3f66;
-            font-size: 32px;
-        }
-
-    .prf-hero-info .prf-name {
-        color: #fff;
+    .page-title {
         font-weight: 700;
-        font-size: 1.2rem;
         margin: 0;
     }
 
-    .prf-hero-info .prf-email {
-        color: rgba(255,255,255,.75);
-        font-size: .88rem;
-        margin: .2rem 0 0;
-    }
-
-    .prf-wrap {
-        max-width: 900px;
-        margin: -28px auto 25px;
-        padding: 0 18px;
+    .main-profile-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(28, 79, 143, 0.1);
+        overflow: hidden;
         position: relative;
-        z-index: 10;
     }
 
-    .prf-card {
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 8px 25px rgba(28,63,102,.08);
-        padding: 22px;
-        border: none;
-    }
-
-    .prf-card-title {
-        display: flex;
-        align-items: center;
-        gap: .6rem;
-        color: var(--prf-navy);
-        font-weight: 700;
-        font-size: 1rem;
-        margin: 0 0 .9rem;
-    }
-
-        .prf-card-title i {
-            width: 30px;
-            height: 30px;
-            border-radius: 8px;
-            background: #eef2f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: .95rem;
+        .main-profile-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--teal-400), var(--secondary));
         }
 
-    .prf-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        padding: .65rem 0;
-        border-bottom: 1px solid #f0f2f5;
+    .admin-overview {
+        background: linear-gradient(135deg, var(--teal-50), white);
+        padding: 2.5rem;
+        border-bottom: 1px solid var(--teal-100);
     }
 
-        .prf-row:last-child {
+    .profile-image-container {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 4px solid var(--teal-200);
+        box-shadow: 0 8px 25px rgba(28, 79, 143, 0.2);
+        object-fit: cover;
+        transition: all 0.3s ease;
+    }
+
+        .profile-image:hover {
+            transform: scale(1.05);
+            border-color: var(--teal-300);
+        }
+
+    .profile-badge {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: var(--secondary);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .admin-basic-info {
+        margin-top: 1rem;
+    }
+
+    .admin-name {
+        color: var(--secondary);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .admin-role {
+        color: var(--accent);
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .quick-stats {
+        margin-top: 1rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 4px 15px rgba(28, 79, 143, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(28, 79, 143, 0.15);
+        }
+
+    .stat-icon {
+        background: linear-gradient(135deg, var(--teal-100), var(--teal-200));
+        color: var(--primary);
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .stat-info h6 {
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-info p {
+        color: var(--secondary);
+        font-weight: 500;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .profile-sections {
+        padding: 0;
+    }
+
+    .info-section {
+        border-bottom: 1px solid var(--teal-100);
+    }
+
+        .info-section:last-child {
             border-bottom: none;
         }
 
-        .prf-row .row-left {
-            display: flex;
-            align-items: center;
-            gap: .7rem;
-            color: var(--prf-muted);
-            font-size: .85rem;
-            flex-shrink: 0;
+    .section-header {
+        background: linear-gradient(90deg, var(--teal-50), transparent);
+        padding: 1.5rem 2.5rem;
+        border-bottom: 1px solid var(--teal-100);
+    }
+
+        .section-header h4 {
+            color: var(--secondary);
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.3rem;
         }
 
-            .prf-row .row-left i {
-                color: var(--prf-navy);
-                width: 16px;
-                text-align: center;
+        .section-header i {
+            color: var(--primary);
+        }
+
+    .section-content {
+        padding: 2rem 2.5rem;
+    }
+
+    .info-item {
+        background: var(--teal-50);
+        border-radius: 10px;
+        padding: 1rem;
+        border-left: 4px solid var(--primary);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+        .info-item:hover {
+            background: var(--teal-100);
+            transform: translateX(5px);
+            border-left-color: var(--teal-600);
+        }
+
+        .info-item label {
+            display: block;
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+            .info-item label i {
+                color: var(--primary);
             }
 
-        .prf-row .row-value {
-            font-weight: 600;
-            color: var(--prf-ink);
-            font-size: .92rem;
-            text-align: right;
-            word-break: break-word;
+        .info-item span {
+            color: var(--secondary);
+            font-weight: 500;
+            font-size: 1rem;
+            display: block;
         }
 
-            .prf-row .row-value.empty {
-                color: #b0b6c0;
+            .info-item span.empty {
+                color: #94a3b8;
                 font-weight: 400;
                 font-style: italic;
             }
+
+    .image-error {
+        background: linear-gradient(135deg, var(--teal-50), var(--teal-100));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 3rem;
+        border: 2px dashed var(--teal-200);
+        border-radius: 50%;
+        width: 200px;
+        height: 200px;
+    }
+
+    @@media (max-width: 768px) {
+        .profile-header {
+            padding: 1.5rem;
+        }
+
+            .profile-header .d-flex {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+        .admin-overview {
+            padding: 1.5rem;
+        }
+
+        .section-content {
+            padding: 1.5rem;
+        }
+
+        .profile-image {
+            width: 150px;
+            height: 150px;
+        }
+
+        .stat-card {
+            margin-bottom: 1rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .profile-image {
+            width: 120px;
+            height: 120px;
+        }
+
+        .stat-card {
+            padding: 1rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .info-section {
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+        .info-section:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .info-section:nth-child(2) {
+            animation-delay: 0.2s;
+        }
 </style>
 
-<div class="content-page bg-white">
-    <!-- Hero: avatar + name + email -->
-    <div class="prf-hero">
-        <div class="prf-avatar" id="parentAvatar">
-            <img src="@parent.FatherPhoto" alt="Parent" style="display:none;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <center><i class="fa-solid fa-user"></i></center>
-        </div>
-        <div class="prf-hero-info">
-
-            <h3 class="prf-name">
-                @parent.FatherName
-            </h3>
-
-            <p class="prf-email">
-                <i class="fa-solid fa-phone"></i>
-                @parent.FatherNo
-            </p>
-
-        </div>
-    </div>
-
-    <div class="prf-wrap">
-
-        <!-- Father Information -->
-        <div class="prf-card mt-5">
-            <p class="prf-card-title"><i class="fa-solid fa-user-tie"></i> Father Information</p>
-
-            <div class="prf-row">
-                <span class="row-left"><i class="fa-solid fa-signature"></i>Father Name</span>
-                <span class="row-value" id="fatherName">@parent.FatherName</span>
-            </div>
-            <div class="prf-row">
-                <span class="row-left"><i class="fa-solid fa-briefcase"></i>Occupation</span>
-                <span class="row-value" id="fatherOccupation">@parent.FatherOccupation</span>
-            </div>
-            <div class="prf-row">
-                <span class="row-left"><i class="fa-solid fa-phone"></i>Mobile Number</span>
-                <span class="row-value" id="fatherMobile">@parent.FatherNo</span>
-            </div>
-            <div class="prf-row">
-                <span class="row-left"><i class="fa-solid fa-building"></i>Office Address</span>
-                <span class="row-value" id="fatherOfficeAddress">@parent.FatherOfficeAddress</span>
-            </div>
-            <div class="prf-row">
-                <span class="row-left"><i class="fa-solid fa-graduation-cap"></i>Qualification</span>
-                <span class="row-value" id="fatherQualification">@parent.FatherQualification</span>
+<div class="content-page">
+    <div class="container-fluid py-4">
+        <div class="profile-header mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="page-title mb-1">
+                        <i class="fas fa-people-roof me-2"></i>
+                        Parent Profile
+                    </h2>
+                    <p class="text-light mb-0">Father &amp; Mother Information</p>
+                </div>
             </div>
         </div>
 
-        <!-- Mother Information -->
-        <div class="prf-card mt-3">
-            <p class="prf-card-title"><i class="fa-solid fa-person-dress"></i> Mother Information</p>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="main-profile-card">
+                    <div class="admin-overview">
+                        <div class="row align-items-center">
+                            <div class="col-md-3 text-center">
+                                <div class="profile-image-container">
+                                    <img src="@parent.FatherPhoto"
+                                         class="profile-image"
+                                         alt="Parent Photo"
+                                         onerror="handleImageError(this)" />
+                                    <div class="profile-badge">
+                                        <i class="fas fa-user-shield"></i>
+                                    </div>
+                                </div>
+                            </div>
 
-            <div class="prf-row">
-                <span class="row-left"><i class="fa-solid fa-signature"></i>@parent.MotherName</span>
-                <span class="row-value" id="motherName">smriti irani</span>
-            </div>
-            <div class="prf-row">
-                <span class="row-left"><i class="fa-solid fa-briefcase"></i>Occupation</span>
-                <span class="row-value" id="motherOccupation">@parent.MotherOccupation</span>
-            </div>
-            <div class="prf-row">
-                <span class="row-left"><i class="fa-solid fa-phone"></i>Mobile Number</span>
-                <span class="row-value" id="motherMobile">@parent.MotherNo</span>
-            </div>
-            <div class="prf-row">
-                <span class="row-left"><i class="fa-solid fa-building"></i>Office Address</span>
-                <span class="row-value" id="motherOfficeAddress">@parent.MotherOfficeAddress</span>
-            </div>
-            <div class="prf-row">
-                <span class="row-left"><i class="fa-solid fa-graduation-cap"></i>Qualification</span>
-                <span class="row-value" id="motherQualification">@parent.MotherQualification</span>
+                            <div class="col-md-9">
+                                <div class="quick-stats">
+                                    <div class="row ms-2">
+                                        <div class="admin-basic-info">
+                                            <h4 class="admin-name">@parent.FatherName</h4>
+                                            <p class="admin-role">Parent / Guardian</p>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="stat-card">
+                                                <div class="stat-icon">
+                                                    <i class="fas fa-phone"></i>
+                                                </div>
+                                                <div class="stat-info">
+                                                    <h6>Father Mobile</h6>
+                                                    <p>@parent.FatherNo</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="stat-card">
+                                                <div class="stat-icon">
+                                                    <i class="fas fa-phone"></i>
+                                                </div>
+                                                <div class="stat-info">
+                                                    <h6>Mother Mobile</h6>
+                                                    <p>@parent.MotherNo</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-sections">
+                        <div class="info-section">
+                            <div class="section-header">
+                                <h4><i class="fas fa-user-tie me-2"></i>Father Information</h4>
+                            </div>
+                            <div class="section-content">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-signature me-2"></i>Father Name</label>
+                                            <span id="fatherName">@parent.FatherName</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-briefcase me-2"></i>Occupation</label>
+                                            <span id="fatherOccupation">@parent.FatherOccupation</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-phone me-2"></i>Mobile Number</label>
+                                            <span id="fatherMobile">@parent.FatherNo</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-graduation-cap me-2"></i>Qualification</label>
+                                            <span id="fatherQualification">@parent.FatherQualification</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-building me-2"></i>Office Address</label>
+                                            <span id="fatherOfficeAddress">@parent.FatherOfficeAddress</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="section-header">
+                                <h4><i class="fas fa-person-dress me-2"></i>Mother Information</h4>
+                            </div>
+                            <div class="section-content">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-signature me-2"></i>Mother Name</label>
+                                            <span id="motherName">@parent.MotherName</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-briefcase me-2"></i>Occupation</label>
+                                            <span id="motherOccupation">@parent.MotherOccupation</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-phone me-2"></i>Mobile Number</label>
+                                            <span id="motherMobile">@parent.MotherNo</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-graduation-cap me-2"></i>Qualification</label>
+                                            <span id="motherQualification">@parent.MotherQualification</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-building me-2"></i>Office Address</label>
+                                            <span id="motherOfficeAddress">@parent.MotherOfficeAddress</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
-    (function () {
-        // Fill empty-looking values with an "empty" styled placeholder instead of leaving blank
-        document.querySelectorAll('.row-value').forEach(function (el) {
+    function handleImageError(img) {
+        img.style.display = "none"
+        const placeholder = document.createElement("div")
+        placeholder.className = "profile-image image-error"
+        placeholder.innerHTML = '<i class="fas fa-user"></i>'
+        img.parentNode.insertBefore(placeholder, img.nextSibling)
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".info-item span, .stat-info p").forEach(function (el) {
             var text = el.textContent.trim();
-            if (text === '' || text === '—') {
-                el.textContent = 'Not Provided';
-                el.classList.add('empty');
+            if (text === "" || text === "—") {
+                el.textContent = "Not Provided";
+                el.classList.add("empty");
             }
         });
-    })();
+
+        const cards = document.querySelectorAll(".stat-card")
+        cards.forEach((card) => {
+            card.addEventListener("mouseenter", function () {
+                this.style.transform = "translateY(-8px)"
+            })
+            card.addEventListener("mouseleave", function () {
+                this.style.transform = "translateY(0)"
+            })
+        })
+
+        const mainCard = document.querySelector(".main-profile-card")
+        mainCard.style.opacity = "0"
+        mainCard.style.transform = "translateY(50px)"
+        setTimeout(() => {
+            mainCard.style.transition = "all 0.8s ease"
+            mainCard.style.opacity = "1"
+            mainCard.style.transform = "translateY(0)"
+        }, 200)
+
+        const infoItems = document.querySelectorAll(".info-item")
+        infoItems.forEach((item) => {
+            item.addEventListener("mouseenter", function () {
+                this.style.transform = "translateX(10px)"
+                this.style.background = "var(--teal-100)"
+            })
+            item.addEventListener("mouseleave", function () {
+                this.style.transform = "translateX(0)"
+                this.style.background = "var(--teal-50)"
+            })
+        })
+    })
 </script>

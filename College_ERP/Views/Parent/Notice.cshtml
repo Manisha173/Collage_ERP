@@ -165,8 +165,15 @@
                 <div class="ntc-bell"><i class="fa-solid fa-bell"></i></div>
                 <div>
                     <p class="ntc-title">@item.Title</p>
-                    <p class="ntc-subtitle">@Html.Raw(item.Description)</p>
-                    <p class="ntc-date">@item.CreatedOn</p>
+                    @{
+                        var desc = item.Description
+                            .Replace("<p><br></p>", "")
+                            .Replace("<p>&nbsp;</p>", "");
+                    }
+                <div class="ntc-subtitle">
+                    @Html.Raw(desc)
+                </div>
+                    <div class="ntc-date">@item.CreatedOn</div>
                 </div>
             </div>
         }

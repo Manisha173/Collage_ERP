@@ -91,7 +91,7 @@
         }
 
         .pcm-item .pcm-message {
-            color: rgba(255,255,255,.9);
+            color: white !important;
             font-size: .88rem;
             margin: 0 0 1.4rem;
         }
@@ -135,9 +135,9 @@
 
                     <p class="pcm-title">@item.title</p>
 
-                    <p class="pcm-message">
+                    <div class="pcm-message" style="color: white !important;">
                         @Html.Raw(item.description)
-                    </p>
+                    </div>
 
                     @if (!string.IsNullOrEmpty(item.attachmentName))
                     {
