@@ -49,13 +49,13 @@ namespace College_ERP.ApiService
         }
         [Route("api/circular")]
         [HttpGet]
-        public IHttpActionResult Circular(int id)
+        public IHttpActionResult Circular(int id, string search = null)
         {
             try
             {
                 string username = _admin.usernameByuserid(id, "teacher");
                 int userid=_teacher.GetUserId(username);
-                var data = _teacher.GetAllCirculars(userid);
+                var data = _teacher.GetAllCirculars(userid,search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }catch(Exception ex)
             {

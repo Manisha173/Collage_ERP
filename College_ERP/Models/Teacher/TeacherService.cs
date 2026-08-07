@@ -118,7 +118,7 @@ namespace College_ERP.Models.Teacher
             return totalCirculars;
         }
 
-        public List<CircularModel> GetAllCirculars(int userid)
+        public List<CircularModel> GetAllCirculars(int userid, string search = null)
         {
             List<CircularModel> list = new List<CircularModel>();
 
@@ -128,6 +128,7 @@ namespace College_ERP.Models.Teacher
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Actions", "SelectAllCircular");
                 cmd.Parameters.AddWithValue("@userid", userid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
 
