@@ -434,12 +434,12 @@ namespace College_ERP.ApiService
         }
         [Route("api/getLeaveRequest")]
         [HttpGet]
-        public IHttpActionResult GetLeaveRequest(int teacherId)
+        public IHttpActionResult GetLeaveRequest(int teacherId, string search = null)
         {
             try
             {
                 int adminId = _teacher.GetAdminId(teacherId);
-                var data = _teacher.GetAllLeaveRequst(adminId, teacherId);
+                var data = _teacher.GetAllLeaveRequst(adminId, teacherId, search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
             catch (Exception ex)
@@ -495,11 +495,11 @@ namespace College_ERP.ApiService
 
         [Route("api/getCommunication")]
         [HttpGet]
-        public IHttpActionResult GetCommunication(int teacherId)
+        public IHttpActionResult GetCommunication(int teacherId, string search = null)
         {
             try
             {
-                var data = _teacher.GetAllTeacherCommunication(teacherId);
+                var data = _teacher.GetAllTeacherCommunication(teacherId, search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
             catch (Exception ex)
@@ -511,11 +511,11 @@ namespace College_ERP.ApiService
         #region Award
         [Route("api/getAward")]
         [HttpGet]
-        public IHttpActionResult GetAward(int teacherId)
+        public IHttpActionResult GetAward(int teacherId, string search = null)
         {
             try
             {
-                var data = _teacher.GetAllAward(teacherId);
+                var data = _teacher.GetAllAward(teacherId, search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
             catch (Exception ex)
@@ -528,12 +528,12 @@ namespace College_ERP.ApiService
         #region Event 
         [Route("api/getEvent")]
         [HttpGet]
-        public IHttpActionResult GetEvent(int teacherid)
+        public IHttpActionResult GetEvent(int teacherid, string search = null)
         {
             try
             {
                 int adminid = _teacher.GetAdminId(teacherid);
-                var data = _teacher.ShowAllEventcategory(adminid);
+                var data = _teacher.ShowAllEventcategory(adminid, search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
             catch (Exception ex)
@@ -545,11 +545,11 @@ namespace College_ERP.ApiService
         #region Schedule Of Teacher
         [Route("api/gettodayschedule")]
         [HttpGet]
-        public IHttpActionResult GetTodaySchedule(int teacherid,string day)
+        public IHttpActionResult GetTodaySchedule(int teacherid,string day, string search = null)
         {
             try
             {
-                var data = _teacher.TodayScheduleOfTeacher(teacherid, day);
+                var data = _teacher.TodayScheduleOfTeacher(teacherid, day, search);
                 string[] days = new string[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
@@ -560,11 +560,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/getfullweakschedule")]
         [HttpGet]
-        public IHttpActionResult GetFullWeakSchedule(int teacherid)
+        public IHttpActionResult GetFullWeakSchedule(int teacherid, string search = null)
         {
             try
             {
-                var data = _teacher.FullWeakSchedule(teacherid);
+                var data = _teacher.FullWeakSchedule(teacherid, search);
                 List<FullWeakScheduleModel> list = new List<FullWeakScheduleModel>();
                 string[] days = new string[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
                 foreach (var day in days)
@@ -582,11 +582,11 @@ namespace College_ERP.ApiService
         #region  exam & syllabus
         [Route("api/getexamtimetable")]
         [HttpGet]
-        public IHttpActionResult GetExamTimeTable(int teacherid,int scheduledid)
+        public IHttpActionResult GetExamTimeTable(int teacherid,int scheduledid, string search = null)
         {
             try
             {
-                var data = _teacher.GetExamTimeTableForTeacher(teacherid, scheduledid);
+                var data = _teacher.GetExamTimeTableForTeacher(teacherid, scheduledid, search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
             catch (Exception ex)
@@ -596,12 +596,12 @@ namespace College_ERP.ApiService
         }
         [Route("api/getscheduledexam")]
         [HttpGet]
-        public IHttpActionResult GetScheduledExam(int teacherid)
+        public IHttpActionResult GetScheduledExam(int teacherid, string search = null)
         {
             try
             {
                 int adminid = _teacher.GetAdminId(teacherid);
-                var data = new AdminServices().GetScheduledExam(adminid);
+                var data = new AdminServices().GetScheduledExam(adminid,search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
             catch (Exception ex)
@@ -611,11 +611,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/getsyllabus")]
         [HttpGet]
-        public IHttpActionResult GetSyllabus(int teacherid)
+        public IHttpActionResult GetSyllabus(int teacherid, string search = null)
         {
             try
             {
-                var data = _teacher.GetSyllabusForteacher(teacherid);
+                var data = _teacher.GetSyllabusForteacher(teacherid, search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
             catch (Exception ex)
@@ -625,11 +625,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/getlibrarydetails")]
         [HttpGet]
-        public IHttpActionResult GetLibraryDetails(int teacherid)
+        public IHttpActionResult GetLibraryDetails(int teacherid, string search = null)
         {
             try
             {
-                var data = _teacher.GetLibraryDetails(teacherid);
+                var data = _teacher.GetLibraryDetails(teacherid, search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
             catch (Exception ex)
@@ -641,12 +641,12 @@ namespace College_ERP.ApiService
         #region Notice
         [Route("api/getnotice")]
         [HttpGet]
-        public IHttpActionResult Notice(int teacherid)
+        public IHttpActionResult Notice(int teacherid, string search = null)
         {
             try
             {
                 int adminid = _teacher.GetAdminId(teacherid);
-                var data = _teacher.GetTeacherNotices("Teacher",teacherid,adminid);
+                var data = _teacher.GetTeacherNotices("Teacher",teacherid,adminid, search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
             catch (Exception ex)
@@ -693,11 +693,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/getnotes")]
         [HttpGet]
-        public IHttpActionResult GetNotes(int teacherid)
+        public IHttpActionResult GetNotes(int teacherid, string search = null)
         {
             try
             {
-                var data = _teacher.GetAllNotes(teacherid);
+                var data = _teacher.GetAllNotes(teacherid,search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
             catch (Exception ex)
