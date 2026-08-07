@@ -240,6 +240,10 @@ namespace College_ERP.Models.Warden
         public string RoomFacilitate { get; set; }
         public int RoomNumber { get; set; }
         public int FeesPerPerson { get; set; }
+        public int TotalFloors { get; set; }
+        public int OccupiedBeds { get; set; }
+        public int RemainingBeds { get; set; }
+        public string StudentName { get; set; }
 
     }
 }

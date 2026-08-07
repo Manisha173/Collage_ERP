@@ -780,7 +780,7 @@ namespace College_ERP.Models.Teacher
             return students;
         }
 
-        public List<AddTaskModel> GetTasksByTeacher(int teacherId)
+        public List<AddTaskModel> GetTasksByTeacher(int teacherId, string search = null)
         {
             List<AddTaskModel> list = new List<AddTaskModel>();
             try
@@ -789,6 +789,7 @@ namespace College_ERP.Models.Teacher
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@action", "selectTaskByTeacher");
                 cmd.Parameters.AddWithValue("@teacherId", teacherId);
+                cmd.Parameters.AddWithValue("@search", search ?? null);
                 connection.Open();
                 var res = cmd.ExecuteReader();
                 if (res.HasRows)
@@ -827,6 +828,7 @@ namespace College_ERP.Models.Teacher
                     cmd.Parameters.AddWithValue("@action", "updateTaskStatus");
                     cmd.Parameters.AddWithValue("@id", taskId);
                     cmd.Parameters.AddWithValue("@taskStatus", 1);
+
                     connection.Open();
                     cmd.ExecuteNonQuery();
                     return true;

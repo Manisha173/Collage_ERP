@@ -381,6 +381,7 @@ namespace College_ERP.Models.DriverServices
                             model.MaleStudents = Convert.ToInt32(sdr["MaleStudents"]);
                             model.FemaleStudents = Convert.ToInt32(sdr["FemaleStudents"]);
                             model.PickupPointCount = Convert.ToInt32(sdr["PickupPointCount"]);
+                            model.DriverProblem = Convert.ToInt32(sdr["DriverProblem"]);
                         }
                     }
 
@@ -398,5 +399,66 @@ namespace College_ERP.Models.DriverServices
             return model;
         }
 
+
+        public int drivernoticecount(int adminid)
+        {
+            int noticecount = 0;
+            try
+            {
+                using(SqlCommand command=new SqlCommand("sp_ManageDriverPanel", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@action", "drivernoticecount");
+                    command.Parameters.AddWithValue("@adminid", adminid);
+                    if (connection.State == ConnectionState.Closed)
+                        connection.Open();
+                    SqlDataReader sdr = command.ExecuteReader();
+                    while(sdr.Read())
+                    {
+                        noticecount = Convert.ToInt32(sdr["noticecount"]);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                if (connection.State == ConnectionState.Open)
+                    connection.Close();
+            }
+            return noticecount;
+        }
+        public int driverannouncementcount(int adminid)
+        {
+            int announcecount = 0;
+            try
+            {
+                using(SqlCommand command=new SqlCommand("sp_ManageDriverPanel", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@action", "announcementcount");
+                    command.Parameters.AddWithValue("@adminid", adminid);
+                    if (connection.State == ConnectionState.Closed)
+                        connection.Open();
+                    SqlDataReader sdr = command.ExecuteReader();
+                    while(sdr.Read())
+                    {
+                        announcecount = Convert.ToInt32(sdr["anouncementcount"]);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                if (connection.State == ConnectionState.Open)
+                    connection.Close();
+            }
+            return announcecount;
+        }
     }
 }

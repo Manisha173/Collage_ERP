@@ -1796,19 +1796,27 @@ namespace College_ERP.Models.Warden
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
 
-                while (rdr.Read())
+                if (rdr.HasRows)
                 {
-                    list.Add(new RoomListModel
+                    while (rdr.Read())
                     {
-                        RoomId = rdr["RoomId"] != DBNull.Value ? Convert.ToInt32(rdr["RoomId"]) : 0,
-                        RoomTypes = rdr["RoomTypes"].ToString(),
-                        BedCount = rdr["BedCount"] != DBNull.Value ? Convert.ToInt32(rdr["BedCount"]) : 0,
-                        RoomFacilitate = string.IsNullOrEmpty(rdr["RoomFacilitate"].ToString()) ? "Non Air Conditioner" : rdr["RoomFacilitate"].ToString(),
-                        RoomNumber = Convert.ToInt32(rdr["RoomNumber"]),
-                        FeesPerPerson = rdr["FeesPerPerson"] != DBNull.Value ? Convert.ToInt32(rdr["FeesPerPerson"]) : 0,
-                        floor = rdr["floor"] != DBNull.Value ? Convert.ToInt32(rdr["floor"]) : 0,
-                        totalfloors = rdr["totalfloors"] != DBNull.Value ? Convert.ToInt32(rdr["totalfloors"]) : -1
-                    });
+                        list.Add(new RoomListModel
+                        {
+                            RoomId = rdr["RoomId"] != DBNull.Value ? Convert.ToInt32(rdr["RoomId"]) : 0,
+                            RoomTypes = rdr["RoomTypes"].ToString(),
+                            BedCount = rdr["BedCount"] != DBNull.Value ? Convert.ToInt32(rdr["BedCount"]) : 0,
+                            RoomFacilitate = string.IsNullOrEmpty(rdr["RoomFacilitate"].ToString()) ? "Non Air Conditioner" : rdr["RoomFacilitate"].ToString(),
+                            RoomNumber = Convert.ToInt32(rdr["RoomNumber"]),
+                            FeesPerPerson = rdr["FeesPerPerson"] != DBNull.Value ? Convert.ToInt32(rdr["FeesPerPerson"]) : 0,
+                            floor = rdr["floor"] != DBNull.Value ? Convert.ToInt32(rdr["floor"]) : 0,
+                            totalfloors = rdr["totalfloors"] != DBNull.Value ? Convert.ToInt32(rdr["totalfloors"]) : -1,
+                            OccupiedBeds = rdr["OccupiedBeds"] != DBNull.Value ? Convert.ToInt32(rdr["OccupiedBeds"]) : 0,
+                            RemainingBeds = rdr["RemainingBeds"] != DBNull.Value ? Convert.ToInt32(rdr["RemainingBeds"]) : 0,
+                            TotalFloors = rdr["TotalFloors"] != DBNull.Value ? Convert.ToInt32(rdr["TotalFloors"]) : 0,
+                            StudentName = rdr["StudentNames"] != DBNull.Value ? rdr["StudentNames"].ToString() : "",
+
+                        });
+                    }
                 }
             }
             catch (Exception ex)
