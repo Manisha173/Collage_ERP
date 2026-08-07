@@ -18,8 +18,8 @@ namespace College_ERP.Models.StudentServices
             public string AcademicYear { get; set; }
             public string AdmissionStage { get; set; }
             public string assigmentattachment { get; set; }
-            public int userid { get; set; }
-            public int StudentId { get; set; }
+            public int? userid { get; set; }
+            public int? StudentId { get; set; }
             public string AdmissionNo { get; set; }
             public string StudentName { get; set; }
             public string BloodGroup { get; set; }
@@ -44,14 +44,14 @@ namespace College_ERP.Models.StudentServices
 
             public string PlaceOfBirth { get; set; }
             public string StateName { get; set; }
-            public int StateId { get; set; }
-            public int CityId { get; set; }
+            public int? StateId { get; set; }
+            public int? CityId { get; set; }
             public string CityName { get; set; }
             public string LastSchoolAttended { get; set; }
 
             public string YearOfPassing { get; set; }
-            public int TotalMarks { get; set; }
-            public int ObtainedMarks { get; set; }
+            public int? TotalMarks { get; set; }
+            public int? ObtainedMarks { get; set; }
             public decimal Percentage { get; set; }
             public string MobileNo { get; set; }
 
@@ -90,19 +90,19 @@ namespace College_ERP.Models.StudentServices
         }
         public class SubmitAssignmentModel
         {
-            public int id { get; set; }
-            public int studentId { get; set; }
+            public int? id { get; set; }
+            public int? studentId { get; set; }
             public HttpPostedFileBase attachment { get; set; }
             public string attachmentUrl { get; set; }
         }
         public class StudentAssignmentModel
         {
-            public int id { get; set; }
+            public int? id { get; set; }
             public string title { get; set; }
             public string description { get; set; }
-            public int StudentId { get; set; }
-            public int ClassId { get; set; }
-            public int SectionId { get; set; }
+            public int? StudentId { get; set; }
+            public int? ClassId { get; set; }
+            public int? SectionId { get; set; }
             public string StudentName { get; set; }
             public string assigmentattachment { get; set; }
             public string assignmentDate { get; set; }
@@ -110,8 +110,8 @@ namespace College_ERP.Models.StudentServices
         }
         public class CircularModel
         {
-            public int userid { get; set; }
-            public int CircularId { get; set; }
+            public int? userid { get; set; }
+            public int? CircularId { get; set; }
 
             public string CircularTitle { get; set; }
 
@@ -130,10 +130,10 @@ namespace College_ERP.Models.StudentServices
         }
         public class LibraryModel
         {
-            public int receiveQuantity { get; set; }
-            public int damageQuantity { get; set; }
+            public int? receiveQuantity { get; set; }
+            public int? damageQuantity { get; set; }
             public decimal totalLateFine { get; set; }
-            public int totalDelayDaysCount { get; set; }
+            public int? totalDelayDaysCount { get; set; }
             public string addedBy { get; set; }
             public bool recieveStatus { get; set; }
             public string bookName { get; set; }
@@ -142,17 +142,17 @@ namespace College_ERP.Models.StudentServices
             public long mobile { get; set; }
             public string orderId { get; set; }
             public string returnDate { get; set; }
-            public int bookId { get; set; }
-            public int userId { get; set; }
-            public int id { get; set; }
-            public int buyerId { get; set; }
+            public int? bookId { get; set; }
+            public int? userId { get; set; }
+            public int? id { get; set; }
+            public int? buyerId { get; set; }
             public string userType { get; set; }
             public DateTime orderDate { get; set; }
             public string orderDateString { get; set; }
             public decimal lateFine { get; set; }
             public decimal damageFine { get; set; }
             public decimal lostFine { get; set; }
-            public int quantity { get; set; }
+            public int? quantity { get; set; }
             public decimal price { get; set; }
             public decimal pricePerBook { get; set; }
         }
@@ -160,10 +160,10 @@ namespace College_ERP.Models.StudentServices
         {
             public string sectionName { get; set; }
             public string examName { get; set; }
-            public int id { get; set; }
-            public int userId { get; set; }
-            public int classId { get; set; }
-            public int sectionId { get; set; }
+            public int? id { get; set; }
+            public int? userId { get; set; }
+            public int? classId { get; set; }
+            public int? sectionId { get; set; }
             public string className { get; set; }
             public string academicYear { get; set; }
             public HttpPostedFileBase attachment { get; set; }
@@ -174,21 +174,21 @@ namespace College_ERP.Models.StudentServices
         {
             public string teacherName { get; set; }
             public string day { get; set; }
-            public int id { get; set; }
+            public int? id { get; set; }
             public string className { get; set; }
             public string sectionName { get; set; }
             public string subjectName { get; set; }
-            public int subjectId { get; set; }
+            public int? subjectId { get; set; }
             public string from { get; set; }
             public string to { get; set; }
             public string combineTime { get; set; }
         }
         public class NoticesModel
         {
-            public int NoticeId { get; set; }
-            public int UserId { get; set; }
-            public int ClassId { get; set; }
-            public int SectionId { get; set; }
+            public int? NoticeId { get; set; }
+            public int? UserId { get; set; }
+            public int? ClassId { get; set; }
+            public int? SectionId { get; set; }
             public string AcademicYear { get; set; }
             public int? ReceiverId { get; set; }
             public string UserType { get; set; }
@@ -205,7 +205,7 @@ namespace College_ERP.Models.StudentServices
             public bool AllLibrarianStatus { get; set; }
             public bool AllStudentStatus { get; set; }
             public bool AllParentStatus { get; set; }
-            public int IsSentToBothStudentParent { get; set; }
+            public int? IsSentToBothStudentParent { get; set; }
             public DateTime CreatedOn { get; set; }
         }
         public class TrasportDetailsModel
@@ -221,7 +221,7 @@ namespace College_ERP.Models.StudentServices
         public class stCommunicationModel
         {
             public string teacherName { get; set; }
-            public int id { get; set; }
+            public int? id { get; set; }
             public string title { get; set; }
             [AllowHtml]
             public string description { get; set; }
@@ -250,7 +250,7 @@ namespace College_ERP.Models.StudentServices
             public string wardenName { get; set; }
             public string wardenEmail { get; set; }
             public long wardenMobile { get; set; }
-            public int roommates { get; set; }
+            public int? roommates { get; set; }
         }
         public class MealMenuModel
         {
@@ -270,16 +270,16 @@ namespace College_ERP.Models.StudentServices
         }
         public class HostelProblemModel
         {
-            public int studentid { get; set; }
+            public int? studentid { get; set; }
             public string problem { get; set; }
             public string createdAt { get; set; }
-            public int problemStatus { get; set; }
+            public int? problemStatus { get; set; }
             public string reason { get; set; }
         }
         public class WardenCommunicationModel
         {
-            public int CommunicationId { get; set; }
-            public int userid { get; set; }
+            public int? CommunicationId { get; set; }
+            public int? userid { get; set; }
             public string Title { get; set; }
             public string Attachment { get; set; }
             public HttpPostedFileBase Attachments { get; set; }
@@ -290,30 +290,42 @@ namespace College_ERP.Models.StudentServices
 
         public class StudentAttendanceModel
         {
-            public int studentId { get; set; }
-            public int examId { get; set; }
+            public int? studentId { get; set; }
+            public int? examId { get; set; }
             public string examName { get; set; }
             public string studentName { get; set; }
-            public int theoryMarks { get; set; }
-            public int practicalMarks { get; set; }           
-            public int subjectid { get; set; }
+            public int? theoryMarks { get; set; }
+            public int? practicalMarks { get; set; }           
+            public int? subjectid { get; set; }
             public string subjectName { get; set; }
         }
 
 
         public class StudentDashboardCount
         {
-            public int TimeTableCount { get; set; }
-            public int AssignmentCount { get; set; }
-            public int HostelProblemCount { get; set; }
+            public int? TimeTableCount { get; set; }
+            public int? AssignmentCount { get; set; }
+            public int? HostelProblemCount { get; set; }
         }
 
         public class StudentICardDetails
         {
             public int studentid { get; set; }
+            public string schoolname { get; set; }
             public string studentname { get; set; }
             public int classid { get; set; }
+            public string classname { get; set; }
             public int sectionid { get; set; }
+            public string sectionname { get; set; }
+            public string address { get; set; }
+            public string studentemail { get; set; }
+            public string fathername { get; set; }
+            public string mothername { get; set; }
+            public string motherofficeno { get; set; }
+            public string fatherofficeno { get; set; }
+            public string studentphoto { get; set; }
+            public string motherphoto { get; set; }
+            public string fatherphoto { get; set; }
         }
     }
 }
