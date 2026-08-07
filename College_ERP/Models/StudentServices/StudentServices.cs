@@ -82,69 +82,76 @@ namespace College_ERP.Models.StudentServices
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@StudentId", id);
                 cmd.Parameters.AddWithValue("@Action", "SELECTBYID");
-                connection.Open();
-
-                SqlDataReader rdr = cmd.ExecuteReader();
-                if (rdr.Read())
+                if (connection.State == ConnectionState.Closed)
                 {
-                    return new StudentProfileModel
+                    connection.Open();
+                }
+                using (SqlDataReader rdr = cmd.ExecuteReader())
+                {
+                    if (rdr.HasRows)
                     {
-                        StudentId = rdr["StudentId"] != DBNull.Value ? Convert.ToInt32(rdr["StudentId"]) : 0,
-                        AdmissionNo = rdr["AdmissionNo"] != DBNull.Value ? rdr["AdmissionNo"].ToString() : "",
-                        StudentName = rdr["StudentName"] != DBNull.Value ? rdr["StudentName"].ToString() : "",
-                        MotherTongue = rdr["MotherTougue"] != DBNull.Value ? rdr["MotherTougue"].ToString() : "",
-                        ClassName = rdr["ClassName"] != DBNull.Value ? rdr["ClassName"].ToString() : "",
-                        ClassId = rdr["ClassId"] != DBNull.Value ? Convert.ToInt32(rdr["ClassId"]) : 0,
-                        SectionName = rdr["SectionName"] != DBNull.Value ? rdr["SectionName"].ToString() : "",
-                        SectionId = rdr["SectionId"] != DBNull.Value ? Convert.ToInt32(rdr["SectionId"]) : 0,
-                        Gender = rdr["Gender"] != DBNull.Value ? rdr["Gender"].ToString() : "",
-                        Religion = rdr["Religion"] != DBNull.Value ? rdr["Religion"].ToString() : "",
-                        Caste = rdr["Caste"] != DBNull.Value ? rdr["Caste"].ToString() : "",
-                        PlaceOfBirth = rdr["PlaceOfBirth"] != DBNull.Value ? rdr["PlaceOfBirth"].ToString() : "",
-                        DOB = rdr["DOB"] != DBNull.Value ? Convert.ToDateTime(rdr["DOB"]) : DateTime.MinValue,
-                        StateId = rdr["st_Id"] != DBNull.Value ? Convert.ToInt32(rdr["st_Id"]) : 0,
-                        StateName = rdr["stateName"] != DBNull.Value ? rdr["stateName"].ToString() : "",
-                        CityId = rdr["city_Id"] != DBNull.Value ? Convert.ToInt32(rdr["city_Id"]) : 0,
-                        CityName = rdr["City_Name"] != DBNull.Value ? rdr["City_Name"].ToString() : "",
-                        ObtainedMarks = rdr["ObtainedMarks"] != DBNull.Value ? Convert.ToInt32(rdr["ObtainedMarks"]) : 0,
-                        TotalMarks = rdr["TotalMarks"] != DBNull.Value ? Convert.ToInt32(rdr["TotalMarks"]) : 0,
-                        Address = rdr["Address"] != DBNull.Value ? rdr["Address"].ToString() : "",
-                        AadharNo = rdr["AadharNumber"] != DBNull.Value ? rdr["AadharNumber"].ToString() : "",
-                        YearOfPassing = rdr["YearOfPassing"] != DBNull.Value ? rdr["YearOfPassing"].ToString() : "",
-                        CurrentAddress = rdr["CurrentAddress"] != DBNull.Value ? rdr["CurrentAddress"].ToString() : "",
-                        Hobbies = rdr["Hobbies"] != DBNull.Value ? rdr["Hobbies"].ToString() : "",
-                        LastSchoolAttended = rdr["LastSchoolAttended"] != DBNull.Value ? rdr["LastSchoolAttended"].ToString() : "",
-                        DateOfAdmission = rdr["DateOfAdmission"] != DBNull.Value ? Convert.ToDateTime(rdr["DateOfAdmission"]) : DateTime.MinValue,
-                        BloodGroup = rdr["BloodGroup"] != DBNull.Value ? rdr["BloodGroup"].ToString() : "",
-                        FatherName = rdr["FatherName"] != DBNull.Value ? rdr["FatherName"].ToString() : "",
-                        FatherQualification = rdr["FatherQualification"] != DBNull.Value ? rdr["FatherQualification"].ToString() : "",
-                        Nationality = rdr["Nationality"] != DBNull.Value ? rdr["Nationality"].ToString() : "",
-                        MotherQualification = rdr["MotherQualification"] != DBNull.Value ? rdr["MotherQualification"].ToString() : "",
-                        FatherOccupation = rdr["FatherOccupation"] != DBNull.Value ? rdr["FatherOccupation"].ToString() : "",
-                        MotherOccupation = rdr["MotherOccupation"] != DBNull.Value ? rdr["MotherOccupation"].ToString() : "",
-                        StudentEmail = rdr["StudentEmail"] != DBNull.Value ? rdr["StudentEmail"].ToString() : "",
-                        FatherOfficeAddress = rdr["FatherOfficeAddress"] != DBNull.Value ? rdr["FatherOfficeAddress"].ToString() : "",
-                        MotherName = rdr["MotherName"] != DBNull.Value ? rdr["MotherName"].ToString() : "",
-                        MobileNo = rdr["MobileNo"] != DBNull.Value ? rdr["MobileNo"].ToString() : "",
-                        FatherOfficeMobileNo = rdr["FatherOfficeNo"] != DBNull.Value ? Convert.ToInt64(rdr["FatherOfficeNo"]) : 0,
-                        MotherOfficeMobileNo = rdr["MotherOfficeNo"] != DBNull.Value ? Convert.ToInt64(rdr["MotherOfficeNo"]) : 0,
-                        MotherOfficeAddress = rdr["MotherOfficeAddress"] != DBNull.Value ? rdr["MotherOfficeAddress"].ToString() : "",
-                        StudentPhotos = rdr["StudentPhoto"] != DBNull.Value ? rdr["StudentPhoto"].ToString() : "",
-                        FatherPhotos = rdr["FatherPhoto"] != DBNull.Value ? rdr["FatherPhoto"].ToString() : "",
-                        MotherPhotos = rdr["MotherPhoto"] != DBNull.Value ? rdr["MotherPhoto"].ToString() : "",
-                        StudentAadharPhotos = rdr["StudentAadharPhoto"] != DBNull.Value ? rdr["StudentAadharPhoto"].ToString() : "",
-                        AcademicYear = rdr["AcademicYear"] != DBNull.Value ? rdr["AcademicYear"].ToString() : "",
-                        AdmissionStage = rdr["AdmissionStage"] != DBNull.Value ? rdr["AdmissionStage"].ToString() : "",
-                        parentEmail = rdr["parentEmail"] != DBNull.Value ? rdr["parentEmail"].ToString() : "",
-                        IsInHostel = rdr["IsInHostel"] != DBNull.Value ? Convert.ToBoolean(rdr["IsInHostel"]) : false,
-                        AdminName = rdr["AdminName"] != DBNull.Value ? rdr["AdminName"].ToString():"",
-                        SchoolauthorizedPersonName = rdr["authorizedPersonName"] != DBNull.Value ? rdr["authorizedPersonName"].ToString():"",
-                        schoolMobile = rdr["schoolMobile"] != DBNull.Value ? rdr["schoolMobile"].ToString():"",
-                        website = rdr["website"] != DBNull.Value ? rdr["website"].ToString():"",
-                        LandLineNo = rdr["LandLineNo"] != DBNull.Value ? rdr["LandLineNo"].ToString():"",
-                        SchoolName = rdr["SchoolName"] != DBNull.Value ? rdr["SchoolName"].ToString():"",
+                        while (rdr.Read())
+                        {
+                            return new StudentProfileModel
+                            {
+                                StudentId = rdr["StudentId"] != DBNull.Value ? Convert.ToInt32(rdr["StudentId"]) : 0,
+                                AdmissionNo = rdr["AdmissionNo"] != DBNull.Value ? rdr["AdmissionNo"].ToString() : "",
+                                StudentName = rdr["StudentName"] != DBNull.Value ? rdr["StudentName"].ToString() : "",
+                                MotherTongue = rdr["MotherTougue"] != DBNull.Value ? rdr["MotherTougue"].ToString() : "",
+                                ClassName = rdr["ClassName"] != DBNull.Value ? rdr["ClassName"].ToString() : "",
+                                ClassId = rdr["ClassId"] != DBNull.Value ? Convert.ToInt32(rdr["ClassId"]) : 0,
+                                SectionName = rdr["SectionName"] != DBNull.Value ? rdr["SectionName"].ToString() : "",
+                                SectionId = rdr["SectionId"] != DBNull.Value ? Convert.ToInt32(rdr["SectionId"]) : 0,
+                                Gender = rdr["Gender"] != DBNull.Value ? rdr["Gender"].ToString() : "",
+                                Religion = rdr["Religion"] != DBNull.Value ? rdr["Religion"].ToString() : "",
+                                Caste = rdr["Caste"] != DBNull.Value ? rdr["Caste"].ToString() : "",
+                                PlaceOfBirth = rdr["PlaceOfBirth"] != DBNull.Value ? rdr["PlaceOfBirth"].ToString() : "",
+                                DOB = rdr["DOB"] != DBNull.Value ? Convert.ToDateTime(rdr["DOB"]) : DateTime.MinValue,
+                                StateId = rdr["st_Id"] != DBNull.Value ? Convert.ToInt32(rdr["st_Id"]) : 0,
+                                StateName = rdr["stateName"] != DBNull.Value ? rdr["stateName"].ToString() : "",
+                                CityId = rdr["city_Id"] != DBNull.Value ? Convert.ToInt32(rdr["city_Id"]) : 0,
+                                CityName = rdr["City_Name"] != DBNull.Value ? rdr["City_Name"].ToString() : "",
+                                ObtainedMarks = rdr["ObtainedMarks"] != DBNull.Value ? Convert.ToInt32(rdr["ObtainedMarks"]) : 0,
+                                TotalMarks = rdr["TotalMarks"] != DBNull.Value ? Convert.ToInt32(rdr["TotalMarks"]) : 0,
+                                Address = rdr["Address"] != DBNull.Value ? rdr["Address"].ToString() : "",
+                                AadharNo = rdr["AadharNumber"] != DBNull.Value ? rdr["AadharNumber"].ToString() : "",
+                                YearOfPassing = rdr["YearOfPassing"] != DBNull.Value ? rdr["YearOfPassing"].ToString() : "",
+                                CurrentAddress = rdr["CurrentAddress"] != DBNull.Value ? rdr["CurrentAddress"].ToString() : "",
+                                Hobbies = rdr["Hobbies"] != DBNull.Value ? rdr["Hobbies"].ToString() : "",
+                                LastSchoolAttended = rdr["LastSchoolAttended"] != DBNull.Value ? rdr["LastSchoolAttended"].ToString() : "",
+                                DateOfAdmission = rdr["DateOfAdmission"] != DBNull.Value ? Convert.ToDateTime(rdr["DateOfAdmission"]) : DateTime.MinValue,
+                                BloodGroup = rdr["BloodGroup"] != DBNull.Value ? rdr["BloodGroup"].ToString() : "",
+                                FatherName = rdr["FatherName"] != DBNull.Value ? rdr["FatherName"].ToString() : "",
+                                FatherQualification = rdr["FatherQualification"] != DBNull.Value ? rdr["FatherQualification"].ToString() : "",
+                                Nationality = rdr["Nationality"] != DBNull.Value ? rdr["Nationality"].ToString() : "",
+                                MotherQualification = rdr["MotherQualification"] != DBNull.Value ? rdr["MotherQualification"].ToString() : "",
+                                FatherOccupation = rdr["FatherOccupation"] != DBNull.Value ? rdr["FatherOccupation"].ToString() : "",
+                                MotherOccupation = rdr["MotherOccupation"] != DBNull.Value ? rdr["MotherOccupation"].ToString() : "",
+                                StudentEmail = rdr["StudentEmail"] != DBNull.Value ? rdr["StudentEmail"].ToString() : "",
+                                FatherOfficeAddress = rdr["FatherOfficeAddress"] != DBNull.Value ? rdr["FatherOfficeAddress"].ToString() : "",
+                                MotherName = rdr["MotherName"] != DBNull.Value ? rdr["MotherName"].ToString() : "",
+                                MobileNo = rdr["MobileNo"] != DBNull.Value ? rdr["MobileNo"].ToString() : "",
+                                FatherOfficeMobileNo = rdr["FatherOfficeNo"] != DBNull.Value ? Convert.ToInt64(rdr["FatherOfficeNo"]) : 0,
+                                MotherOfficeMobileNo = rdr["MotherOfficeNo"] != DBNull.Value ? Convert.ToInt64(rdr["MotherOfficeNo"]) : 0,
+                                MotherOfficeAddress = rdr["MotherOfficeAddress"] != DBNull.Value ? rdr["MotherOfficeAddress"].ToString() : "",
+                                StudentPhotos = rdr["StudentPhoto"] != DBNull.Value ? rdr["StudentPhoto"].ToString() : "",
+                                FatherPhotos = rdr["FatherPhoto"] != DBNull.Value ? rdr["FatherPhoto"].ToString() : "",
+                                MotherPhotos = rdr["MotherPhoto"] != DBNull.Value ? rdr["MotherPhoto"].ToString() : "",
+                                StudentAadharPhotos = rdr["StudentAadharPhoto"] != DBNull.Value ? rdr["StudentAadharPhoto"].ToString() : "",
+                                AcademicYear = rdr["AcademicYear"] != DBNull.Value ? rdr["AcademicYear"].ToString() : "",
+                                AdmissionStage = rdr["AdmissionStage"] != DBNull.Value ? rdr["AdmissionStage"].ToString() : "",
+                                parentEmail = rdr["parentEmail"] != DBNull.Value ? rdr["parentEmail"].ToString() : "",
+                                IsInHostel = rdr["IsInHostel"] != DBNull.Value ? Convert.ToBoolean(rdr["IsInHostel"]) : false,
+                                AdminName = rdr["AdminName"] != DBNull.Value ? rdr["AdminName"].ToString() : "",
+                                SchoolauthorizedPersonName = rdr["authorizedPersonName"] != DBNull.Value ? rdr["authorizedPersonName"].ToString() : "",
+                                schoolMobile = rdr["schoolMobile"] != DBNull.Value ? rdr["schoolMobile"].ToString() : "",
+                                website = rdr["website"] != DBNull.Value ? rdr["website"].ToString() : "",
+                                LandLineNo = rdr["LandLineNo"] != DBNull.Value ? rdr["LandLineNo"].ToString() : "",
+                                SchoolName = rdr["SchoolName"] != DBNull.Value ? rdr["SchoolName"].ToString() : "",
 
-                    };
+                            };
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -929,7 +936,54 @@ namespace College_ERP.Models.StudentServices
             return model;
         }
 
-
+        public StudentICardDetails StudentICardAndPassDetails(int studentid)
+        {
+            StudentICardDetails model = new StudentICardDetails();
+            try
+            {
+                using (SqlCommand command = new SqlCommand("sp_StudentRegistrationManagement", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@action", "studentdetailsforICard");
+                    command.Parameters.AddWithValue("@StudentId", studentid);
+                    if (connection.State == ConnectionState.Closed)
+                        connection.Open();
+                    SqlDataReader sdr = command.ExecuteReader();
+                    if(sdr.HasRows)
+                    {
+                        while (sdr.Read())
+                        {
+                            model.studentid = Convert.ToInt32(sdr["studentid"]);
+                            model.schoolname = sdr["SchoolName"] != DBNull.Value ? sdr["SchoolName"].ToString() : null;
+                            model.classid = Convert.ToInt32(sdr["classid"]);
+                            model.classname = sdr["classname"] != DBNull.Value ? sdr["classname"].ToString() : null;
+                            model.sectionid = Convert.ToInt32(sdr["sectionid"]);
+                            model.sectionname = sdr["sectionName"] != DBNull.Value ? sdr["sectionName"].ToString() : null;
+                            model.studentname = sdr["studentname"] != DBNull.Value ? sdr["studentname"].ToString() : null;
+                            model.address = sdr["address"] != DBNull.Value ? sdr["address"].ToString() : null;
+                            model.studentemail = sdr["studentemail"] != DBNull.Value ? sdr["studentemail"].ToString() : null;
+                            model.fathername = sdr["Fathername"] != DBNull.Value ? sdr["Fathername"].ToString() : null;
+                            model.mothername = sdr["Mothername"] != DBNull.Value ? sdr["Mothername"].ToString() : null;
+                            model.fatherofficeno = sdr["fatherofficeno"] != DBNull.Value ? sdr["fatherofficeno"].ToString() : null;
+                            model.motherofficeno = sdr["MotherOfficeNo"] != DBNull.Value ? sdr["MotherOfficeNo"].ToString() : null;
+                            model.studentphoto = sdr["studentphoto"] != DBNull.Value ? sdr["studentphoto"].ToString() : null;
+                            model.motherphoto = sdr["motherphoto"] != DBNull.Value ? sdr["motherphoto"].ToString() : null;
+                            model.fatherphoto = sdr["fatherphoto"] != DBNull.Value ? sdr["fatherphoto"].ToString() : null;
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                if (connection.State == ConnectionState.Open)
+                    connection.Close();
+            }
+            return model;
+        }
 
 
 

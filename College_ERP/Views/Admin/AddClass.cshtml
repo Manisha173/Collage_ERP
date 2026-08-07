@@ -1,4 +1,6 @@
-﻿@{
+﻿@using System.Globalization
+
+@{
     ViewBag.Title = "Add Class";
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
@@ -81,9 +83,37 @@
                                         {
                                             <tr>
                                                 <td>@sr</td>
-                                                <td>@item.InstitutionType</td>
-                                                <td>@item.EducationLevel</td>
-                                                <td>@item.ClassName</td>
+
+                                                <td>@CultureInfo.CurrentCulture.TextInfo.ToTitleCase((item.InstitutionType ?? "").ToLower())</td>
+                                                <td>@CultureInfo.CurrentCulture.TextInfo.ToTitleCase((item.EducationLevel ?? "").ToLower())</td>
+                                                <td>
+                                                    @{
+                                                        var className = (item.ClassName ?? "").ToLower();
+
+                                                        var displayName = className switch
+                                                        {
+                                                            "ba" => "B.A.",
+                                                            "bsc" => "B.Sc.",
+                                                            "bcom" => "B.Com",
+                                                            "btech" => "B.Tech",
+                                                            "be" => "B.E.",
+                                                            "bba" => "BBA",
+                                                            "bca" => "BCA",
+                                                            "llb" => "LLB",
+                                                            "mbbs" => "MBBS",
+                                                            "bpharma" => "B.Pharm",
+                                                            "barch" => "B.Arch",
+                                                            "bds" => "BDS",
+                                                            "bfa" => "BFA",
+                                                            "bms" => "BMS",
+                                                            "bhm" => "BHM",
+                                                            _ => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(
+                                                                    className.Replace("_", " "))
+                                                        };
+                                                    }
+
+                                                    @displayName
+                                                </td>
                                                 <td>
                                                     @if (item.HasStream)
                                                     {
@@ -124,7 +154,7 @@
                             <div class="card-body">
                                 <form method="post" id="classForm">
                                     <div class="row justify-content-center">
-                                            <!-- Institution Type -->
+                                        <!-- Institution Type -->
                                         <div class="col-sm-4">
                                             <label for="institutionType" class="form-label">Institution Type</label>
                                             <select name="institutionType" id="institutionType" class="form-select">
@@ -133,7 +163,7 @@
                                                 <option value="college">College</option>
                                             </select>
                                         </div>
-                                            <!-- Education Level -->
+                                        <!-- Education Level -->
                                         <div class="col-sm-4">
                                             <label for="educationLevel" class="form-label">Education Level</label>
                                             <select name="educationLevel" id="educationLevel" class="form-select">
@@ -527,7 +557,38 @@
                     Swal.showLoading();
                 }
             });
+            function getClassName(className) {
+                const courseMap = {
+                    "ba": "B.A.",
+                    "bsc": "B.Sc.",
+                    "bcom": "B.Com",
+                    "btech": "B.Tech",
+                    "be": "B.E.",
+                    "bba": "BBA",
+                    "bca": "BCA",
+                    "llb": "LLB",
+                    "mbbs": "MBBS",
+                    "bpharma": "B.Pharm",
+                    "barch": "B.Arch",
+                    "bds": "BDS",
+                    "bfa": "BFA",
+                    "bms": "BMS",
+                    "bhm": "BHM"
+                };
 
+                return courseMap[(className || "").toLowerCase()] ||
+                    (className || "").replace(/_/g, " ")
+                        .toLowerCase()
+                        .replace(/\b\w/g, c => c.toUpperCase());
+            }
+            function toTitleCase(str) {
+                return (str || "")
+                    .replace(/_/g, " ")
+                    .toLowerCase()
+                    .replace(/\b\w/g, function (char) {
+                        return char.toUpperCase();
+                    });
+            }
             $.get('/Admin/GetStreamByClassId?classid=' + classid, function (data) {
                 if (data && data.length > 0) {
                     let html = '';
@@ -535,8 +596,8 @@
                     data.forEach(function (item) {
                         html += `<tr>
                                     <td>${sr++}</td>
-                                    <td>${item.ClassName}</td>
-                                    <td>${item.ClassStream}</td>
+                                   <td>${getClassName(item.ClassName)}</td>
+                                   <td>${toTitleCase(item.ClassStream)}</td>
                                 </tr>`;
                     });
 

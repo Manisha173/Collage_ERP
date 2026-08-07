@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.ServiceModel.Channels;
 using System.Web;
 using System.Web.Http;
 using College_ERP.Models.Admin;
@@ -468,6 +469,31 @@ namespace College_ERP.ApiService
                     status=false,
                     message=ex.Message,
                     StatusCode=500
+                });
+            }
+        }
+
+        [Route("api/student-parent-icard")]
+        [HttpGet]
+        public IHttpActionResult StudentParentICardDetails(int studentid)
+        {
+            try
+            {
+                var result=_student.StudentICardAndPassDetails(studentid);
+                return Ok(new
+                {
+                    status=true,
+                    StatusCode=200,
+                    Message="I-Card details",
+                    data=result
+                });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new{
+                    status=false,
+                    StatusCode=500,
+                    Message=ex.Message
                 });
             }
         }
