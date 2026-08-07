@@ -307,5 +307,13 @@ namespace College_ERP.Models.StudentServices
             public int AssignmentCount { get; set; }
             public int HostelProblemCount { get; set; }
         }
+
+        public class StudentICardDetails
+        {
+            public int studentid { get; set; }
+            public string studentname { get; set; }
+            public int classid { get; set; }
+            public int sectionid { get; set; }
+        }
     }
 }

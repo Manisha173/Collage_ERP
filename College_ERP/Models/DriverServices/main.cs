@@ -124,6 +124,7 @@ namespace College_ERP.Models.DriverServices
             public int MaleStudents { get; set; }
             public int FemaleStudents { get; set; }
             public int PickupPointCount { get; set; }
+            public int DriverProblem { get; set; }
         }
     }
 }

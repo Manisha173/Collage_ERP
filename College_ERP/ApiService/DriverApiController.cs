@@ -168,6 +168,58 @@ namespace College_ERP.ApiService
                 });
             }
         }
+        [Route("api/drivernoticecount")]
+        [HttpGet]
+        public IHttpActionResult drivernoticecount(int driverid)
+        {
+            try
+            {
+                int adminid = _driver.GetAdminId(driverid);
+                var result = _driver.drivernoticecount(adminid);
+                return Ok(new
+                {
+                    status = true,
+                    StatusCode = 200,
+                    Message = "driver notice count!!",
+                    data = result
+                });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new
+                {
+                    status=false,
+                    StatusCode=500,
+                    Message=ex.Message
+                });
+            }
+        }
+        [Route("api/driverannouncementcount")]
+        [HttpGet]
+        public IHttpActionResult driverannouncementcount(int driverid)
+        {
+            try
+            {
+                int adminid = _driver.GetAdminId(driverid);
+                var result = _driver.driverannouncementcount(adminid);
+                return Ok(new
+                {
+                    status = true,
+                    StatusCode = 200,
+                    Message = "driver announcemnt count!!",
+                    data = result
+                });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new
+                {
+                    status=false,
+                    StatusCode=500,
+                    Message=ex.Message
+                });
+            }
+        }
 
     }
 }

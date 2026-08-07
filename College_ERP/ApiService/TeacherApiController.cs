@@ -232,11 +232,11 @@ namespace College_ERP.ApiService
         #region Task
         [Route("api/GetTask")]
         [HttpGet]
-        public IHttpActionResult GetTask(int teacherId)
+        public IHttpActionResult GetTask(int teacherId, string search = null)
         {
             try
             {
-                var data = _teacher.GetTasksByTeacher(teacherId);
+                var data = _teacher.GetTasksByTeacher(teacherId, search);
 
                 return Ok(new
                 {
