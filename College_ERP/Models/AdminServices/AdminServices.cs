@@ -11195,7 +11195,7 @@ namespace College_ERP.Models.AdminServices
             }
         }
 
-        public List<ScheduleExamModel> GetScheduledExam(int userId)
+        public List<ScheduleExamModel> GetScheduledExam(int userId, string search = null)
         {
             try
             {
@@ -11203,6 +11203,7 @@ namespace College_ERP.Models.AdminServices
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@action", "selectScheduleExam");
                 cmd.Parameters.AddWithValue("@userId", userId);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 List<ScheduleExamModel> list = new List<ScheduleExamModel>();
                 var res = cmd.ExecuteReader();
