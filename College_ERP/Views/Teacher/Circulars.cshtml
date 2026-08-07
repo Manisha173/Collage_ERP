@@ -75,29 +75,56 @@
 </div>
 
 <script>
-    function viewDesc(desc) {
+    function viewDesc(id) {
         Swal.fire({
             title: 'Please wait!',
             text: 'Loading...',
-            didOpen: () => { Swal.showLoading(); }
+            didOpen: () => Swal.showLoading()
         });
-        fetch('/teacher/GetTaskDescription?id=' + desc).then(res => res.json()).then(data => {
-            
-            
-            console.log(data);
-            if (data) {
-                $('#DescriptionContent').text(data[0].CircularDescription);
-                $('#viewDescriptionModal').modal('show');
-            } else {
-                $('#DescriptionContent').text('No description found.');
-                $('#viewDescriptionModal').modal('show');
-            }
 
-        }).catch(error => {
-            console.error('Error fetching description:', error);
-            $('#DescriptionContent').text('Failed to load description.');
-            $('#viewDescriptionModal').modal('show');
-        }).finally(() => { Swal.close() }
-        );
+        fetch('/teacher/GetTaskDescription?id=' + id)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+
+                if (data && data.CircularDescription) {
+                    $('#DescriptionContent').html(data.CircularDescription);
+                } else {
+                    $('#DescriptionContent').html('No description found.');
+                }
+
+                $('#viewDescriptionModal').modal('show');
+            })
+            .catch(error => {
+                console.error(error);
+                $('#DescriptionContent').html('Failed to load description.');
+                $('#viewDescriptionModal').modal('show');
+            })
+            .finally(() => Swal.close());
     }
+    //function viewDesc(desc) {
+    //    Swal.fire({
+    //        title: 'Please wait!',
+    //        text: 'Loading...',
+    //        didOpen: () => { Swal.showLoading(); }
+    //    });
+    //    fetch('/teacher/GetTaskDescription?id=' + desc).then(res => res.json()).then(data => {
+            
+            
+    //        console.log(data);
+    //        if (data) {
+    //            $('#DescriptionContent').text(data[0].CircularDescription);
+    //            $('#viewDescriptionModal').modal('show');
+    //        } else {
+    //            $('#DescriptionContent').text('No description found.');
+    //            $('#viewDescriptionModal').modal('show');
+    //        }
+
+    //    }).catch(error => {
+    //        console.error('Error fetching description:', error);
+    //        $('#DescriptionContent').text('Failed to load description.');
+    //        $('#viewDescriptionModal').modal('show');
+    //    }).finally(() => { Swal.close() }
+    //    );
+    //}
 </script>

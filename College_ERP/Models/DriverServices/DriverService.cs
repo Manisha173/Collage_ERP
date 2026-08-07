@@ -358,5 +358,45 @@ namespace College_ERP.Models.DriverServices
         }
         #endregion
 
+
+        public driverdashboardcount driverdashboardcount(int driverid)
+        {
+            driverdashboardcount model = new driverdashboardcount();
+
+            try
+            {
+                using(SqlCommand command=new SqlCommand("sp_ManageDriverPanel", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@action", "driverdashboardcount");
+                    command.Parameters.AddWithValue("@driverid", driverid);
+                    if (connection.State == ConnectionState.Closed)
+                        connection.Open();
+                    SqlDataReader sdr = command.ExecuteReader();
+                    if(sdr.HasRows)
+                    {
+                        while(sdr.Read())
+                        {
+                            model.TotalStudents = Convert.ToInt32(sdr["TotalStudents"]);
+                            model.MaleStudents = Convert.ToInt32(sdr["MaleStudents"]);
+                            model.FemaleStudents = Convert.ToInt32(sdr["FemaleStudents"]);
+                            model.PickupPointCount = Convert.ToInt32(sdr["PickupPointCount"]);
+                        }
+                    }
+
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                if (connection.State == ConnectionState.Open)
+                    connection.Close();
+            }
+            return model;
+        }
+
     }
 }

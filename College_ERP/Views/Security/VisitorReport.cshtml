@@ -5,6 +5,68 @@
     var data = ViewData["visitorlistrepo"] as List<College_ERP.Models.Security.main.VisitorModel>;
 }
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.2/css/buttons.dataTables.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+    .dt-button {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 8px !important;
+        color: inherit !important;
+    }
+
+        .dt-button:hover,
+        .dt-button:focus,
+        .dt-button:active {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+    .dt-buttons {
+        display: flex;
+        align-items: center;
+        gap: 8px; /* -6px ki jagah positive gap use karein */
+        margin-top: 7px;
+    }
+
+    .icon-btn {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 5px 10px !important;
+        min-width: auto !important;
+        cursor: pointer;
+    }
+
+        .icon-btn:hover {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            transform: scale(1.15);
+            transition: .2s ease;
+        }
+
+        .icon-btn:focus,
+        .icon-btn:active {
+            outline: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+    table.dataTable thead th,
+    table.dataTable thead td {
+        border: 1px solid #dee2e6 !important;
+    }
+
+    table.dataTable tbody td {
+        border: 1px solid #dee2e6 !important;
+    }
+</style>
+
 <div class="content-page">
     <div class="card">
         <div class="card-header mb-2 py-0 text-end border-bottom-0">
@@ -76,7 +138,7 @@
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
-                    <table id="datatablehis" class="table table-bordered dt-responsive nowrap w-100">
+                    <table id="datatablehis" class="table table-bordered ">
                         <thead>
                             <tr>
                                 <th>SR</th>
@@ -105,83 +167,142 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 <script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
 
+
+
+
 <script>
     function initializeDataTable() {
-        debugger
+        debugger;
+
+        // Export columns
+        const exportColumns = [0, 1, 2, 3, 4, 5];
+
+        // PDF column widths
+        const pdfColumnWidths = ['*', '*', '*', '*', '*', '*'];
+
         let table = $('#datatable').DataTable({
             ordering: false,
             autoWidth: false,
             pageLength: 10,
-            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
-            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            lengthMenu: [
+                [10, 20, 50, 100],
+                [10, 20, 50, 100]
+            ],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">',
+
             buttons: [
                 {
-                    extend: 'excel',
-                    text: 'Export Excel',
+                    extend: 'excelHtml5',
+                    text: '<i class="fa-solid fa-file-excel" style="color:#287f71;font-size:25px;"></i>',
+                    className: 'icon-btn',
+                    titleAttr: 'Export Excel',
                     exportOptions: {
-                        columns: function (idx, data, node) {
-                            return ![8].includes(idx);
-                        } // exclude last column
+                        columns: exportColumns
                     }
                 },
                 {
                     extend: 'pdfHtml5',
-                    text: 'Export PDF',
+                    text: '<i class="fa-solid fa-file-pdf" style="color:#dc3545;font-size:25px;"></i>',
+                    className: 'icon-btn',
+                    titleAttr: 'Export PDF',
                     orientation: 'landscape',
                     pageSize: 'A4',
                     exportOptions: {
-                        columns: function (idx, data, node) {
-                            return ![8].includes(idx);
-                        } // exclude last column
+                        columns: exportColumns
                     },
                     customize: function (doc) {
+
                         doc.defaultStyle.fontSize = 6;
+                        doc.defaultStyle.alignment = 'center';
+
                         doc.styles.tableHeader.fontSize = 7;
-                        doc.content[1].table.widths =
-                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                        doc.styles.tableHeader.bold = true;
+                        doc.styles.tableHeader.alignment = 'center';
+
+                        doc.content[1].table.widths = pdfColumnWidths;
+
+                        var body = doc.content[1].table.body;
+
+                        for (var i = 0; i < body.length; i++) {
+                            for (var j = 0; j < body[i].length; j++) {
+                                body[i][j].alignment = 'center';
+                                body[i][j].margin = [2, 4, 2, 4];
+                            }
+                        }
                     }
                 }
             ]
         });
+
         return table;
     }
     function initializeDataTablehis() {
-        debugger
+        debugger;
+
+        // Export columns (exclude last Action column)
+        const exportColumns = [0, 1, 2, 3, 4, 5, 6, 7];
+
+        // PDF column widths
+        const pdfColumnWidths = ['*', '*', '*', '*', '*', '*', '*', '*'];
+
         let table = $('#datatablehis').DataTable({
             ordering: false,
             autoWidth: false,
             pageLength: 10,
-            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
-            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+            lengthMenu: [
+                [10, 20, 50, 100],
+                [10, 20, 50, 100]
+            ],
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">',
+
             buttons: [
                 {
-                    extend: 'excel',
-                    text: 'Export Excel',
+                    extend: 'excelHtml5',
+                    text: '<i class="fa-solid fa-file-excel" style="color:#287f71;font-size:25px;"></i>',
+                    className: 'icon-btn',
+                    titleAttr: 'Export Excel',
                     exportOptions: {
-                        columns: function (idx, data, node) {
-                            return ![8].includes(idx);
-                        } // exclude last column
+                        columns: exportColumns
                     }
                 },
                 {
                     extend: 'pdfHtml5',
-                    text: 'Export PDF',
+                    text: '<i class="fa-solid fa-file-pdf" style="color:#dc3545;font-size:25px;"></i>',
+                    className: 'icon-btn',
+                    titleAttr: 'Export PDF',
                     orientation: 'landscape',
                     pageSize: 'A4',
                     exportOptions: {
-                        columns: function (idx, data, node) {
-                            return ![8].includes(idx);
-                        } // exclude last column
+                        columns: exportColumns
                     },
                     customize: function (doc) {
+
+                        // Default font settings
                         doc.defaultStyle.fontSize = 6;
+                        doc.defaultStyle.alignment = 'center';
+
+                        // Header settings
                         doc.styles.tableHeader.fontSize = 7;
-                        doc.content[1].table.widths =
-                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                        doc.styles.tableHeader.bold = true;
+                        doc.styles.tableHeader.alignment = 'center';
+
+                        // Set equal column widths
+                        doc.content[1].table.widths = pdfColumnWidths;
+
+                        // Center all table cells
+                        var body = doc.content[1].table.body;
+
+                        for (var i = 0; i < body.length; i++) {
+                            for (var j = 0; j < body[i].length; j++) {
+                                body[i][j].alignment = 'center';
+                                body[i][j].margin = [2, 4, 2, 4];
+                            }
+                        }
                     }
                 }
             ]
         });
+
         return table;
     }
     $(document).ready(function () {

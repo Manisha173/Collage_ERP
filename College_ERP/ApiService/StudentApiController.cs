@@ -444,5 +444,32 @@ namespace College_ERP.ApiService
             }
         }
         #endregion
+
+        [Route("api/StudentDashboardCount")]
+        [HttpGet]
+        public IHttpActionResult StudentDashboardCount(int studentid)
+        {
+            try
+            {
+                string day = DateTime.Now.DayOfWeek.ToString();
+                var result = _student.StudentDashboardCount(studentid, day);
+                return Ok(new
+                {
+                    status=true,
+                    StatusCode=200,
+                    message="Student dashboard count!!",
+                    data=result
+                });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new
+                {
+                    status=false,
+                    message=ex.Message,
+                    StatusCode=500
+                });
+            }
+        }
     }
 }

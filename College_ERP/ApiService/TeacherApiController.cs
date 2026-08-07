@@ -1,4 +1,14 @@
-﻿using Antlr.Runtime.Tree;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Protocols.WSTrust;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Mail;
+using System.Web;
+using System.Web.ApplicationServices;
+using System.Web.Http;
+using Antlr.Runtime.Tree;
 using College_ERP.Models.Admin;
 using College_ERP.Models.AdminServices;
 using College_ERP.Models.HomeServices;
@@ -6,14 +16,6 @@ using College_ERP.Models.SuperAdmin;
 using College_ERP.Models.Teacher;
 using Newtonsoft.Json;
 using PdfSharp.Charting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Mail;
-using System.Web;
-using System.Web.Http;
 using static System.Collections.Specialized.BitVector32;
 
 namespace College_ERP.ApiService
@@ -704,7 +706,7 @@ namespace College_ERP.ApiService
             }
         }
         [Route("api/deletenotes")]
-        [HttpDelete]
+        [HttpPost]
         public IHttpActionResult DeleteNotes(int id)
         {
             try
@@ -741,6 +743,52 @@ namespace College_ERP.ApiService
             }
         }
         #endregion
+
+
+        #region holiday
+        [Route("api/GetHolidayByUserid")]
+        [HttpGet]
+        public IHttpActionResult GetHolidateByUserid(int userid)
+        {
+            try
+            {
+                int userId = _teacher.GetAdminId(userid);
+                var holidays = _teacher.GetHolidaysForAll(userId);
+                return Ok(new
+                {
+                    status = true,
+                    message = "Holiday List!!",
+                    Holiday = holidays
+                });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new { status = false, message = ex.Message });
+            }
+        }
+
+        #endregion
+
+        [Route("api/teacherdashboard-count")]
+        [HttpGet]
+        public IHttpActionResult teacherdashboardcount(int teacherid)
+        {
+            try
+            {
+                int userId = _teacher.GetAdminId(teacherid);
+                var result = _teacher.GetDashboardCounts(userId, teacherid);
+                return Ok(new
+                {
+                    status = true,
+                    message = "teacher dashboard count!",
+                    data = result
+                });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new { Status = false, message = ex.Message });
+            }
+        }
 
 
     }

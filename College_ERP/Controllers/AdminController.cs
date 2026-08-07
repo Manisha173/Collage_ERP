@@ -3942,5 +3942,12 @@ namespace College_ERP.Controllers
             var data = adminservices.GetOptionalSubjectByStreamId(streamId);
             return Json(data, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult communicationByWarden()
+        {
+            int userid = homeService.GetUserId(User.Identity.Name);
+            ViewData["CommunicationList"] = adminservices.AdminCommunicationListByWarden(userid);
+            return View();
+        }
     }
 }

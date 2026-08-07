@@ -50,7 +50,9 @@
                                 <tr>
                                     <td>@sr</td>
                                     <td>
-                                        <a href="javascript:void(0);" onclick="viewMealDetails('@item.Day')"> @item.Day </a>
+                                        <a href="javascript:void(0);" onclick="viewMealDetails('@item.Day')">
+                                            @item.Day
+                                        </a>
                                     </td>
                                     <td>@item.CreatedDate.ToString("dd-MMM-yyyy")</td>
                                     <td>
@@ -75,17 +77,31 @@
         <div class="modal fade" id="mealDetailsModal" tabindex="-1" aria-labelledby="mealDetailsLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
-                    <div class="modal-header bg-primary text-light">
+
+                    <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title" id="mealDetailsLabel">Meal Details</h5>
-                        <button type="button" class="btn-close text-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+
                     <div class="modal-body" id="mealDetailsBody">
-                        <!-- Content will be loaded via AJAX -->
                     </div>
+
                 </div>
             </div>
         </div>
-
+        <!--<div class="modal fade" id="mealDetailsModal" tabindex="-1" aria-labelledby="mealDetailsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5 class="modal-title" id="mealDetailsLabel">Meal Details</h5>
+                    <button type="button" class="btn-close text-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="mealDetailsBody">-->
+        <!-- Content will be loaded via AJAX -->
+        <!--</div>
+            </div>
+        </div>
+    </div>-->
         <!-- Modal for Adding Meal Schedule -->
         <div class="modal fade" id="exampleModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable modal-lg">
@@ -163,7 +179,8 @@
 
     </div>
 </div>
-
+<script src="~/assets/tom-select/tom-select.complete.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     $(document).on('click', '.remove-meal-row', function () {
         $(this).closest('.meal-row').remove();
@@ -289,31 +306,82 @@
             type: 'GET',
             data: { day: day },
             success: function (response) {
+
+                console.log(response);
+
                 if (response.success) {
+
                     var html = '';
-                    html += '<h5 style="font-weight:bold; margin-bottom:15px;">Day: ' + day + '</h5>';
+                    html += '<h5 class="fw-bold mb-3">Day: ' + day + '</h5>';
+
                     response.data.forEach(function (meal) {
-                        html += '<div class="meal-block mb-3">';
-                        html += '<h6><span style="font-weight:bold;">Meal Time:</span> ' + meal.StartTime + ' - ' + meal.EndTime + '</h6>';
-                        html += '<ul>';
-                        meal.Menus.forEach(function (menu) {
-                            html += '<li>' + menu.Menu + '</li>';
-                        });
-                        html += '</ul>';
+
+                        html += '<div class="meal-block mb-3 border-bottom pb-2">';
+                        html += '<h6><strong>Meal Time:</strong> ' + meal.StartTime + ' - ' + meal.EndTime + '</h6>';
+
+                        if (meal.Menus && meal.Menus.length > 0) {
+                            html += '<ul>';
+
+                            meal.Menus.forEach(function (menu) {
+                                html += '<li>' + menu.Menu + '</li>';
+                            });
+
+                            html += '</ul>';
+                        }
+                        else {
+                            html += '<p>No menu available.</p>';
+                        }
+
                         html += '</div>';
                     });
 
                     $('#mealDetailsBody').html(html);
-                    $('#mealDetailsModal').modal('show');
+
+                    // Bootstrap 5 Modal
+                    var modal = new bootstrap.Modal(document.getElementById('mealDetailsModal'));
+                    modal.show();
+
                 } else {
                     Swal.fire("Error", response.message, "error");
                 }
             },
-            error: function () {
-                Swal.fire("Error", "Some error occured", "error");
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+                Swal.fire("Error", "Some error occurred.", "error");
             }
         });
     }
+    //function viewMealDetails(day) {
+    //    $.ajax({
+    //        url: '/Warden/GetMealDetailsByDay',
+    //        type: 'GET',
+    //        data: { day: day },
+    //        success: function (response) {
+    //            if (response.success) {
+    //                var html = '';
+    //                html += '<h5 style="font-weight:bold; margin-bottom:15px;">Day: ' + day + '</h5>';
+    //                response.data.forEach(function (meal) {
+    //                    html += '<div class="meal-block mb-3">';
+    //                    html += '<h6><span style="font-weight:bold;">Meal Time:</span> ' + meal.StartTime + ' - ' + meal.EndTime + '</h6>';
+    //                    html += '<ul>';
+    //                    meal.Menus.forEach(function (menu) {
+    //                        html += '<li>' + menu.Menu + '</li>';
+    //                    });
+    //                    html += '</ul>';
+    //                    html += '</div>';
+    //                });
+
+    //                $('#mealDetailsBody').html(html);
+    //                $('#mealDetailsModal').modal('show');
+    //            } else {
+    //                Swal.fire("Error", response.message, "error");
+    //            }
+    //        },
+    //        error: function () {
+    //            Swal.fire("Error", "Some error occured", "error");
+    //        }
+    //    });
+    //}
 
     //delete
     function deleteClass(mealId) {

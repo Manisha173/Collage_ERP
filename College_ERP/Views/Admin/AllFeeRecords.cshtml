@@ -70,7 +70,69 @@
             box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
         }
 </style>
+<style>
+    .dt-button {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 8px !important;
+        color: inherit !important;
+    }
 
+        .dt-button:hover {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .dt-button:focus,
+        .dt-button:active {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+    .dt-buttons {
+        display: flex;
+        gap: -6px;
+        align-items: center;
+    }
+
+
+
+    .icon-btn {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 5px 10px !important;
+        min-width: auto !important;
+        cursor: pointer;
+    }
+
+        .icon-btn:hover {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            transform: scale(1.15);
+            transition: 0.2s ease;
+        }
+
+        .icon-btn:focus,
+        .icon-btn:active {
+            outline: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+    .dt-buttons {
+        display: flex;
+        align-items: center;
+        gap: -6px;
+        position: initial;
+        margin-top: 7px;
+    }
+</style>
 <div class="content-page">
     <div class="content">
         <div class="container-fluid">
@@ -606,42 +668,99 @@
 
 <script>
     function initializeDataTable() {
-        debugger
+        debugger;
+
+        // Export all columns except 8 and 9
+        const exportColumns = [0, 1, 2, 3, 4, 5, 6, 7];
+
+        const pdfColumnWidths = [
+            '*', '*', '*', '*',
+            '*', '*', '*', '*'
+        ];
+
+
         let table = $('#datatablefeestatement').DataTable({
+
             ordering: false,
             autoWidth: false,
+
             pageLength: 10,
-            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
-            dom: '<"top"lBf>rt<"bottom"ip><"clear">', // l = length, B = buttons, f = filter (search)
+
+            lengthMenu: [
+                [10, 20, 50, 100],
+                [10, 20, 50, 100]
+            ],
+
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">',
+
+
             buttons: [
+
                 {
                     extend: 'excel',
-                    text: 'Export Excel',
+
+                    text: '<i class="fa-solid fa-file-excel" style="color:#287f71;font-size:25px;"></i>',
+
+                    className: 'icon-btn',
+
+                    titleAttr: 'Export Excel',
+
                     exportOptions: {
-                        columns: function (idx, data, node) {
-                            return ![8, 9].includes(idx);
-                        } // exclude last column
+                        columns: exportColumns
                     }
                 },
+
+
                 {
                     extend: 'pdfHtml5',
-                    text: 'Export PDF',
+
+                    text: '<i class="fa-solid fa-file-pdf" style="color:#dc3545;font-size:25px;"></i>',
+
+                    className: 'icon-btn',
+
+                    titleAttr: 'Export PDF',
+
                     orientation: 'landscape',
+
                     pageSize: 'A4',
+
                     exportOptions: {
-                        columns: function (idx, data, node) {
-                            return ![8, 9].includes(idx);
-                        } // exclude last column
+                        columns: exportColumns
                     },
+
+
                     customize: function (doc) {
+
                         doc.defaultStyle.fontSize = 6;
+                        doc.defaultStyle.alignment = 'center';
+
+
                         doc.styles.tableHeader.fontSize = 7;
-                        doc.content[1].table.widths =
-                            Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                        doc.styles.tableHeader.bold = true;
+                        doc.styles.tableHeader.alignment = 'center';
+
+
+                        doc.content[1].table.widths = pdfColumnWidths;
+
+
+                        var body = doc.content[1].table.body;
+
+
+                        for (var i = 0; i < body.length; i++) {
+
+                            for (var j = 0; j < body[i].length; j++) {
+
+                                body[i][j].alignment = 'center';
+                                body[i][j].margin = [2, 4, 2, 4];
+
+                            }
+                        }
                     }
                 }
             ]
         });
+
+
         return table;
     }
 

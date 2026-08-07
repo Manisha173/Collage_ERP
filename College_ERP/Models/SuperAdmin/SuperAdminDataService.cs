@@ -133,30 +133,36 @@ namespace College_ERP.Models.SuperAdmin
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@action", "SelectCompanyByUserid");
                 cmd.Parameters.AddWithValue("@userid", id);
-
-                connection.Open();
+                if (connection.State == ConnectionState.Closed)
+                {
+                    connection.Open();
+                }
                 rdr = cmd.ExecuteReader();
 
-                while (rdr.Read())
+                if (rdr.HasRows)
                 {
-                    list = new SuperAdminModel();
 
-                    list.Id = rdr["Id"] != DBNull.Value ? Convert.ToInt32(rdr["Id"]) : 0;
-                    list.SchoolName = rdr["SchoolName"]?.ToString();
-                    list.AuthorizedPersonName = rdr["AuthorizedPersonName"]?.ToString();
-                    list.MobileNo = rdr["MobileNo"] != DBNull.Value ? Convert.ToInt64(rdr["MobileNo"]) : (long?)null;
-                    list.LandLineNo = rdr["LandLineNo"] != DBNull.Value ? Convert.ToInt64(rdr["LandLineNo"]) : (long?)null;
-                    list.EmailId = rdr["EmailId"]?.ToString();
-                    list.stateName = rdr["stateName"]?.ToString();
-                    list.State =Convert.ToInt32(rdr["state"] ?? 0);
-                    list.City = Convert.ToInt32(rdr["city"] ?? 0);
-                    list.City_Name = rdr["City_Name"]?.ToString();
-                    list.Website = rdr["Website"]?.ToString();
-                    list.School_Logo = rdr["School_Logo"]?.ToString();
-                    list.Duration = rdr["Duration"]?.ToString();
-                    list.Authorized_Sign = rdr["Authorized_Sign"]?.ToString();
-                    list.School_Address = rdr["School_Address"]?.ToString();
-                 
+                    while (rdr.Read())
+                    {
+                        list = new SuperAdminModel();
+
+                        list.Id = rdr["Id"] != DBNull.Value ? Convert.ToInt32(rdr["Id"]) : 0;
+                        list.SchoolName = rdr["SchoolName"]?.ToString();
+                        list.AuthorizedPersonName = rdr["AuthorizedPersonName"]?.ToString();
+                        list.MobileNo = rdr["MobileNo"] != DBNull.Value ? Convert.ToInt64(rdr["MobileNo"]) : (long?)null;
+                        list.LandLineNo = rdr["LandLineNo"] != DBNull.Value ? Convert.ToInt64(rdr["LandLineNo"]) : (long?)null;
+                        list.EmailId = rdr["EmailId"]?.ToString();
+                        list.stateName = rdr["stateName"]?.ToString();
+                        list.State = Convert.ToInt32(rdr["state"] ?? 0);
+                        list.City = Convert.ToInt32(rdr["city"] ?? 0);
+                        list.City_Name = rdr["City_Name"]?.ToString();
+                        list.Website = rdr["Website"]?.ToString();
+                        list.School_Logo = rdr["School_Logo"]?.ToString();
+                        list.Duration = rdr["Duration"]?.ToString();
+                        list.Authorized_Sign = rdr["Authorized_Sign"]?.ToString();
+                        list.School_Address = rdr["School_Address"]?.ToString();
+
+                    }
                 }
             return list;
             }

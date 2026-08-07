@@ -154,8 +154,13 @@ namespace College_ERP.Controllers
         public ActionResult GetTaskDescription(int id)
         {
             int teacherId = homeService.GetUserId(User.Identity.Name);
-            var data = teacherService.GetAllCirculars(teacherId).Where(d=>d.CircularId==id).ToList();
-            return Json(data,JsonRequestBehavior.AllowGet);
+
+            // Breakpoint yahan lagao
+            var allData = teacherService.GetAllCirculars(teacherId);
+
+            var data = allData.FirstOrDefault(x => x.CircularId == id);
+
+            return Json(data, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public JsonResult UpdateTaskStatus(int id)
@@ -280,7 +285,9 @@ namespace College_ERP.Controllers
         [HttpPost]
         public ActionResult ApplyLeave(LeaveRequestModel sm)
         {
-            sm.userId = teacherService.GetUserId(User.Identity.Name);
+           int userId = teacherService.GetUserId(User.Identity.Name);
+            int adminid = teacherService.GetAdminId(userId);
+            sm.userId = adminid;
             sm.teacherId = Convert.ToInt32(homeService.GetUserId(User.Identity.Name));
             string uniqueFileName = null;
             if (sm.attachment != null && sm.attachment.ContentLength > 0)

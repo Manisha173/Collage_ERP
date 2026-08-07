@@ -299,5 +299,13 @@ namespace College_ERP.Models.StudentServices
             public int subjectid { get; set; }
             public string subjectName { get; set; }
         }
+
+
+        public class StudentDashboardCount
+        {
+            public int TimeTableCount { get; set; }
+            public int AssignmentCount { get; set; }
+            public int HostelProblemCount { get; set; }
+        }
     }
 }

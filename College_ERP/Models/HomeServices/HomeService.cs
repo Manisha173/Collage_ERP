@@ -60,6 +60,41 @@ namespace College_ERP.Models.HomeServices
 
             }
         }
+        public bool IsInHostelornot(int userid)
+        {
+            try
+            {
+                bool isInHostel = false;
+
+                cmd = new SqlCommand("sp_loginmanager", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@action", "IsInHostel");
+                cmd.Parameters.AddWithValue("@userid", userid);
+
+                con.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        isInHostel = Convert.ToBoolean(reader["IsInHostel"]);
+                    }
+                }
+
+                return isInHostel;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+
+                cmd?.Dispose();
+            }
+        }
 
         #region jwt token
 
@@ -114,6 +149,7 @@ namespace College_ERP.Models.HomeServices
                     {
                         Id = Convert.ToInt32(dr["Id"]),
                         UserId = Convert.ToInt32(dr["UserId"]),
+                        Username = dr["Username"].ToString(),
                         RefreshToken = dr["RefreshToken"].ToString(),
                         ExpiryDate = Convert.ToDateTime(dr["ExpiryDate"]),
                         IsRevoked = Convert.ToBoolean(dr["IsRevoked"])
@@ -155,7 +191,7 @@ namespace College_ERP.Models.HomeServices
                     con.Close();
             }
         }
-        public string GetRoleByUserId(int userId)
+        public string GetRoleByUserId(string username)
         {
             try
             {
@@ -165,7 +201,7 @@ namespace College_ERP.Models.HomeServices
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 cmd.Parameters.AddWithValue("@Action", "GetRoleByUserid");
-                cmd.Parameters.AddWithValue("@UserId", userId);
+                cmd.Parameters.AddWithValue("@username", username);
 
                 if (con.State == ConnectionState.Closed)
                     con.Open();

@@ -3201,7 +3201,8 @@ namespace College_ERP.Models.AdminServices
                         BankAccountNumber = rdr["BankAccountNumber"] != DBNull.Value ? Convert.ToInt64(rdr["BankAccountNumber"]) : 0,
                         ReenterBankAccountNumber = rdr["ReenterBankAccountNumber"] != DBNull.Value ? Convert.ToInt64(rdr["ReenterBankAccountNumber"]) : 0,
 
-                        IfscCode = rdr["IFSCCode"]?.ToString()
+                        IfscCode = rdr["IFSCCode"]?.ToString(),
+                        userid = Convert.ToInt32(rdr["userid"])
 
                     };
                 }
@@ -8085,26 +8086,105 @@ namespace College_ERP.Models.AdminServices
                     {
                         orders.Add(new OrderHistoryModel
                         {
-                            id = Convert.ToInt32(reader["id"]),
-                            addedBy = reader["addedBy"].ToString(),
-                            orderId = reader["shortOrderId"].ToString(),
+                            id = reader["id"] == DBNull.Value ? 0 : Convert.ToInt32(reader["id"]),
+
+                            addedBy = reader["addedBy"] == DBNull.Value ? "" : reader["addedBy"].ToString(),
+
+                            orderId = reader["shortOrderId"] == DBNull.Value ? "" : reader["shortOrderId"].ToString(),
+
                             userId = reader["userId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["userId"]),
+
                             bookId = reader["bookId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["bookId"]),
+
                             buyerId = reader["buyerId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["buyerId"]),
-                            userType = reader["userType"].ToString(),
-                            orderDate = reader["orderDate"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(reader["orderDate"]),
-                            orderDateString = reader["orderDate"] == null ? null: Convert.ToDateTime(reader["orderDate"]).ToString("dd-MMM-yyyy"),
-                            lateFine = reader["lateFine"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["lateFine"]),
-                            damageFine = reader["damageFine"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["damageFine"]),
-                            lostFine = reader["lostFine"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["lostFine"]),
-                            quantity = reader["quantity"] == DBNull.Value ? 0 : Convert.ToInt32(reader["quantity"]),
-                            price = reader["price"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["price"]),
-                            returnDate = reader["returnDate"] == null ? "" : Convert.ToDateTime(reader["returnDate"]).ToString("dd-MMM-yyyy"),
-                            name = reader["userType"].ToString().Equals("student") ? reader["StudentName"].ToString() : reader["userType"].ToString().Equals("teacher") ? reader["TeacherName"].ToString() : null,
-                            email = reader["userType"].ToString().Equals("student") ? reader["StudentEmail"].ToString() : reader["userType"].ToString().Equals("teacher") ? reader["TeacherEmail"].ToString() : null,
-                            mobile = reader["userType"].ToString().Equals("student") ? Convert.ToInt64(reader["MobileNo"]) : reader["userType"].ToString().Equals("teacher") ? Convert.ToInt64(reader["TeacherMobile"]) : 0,
-                            recieveStatus = Convert.ToBoolean(reader["recieveStatus"]),
-                            bookName = reader["title"].ToString()
+
+
+                            userType = reader["userType"] == DBNull.Value ? "" : reader["userType"].ToString(),
+
+
+                            orderDate = reader["orderDate"] == DBNull.Value
+                ? DateTime.MinValue
+                : Convert.ToDateTime(reader["orderDate"]),
+
+
+                            orderDateString = reader["orderDate"] == DBNull.Value
+                ? ""
+                : Convert.ToDateTime(reader["orderDate"]).ToString("dd-MMM-yyyy"),
+
+
+                            lateFine = reader["lateFine"] == DBNull.Value
+                ? 0
+                : Convert.ToDecimal(reader["lateFine"]),
+
+
+                            damageFine = reader["damageFine"] == DBNull.Value
+                ? 0
+                : Convert.ToDecimal(reader["damageFine"]),
+
+
+                            lostFine = reader["lostFine"] == DBNull.Value
+                ? 0
+                : Convert.ToDecimal(reader["lostFine"]),
+
+
+                            quantity = reader["quantity"] == DBNull.Value
+                ? 0
+                : Convert.ToInt32(reader["quantity"]),
+
+
+                            price = reader["price"] == DBNull.Value
+                ? 0
+                : Convert.ToDecimal(reader["price"]),
+
+
+                            returnDate = reader["returnDate"] == DBNull.Value
+                ? ""
+                : Convert.ToDateTime(reader["returnDate"]).ToString("dd-MMM-yyyy"),
+
+
+                            name = reader["userType"] != DBNull.Value
+           && reader["userType"].ToString().ToLower() == "student"
+           ? (reader["StudentName"] == DBNull.Value ? "" : reader["StudentName"].ToString())
+
+           : reader["userType"] != DBNull.Value
+           && reader["userType"].ToString().ToLower() == "teacher"
+           ? (reader["TeacherName"] == DBNull.Value ? "" : reader["TeacherName"].ToString())
+
+           : "",
+
+
+                            email = reader["userType"] != DBNull.Value
+           && reader["userType"].ToString().ToLower() == "student"
+           ? (reader["StudentEmail"] == DBNull.Value ? "" : reader["StudentEmail"].ToString())
+
+           : reader["userType"] != DBNull.Value
+           && reader["userType"].ToString().ToLower() == "teacher"
+           ? (reader["TeacherEmail"] == DBNull.Value ? "" : reader["TeacherEmail"].ToString())
+
+           : "",
+
+
+                            mobile = reader["userType"] != DBNull.Value
+             && reader["userType"].ToString().ToLower() == "student"
+
+             ? (reader["MobileNo"] == DBNull.Value ? 0 : Convert.ToInt64(reader["MobileNo"]))
+
+             : reader["userType"] != DBNull.Value
+             && reader["userType"].ToString().ToLower() == "teacher"
+
+             ? (reader["TeacherMobile"] == DBNull.Value ? 0 : Convert.ToInt64(reader["TeacherMobile"]))
+
+             : 0,
+
+
+                            recieveStatus = reader["recieveStatus"] == DBNull.Value
+                    ? false
+                    : Convert.ToBoolean(reader["recieveStatus"]),
+
+
+                            bookName = reader["title"] == DBNull.Value
+               ? ""
+               : reader["title"].ToString()
                         });
                     }
                 }
@@ -8139,24 +8219,71 @@ namespace College_ERP.Models.AdminServices
                     {
                         orders.Add(new OrderHistoryModel
                         {
-                            id = Convert.ToInt32(reader["id"]),
-                            orderId = reader["shortOrderId"].ToString(),
+                            id = reader["id"] == DBNull.Value ? 0 : Convert.ToInt32(reader["id"]),
+                            addedBy = reader["addedBy"] == DBNull.Value ? "" : reader["addedBy"].ToString(),
+
+                            orderId = reader["shortOrderId"] == DBNull.Value ? "" : reader["shortOrderId"].ToString(),
+
                             userId = reader["userId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["userId"]),
+
                             bookId = reader["bookId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["bookId"]),
+
                             buyerId = reader["buyerId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["buyerId"]),
-                            userType = reader["userType"].ToString(),
-                            orderDate = reader["orderDate"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(reader["orderDate"]),
+
+                            userType = reader["userType"] == DBNull.Value ? "" : reader["userType"].ToString(),
+
+                            orderDate = reader["orderDate"] == DBNull.Value
+                ? DateTime.MinValue
+                : Convert.ToDateTime(reader["orderDate"]),
+
+                            orderDateString = reader["orderDate"] == DBNull.Value
+                ? ""
+                : Convert.ToDateTime(reader["orderDate"]).ToString("dd-MMM-yyyy"),
+
+
                             lateFine = reader["lateFine"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["lateFine"]),
+
                             damageFine = reader["damageFine"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["damageFine"]),
+
                             lostFine = reader["lostFine"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["lostFine"]),
+
                             quantity = reader["quantity"] == DBNull.Value ? 0 : Convert.ToInt32(reader["quantity"]),
+
                             price = reader["price"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["price"]),
-                            returnDate = reader["returnDate"] == null ? "" : Convert.ToDateTime(reader["returnDate"]).ToString("dd-MM-yyyy"),
-                            name = reader["userType"].ToString().Equals("student") ? reader["StudentName"].ToString() : reader["userType"].ToString().Equals("teacher") ? reader["TeacherName"].ToString() : null,
-                            email = reader["userType"].ToString().Equals("student") ? reader["StudentEmail"].ToString() : reader["userType"].ToString().Equals("teacher") ? reader["TeacherEmail"].ToString() : null,
-                            mobile = reader["userType"].ToString().Equals("student") ? Convert.ToInt64(reader["MobileNo"]) : reader["userType"].ToString().Equals("teacher") ? Convert.ToInt64(reader["TeacherMobile"]) : 0,
-                            recieveStatus = Convert.ToBoolean(reader["recieveStatus"]),
-                            bookName = reader["title"].ToString()
+
+
+                            returnDate = reader["returnDate"] == DBNull.Value
+                ? ""
+                : Convert.ToDateTime(reader["returnDate"]).ToString("dd-MMM-yyyy"),
+
+
+                            name = reader["userType"]?.ToString().ToLower() == "student"
+            ? (reader["StudentName"] == DBNull.Value ? "" : reader["StudentName"].ToString())
+            : reader["userType"]?.ToString().ToLower() == "teacher"
+            ? (reader["TeacherName"] == DBNull.Value ? "" : reader["TeacherName"].ToString())
+            : "",
+
+
+                            email = reader["userType"]?.ToString().ToLower() == "student"
+            ? (reader["StudentEmail"] == DBNull.Value ? "" : reader["StudentEmail"].ToString())
+            : reader["userType"]?.ToString().ToLower() == "teacher"
+            ? (reader["TeacherEmail"] == DBNull.Value ? "" : reader["TeacherEmail"].ToString())
+            : "",
+
+
+                            mobile = reader["userType"]?.ToString().ToLower() == "student"
+            ? (reader["MobileNo"] == DBNull.Value ? 0 : Convert.ToInt64(reader["MobileNo"]))
+            : reader["userType"]?.ToString().ToLower() == "teacher"
+            ? (reader["TeacherMobile"] == DBNull.Value ? 0 : Convert.ToInt64(reader["TeacherMobile"]))
+            : 0,
+
+
+                            recieveStatus = reader["recieveStatus"] == DBNull.Value
+                    ? false
+                    : Convert.ToBoolean(reader["recieveStatus"]),
+
+
+                            bookName = reader["title"] == DBNull.Value ? "" : reader["title"].ToString()
                         });
                     }
                 }
@@ -10801,7 +10928,7 @@ namespace College_ERP.Models.AdminServices
             }
         }
 
-        public List<ExcelAttendanceRecordModel>          GetAttendaceRecordById(int userid,string department, string empcode, string startDate, string endDate)
+        public List<ExcelAttendanceRecordModel>  GetAttendaceRecordById(int userid,string department, string empcode, string startDate, string endDate)
         {
             List<ExcelAttendanceRecordModel> attendanceList = new List<ExcelAttendanceRecordModel>();
 
@@ -12026,5 +12153,57 @@ namespace College_ERP.Models.AdminServices
             }
             return list;
         }
+
+
+        public List<AdminCommunicationList> AdminCommunicationListByWarden(int userid)
+        {
+            List<AdminCommunicationList> data = new List<AdminCommunicationList>();
+            try
+            {
+               using(SqlCommand cmd=new SqlCommand("sp_ManageCommunication", connection))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@userid", userid);
+                    cmd.Parameters.AddWithValue("@action", "showcommunicationforadmin");
+                    connection.Open();
+                    SqlDataReader sdr = cmd.ExecuteReader();
+                    if(sdr.HasRows)
+                    {
+                        while(sdr.Read())
+                        {
+                            data.Add(new AdminCommunicationList
+                            {
+                                Id = Convert.ToInt32(sdr["Id"]),
+                                Title = sdr["Title"].ToString(),
+                                Attachment = sdr["Attachment"].ToString(),
+                                Description = sdr["Description"].ToString(),
+                                WardenName = sdr["Name"].ToString(),
+                                EmailId = sdr["Email_Id"].ToString(),
+                                Mobile = sdr["MobileNo"].ToString(),
+                                BlockName = sdr["BlockName"].ToString(),
+                                BlockType = sdr["blockType"].ToString(),
+                                TotalFloorInBlock = Convert.ToInt32(sdr["TotalFlourInBlock"])
+                            });
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                    if (connection.State == ConnectionState.Open)
+                    {
+                        connection.Close();
+                    }
+            }
+            return data;
+        }
+
+
+
+
     }
 }

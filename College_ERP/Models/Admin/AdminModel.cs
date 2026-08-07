@@ -1374,4 +1374,20 @@ namespace College_ERP.Models.Admin
         public int Id { get; set; }
         public string stream { get; set; }
     }
+
+
+    public class AdminCommunicationList
+    {
+        public int Id { get; set; }
+
+        public string Title { get; set; }
+        public string Attachment { get; set; }
+        public string Description { get; set; }
+        public string WardenName { get; set; }
+        public string EmailId { get; set; }
+        public string Mobile { get; set; }
+        public string BlockName { get; set; }
+        public string BlockType { get; set; }
+        public int TotalFloorInBlock { get; set; }
+    }
 }

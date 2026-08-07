@@ -117,5 +117,13 @@ namespace College_ERP.Models.DriverServices
             public string pickupPoint { get; set; }
 
         }
+
+        public class driverdashboardcount
+        {
+            public int TotalStudents { get; set; }
+            public int MaleStudents { get; set; }
+            public int FemaleStudents { get; set; }
+            public int PickupPointCount { get; set; }
+        }
     }
 }

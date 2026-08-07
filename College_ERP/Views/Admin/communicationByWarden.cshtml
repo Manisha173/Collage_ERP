@@ -1,0 +1,315 @@
+﻿
+@{
+    ViewBag.Title = "communicationByWarden";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+    var data = ViewData["CommunicationList"] as List<College_ERP.Models.Admin.AdminCommunicationList>;
+}
+<style>
+    .custom-file-upload {
+        border: 1px solid #1e7644;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        margin-top: 2px;
+        width: 115px;
+        background: #1e7644;
+        color: white;
+    }
+
+
+    .filter-section {
+        background: white;
+        border-radius: 12px;
+        padding: 10px 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .filter-select {
+        padding: 12px 20px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+        min-width: 200px;
+    }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-select:hover {
+            border-color: #667eea;
+        }
+    /* Remove default DataTables button style */
+    .dt-button {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 8px !important;
+        color: inherit !important;
+    }
+
+        .dt-button:hover {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .dt-button:focus,
+        .dt-button:active {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+    /* Button container */
+    .dt-buttons {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 7px;
+    }
+
+    /* Icon button */
+    .icon-btn {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 5px 10px !important;
+        min-width: auto !important;
+        cursor: pointer;
+    }
+
+        /* Hover effect */
+        .icon-btn:hover {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            transform: scale(1.15);
+            transition: 0.2s ease;
+        }
+
+        /* Remove focus outline */
+        .icon-btn:focus,
+        .icon-btn:active {
+            outline: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+</style>
+<div class="content-page">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 d-flex justify-content-between">
+                        <span>Communication List</span>
+
+                    </h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered dt-responsive nowrap w-100" id="cummunication">
+                            <thead>
+                                <tr>
+                                    <th>SR</th>
+                                    <th>Title</th>
+                                    <th>WardentName</th>
+                                    <th>Email</th>
+                                    <th>Mobile</th>
+                                    <th>BlockName</th>
+                                    <th>BlockType</th>
+                                    <th style="text-align:center!important;">TotalFloor</th>
+                                    <th>Description</th>
+                                    <th>Attachment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if(data!=null && data.Any())
+                                {
+                                    int i = 1;
+                                    foreach(var item in data)
+                                    {
+                                        <tr>
+                                            <td>@i</td>
+                                            <td>@item.Title</td>
+
+                                            @*<td style="max-width:300px; white-space:normal; word-wrap:break-word;">
+            @Html.Raw(item.Description)
+        </td>*@
+                                            <td>@item.WardenName</td>
+                                            <td>@item.EmailId</td>
+                                            <td>@item.Mobile</td>
+                                            <td>@item.BlockName</td>
+                                            <td>@item.BlockType</td>
+                                            <td>@item.TotalFloorInBlock</td>
+                                            <td id="desc_@item.Id" data-description="@Html.AttributeEncode(item.Description)">
+                                                <a href="#" class="text-primary" onclick="showDescription('@item.Description')">View</a>
+                                            </td>
+                                            <td><a target="_blank" href="@item.Attachment">View</a></td>
+                                        </tr>
+                                        i++;
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--description-->
+<div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descriptionModalLabel">Communication Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalDescriptionContent">
+                <!-- Description will be injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script defer src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script>
+    function showDescription(description) {
+
+        // HTML entities decode karo
+        var textarea = document.createElement("textarea");
+        textarea.innerHTML = description;
+        var decoded = textarea.value;
+
+        // HTML tags remove karo
+        var div = document.createElement("div");
+        div.innerHTML = decoded;
+
+        document.getElementById("modalDescriptionContent").innerText =
+            div.textContent || div.innerText || "";
+
+        var modal = new bootstrap.Modal(document.getElementById('descriptionModal'));
+        modal.show();
+    }
+    function initializeDataTable() {
+        debugger;
+
+        // Export all columns except 8 and 9
+        const exportColumns = [0, 1, 2, 3, 4, 5, 6, 7];
+
+        const pdfColumnWidths = [
+            '*', '*', '*', '*',
+            '*', '*', '*', '*'
+        ];
+
+
+        let table = $('#cummunication').DataTable({
+
+            ordering: false,
+            autoWidth: false,
+
+            pageLength: 10,
+
+            lengthMenu: [
+                [10, 20, 50, 100],
+                [10, 20, 50, 100]
+            ],
+
+            dom: '<"top"lBf>rt<"bottom"ip><"clear">',
+
+
+            buttons: [
+
+                {
+                    extend: 'excel',
+
+                    text: '<i class="fa-solid fa-file-excel" style="color:#287f71;font-size:25px;"></i>',
+
+                    className: 'icon-btn',
+
+                    titleAttr: 'Export Excel',
+
+                    exportOptions: {
+                        columns: exportColumns
+                    }
+                },
+
+
+                {
+                    extend: 'pdfHtml5',
+
+                    text: '<i class="fa-solid fa-file-pdf" style="color:#dc3545;font-size:25px;"></i>',
+
+                    className: 'icon-btn',
+
+                    titleAttr: 'Export PDF',
+
+                    orientation: 'landscape',
+
+                    pageSize: 'A4',
+
+                    exportOptions: {
+                        columns: exportColumns
+                    },
+
+
+                    customize: function (doc) {
+
+                        doc.defaultStyle.fontSize = 6;
+                        doc.defaultStyle.alignment = 'center';
+
+
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc.styles.tableHeader.bold = true;
+                        doc.styles.tableHeader.alignment = 'center';
+
+
+                        doc.content[1].table.widths = pdfColumnWidths;
+
+
+                        var body = doc.content[1].table.body;
+
+
+                        for (var i = 0; i < body.length; i++) {
+
+                            for (var j = 0; j < body[i].length; j++) {
+
+                                body[i][j].alignment = 'center';
+                                body[i][j].margin = [2, 4, 2, 4];
+
+                            }
+                        }
+                    }
+                }
+            ]
+        });
+
+
+        return table;
+    }
+    $(document).ready(function () {
+        initializeDataTable()
+    });
+</script>

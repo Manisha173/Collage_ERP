@@ -37,7 +37,9 @@ namespace College_ERP.ApiService
             if (res != null)
             {
                 int userid = _home.GetUserId(username);
-
+                bool IsInHostel = _home.IsInHostelornot(userid);
+                var role = _home.GetRoleByUserId(username);
+                var userdetails = _home.GetUserResetDetailsByUsername(username);
                 string accessToken = JwtTokenHelper.GenerateAccessToken(userid, res);
 
                 string refreshToken = JwtTokenHelper.GenerateRefreshToken();
@@ -49,6 +51,10 @@ namespace College_ERP.ApiService
                     status = true,
                     access_token = accessToken,
                     refresh_token = refreshToken,
+                    id=userid,
+                    Role= role,
+                    IsInHostel= IsInHostel,
+                    name = userdetails.FullName,
                     expires_in = 1800
                 });
 
@@ -89,7 +95,7 @@ namespace College_ERP.ApiService
                 return Unauthorized();
             }
 
-            string role = _home.GetRoleByUserId(token.UserId);
+            string role = _home.GetRoleByUserId(token.Username);
 
 
             string accessToken = JwtTokenHelper.GenerateAccessToken(token.UserId, role);
