@@ -65,11 +65,11 @@ namespace College_ERP.ApiService
 
         [Route("api/getAssignedSubject")]
         [HttpGet]
-        public IHttpActionResult GetSubjectAssigned(int id)
+        public IHttpActionResult GetSubjectAssigned(int id, string search = null)
         {
             try
             {
-                var assignments = _teacher.GetSubjectAssignedById(id);
+                var assignments = _teacher.GetSubjectAssignedById(id,search);
                 var assignmentsWithCount = _teacher.GetSubjectAssignmentsWithStudentCount(id);
                 var combinedAssignments = assignments.Join(assignmentsWithCount,
                     a => new { a.ClassId, a.SectionId, a.SubjectId },
@@ -124,11 +124,11 @@ namespace College_ERP.ApiService
 
         [Route("api/getStudent")]
         [HttpGet]
-        public IHttpActionResult GetStudents( int classId, int sectionId)
+        public IHttpActionResult GetStudents( int classId, int sectionId, string search = null)
         {
             try
             {
-                var data = _teacher.GetStudents( classId,  sectionId);
+                var data = _teacher.GetStudents( classId,  sectionId, search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }catch(Exception ex)
             {

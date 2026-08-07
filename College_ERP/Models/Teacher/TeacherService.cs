@@ -337,7 +337,7 @@ namespace College_ERP.Models.Teacher
         }
 
 
-        public List<SubjectAssignModel> GetSubjectAssignedById(int userid)
+        public List<SubjectAssignModel> GetSubjectAssignedById(int userid, string search = null)
         {
             List<SubjectAssignModel> list = new List<SubjectAssignModel>();
             try
@@ -346,6 +346,7 @@ namespace College_ERP.Models.Teacher
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Actions", "GetAll");
                 cmd.Parameters.AddWithValue("@id", userid);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -556,7 +557,7 @@ namespace College_ERP.Models.Teacher
             }
         }
 
-        public List<StudentModel> GetStudents( int classId, int sectionId)
+        public List<StudentModel> GetStudents( int classId, int sectionId, string search = null)
         {
             List<StudentModel> list = new List<StudentModel>();
 
@@ -567,6 +568,7 @@ namespace College_ERP.Models.Teacher
                 cmd.Parameters.AddWithValue("@Action", "SELECTStudents");
                 cmd.Parameters.AddWithValue("@ClassId", classId);
                 cmd.Parameters.AddWithValue("@SectionId", sectionId);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
 
                 SqlDataReader rdr = cmd.ExecuteReader();
