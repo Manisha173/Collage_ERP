@@ -2837,6 +2837,7 @@ namespace College_ERP.Models.AdminServices
                 command.Parameters.AddWithValue("@IfscCode", teacher.IfscCode ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("@address", teacher.address ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("@userid", teacher.userid);
+                command.Parameters.AddWithValue("@EmpCode", teacher.empCode);
 
 
                 int id = 0;
@@ -3110,7 +3111,8 @@ namespace College_ERP.Models.AdminServices
 
                         IfscCode = rdr["IFSCCode"]?.ToString(),
                         username =rdr["Username"] !=DBNull.Value? rdr["Username"].ToString():null,
-                        password = rdr["Password"] != DBNull.Value ? rdr["Password"].ToString():null
+                        password = rdr["Password"] != DBNull.Value ? rdr["Password"].ToString():null,
+                        empCode = rdr["EmpCode"] != DBNull.Value ? rdr["EmpCode"].ToString():null
 
                     });
                 }
@@ -3202,7 +3204,8 @@ namespace College_ERP.Models.AdminServices
                         ReenterBankAccountNumber = rdr["ReenterBankAccountNumber"] != DBNull.Value ? Convert.ToInt64(rdr["ReenterBankAccountNumber"]) : 0,
 
                         IfscCode = rdr["IFSCCode"]?.ToString(),
-                        userid = Convert.ToInt32(rdr["userid"])
+                        userid = Convert.ToInt32(rdr["userid"]),
+                        empCode= rdr["EmpCode"]?.ToString()
 
                     };
                 }

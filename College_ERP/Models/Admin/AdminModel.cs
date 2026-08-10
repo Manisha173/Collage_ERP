@@ -172,6 +172,7 @@ namespace College_ERP.Models.Admin
         public int TeacherId { get; set; }
         public string EmployeeId { get; set; }
         public string RegistrationNo { get; set; }
+        public string empCode { get; set; }
 
 
         // Personal Information
