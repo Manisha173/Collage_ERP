@@ -126,11 +126,11 @@ namespace College_ERP.ApiService
         [Route("api/GetAllMeals")]
         [HttpGet]
 
-        public IHttpActionResult GetAllMeals(int wardenId)
+        public IHttpActionResult GetAllMeals(int wardenId, string search=null)
         {
             try
             {
-                List<MealViewModel> res = _warden.GetAllMeals(wardenId);
+                List<MealViewModel> res = _warden.GetAllMeals(wardenId, search);
                 var newMeal = res.Select(e => new
                 {
                     day=e.Day,
@@ -206,11 +206,11 @@ namespace College_ERP.ApiService
 
         [Route("api/GetAllWardenCommunication")]
         [HttpGet]
-        public IHttpActionResult GetAllWardenCommunication(int wardenid)
+        public IHttpActionResult GetAllWardenCommunication(int wardenid, string search=null)
         {
             try
             {
-                List<CommunicationModel> res = _warden.GetAllCommunication(wardenid);
+                List<CommunicationModel> res = _warden.GetAllCommunication(wardenid,search);
                 return Ok(new { status = true, data = res, message = "data retrieved" });
             }
             catch(Exception ex)
@@ -290,12 +290,12 @@ namespace College_ERP.ApiService
         [Route("api/GetWardenNotices")]
         [HttpGet]
     
-         public IHttpActionResult GetWardenNotices(int wardenId)
+         public IHttpActionResult GetWardenNotices(int wardenId,string search=null)
         {
             try
             {
                 int adminid = _warden.GetAdminId(wardenId);
-                List<NoticeModel> res = _warden.GetWardenNotices("Warden", wardenId, adminid);
+                List<NoticeModel> res = _warden.GetWardenNotices("Warden", wardenId, adminid,search);
                 return Ok(new { status = true, data = res, message = "data retrieved.." });
             }
             catch(Exception ex)
@@ -347,11 +347,11 @@ namespace College_ERP.ApiService
 
         [Route("api/GetAllStudentInBlock")]
         [HttpGet]
-        public IHttpActionResult GetAllStudentInBlock(int wardenid)
+        public IHttpActionResult GetAllStudentInBlock(int wardenid,string search=null)
         {
             try
             {
-                var res = _warden.GetStudentsInBlock(wardenid);
+                var res = _warden.GetStudentsInBlock(wardenid,search);
                 return Ok(new { status=true,data=res,message="data retrieved!"});
             }
             catch(Exception ex)
@@ -697,11 +697,11 @@ namespace College_ERP.ApiService
 
         [Route("api/GetMealDetailsByDayAndUser")]
         [HttpGet]
-        public IHttpActionResult GetMealDetailsByDayAndUser(string day, int wardenId)
+        public IHttpActionResult GetMealDetailsByDayAndUser(string day, int wardenId,string search=null)
         {
             try
             {
-               var mealDict = _warden.GetMealDetailsByDayAndUser(day, wardenId);
+               var mealDict = _warden.GetMealDetailsByDayAndUser(day, wardenId,search);
                 return Ok(new { status = true, data = mealDict, message = "data retrieved!" });
             }
             catch(Exception ex)
