@@ -486,11 +486,7 @@ namespace College_ERP.Models.StudentServices
         }
         #endregion
         #region Notice
-<<<<<<< HEAD
-        public List<NoticesModel> GetStudentNotices(string userType, int userId, int adminid,string search=null)
-=======
         public List<NoticesModel> GetStudentNotices(string userType, int userId, int adminid, string search = null)
->>>>>>> b1a0a1c9cd24fac089e441088659cd69285e32e4
         {
             try
             {
@@ -503,11 +499,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.Parameters.AddWithValue("@UserType", userType);
                 cmd.Parameters.AddWithValue("@UserId", userId);
                 cmd.Parameters.AddWithValue("@adminid", adminid);
-<<<<<<< HEAD
-                cmd.Parameters.AddWithValue("@search", @search);
-=======
                 cmd.Parameters.AddWithValue("@search", search??null);
->>>>>>> b1a0a1c9cd24fac089e441088659cd69285e32e4
 
                 connection.Open();
                 SqlDataReader dr = cmd.ExecuteReader();
@@ -583,11 +575,7 @@ namespace College_ERP.Models.StudentServices
         }
         #endregion
         #region Communication
-<<<<<<< HEAD
-        public List<stCommunicationModel> GetCommunication(int studentid,int isSendTo,string search=null)
-=======
         public List<stCommunicationModel> GetCommunication(int studentid,int isSendTo, string search = null)
->>>>>>> b1a0a1c9cd24fac089e441088659cd69285e32e4
         {
             try
             {
@@ -597,11 +585,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.Parameters.AddWithValue("@action", "selectcommunication");
                 cmd.Parameters.AddWithValue("@studentid", studentid);
                 cmd.Parameters.AddWithValue("@isSendto", isSendTo);
-<<<<<<< HEAD
-                cmd.Parameters.AddWithValue("@search", search);
-=======
                 cmd.Parameters.AddWithValue("@search", search??null);
->>>>>>> b1a0a1c9cd24fac089e441088659cd69285e32e4
                 connection.Open();
                 SqlDataReader res = cmd.ExecuteReader();
                 while (res.Read())

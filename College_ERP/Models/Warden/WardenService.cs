@@ -330,11 +330,7 @@ namespace College_ERP.Models.Warden
             }
         }
 
-<<<<<<< HEAD
-        public List<MealViewModel> GetAllMeals(int userId,string search=null)
-=======
         public List<MealViewModel> GetAllMeals(int userId, string search = null)
->>>>>>> b1a0a1c9cd24fac089e441088659cd69285e32e4
         {
             List<MealViewModel> meals = new List<MealViewModel>();
 
@@ -343,11 +339,7 @@ namespace College_ERP.Models.Warden
 
             cmd.Parameters.AddWithValue("@Action", "GetAllMeals");
             cmd.Parameters.AddWithValue("@UserId", userId);
-<<<<<<< HEAD
-            cmd.Parameters.AddWithValue("@search", search??null);
-=======
             cmd.Parameters.AddWithValue("@search", search?? null);
->>>>>>> b1a0a1c9cd24fac089e441088659cd69285e32e4
 
             connection.Open();
             SqlDataReader reader = cmd.ExecuteReader();
