@@ -362,11 +362,11 @@ namespace College_ERP.ApiService
 
         [Route("api/GetStudentSubmittedAssignment")]
         [HttpGet]
-        public IHttpActionResult GetStudentAssignments(int assignmentId)
+        public IHttpActionResult GetStudentAssignments(int assignmentId, string search = null)
         {
             try
             {
-                var data = _teacher.GetStudentAssignments(assignmentId);
+                var data = _teacher.GetStudentAssignments(assignmentId,search);
                
                     return Ok(new
                     {
