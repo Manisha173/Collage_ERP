@@ -846,7 +846,7 @@ namespace College_ERP.Models.Teacher
                 connection.Close();
             }
         }
-        public List<SubjectAssignModel> GetClassFromTeacher(int teacherid)
+        public List<SubjectAssignModel> GetClassFromTeacher(int teacherid, string search = null)
         {
             try
             {
@@ -855,6 +855,7 @@ namespace College_ERP.Models.Teacher
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Actions", "selectClassofteacher");
                 cmd.Parameters.AddWithValue("@teacherId", teacherid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader res = cmd.ExecuteReader();
                 while (res.Read())
@@ -877,7 +878,7 @@ namespace College_ERP.Models.Teacher
                 connection.Close();
             }
         }
-        public List<SubjectAssignModel> GetSectionFromTeacher(int teacherid, int classid)
+        public List<SubjectAssignModel> GetSectionFromTeacher(int teacherid, int classid, string search = null)
         {
             try
             {
@@ -887,6 +888,7 @@ namespace College_ERP.Models.Teacher
                 cmd.Parameters.AddWithValue("@Actions", "selectsectionofteacher");
                 cmd.Parameters.AddWithValue("@ClassId", classid);
                 cmd.Parameters.AddWithValue("@teacherId", teacherid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader res = cmd.ExecuteReader();
                 while (res.Read())
@@ -1684,7 +1686,7 @@ namespace College_ERP.Models.Teacher
             }
         }
 
-        public List<HolidayModel> GetHolidaysForAll(int userId)
+        public List<HolidayModel> GetHolidaysForAll(int userId, string search = null)
         {
             List<HolidayModel> holidays = new List<HolidayModel>();
             try
@@ -1693,6 +1695,7 @@ namespace College_ERP.Models.Teacher
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Action", "HolidaysForAll");
                 cmd.Parameters.AddWithValue("@userid", userId);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();

@@ -167,11 +167,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/getClass")]
         [HttpGet]
-        public IHttpActionResult GetClass(int teacherid)
+        public IHttpActionResult GetClass(int teacherid, string search = null)
         {
             try
             {
-                var data = _teacher.GetClassFromTeacher(teacherid);
+                var data = _teacher.GetClassFromTeacher(teacherid, search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
             catch (Exception ex)
@@ -181,11 +181,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/getSection")]
         [HttpGet]
-        public IHttpActionResult GetSection(int teacherid, int classid)
+        public IHttpActionResult GetSection(int teacherid, int classid, string search = null)
         {
             try
             {
-                var data = _teacher.GetSectionFromTeacher(teacherid, classid);
+                var data = _teacher.GetSectionFromTeacher(teacherid, classid, search);
                 return Ok(new { status = true, message = "Data received.", data = data });
             }
             catch (Exception ex)
@@ -210,11 +210,11 @@ namespace College_ERP.ApiService
 
         [Route("api/GetTimeTableByClassSection")]
         [HttpGet]
-        public IHttpActionResult GetTimeTableByClassAndSection( int classid, int sectionid)
+        public IHttpActionResult GetTimeTableByClassAndSection( int classid, int sectionid, string search = null)
         {
             try
             {
-                var data = _admin.ShowAllTimeTableDetails( classid, sectionid);
+                var data = _admin.ShowAllTimeTableDetails( classid, sectionid, search);
                 List<timetableshowModel> list = new List<timetableshowModel>();
                 string[] days = new string[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
                 foreach (var day in days)
@@ -748,12 +748,12 @@ namespace College_ERP.ApiService
         #region holiday
         [Route("api/GetHolidayByUserid")]
         [HttpGet]
-        public IHttpActionResult GetHolidateByUserid(int userid)
+        public IHttpActionResult GetHolidateByUserid(int userid, string search = null)
         {
             try
             {
                 int userId = _teacher.GetAdminId(userid);
-                var holidays = _teacher.GetHolidaysForAll(userId);
+                var holidays = _teacher.GetHolidaysForAll(userId, search);
                 return Ok(new
                 {
                     status = true,

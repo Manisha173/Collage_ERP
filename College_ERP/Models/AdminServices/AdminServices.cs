@@ -7575,7 +7575,7 @@ namespace College_ERP.Models.AdminServices
                     connection.Close();
             }
         }
-        public List<SubjectTimeModel> ShowAllTimeTableDetails(int classid, int sectionid)
+        public List<SubjectTimeModel> ShowAllTimeTableDetails(int classid, int sectionid, string search = null)
         {
             try
             {
@@ -7585,6 +7585,7 @@ namespace College_ERP.Models.AdminServices
                 cmd.Parameters.AddWithValue("@action", "selectTimeTableDetails");
                 cmd.Parameters.AddWithValue("@classId", classid);
                 cmd.Parameters.AddWithValue("@sectionId", sectionid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader res = cmd.ExecuteReader();
                 while (res.Read())
