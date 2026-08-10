@@ -980,6 +980,11 @@ namespace College_ERP.Models.StudentServices
                             model.studentphoto = sdr["studentphoto"] != DBNull.Value ? sdr["studentphoto"].ToString() : null;
                             model.motherphoto = sdr["motherphoto"] != DBNull.Value ? sdr["motherphoto"].ToString() : null;
                             model.fatherphoto = sdr["fatherphoto"] != DBNull.Value ? sdr["fatherphoto"].ToString() : null;
+                            model.stuDOB = sdr["DOB"] != DBNull.Value ? sdr["DOB"].ToString() : null;
+                            model.CollagMobile = sdr["MobileNo"] != DBNull.Value ? sdr["MobileNo"].ToString() : null;
+                            model.CollagLandLineNo = sdr["LandLineNo"] != DBNull.Value ? sdr["LandLineNo"].ToString() : null;
+                            model.CollagAddress = sdr["School_Address"] != DBNull.Value ? sdr["School_Address"].ToString() : null;
+                            model.CollagLOGO = sdr["School_Logo"] != DBNull.Value ? sdr["School_Logo"].ToString() : null;
                         }
                     }
                 }

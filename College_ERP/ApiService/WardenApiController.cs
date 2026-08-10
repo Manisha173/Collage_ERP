@@ -35,11 +35,11 @@ namespace College_ERP.ApiService
 
         [Route("api/GetStudentsInBlock")]
         [HttpGet]
-        public IHttpActionResult GetStudentsInBlock(int id)
+        public IHttpActionResult GetStudentsInBlock(int id, string search = null)
          {
             try
             {
-                List<StudentDetailModel> res = _warden.GetStudentsInBlock(id);
+                List<StudentDetailModel> res = _warden.GetStudentsInBlock(id, search);
                 return Ok(new { status = true, data = res, message = "data retrieve" });
             }
             catch (Exception ex)
@@ -389,11 +389,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/GetRoomsByFloorNo")]
         [HttpGet]
-        public IHttpActionResult GetRoomsByFloor(int floorno,int wardenid)
+        public IHttpActionResult GetRoomsByFloor(int floorno,int wardenid,string search=null)
         {
             try
             {
-                var res = _warden.GetRoomsByFloor(floorno,wardenid);
+                var res = _warden.GetRoomsByFloor(floorno,wardenid, search);
                 return Ok(new { status=true,data=res,message="data retrieved!"});
             }
             catch(Exception ex)
@@ -417,12 +417,12 @@ namespace College_ERP.ApiService
         }
         [Route("api/GetAllFeeRecords")]
         [HttpGet]
-        public IHttpActionResult GetAllFeeRecords(int userid)
+        public IHttpActionResult GetAllFeeRecords(int userid,string search=null)
         {
             try
             {
                 int adminid = _warden.GetAdminId(userid);
-                List<FeeRecordsModel> res = _warden.GetLastFeeRecords(adminid);
+                List<FeeRecordsModel> res = _warden.GetLastFeeRecords(adminid,search);
                 return Ok(new { status=true,data=res,message="data retrieved!"});
             }
             catch(Exception ex)
@@ -490,12 +490,12 @@ namespace College_ERP.ApiService
         #region HolidaysForAll
         [Route("api/GetHolidaysForAll")]
         [HttpGet]
-        public IHttpActionResult GetHolidaysForAll(int wardenId)
+        public IHttpActionResult GetHolidaysForAll(int wardenId,string search=null)
         {
             try
             {
                 int adminId = _warden.GetAdminId(wardenId);
-                List<HolidayModel> res = _warden.GetHolidaysForAll(adminId);
+                List<HolidayModel> res = _warden.GetHolidaysForAll(adminId,search);
                 return Ok(new { status = true, data = res, message = "data retrieved!" });
             }
             catch(Exception ex)
@@ -556,12 +556,12 @@ namespace College_ERP.ApiService
 
         [Route("api/GetRoomsByBlockId")]
         [HttpGet]
-        public IHttpActionResult GetRoomsByBlockId(int blockId, int wardenid)
+        public IHttpActionResult GetRoomsByBlockId(int blockId, int wardenid,string search=null)
         {
             try
             {
                 int adminId = _warden.GetAdminId(wardenid);
-                List<RoomModel> rooms = _warden.GetRoomsByBlockId(blockId, adminId);
+                List<RoomModel> rooms = _warden.GetRoomsByBlockId(blockId, adminId, search);
                 return Ok(new { status = true, data = rooms, message = "data retrieved!" });
             }
             catch(Exception ex)
@@ -646,11 +646,11 @@ namespace College_ERP.ApiService
         #region HostelProblems
         [Route("api/GetHostelProblem")]
         [HttpGet]
-        public IHttpActionResult GetHostelProblem(int wardenid)
+        public IHttpActionResult GetHostelProblem(int wardenid, string search = null)
         {
             try 
             {
-                List<HostelProblemsModel> list = _warden.GetHostelProblem(wardenid);
+                List<HostelProblemsModel> list = _warden.GetHostelProblem(wardenid,search);
                 return Ok(new { status = true, data = list, message = "data retrieved!" });
             }
             catch(Exception ex)
@@ -681,12 +681,12 @@ namespace College_ERP.ApiService
         #endregion
         [Route("api/GetHolidaysTodayAndTomorrow")]
         [HttpGet]
-        public IHttpActionResult GetHolidaysTodayAndTomorrow(int wardenId)
+        public IHttpActionResult GetHolidaysTodayAndTomorrow(int wardenId,string search=null)
         {
             try
             {
                 int adminId = _warden.GetAdminId(wardenId);
-                List<HolidayModel> holidays = _warden.GetHolidaysTodayAndTomorrow(adminId);
+                List<HolidayModel> holidays = _warden.GetHolidaysTodayAndTomorrow(adminId, search);
                 return Ok(new { status = true, data = holidays, message = "data retrieved!" });
             }
             catch (Exception ex)
@@ -711,11 +711,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/GetFeeHistory")]
         [HttpGet]
-        public IHttpActionResult GetFeeHistory(int studentidhostelid)
+        public IHttpActionResult GetFeeHistory(int studentidhostelid,string search=null)
         {
             try
             {
-               var mealDict = _warden.GetFeeHistoryOfStudent(studentidhostelid);
+               var mealDict = _warden.GetFeeHistoryOfStudent(studentidhostelid,search);
                 return Ok(new { status = true, data = mealDict, message = "data retrieved!" });
             }
             catch(Exception ex)
@@ -757,12 +757,12 @@ namespace College_ERP.ApiService
         }
         [Route("api/GetRoomDetailByWardenId")]
         [HttpGet]
-        public IHttpActionResult GetRoomList(int wardenId)
+        public IHttpActionResult GetRoomList(int wardenId, string search = null)
         {
             try
             {
                 int adminId = _warden.GetAdminId(wardenId);
-                var data= _warden.GetRoomList(wardenId);
+                var data= _warden.GetRoomList(wardenId,search);
                 return Ok(new { status=true,data=data,message="Data retrived!!"});
 
 
