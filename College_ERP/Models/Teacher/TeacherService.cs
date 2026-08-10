@@ -118,7 +118,7 @@ namespace College_ERP.Models.Teacher
             return totalCirculars;
         }
 
-        public List<CircularModel> GetAllCirculars(int userid)
+        public List<CircularModel> GetAllCirculars(int userid, string search = null)
         {
             List<CircularModel> list = new List<CircularModel>();
 
@@ -128,6 +128,7 @@ namespace College_ERP.Models.Teacher
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Actions", "SelectAllCircular");
                 cmd.Parameters.AddWithValue("@userid", userid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
 
@@ -336,7 +337,7 @@ namespace College_ERP.Models.Teacher
         }
 
 
-        public List<SubjectAssignModel> GetSubjectAssignedById(int userid)
+        public List<SubjectAssignModel> GetSubjectAssignedById(int userid, string search = null)
         {
             List<SubjectAssignModel> list = new List<SubjectAssignModel>();
             try
@@ -345,6 +346,7 @@ namespace College_ERP.Models.Teacher
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Actions", "GetAll");
                 cmd.Parameters.AddWithValue("@id", userid);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -555,7 +557,7 @@ namespace College_ERP.Models.Teacher
             }
         }
 
-        public List<StudentModel> GetStudents( int classId, int sectionId)
+        public List<StudentModel> GetStudents( int classId, int sectionId, string search = null)
         {
             List<StudentModel> list = new List<StudentModel>();
 
@@ -566,6 +568,7 @@ namespace College_ERP.Models.Teacher
                 cmd.Parameters.AddWithValue("@Action", "SELECTStudents");
                 cmd.Parameters.AddWithValue("@ClassId", classId);
                 cmd.Parameters.AddWithValue("@SectionId", sectionId);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
 
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -843,7 +846,7 @@ namespace College_ERP.Models.Teacher
                 connection.Close();
             }
         }
-        public List<SubjectAssignModel> GetClassFromTeacher(int teacherid)
+        public List<SubjectAssignModel> GetClassFromTeacher(int teacherid, string search = null)
         {
             try
             {
@@ -852,6 +855,7 @@ namespace College_ERP.Models.Teacher
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Actions", "selectClassofteacher");
                 cmd.Parameters.AddWithValue("@teacherId", teacherid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader res = cmd.ExecuteReader();
                 while (res.Read())
@@ -874,7 +878,7 @@ namespace College_ERP.Models.Teacher
                 connection.Close();
             }
         }
-        public List<SubjectAssignModel> GetSectionFromTeacher(int teacherid, int classid)
+        public List<SubjectAssignModel> GetSectionFromTeacher(int teacherid, int classid, string search = null)
         {
             try
             {
@@ -884,6 +888,7 @@ namespace College_ERP.Models.Teacher
                 cmd.Parameters.AddWithValue("@Actions", "selectsectionofteacher");
                 cmd.Parameters.AddWithValue("@ClassId", classid);
                 cmd.Parameters.AddWithValue("@teacherId", teacherid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader res = cmd.ExecuteReader();
                 while (res.Read())
@@ -1681,7 +1686,7 @@ namespace College_ERP.Models.Teacher
             }
         }
 
-        public List<HolidayModel> GetHolidaysForAll(int userId)
+        public List<HolidayModel> GetHolidaysForAll(int userId, string search = null)
         {
             List<HolidayModel> holidays = new List<HolidayModel>();
             try
@@ -1690,6 +1695,7 @@ namespace College_ERP.Models.Teacher
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Action", "HolidaysForAll");
                 cmd.Parameters.AddWithValue("@userid", userId);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
