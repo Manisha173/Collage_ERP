@@ -743,7 +743,7 @@ namespace College_ERP.Models.Teacher
         
         #endregion
 
-        public List<StudentAssignmentModel> GetStudentAssignments(int assignmentId)
+        public List<StudentAssignmentModel> GetStudentAssignments(int assignmentId,string search = null)
         {
             var students = new List<StudentAssignmentModel>();
             try
@@ -752,6 +752,7 @@ namespace College_ERP.Models.Teacher
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@action", "selectStudentassignment");
                 cmd.Parameters.AddWithValue("@id", assignmentId);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
