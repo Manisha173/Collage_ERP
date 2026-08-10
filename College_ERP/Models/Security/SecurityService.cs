@@ -136,7 +136,7 @@ namespace College_ERP.Models.Security
 
             return list;
         }
-        public List<StaffModel> GetStaffList(string type,int adminid)
+        public List<StaffModel> GetStaffList(string type,int adminid, string search = null)
         {
             List<StaffModel> list = new List<StaffModel>();
 
@@ -147,6 +147,7 @@ namespace College_ERP.Models.Security
                 cmd.Parameters.AddWithValue("@action", "selectStaff");
                 cmd.Parameters.AddWithValue("@visitorType", type);
                 cmd.Parameters.AddWithValue("@userId", adminid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 conn.Open();
                 var res = cmd.ExecuteReader();
                 while (res.Read())
@@ -265,7 +266,7 @@ namespace College_ERP.Models.Security
                 cmd.Dispose();
             }
         }
-        public List<VisitorModel> GetAllVisitorsList(int userId)
+        public List<VisitorModel> GetAllVisitorsList(int userId, string search = null)
         {
             try
             {
@@ -274,6 +275,7 @@ namespace College_ERP.Models.Security
                 cmd.Parameters.AddWithValue("@action", "selectAllVisitor");
                 //cmd.Parameters.AddWithValue("@loginState",SqlDbType.Int).Value=(object)loginStatus??DBNull.Value;
                 cmd.Parameters.AddWithValue("@userId", userId);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 conn.Open();
                 List<VisitorModel> list = new List<VisitorModel>();
                 var res = cmd.ExecuteReader();
@@ -537,7 +539,7 @@ namespace College_ERP.Models.Security
                     conn.Close();
             }
         }
-        public List<VisitorModel> GetVisitorHistory(int visitorid)
+        public List<VisitorModel> GetVisitorHistory(int visitorid, string search = null)
         {
             try
             {
@@ -545,6 +547,7 @@ namespace College_ERP.Models.Security
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@action", "selectvisitorhistory");
                 cmd.Parameters.AddWithValue("@id", visitorid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 conn.Open();
                 List<VisitorModel> list = new List<VisitorModel>();
                 var res = cmd.ExecuteReader();
@@ -622,7 +625,7 @@ namespace College_ERP.Models.Security
 
             }
         }
-        public List<RoomModel> GetRoomsByBlockId(int securityid)
+        public List<RoomModel> GetRoomsByBlockId(int securityid, string search = null)
         {
             List<RoomModel> rooms = new List<RoomModel>();
 
@@ -632,6 +635,7 @@ namespace College_ERP.Models.Security
                 cmd.Parameters.AddWithValue("@Action", "SELECTROOMBYBLOCKID");
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@id", securityid);
+                cmd.Parameters.AddWithValue("@search", search ?? null);
 
                 conn.Open();
                 SqlDataReader dr = cmd.ExecuteReader();
@@ -656,7 +660,7 @@ namespace College_ERP.Models.Security
 
             return rooms;
         }
-        public List<College_ERP.Models.Security.main.UserOrderModel> SelectUsersByRoomNo(int roomNo, int adminid)
+        public List<College_ERP.Models.Security.main.UserOrderModel> SelectUsersByRoomNo(int roomNo, int adminid, string search = null)
         {
             List<College_ERP.Models.Security.main.UserOrderModel> list = new List<College_ERP.Models.Security.main.UserOrderModel>();
             try
@@ -667,6 +671,7 @@ namespace College_ERP.Models.Security
                 cmd.Parameters.AddWithValue("@Action", "GetStudentsByRoomNo");
                 cmd.Parameters.AddWithValue("@RoomNo", roomNo);
                 cmd.Parameters.AddWithValue("@userid", adminid);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 conn.Open();
                 SqlDataReader rd = cmd.ExecuteReader();
@@ -703,7 +708,7 @@ namespace College_ERP.Models.Security
         }
         #endregion
 
-        public List<NoticeModel> GetSecurityNotices(string userType, int userId,int adminid)
+        public List<NoticeModel> GetSecurityNotices(string userType, int userId,int adminid, string search = null)
         {
             var notices = new List<NoticeModel>();
 
@@ -714,6 +719,7 @@ namespace College_ERP.Models.Security
             cmd.Parameters.AddWithValue("@UserType", userType);
             cmd.Parameters.AddWithValue("@UserId", userId);
             cmd.Parameters.AddWithValue("@adminid", adminid);
+            cmd.Parameters.AddWithValue("@search", search??null);
 
             conn.Open();
             SqlDataReader dr = cmd.ExecuteReader();

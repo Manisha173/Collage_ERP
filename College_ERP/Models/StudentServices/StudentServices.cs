@@ -166,7 +166,7 @@ namespace College_ERP.Models.StudentServices
         }
         #endregion
         #region Assignment Management
-        public List<StudentAssignmentModel> GetStudentAssignmentById(int studentid)
+        public List<StudentAssignmentModel> GetStudentAssignmentById(int studentid, string search = null)
         {
             List<StudentAssignmentModel> list = new List<StudentAssignmentModel>();
 
@@ -176,6 +176,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Action", "selectassignment");
                 cmd.Parameters.AddWithValue("@studentid", studentid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
 
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -247,7 +248,7 @@ namespace College_ERP.Models.StudentServices
         }
         #endregion
         #region Circular Management
-        public List<CircularModel> GetAllCirculars(int adminid)
+        public List<CircularModel> GetAllCirculars(int adminid, string search = null)
         {
             List<CircularModel> list = new List<CircularModel>();
 
@@ -257,6 +258,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Actions", "GetAllCircular");
                 cmd.Parameters.AddWithValue("@userid", adminid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
 
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -287,7 +289,7 @@ namespace College_ERP.Models.StudentServices
         #endregion
 
         #region Circular Management
-        public List<CourseModel> GetCourse(int classid,int sectionid,int adminid)
+        public List<CourseModel> GetCourse(int classid,int sectionid,int adminid, string search = null)
         {
             List<CourseModel> list = new List<CourseModel>();
 
@@ -299,6 +301,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.Parameters.AddWithValue("@classid", classid);
                 cmd.Parameters.AddWithValue("@sectionid", sectionid);
                 cmd.Parameters.AddWithValue("@adminid", adminid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
 
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -324,7 +327,7 @@ namespace College_ERP.Models.StudentServices
         }
         #endregion
         #region Library
-        public List<LibraryModel> GetLibraryDetails(int studentid)
+        public List<LibraryModel> GetLibraryDetails(int studentid, string search = null)
         {
             List<LibraryModel> orders = new List<LibraryModel>();
             try
@@ -333,6 +336,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@action", "selectorderofteacher");
                 cmd.Parameters.AddWithValue("@buyerId", studentid);
+                cmd.Parameters.AddWithValue("@search", search ?? null);
                 connection.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -381,7 +385,7 @@ namespace College_ERP.Models.StudentServices
         #endregion
         #region TimeTables
 
-        public List<ExamTimeTableModel> GetExamTimeTableForStudent(int studentid, int scheduledid)
+        public List<ExamTimeTableModel> GetExamTimeTableForStudent(int studentid, int scheduledid, string search = null)
         {
             try
             {
@@ -396,6 +400,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.Parameters.AddWithValue("@action", "selectexamtimetableforstudent");
                 cmd.Parameters.AddWithValue("@studentid", studentid);
                 cmd.Parameters.AddWithValue("@scheduledid", scheduledid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                
                 connection.Open();
                 SqlDataReader res = cmd.ExecuteReader();
@@ -434,7 +439,7 @@ namespace College_ERP.Models.StudentServices
                 connection.Close();
             }
         }
-        public List<TodaySchedulesModel> GetTodayScheduleOfStudent(int classid,int sectionid, string day)
+        public List<TodaySchedulesModel> GetTodayScheduleOfStudent(int classid,int sectionid, string day, string search = null)
         {
             try
             {
@@ -445,6 +450,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.Parameters.AddWithValue("@classid", classid);
                 cmd.Parameters.AddWithValue("@sectionid", sectionid);
                 cmd.Parameters.AddWithValue("@day", day);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader res = cmd.ExecuteReader();
                 while (res.Read())
@@ -480,7 +486,7 @@ namespace College_ERP.Models.StudentServices
         }
         #endregion
         #region Notice
-        public List<NoticesModel> GetStudentNotices(string userType, int userId, int adminid)
+        public List<NoticesModel> GetStudentNotices(string userType, int userId, int adminid, string search = null)
         {
             try
             {
@@ -493,6 +499,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.Parameters.AddWithValue("@UserType", userType);
                 cmd.Parameters.AddWithValue("@UserId", userId);
                 cmd.Parameters.AddWithValue("@adminid", adminid);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 connection.Open();
                 SqlDataReader dr = cmd.ExecuteReader();
@@ -568,7 +575,7 @@ namespace College_ERP.Models.StudentServices
         }
         #endregion
         #region Communication
-        public List<stCommunicationModel> GetCommunication(int studentid,int isSendTo)
+        public List<stCommunicationModel> GetCommunication(int studentid,int isSendTo, string search = null)
         {
             try
             {
@@ -578,6 +585,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.Parameters.AddWithValue("@action", "selectcommunication");
                 cmd.Parameters.AddWithValue("@studentid", studentid);
                 cmd.Parameters.AddWithValue("@isSendto", isSendTo);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader res = cmd.ExecuteReader();
                 while (res.Read())
@@ -602,7 +610,7 @@ namespace College_ERP.Models.StudentServices
                 connection.Close();
             }
         }
-        public List<WardenCommunicationModel> GetWardenCommunication(int studentid)
+        public List<WardenCommunicationModel> GetWardenCommunication(int studentid, string search = null)
         {
             List<WardenCommunicationModel> list = new List<WardenCommunicationModel>();
             try
@@ -611,6 +619,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@action", "selectwardencommunication");
                 cmd.Parameters.AddWithValue("@studentid", studentid);
+                cmd.Parameters.AddWithValue("@search", search ??null);
 
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -712,7 +721,7 @@ namespace College_ERP.Models.StudentServices
                 connection.Close();
             }
         }
-        public List<MealMode> GetMealSchedule(string day,int studentid)
+        public List<MealMode> GetMealSchedule(string day,int studentid,string search = null)
         {
             try
             {
@@ -722,6 +731,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.Parameters.AddWithValue("@action", "selectmeals");
                 cmd.Parameters.AddWithValue("@studentid", studentid);
                 cmd.Parameters.AddWithValue("@day", day);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader res = cmd.ExecuteReader();
                 while (res.Read())
@@ -812,7 +822,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.Dispose();
             }
         }
-        public List<HostelProblemModel> GetHostelProblem(int studentid)
+        public List<HostelProblemModel> GetHostelProblem(int studentid,string search = null)
         {
             try
             {
@@ -820,6 +830,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@studentid", studentid);
                 cmd.Parameters.AddWithValue("@action", "selectproblem");
+                cmd.Parameters.AddWithValue("@search", search??null);
                 List<HostelProblemModel> list = new List<HostelProblemModel>();
                 connection.Open();
                 var res = cmd.ExecuteReader();

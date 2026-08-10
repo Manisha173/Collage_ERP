@@ -109,7 +109,7 @@ namespace College_ERP.Models.DriverServices
         }
         #endregion
         #region Announcements
-        public List<CircularModel> GetAllCirculars(int userid)
+        public List<CircularModel> GetAllCirculars(int userid, string search = null)
         {
             List<CircularModel> list = new List<CircularModel>();
 
@@ -119,6 +119,7 @@ namespace College_ERP.Models.DriverServices
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Actions", "SelectAllCircular");
                 cmd.Parameters.AddWithValue("@userid", userid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
 
@@ -149,7 +150,7 @@ namespace College_ERP.Models.DriverServices
         }
         #endregion
         #region Notice
-        public List<NoticesModel> GetDriverNotices(string userType, int userId, int adminid)
+        public List<NoticesModel> GetDriverNotices(string userType, int userId, int adminid, string search = null)
         {
             try
             {
@@ -162,6 +163,7 @@ namespace College_ERP.Models.DriverServices
                 cmd.Parameters.AddWithValue("@UserType", userType);
                 cmd.Parameters.AddWithValue("@UserId", userId);
                 cmd.Parameters.AddWithValue("@adminid", adminid);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 connection.Open();
                 SqlDataReader dr = cmd.ExecuteReader();
@@ -226,13 +228,14 @@ namespace College_ERP.Models.DriverServices
                 cmd.Dispose();
             }
         }
-        public List<DriverProblemModel> GetDriverProblem(int driverid)
+        public List<DriverProblemModel> GetDriverProblem(int driverid, string search = null)
         {
             try
             {
                 cmd = new SqlCommand("sp_ManageDriverProblem", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@driverid", driverid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 cmd.Parameters.AddWithValue("@action", "selectproblem");
                 List<DriverProblemModel> list = new List<DriverProblemModel>();
                 connection.Open();
@@ -265,13 +268,14 @@ namespace College_ERP.Models.DriverServices
         }
         #endregion
         #region StudentList In Bus
-        public List<StudentListInBusModel> GetStudentListInBus(int driverid)
+        public List<StudentListInBusModel> GetStudentListInBus(int driverid, string search = null)
         {
             try
             {
                 cmd = new SqlCommand("sp_ManageDriverPanel", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@driverid", driverid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 cmd.Parameters.AddWithValue("@action", "selectStudentlistInBus");
                 List<StudentListInBusModel> list = new List<StudentListInBusModel>();
                 connection.Open();
@@ -316,13 +320,14 @@ namespace College_ERP.Models.DriverServices
         }
         #endregion
         #region GetPickupPoints
-        public List<PickupPointModel> GetPickupPoints(int driverid)
+        public List<PickupPointModel> GetPickupPoints(int driverid, string search = null)
         {
             try
             {
                 cmd = new SqlCommand("sp_ManageDriverPanel", connection);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@driverid", driverid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 cmd.Parameters.AddWithValue("@action", "GetPickPoint");
                 List<PickupPointModel> list = new List<PickupPointModel>();
                 connection.Open();

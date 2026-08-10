@@ -329,7 +329,7 @@ namespace College_ERP.Models.Warden
             }
         }
 
-        public List<MealViewModel> GetAllMeals(int userId)
+        public List<MealViewModel> GetAllMeals(int userId, string search = null)
         {
             List<MealViewModel> meals = new List<MealViewModel>();
 
@@ -338,6 +338,7 @@ namespace College_ERP.Models.Warden
 
             cmd.Parameters.AddWithValue("@Action", "GetAllMeals");
             cmd.Parameters.AddWithValue("@UserId", userId);
+            cmd.Parameters.AddWithValue("@search", search?? null);
 
             connection.Open();
             SqlDataReader reader = cmd.ExecuteReader();
