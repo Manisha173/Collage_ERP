@@ -48,11 +48,11 @@ namespace College_ERP.ApiService
         #region Student Assingments
         [Route("api/studentassignmets")]
         [HttpGet]
-        public IHttpActionResult GetStudentAssignments(int studentid)
+        public IHttpActionResult GetStudentAssignments(int studentid, string search = null)
         {
             try
             {
-                var data = _student.GetStudentAssignmentById(studentid);
+                var data = _student.GetStudentAssignmentById(studentid,search);
                 return Ok(new { status = data!=null, message = data != null?"Data received.":"Data not found", data = data });
             }
             catch (Exception ex)
@@ -90,12 +90,12 @@ namespace College_ERP.ApiService
         #region Announcements
         [Route("api/studentannouncements")]
         [HttpGet]
-        public IHttpActionResult GetStudentAnnouncements(int studentid)
+        public IHttpActionResult GetStudentAnnouncements(int studentid, string search = null)
         {
             try
             {
                 int adminid = _student.GetAdminId(studentid);
-                var data = _student.GetAllCirculars(adminid);
+                var data = _student.GetAllCirculars(adminid, search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -107,12 +107,12 @@ namespace College_ERP.ApiService
         #region Course
         [Route("api/studentcourse")]
         [HttpGet]
-        public IHttpActionResult GetStudentCourse(int classid,int sectionid,int studentid)
+        public IHttpActionResult GetStudentCourse(int classid,int sectionid,int studentid, string search = null)
         {
             try
             {
                 int adminid = _student.GetAdminId(studentid);
-                var data = _student.GetCourse(classid,sectionid,adminid);
+                var data = _student.GetCourse(classid,sectionid,adminid, search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -124,11 +124,11 @@ namespace College_ERP.ApiService
         #region Library
         [Route("api/studentlibrarydetails")]
         [HttpGet]
-        public IHttpActionResult GetLibraryDetails(int studentid)
+        public IHttpActionResult GetLibraryDetails(int studentid, string search = null)
         {
             try
             {
-                var data = _student.GetLibraryDetails(studentid);
+                var data = _student.GetLibraryDetails(studentid, search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -140,12 +140,12 @@ namespace College_ERP.ApiService
         #region TimeTable
         [Route("api/scheduledexams")]
         [HttpGet]
-        public IHttpActionResult GetScheduledExams(int studentid)
+        public IHttpActionResult GetScheduledExams(int studentid, string search = null)
         {
             try
             {
                 int adminid = _student.GetAdminId(studentid);
-                var data = _admin.GetScheduledExam(adminid);
+                var data = _admin.GetScheduledExam(adminid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -156,11 +156,11 @@ namespace College_ERP.ApiService
 
         [Route("api/studenexamtimetable")]
         [HttpGet]
-        public IHttpActionResult GetExamTimeTable(int studentid,int scheduleid)
+        public IHttpActionResult GetExamTimeTable(int studentid,int scheduleid, string search = null)
         {
             try
             {
-                var data = _student.GetExamTimeTableForStudent(studentid,scheduleid);
+                var data = _student.GetExamTimeTableForStudent(studentid,scheduleid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -170,11 +170,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/studenttodayschedule")]
         [HttpGet]
-        public IHttpActionResult GetTodaySchedule(int classid,int sectionid,string day)
+        public IHttpActionResult GetTodaySchedule(int classid,int sectionid,string day, string search = null)
         {
             try
             {
-                var data = _student.GetTodayScheduleOfStudent(classid,sectionid,day );
+                var data = _student.GetTodayScheduleOfStudent(classid,sectionid,day,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -184,11 +184,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/studentclasstimetable")]
         [HttpGet]
-        public IHttpActionResult GetStudentTimeTable(int classid, int sectionid)
+        public IHttpActionResult GetStudentTimeTable(int classid, int sectionid, string search = null)
         {
             try
             {
-                var data = _admin.ShowAllTimeTableDetails(classid, sectionid);
+                var data = _admin.ShowAllTimeTableDetails(classid, sectionid, search);
                 List<timetableshowModel> list = new List<timetableshowModel>();
                 string[] days = new string[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
                 foreach (var day in days)
@@ -206,12 +206,12 @@ namespace College_ERP.ApiService
         #region Notice
         [Route("api/studentnotice")]
         [HttpGet]
-        public IHttpActionResult GetNotice(int studentid)
+        public IHttpActionResult GetNotice(int studentid, string search = null)
         {
             try
             {
                 int adminid = _student.GetAdminId(studentid);
-                var data = _student.GetStudentNotices("student", studentid, adminid);
+                var data = _student.GetStudentNotices("student", studentid, adminid, search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -261,11 +261,11 @@ namespace College_ERP.ApiService
         #region Communication
         [Route("api/communcation")]
         [HttpGet]
-        public IHttpActionResult GetCommunication(int studentid)
+        public IHttpActionResult GetCommunication(int studentid, string search = null)
         {
             try
             {
-                var data = _student.GetCommunication(studentid,1);
+                var data = _student.GetCommunication(studentid,1,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -275,11 +275,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/wardencommuncation")]
         [HttpGet]
-        public IHttpActionResult GetWardenCommunication(int studentid)
+        public IHttpActionResult GetWardenCommunication(int studentid, string search = null)
         {
             try
             {
-                var data = _student.GetWardenCommunication(studentid);
+                var data = _student.GetWardenCommunication(studentid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -321,11 +321,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/mealschedule")]
         [HttpGet]
-        public IHttpActionResult GetHostelMealSchedule(string day,int studentid)
+        public IHttpActionResult GetHostelMealSchedule(string day,int studentid, string search = null)
         { 
             try
             {
-                var data = _student.GetMealSchedule(day,studentid);
+                var data = _student.GetMealSchedule(day,studentid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -335,12 +335,12 @@ namespace College_ERP.ApiService
         }
         [Route("api/weeklymealschedule")]
         [HttpGet]
-        public IHttpActionResult GetHostelWeeklyMealSchedule(int studentid)
+        public IHttpActionResult GetHostelWeeklyMealSchedule(int studentid, string search = null)
         { 
             try
             {
                 int wardenid = _student.GetWardenId(studentid);
-                List<MealViewModel> res = _warden.GetAllMeals(wardenid);
+                List<MealViewModel> res = _warden.GetAllMeals(wardenid, search);
                 var newMeal = res.Select(e => new
                 {
                     day = e.Day,
@@ -400,11 +400,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/hostelproblems")]
         [HttpGet]
-        public IHttpActionResult GetStudentHostelProblems(int studentid)
+        public IHttpActionResult GetStudentHostelProblems(int studentid, string search = null)
         {
             try
             {
-                var data = _student.GetHostelProblem(studentid);
+                var data = _student.GetHostelProblem(studentid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)

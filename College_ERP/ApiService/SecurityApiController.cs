@@ -43,12 +43,12 @@ namespace College_ERP.ApiService
         }
         [Route("api/notice")]
         [HttpGet]
-        public IHttpActionResult GetNotice(int securityid)
+        public IHttpActionResult GetNotice(int securityid, string search = null)
         {
             try
             {
                 int adminid = _security.GetAdminId(securityid);
-                var data = _security.GetSecurityNotices("security", securityid,adminid);
+                var data = _security.GetSecurityNotices("security", securityid,adminid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -94,11 +94,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/visitorlist")]
         [HttpGet]
-        public IHttpActionResult GetVisitorList(int securityid)
+        public IHttpActionResult GetVisitorList(int securityid, string search = null)
         {
             try
             {
-                var data = _security.GetAllVisitorsList(securityid);
+                var data = _security.GetAllVisitorsList(securityid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -210,12 +210,12 @@ namespace College_ERP.ApiService
         }
         [Route("api/getstafflist")]
         [HttpGet]
-        public IHttpActionResult GetStaffList(string role,int securityid)
+        public IHttpActionResult GetStaffList(string role,int securityid, string search = null)
         {
             try
             {
                 int adminid = _security.GetAdminId(securityid);
-                var data = _security.GetStaffList(role,adminid);
+                var data = _security.GetStaffList(role,adminid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -225,11 +225,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/getrooms")]
         [HttpGet]
-        public IHttpActionResult GetRoomNo(int securityid)
+        public IHttpActionResult GetRoomNo(int securityid, string search = null)
         {
             try
             {
-                var data = _security.GetRoomsByBlockId(securityid);
+                var data = _security.GetRoomsByBlockId(securityid, search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -239,12 +239,12 @@ namespace College_ERP.ApiService
         }
         [Route("api/getstudentinroom")]
         [HttpGet]
-        public IHttpActionResult GetStudentOfRoom(int roomid,int securityid)
+        public IHttpActionResult GetStudentOfRoom(int roomid,int securityid,string search = null)
         {
             try
             {
                 int adminid = _security.GetAdminId(securityid);
-                var data = _security.SelectUsersByRoomNo(roomid,adminid);
+                var data = _security.SelectUsersByRoomNo(roomid,adminid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -254,11 +254,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/visitorhistory")]
         [HttpGet]
-        public IHttpActionResult GetVisitorHistory(int visitorid)
+        public IHttpActionResult GetVisitorHistory(int visitorid, string search = null)
         {
             try
             {
-                var data = _security.GetVisitorHistory(visitorid);
+                var data = _security.GetVisitorHistory(visitorid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)

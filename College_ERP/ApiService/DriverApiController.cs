@@ -42,12 +42,12 @@ namespace College_ERP.ApiService
         #region GetDriverAnnouncements
         [Route("api/GetDriverAnnouncements")]
         [HttpGet]
-        public IHttpActionResult GetDriverAnnouncements(int driverId)
+        public IHttpActionResult GetDriverAnnouncements(int driverId, string search = null)
         {
             try
             {
                 int adminid = _driver.GetAdminId(driverId);
-                var data = _driver.GetAllCirculars(adminid);
+                var data = _driver.GetAllCirculars(adminid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -59,12 +59,12 @@ namespace College_ERP.ApiService
         #region Notice
         [Route("api/GetDriverNotice")]
         [HttpGet]
-        public IHttpActionResult GetDriverNotice(int driverid)
+        public IHttpActionResult GetDriverNotice(int driverid, string search = null)
         {
             try
             {
                 int adminid = _driver.GetAdminId(driverid);
-                var data = _driver.GetDriverNotices("BusDriver", driverid, adminid);
+                var data = _driver.GetDriverNotices("BusDriver", driverid, adminid, search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -97,11 +97,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/GetDriverProblems")]
         [HttpGet]
-        public IHttpActionResult GetDriverProblems(int driverid)
+        public IHttpActionResult GetDriverProblems(int driverid, string search = null)
         {
             try
             {
-                var data = _driver.GetDriverProblem(driverid);
+                var data = _driver.GetDriverProblem(driverid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -113,11 +113,11 @@ namespace College_ERP.ApiService
         #region Student List InBus
         [Route("api/GetStudentsInBus")]
         [HttpGet]
-        public IHttpActionResult GetStudentsInBus(int driverid)
+        public IHttpActionResult GetStudentsInBus(int driverid, string search = null)
         {
             try
             {
-                var data = _driver.GetStudentListInBus(driverid);
+                var data = _driver.GetStudentListInBus(driverid,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -129,11 +129,11 @@ namespace College_ERP.ApiService
         #region PickupPoints
         [Route("api/GetPickupPoints")]
         [HttpGet]
-        public IHttpActionResult GetPickupPoints(int driverid)
+        public IHttpActionResult GetPickupPoints(int driverid,string search = null)
         {
             try
             {
-                var data = _driver.GetPickupPoints(driverid);
+                var data = _driver.GetPickupPoints(driverid, search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
