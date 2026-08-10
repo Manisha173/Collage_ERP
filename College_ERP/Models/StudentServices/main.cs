@@ -326,6 +326,11 @@ namespace College_ERP.Models.StudentServices
             public string studentphoto { get; set; }
             public string motherphoto { get; set; }
             public string fatherphoto { get; set; }
+            public string stuDOB { get; set; }
+            public string CollagMobile { get; set; }
+            public string CollagLandLineNo { get; set; }
+            public string CollagAddress { get; set; }
+            public string CollagLOGO { get; set; }
         }
     }
 }

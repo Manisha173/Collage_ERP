@@ -480,7 +480,7 @@ namespace College_ERP.Models.StudentServices
         }
         #endregion
         #region Notice
-        public List<NoticesModel> GetStudentNotices(string userType, int userId, int adminid)
+        public List<NoticesModel> GetStudentNotices(string userType, int userId, int adminid,string search=null)
         {
             try
             {
@@ -493,6 +493,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.Parameters.AddWithValue("@UserType", userType);
                 cmd.Parameters.AddWithValue("@UserId", userId);
                 cmd.Parameters.AddWithValue("@adminid", adminid);
+                cmd.Parameters.AddWithValue("@search", @search);
 
                 connection.Open();
                 SqlDataReader dr = cmd.ExecuteReader();
@@ -568,7 +569,7 @@ namespace College_ERP.Models.StudentServices
         }
         #endregion
         #region Communication
-        public List<stCommunicationModel> GetCommunication(int studentid,int isSendTo)
+        public List<stCommunicationModel> GetCommunication(int studentid,int isSendTo,string search=null)
         {
             try
             {
@@ -578,6 +579,7 @@ namespace College_ERP.Models.StudentServices
                 cmd.Parameters.AddWithValue("@action", "selectcommunication");
                 cmd.Parameters.AddWithValue("@studentid", studentid);
                 cmd.Parameters.AddWithValue("@isSendto", isSendTo);
+                cmd.Parameters.AddWithValue("@search", search);
                 connection.Open();
                 SqlDataReader res = cmd.ExecuteReader();
                 while (res.Read())
@@ -969,6 +971,11 @@ namespace College_ERP.Models.StudentServices
                             model.studentphoto = sdr["studentphoto"] != DBNull.Value ? sdr["studentphoto"].ToString() : null;
                             model.motherphoto = sdr["motherphoto"] != DBNull.Value ? sdr["motherphoto"].ToString() : null;
                             model.fatherphoto = sdr["fatherphoto"] != DBNull.Value ? sdr["fatherphoto"].ToString() : null;
+                            model.stuDOB = sdr["DOB"] != DBNull.Value ? sdr["DOB"].ToString() : null;
+                            model.CollagMobile = sdr["MobileNo"] != DBNull.Value ? sdr["MobileNo"].ToString() : null;
+                            model.CollagLandLineNo = sdr["LandLineNo"] != DBNull.Value ? sdr["LandLineNo"].ToString() : null;
+                            model.CollagAddress = sdr["School_Address"] != DBNull.Value ? sdr["School_Address"].ToString() : null;
+                            model.CollagLOGO = sdr["School_Logo"] != DBNull.Value ? sdr["School_Logo"].ToString() : null;
                         }
                     }
                 }

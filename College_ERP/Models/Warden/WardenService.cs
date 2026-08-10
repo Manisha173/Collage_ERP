@@ -233,7 +233,7 @@ namespace College_ERP.Models.Warden
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@action", "GetStudentsInBlock");
                 cmd.Parameters.AddWithValue("@userid", userId);
-                cmd.Parameters.AddWithValue("@search", search);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -734,7 +734,7 @@ namespace College_ERP.Models.Warden
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Action", "GetAllCommunication");
                 cmd.Parameters.AddWithValue("@userId", userid);
-                cmd.Parameters.AddWithValue("@search", search);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -1098,7 +1098,7 @@ namespace College_ERP.Models.Warden
 
             return roomInfo;
         }
-        public List<RoomModel> GetRoomsByBlockId(int blockId, int userid)
+        public List<RoomModel> GetRoomsByBlockId(int blockId, int userid,string search=null)
         {
             List<RoomModel> rooms = new List<RoomModel>();
 
@@ -1109,6 +1109,7 @@ namespace College_ERP.Models.Warden
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@BlockId", blockId);
                 cmd.Parameters.AddWithValue("@userid", userid);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 connection.Open();
                 SqlDataReader dr = cmd.ExecuteReader();
@@ -1138,7 +1139,7 @@ namespace College_ERP.Models.Warden
 
             return rooms;
         }
-        public List<RoomModel> GetRoomsByFloor(int floorno, int userid)
+        public List<RoomModel> GetRoomsByFloor(int floorno, int userid,string search =null)
         {
             List<RoomModel> rooms = new List<RoomModel>();
 
@@ -1149,6 +1150,7 @@ namespace College_ERP.Models.Warden
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@floorno", floorno);
                 cmd.Parameters.AddWithValue("@wardenid", userid);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 connection.Open();
                 SqlDataReader dr = cmd.ExecuteReader();
@@ -1231,7 +1233,7 @@ namespace College_ERP.Models.Warden
             cmd.Parameters.AddWithValue("@UserType", userType);
             cmd.Parameters.AddWithValue("@UserId", userId);
             cmd.Parameters.AddWithValue("@adminid", adminid);
-            cmd.Parameters.AddWithValue("@search", search);
+            cmd.Parameters.AddWithValue("@search", search ?? null);
 
             connection.Open();
             SqlDataReader dr = cmd.ExecuteReader();
@@ -1345,7 +1347,7 @@ namespace College_ERP.Models.Warden
             }
             return feeRecords;
         }
-        public List<FeeRecordsModel> GetLastFeeRecords(int userid)
+        public List<FeeRecordsModel> GetLastFeeRecords(int userid,string search=null)
         {
             try
             {
@@ -1356,6 +1358,7 @@ namespace College_ERP.Models.Warden
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Action", "selectlastpaymentofall");
                 cmd.Parameters.AddWithValue("@userid", userid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -1387,7 +1390,7 @@ namespace College_ERP.Models.Warden
                     connection.Close();
             }
         }
-        public List<FeeRecordsModel> GetFeeHistoryOfStudent(int studenthostelid)
+        public List<FeeRecordsModel> GetFeeHistoryOfStudent(int studenthostelid,string search=null)
         {
             try
             {
@@ -1398,6 +1401,7 @@ namespace College_ERP.Models.Warden
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Action", "selectfeehistoryofstudent");
                 cmd.Parameters.AddWithValue("@StudentHostelId", studenthostelid);
+                cmd.Parameters.AddWithValue("@search", search);
                 connection.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -1588,7 +1592,7 @@ namespace College_ERP.Models.Warden
 
             return model;
         }
-        public List<HolidayModel> GetHolidaysForAll(int userId)
+        public List<HolidayModel> GetHolidaysForAll(int userId, string search = null)
         {
             List<HolidayModel> holidays = new List<HolidayModel>();
             try
@@ -1597,6 +1601,7 @@ namespace College_ERP.Models.Warden
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Action", "HolidaysForAll");
                 cmd.Parameters.AddWithValue("@userid", userId);
+                cmd.Parameters.AddWithValue("@search", search);
 
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -1624,7 +1629,7 @@ namespace College_ERP.Models.Warden
 
         }
 
-        public List<HolidayModel> GetHolidaysTodayAndTomorrow(int userId)
+        public List<HolidayModel> GetHolidaysTodayAndTomorrow(int userId, string search = null)
         {
             List<HolidayModel> holidays = new List<HolidayModel>();
             try
@@ -1633,6 +1638,7 @@ namespace College_ERP.Models.Warden
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Action", "HolidaysTodayAndTomorrow");
                 cmd.Parameters.AddWithValue("@userid", userId);
+                cmd.Parameters.AddWithValue("@search", search??null);
 
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -1686,7 +1692,7 @@ namespace College_ERP.Models.Warden
             }
         }
         #region Hostel Problems Management
-        public List<HostelProblemsModel> GetHostelProblem(int wardenid)
+        public List<HostelProblemsModel> GetHostelProblem(int wardenid, string search = null)
         {
             try
             {
@@ -1694,6 +1700,7 @@ namespace College_ERP.Models.Warden
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@wardenid", wardenid);
                 cmd.Parameters.AddWithValue("@action", "selectforwarden");
+                cmd.Parameters.AddWithValue("@search", search??null);
                 List<HostelProblemsModel> list = new List<HostelProblemsModel>();
                 connection.Open();
                 var res = cmd.ExecuteReader();
@@ -1788,7 +1795,7 @@ namespace College_ERP.Models.Warden
                 cmd.Dispose();
             }
         }
-        public List<RoomListModel> GetRoomList(int wardenid)
+        public List<RoomListModel> GetRoomList(int wardenid,string search=null)
         {
             List<RoomListModel> list = new List<RoomListModel>();
             try
@@ -1798,6 +1805,7 @@ namespace College_ERP.Models.Warden
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@action", "selectroomlist");
                 cmd.Parameters.AddWithValue("@wardenid", wardenid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
 

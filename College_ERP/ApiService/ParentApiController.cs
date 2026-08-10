@@ -51,12 +51,12 @@ namespace College_ERP.ApiService
         }
         [Route("api/parentnotice")]
         [HttpGet]
-        public IHttpActionResult GetNotice(int studentid)
+        public IHttpActionResult GetNotice(int studentid,string search=null)
         {
             try
             {
                 int adminid = _student.GetAdminId(studentid);
-                var data = _student.GetStudentNotices("parent", studentid, adminid);
+                var data = _student.GetStudentNotices("parent", studentid, adminid, search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
@@ -66,11 +66,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/parentcommuncation")]
         [HttpGet]
-        public IHttpActionResult GetCommunication(int studentid)
+        public IHttpActionResult GetCommunication(int studentid, string search = null)
         {
             try
             {
-                var data = _student.GetCommunication(studentid, 2);
+                var data = _student.GetCommunication(studentid, 2,search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
