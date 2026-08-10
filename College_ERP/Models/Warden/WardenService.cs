@@ -224,7 +224,7 @@ namespace College_ERP.Models.Warden
             return list;
         }
 
-        public List<StudentDetailModel> GetStudentsInBlock(int userId)
+        public List<StudentDetailModel> GetStudentsInBlock(int userId,string search=null)
         {
             List<StudentDetailModel> students = new List<StudentDetailModel>();
 
@@ -233,6 +233,7 @@ namespace College_ERP.Models.Warden
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@action", "GetStudentsInBlock");
                 cmd.Parameters.AddWithValue("@userid", userId);
+                cmd.Parameters.AddWithValue("@search", search);
 
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -329,7 +330,7 @@ namespace College_ERP.Models.Warden
             }
         }
 
-        public List<MealViewModel> GetAllMeals(int userId)
+        public List<MealViewModel> GetAllMeals(int userId,string search=null)
         {
             List<MealViewModel> meals = new List<MealViewModel>();
 
@@ -338,6 +339,7 @@ namespace College_ERP.Models.Warden
 
             cmd.Parameters.AddWithValue("@Action", "GetAllMeals");
             cmd.Parameters.AddWithValue("@UserId", userId);
+            cmd.Parameters.AddWithValue("@search", search??null);
 
             connection.Open();
             SqlDataReader reader = cmd.ExecuteReader();
@@ -637,7 +639,7 @@ namespace College_ERP.Models.Warden
             return menus;
         }
 
-        public List<MealViewModel> GetMealDetailsByDayAndUser(string day, int userid)
+        public List<MealViewModel> GetMealDetailsByDayAndUser(string day, int userid,string search=null)
         {
             Dictionary<int, MealViewModel> mealDict = new Dictionary<int, MealViewModel>();
 
@@ -646,6 +648,7 @@ namespace College_ERP.Models.Warden
             cmd.Parameters.AddWithValue("@Action", "GetMealsByDayAndUser");
             cmd.Parameters.AddWithValue("@Day", day);
             cmd.Parameters.AddWithValue("@userid", userid);
+            cmd.Parameters.AddWithValue("@search", search??null);
 
             connection.Open();
             SqlDataReader rdr = cmd.ExecuteReader();
@@ -721,7 +724,7 @@ namespace College_ERP.Models.Warden
 
         }
 
-        public List<CommunicationModel> GetAllCommunication(int userid)
+        public List<CommunicationModel> GetAllCommunication(int userid,string search=null)
         {
             List<CommunicationModel> list = new List<CommunicationModel>();
 
@@ -731,6 +734,7 @@ namespace College_ERP.Models.Warden
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Action", "GetAllCommunication");
                 cmd.Parameters.AddWithValue("@userId", userid);
+                cmd.Parameters.AddWithValue("@search", search);
 
                 connection.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -1216,7 +1220,7 @@ namespace College_ERP.Models.Warden
                     connection.Close();
             }
         }
-        public List<NoticeModel> GetWardenNotices(string userType, int userId, int adminid)
+        public List<NoticeModel> GetWardenNotices(string userType, int userId, int adminid,string search=null)
         {
             var notices = new List<NoticeModel>();
 
@@ -1227,6 +1231,7 @@ namespace College_ERP.Models.Warden
             cmd.Parameters.AddWithValue("@UserType", userType);
             cmd.Parameters.AddWithValue("@UserId", userId);
             cmd.Parameters.AddWithValue("@adminid", adminid);
+            cmd.Parameters.AddWithValue("@search", search);
 
             connection.Open();
             SqlDataReader dr = cmd.ExecuteReader();
