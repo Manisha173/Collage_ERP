@@ -389,7 +389,7 @@ namespace College_ERP.Models.Security
 
             }
         } 
-        public List<VisitorModel> GetLoginVisitorsList(int userid)
+        public List<VisitorModel> GetLoginVisitorsList(int userid, string search = null)
         {
             try
             {
@@ -397,6 +397,7 @@ namespace College_ERP.Models.Security
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@action", "selectLoginVisitor");
                 cmd.Parameters.AddWithValue("@userid", userid);
+                cmd.Parameters.AddWithValue("@search", search??null);
                 conn.Open();
                 List<VisitorModel> list = new List<VisitorModel>();
                 var res = cmd.ExecuteReader();
