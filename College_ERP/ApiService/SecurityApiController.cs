@@ -168,11 +168,11 @@ namespace College_ERP.ApiService
         }
         [Route("api/loginvisitorlist")]
         [HttpGet]
-        public IHttpActionResult GetLoginVisitorList(int securityid)
+        public IHttpActionResult GetLoginVisitorList(int securityid, string search = null)
         {
             try
             {
-                var data = _security.GetLoginVisitorsList(securityid);
+                var data = _security.GetLoginVisitorsList(securityid, search);
                 return Ok(new { status = data != null, message = data != null ? "Data received." : "Data not found", data = data });
             }
             catch (Exception ex)
