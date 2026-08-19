@@ -1,4 +1,16 @@
-﻿<!DOCTYPE html>
+﻿
+@{ 
+    College_ERP.Models.HomeServices.HomeService homeService = new College_ERP.Models.HomeServices.HomeService();
+    College_ERP.Models.SuperAdmin.SuperAdminDataService superAdminDataService = new College_ERP.Models.SuperAdmin.SuperAdminDataService();
+    int userId = Convert.ToInt32(homeService.GetUserId(User.Identity.Name));
+
+    var companyInfo = superAdminDataService.GetAdminById(userId);
+
+    string Companyname = companyInfo.CompanyName;
+    string Companylogo = companyInfo.SchoolLogo;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 
 
@@ -122,6 +134,33 @@
             border-radius: 4px;
             font-weight: bold;
         }
+        .company-name-wrapper {
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+            padding-left: 15px;
+/*            border-left: 1px solid #e5e7eb;*/
+        }
+
+        .company-name-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .company-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 50px;
+        }
+
+        .company-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            white-space: nowrap;
+        }
     </style>
 </head>
 
@@ -148,7 +187,20 @@
                             <h5 class="mb-0"></h5>
                         </li>
                     </ul>
+                    <!-- Company Name -->
+                    <ul class="list-unstyled topnav-menu mb-0 d-flex align-items-center" style="margin-right: 220px;">
+                        <li class="company-name-wrapper">
+                            <div class="company-name-box">
+                                <img src="@Url.Content(Companylogo)"
+                                     class="company-logo"
+                                     alt="Company Logo" />
+
+                                <span class="company-name">@Companyname</span>
+                            </div>
+                        </li>
+                    </ul>
                     <ul class="list-unstyled  topnav-menu mb-0 d-flex align-items-center" id="searchContainer">
+
                         <li class="mx-4 position-relative" style="width:300px;">
                             <form method="post" id="searchForm">
                                 <input id="searchComponent" type="search" class="form-control" placeholder="Search Module..." />
@@ -168,7 +220,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow p-3 mt-3" aria-labelledby="userDropdown" style="width: 250px;">
                                 <li class="text-center mb-2">
-                                    <div class="avatar rounded-circle d-inline-block overflow-hidden"  style="width: 40px; height: 40px;">
+                                    <div class="avatar rounded-circle d-inline-block overflow-hidden" style="width: 40px; height: 40px;">
                                         <img class="admin-avatar" id="adminI2" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;" />
                                     </div>
                                     <div class="fw-bold mt-2">@User.Identity.Name</div>
@@ -192,8 +244,8 @@
                     </ul>
 
                     @*<ul class="list-unstyled topnav-menu mb-0 d-flex align-items-center">
-                            <li><button class="btn btn-outline-info" id="logoutuser">Logout</button></li>
-                        </ul>*@
+            <li><button class="btn btn-outline-info" id="logoutuser">Logout</button></li>
+        </ul>*@
                 </div>
 
             </div>

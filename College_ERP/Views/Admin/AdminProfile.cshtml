@@ -6,625 +6,786 @@
 
 <style>
     :root {
-  --primary: #0f766e;
-  --secondary: #134e4a;
-  --accent: #115e59;
-  --light: #042f2e;
-  --dark: #042f2e;
-  --success: #0d9488;
-  --teal-50: #f0fdfa;
-  --teal-100: #ccfbf1;
-  --teal-200: #99f6e4;
-  --teal-300: #5eead4;
-  --teal-400: #2dd4bf;
-  --teal-500: #14b8a6;
-  --teal-600: #0d9488;
-  --teal-700: #0f766e;
-  --teal-800: #115e59;
-  --teal-900: #134e4a;
-  --teal-950: #042f2e;
-}
- 
-
-/* Header Styles */
-.profile-header {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(15, 118, 110, 0.2);
-}
-
-.page-title {
-  font-weight: 700;
-  margin: 0;
-}
-
-.action-buttons .btn {
-  border-radius: 25px;
-  padding: 8px 20px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.btn-primary {
-  background: linear-gradient(45deg, var(--teal-400), var(--teal-500));
-  border: none;
-  color: white;
-}
-
-.btn-primary:hover {
-  background: linear-gradient(45deg, var(--teal-500), var(--teal-600));
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);
-}
-
-.btn-outline-primary {
-  border: 2px solid var(--teal-400);
-  color: var(--teal-400);
-  background: transparent;
-}
-
-.btn-outline-primary:hover {
-  background: var(--teal-400);
-  color: white;
-  transform: translateY(-2px);
-}
-
-.btn-outline-success {
-  border: 2px solid var(--success);
-  color: var(--success);
-  background: transparent;
-}
-
-.btn-outline-success:hover {
-  background: var(--success);
-  color: white;
-  transform: translateY(-2px);
-}
-
-/* Main Profile Card */
-.main-profile-card {
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(15, 118, 110, 0.1);
-  overflow: hidden;
-  position: relative;
-}
-
-.main-profile-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, var(--primary), var(--teal-400), var(--secondary));
-}
-
-/* Admin Overview */
-.admin-overview {
-  background: linear-gradient(135deg, var(--teal-50), white);
-  padding: 2.5rem;
-  border-bottom: 1px solid var(--teal-100);
-}
-
-.profile-image-container {
-  position: relative;
-  display: inline-block;
-  margin-bottom: 1.5rem;
-}
-
-.profile-image {
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  border: 4px solid var(--teal-200);
-  box-shadow: 0 8px 25px rgba(15, 118, 110, 0.2);
-  object-fit: cover;
-  transition: all 0.3s ease;
-}
-
-.profile-image:hover {
-  transform: scale(1.05);
-  border-color: var(--teal-300);
-}
-
-.profile-badge {
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  color: var(--secondary);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
-}
-
-.admin-status {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: var(--success);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.admin-status.active {
-  background: var(--success);
-  animation: pulse 2s infinite;
-}
-
-.admin-status i {
-  font-size: 8px;
-}
-
-@@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(13, 148, 136, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0);
-  }
-}
-
-.admin-basic-info {
-  margin-top: 1rem;
-}
-
-.admin-name {
-  color: var(--secondary);
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-
-.admin-role {
-  color: var(--accent);
-  font-weight: 500;
-  margin-bottom: 1rem;
-}
-
-.admin-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-.admin-badges .badge {
-  font-size: 0.8rem;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-}
-
-.bg-success {
-  background: var(--success) !important;
-}
-
-.bg-primary {
-  background: var(--primary) !important;
-}
-
-/* Quick Stats */
-.quick-stats {
-  margin-top: 1rem;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 15px;
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  box-shadow: 0 4px 15px rgba(15, 118, 110, 0.1);
-  transition: all 0.3s ease;
-  height: 100%;
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(15, 118, 110, 0.15);
-}
-
-.stat-icon {
-  background: linear-gradient(135deg, var(--teal-100), var(--teal-200));
-  color: var(--primary);
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-}
-
-.stat-info h6 {
-  color: var(--accent);
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.stat-info p {
-  color: var(--secondary);
-  font-weight: 500;
-  margin: 0;
-  font-size: 1rem;
-}
-
-/* Profile Sections */
-.profile-sections {
-  padding: 0;
-}
-
-.info-section {
-  border-bottom: 1px solid var(--teal-100);
-}
-
-.info-section:last-child {
-  border-bottom: none;
-}
-
-.section-header {
-  background: linear-gradient(90deg, var(--teal-50), transparent);
-  padding: 1.5rem 2.5rem;
-  border-bottom: 1px solid var(--teal-100);
-}
-
-.section-header h4 {
-  color: var(--secondary);
-  font-weight: 700;
-  margin: 0;
-  font-size: 1.3rem;
-}
-
-.section-header i {
-  color: var(--primary);
-}
-
-.section-content {
-  padding: 2rem 2.5rem;
-}
-
-/* Info Items */
-.info-item {
-  background: var(--teal-50);
-  border-radius: 10px;
-  padding: 1rem;
-  border-left: 4px solid var(--primary);
-  transition: all 0.3s ease;
-  height: 100%;
-}
-
-.info-item:hover {
-  background: var(--teal-100);
-  transform: translateX(5px);
-  border-left-color: var(--teal-600);
-}
-
-.info-item label {
-  display: block;
-  color: var(--accent);
-  font-weight: 600;
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
-}
-
-.info-item label i {
-  color: var(--primary);
-}
-
-.info-item span {
-  color: var(--secondary);
-  font-weight: 500;
-  font-size: 1rem;
-  display: block;
-}
-
-.info-item .highlight {
-  color: var(--primary);
-  font-weight: 700;
-  background: var(--teal-100);
-  padding: 2px 8px;
-  border-radius: 5px;
-}
-
-.document-link {
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-}
-
-.document-link:hover {
-  color: var(--teal-600);
-  text-decoration: underline;
-  transform: translateX(5px);
-}
-
-/* Company Cards */
-.company-card, .authorized-card {
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 6px 20px rgba(15, 118, 110, 0.1);
-  overflow: hidden;
-  transition: all 0.3s ease;
-  height: 100%;
-}
-
-.company-card:hover, .authorized-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(15, 118, 110, 0.15);
-}
-
-.company-card .card-header, .authorized-card .card-header {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.company-logo-container {
-  position: relative;
-}
-
-.company-logo {
-  width: 60px;
-  height: 60px;
-  border-radius: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  object-fit: cover;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.company-info {
-  flex: 1;
-}
-
-.company-info h5, .authorized-card .card-header h5 {
-  margin: 0;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.company-info p {
-  margin: 0;
-  opacity: 0.9;
-  font-size: 0.9rem;
-}
-
-.authorized-card .card-header i {
-  font-size: 1.5rem;
-}
-
-.card-content {
-  padding: 1.5rem;
-}
-
-.card-content .info-item {
-  background: var(--teal-50);
-  margin-bottom: 1rem;
-  border-left: 3px solid var(--teal-300);
-}
-
-.card-content .info-item:last-child {
-  margin-bottom: 0;
-}
-
-/* Error States */
-.image-error {
-  background: linear-gradient(135deg, var(--teal-50), var(--teal-100));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary);
-  font-size: 3rem;
-  border: 2px dashed var(--teal-200);
-  border-radius: 50%;
-  width: 200px;
-  height: 200px;
-}
-
-.logo-error {
-  background: linear-gradient(135deg, var(--teal-50), var(--teal-100));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary);
-  font-size: 1.5rem;
-  border: 2px dashed var(--teal-200);
-  border-radius: 10px;
-  width: 60px;
-  height: 60px;
-}
-
-/* Responsive Design */
-@@media (max-width: 768px) {
-  .profile-header {
-    padding: 1.5rem;
-  }
-
-  .profile-header .d-flex {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-
-  .action-buttons {
-    width: 100%;
-  }
-
-  .action-buttons .btn {
-    width: 32%;
-    margin-bottom: 0.5rem;
-  }
-
-  .admin-overview {
-    padding: 1.5rem;
-  }
-
-  .section-content {
-    padding: 1.5rem;
-  }
-
-  .profile-image {
-    width: 150px;
-    height: 150px;
-  }
-
-  .stat-card {
-    margin-bottom: 1rem;
-  }
-
-  .company-card, .authorized-card {
-    margin-bottom: 1.5rem;
-  }
-}
-
-@@media (max-width: 576px) {
-  .profile-image {
-    width: 120px;
-    height: 120px;
-  }
-
-  .stat-card {
-    padding: 1rem;
-  }
-
-  .stat-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
-  }
-
-  .action-buttons .btn {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-
-  .admin-badges {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-/* Animation */
-@@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.info-section {
-  animation: fadeInUp 0.6s ease forwards;
-}
-
-.info-section:nth-child(1) {
-  animation-delay: 0.1s;
-}
-.info-section:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
+        --primary: #0f766e;
+        --secondary: #134e4a;
+        --accent: #115e59;
+        --light: #042f2e;
+        --dark: #042f2e;
+        --success: #0d9488;
+        --teal-50: #f0fdfa;
+        --teal-100: #ccfbf1;
+        --teal-200: #99f6e4;
+        --teal-300: #5eead4;
+        --teal-400: #2dd4bf;
+        --teal-500: #14b8a6;
+        --teal-600: #0d9488;
+        --teal-700: #0f766e;
+        --teal-800: #115e59;
+        --teal-900: #134e4a;
+        --teal-950: #042f2e;
+    }
+
+
+    /* Header Styles */
+    .profile-header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(15, 118, 110, 0.2);
+    }
+
+    .page-title {
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .action-buttons .btn {
+        border-radius: 25px;
+        padding: 8px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, var(--teal-400), var(--teal-500));
+        border: none;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--teal-500), var(--teal-600));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);
+        }
+
+    .btn-outline-primary {
+        border: 2px solid var(--teal-400);
+        color: var(--teal-400);
+        background: transparent;
+    }
+
+        .btn-outline-primary:hover {
+            background: var(--teal-400);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .btn-outline-success {
+        border: 2px solid var(--success);
+        color: var(--success);
+        background: transparent;
+    }
+
+        .btn-outline-success:hover {
+            background: var(--success);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    /* Main Profile Card */
+    .main-profile-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(15, 118, 110, 0.1);
+        overflow: hidden;
+        position: relative;
+    }
+
+        .main-profile-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--teal-400), var(--secondary));
+        }
+
+    /* Admin Overview */
+    .admin-overview {
+        background: linear-gradient(135deg, var(--teal-50), white);
+        padding: 2.5rem;
+        border-bottom: 1px solid var(--teal-100);
+    }
+
+    .profile-image-container {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 4px solid var(--teal-200);
+        box-shadow: 0 8px 25px rgba(15, 118, 110, 0.2);
+        object-fit: cover;
+        transition: all 0.3s ease;
+    }
+
+        .profile-image:hover {
+            transform: scale(1.05);
+            border-color: var(--teal-300);
+        }
+
+    .profile-badge {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: var(--secondary);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .admin-status {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--success);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .admin-status.active {
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .admin-status i {
+            font-size: 8px;
+        }
+
+    @@keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.7);
+        }
+
+        70% {
+            box-shadow: 0 0 0 10px rgba(13, 148, 136, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(13, 148, 136, 0);
+        }
+    }
+
+    .admin-basic-info {
+        margin-top: 1rem;
+    }
+
+    .admin-name {
+        color: var(--secondary);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .admin-role {
+        color: var(--accent);
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .admin-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+        .admin-badges .badge {
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+    .bg-success {
+        background: var(--success) !important;
+    }
+
+    .bg-primary {
+        background: var(--primary) !important;
+    }
+
+    /* Quick Stats */
+    .quick-stats {
+        margin-top: 1rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 4px 15px rgba(15, 118, 110, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(15, 118, 110, 0.15);
+        }
+
+    .stat-icon {
+        background: linear-gradient(135deg, var(--teal-100), var(--teal-200));
+        color: var(--primary);
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .stat-info h6 {
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-info p {
+        color: var(--secondary);
+        font-weight: 500;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    /* Profile Sections */
+    .profile-sections {
+        padding: 0;
+    }
+
+    .info-section {
+        border-bottom: 1px solid var(--teal-100);
+    }
+
+        .info-section:last-child {
+            border-bottom: none;
+        }
+
+    .section-header {
+        background: linear-gradient(90deg, var(--teal-50), transparent);
+        padding: 1.5rem 2.5rem;
+        border-bottom: 1px solid var(--teal-100);
+    }
+
+        .section-header h4 {
+            color: var(--secondary);
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .section-header i {
+            color: var(--primary);
+        }
+
+    .section-content {
+        padding: 2rem 2.5rem;
+    }
+
+    /* Info Items */
+    .info-item {
+        background: var(--teal-50);
+        border-radius: 10px;
+        padding: 1rem;
+        border-left: 4px solid var(--primary);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+        .info-item:hover {
+            background: var(--teal-100);
+            transform: translateX(5px);
+            border-left-color: var(--teal-600);
+        }
+
+        .info-item label {
+            display: block;
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+            .info-item label i {
+                color: var(--primary);
+            }
+
+        .info-item span {
+            color: var(--secondary);
+            font-weight: 500;
+            font-size: 1rem;
+            display: block;
+        }
+
+        .info-item .highlight {
+            color: var(--primary);
+            font-weight: 700;
+            background: var(--teal-100);
+            padding: 2px 8px;
+            border-radius: 5px;
+        }
+
+    .document-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+
+        .document-link:hover {
+            color: var(--teal-600);
+            text-decoration: underline;
+            transform: translateX(5px);
+        }
+
+    /* Company Cards */
+    .company-card, .authorized-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 6px 20px rgba(15, 118, 110, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+        .company-card:hover, .authorized-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(15, 118, 110, 0.15);
+        }
+
+        .company-card .card-header, .authorized-card .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+/*    .company-logo-container {
+        position: relative;
+    }
+
+    .company-logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        object-fit: cover;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }*/
+
+    .company-info {
+        flex: 1;
+    }
+
+        .company-info h5, .authorized-card .card-header h5 {
+            margin: 0;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .company-info p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+    .authorized-card .card-header i {
+        font-size: 1.5rem;
+    }
+
+    .card-content {
+        padding: 1.5rem;
+    }
+
+        .card-content .info-item {
+            background: var(--teal-50);
+            margin-bottom: 1rem;
+            border-left: 3px solid var(--teal-300);
+        }
+
+            .card-content .info-item:last-child {
+                margin-bottom: 0;
+            }
+
+    /* Error States */
+    .image-error {
+        background: linear-gradient(135deg, var(--teal-50), var(--teal-100));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 3rem;
+        border: 2px dashed var(--teal-200);
+        border-radius: 50%;
+        width: 200px;
+        height: 200px;
+    }
+
+    .logo-error {
+        background: linear-gradient(135deg, var(--teal-50), var(--teal-100));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 1.5rem;
+        border: 2px dashed var(--teal-200);
+        border-radius: 10px;
+        width: 60px;
+        height: 60px;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .profile-header {
+            padding: 1.5rem;
+        }
+
+            .profile-header .d-flex {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+        .action-buttons {
+            width: 100%;
+        }
+
+            .action-buttons .btn {
+                width: 32%;
+                margin-bottom: 0.5rem;
+            }
+
+        .admin-overview {
+            padding: 1.5rem;
+        }
+
+        .section-content {
+            padding: 1.5rem;
+        }
+
+        .profile-image {
+            width: 150px;
+            height: 150px;
+        }
+
+        .stat-card {
+            margin-bottom: 1rem;
+        }
+
+        .company-card, .authorized-card {
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .profile-image {
+            width: 120px;
+            height: 120px;
+        }
+
+        .stat-card {
+            padding: 1rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+
+        .action-buttons .btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-badges {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    /* Animation */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .info-section {
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+        .info-section:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .info-section:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+    .profile-header {
+        padding: 20px 24px;
+        border-radius: 12px;
+    }
+
+    .profile-title-section {
+        min-width: 0;
+    }
+
+    .company-profile-info {
+        flex-shrink: 0;
+    }
+
+    .company-info h5 {
+        color: #fff;
+        font-size: 16px;
+        margin: 0;
+        max-width: 220px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .company-info small {
+        font-size: 11px;
+        opacity: 0.8;
+    }
+
+
+
+
+
+    /* Responsive */
+    @@media (max-width: 576px) {
+        .profile-header {
+            padding: 16px;
+        }
+
+            .profile-header > div {
+                align-items: flex-start !important;
+            }
+
+        .company-info {
+            display: none;
+        }
+
+        .company-logo-container {
+            width: 58px;
+            height: 58px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        }
+
+        .company-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .page-title {
+            font-size: 18px;
+        }
+    }
+
+    .profile-header {
+        padding: 10px 16px !important;
+        min-height: auto;
+    }
+
+    .page-title {
+        font-size: 16px;
+        line-height: 1.2;
+        margin: 0;
+    }
+
+    .profile-title-section p {
+        font-size: 12px;
+        line-height: 1.2;
+    }
+
+    .profile-title-section {
+        padding: 0;
+    }
+    .company-card-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 12px !important;
+        min-height: auto !important;
+    }
+
+    .company-logo-container {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .company-logo {
+        width: 35px;
+        height: 35px;
+        object-fit: contain;
+        border-radius: 5px;
+    }
+
+    .company-info h5 {
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.2;
+        margin: 0 !important;
+    }
+    .authorized-header {
+        padding: 6px 10px !important;
+        gap: 7px !important;
+        min-height: 42px !important;
+    }
+
+        .authorized-header i {
+            font-size: 14px !important;
+        }
+
+        .authorized-header h5 {
+            font-size: 13px !important;
+            line-height: 1.2 !important;
+            margin: 0 !important;
+        }
 </style>
 
 
-    <div class="content-page">
-        <div class="container-fluid py-4">
-            <!-- Header Section -->
-            <div class="profile-header mb-4">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h2 class="page-title mb-1">
-                            <i class="fas fa-user-shield me-2"></i>
-                            Admin Profile
-                        </h2>
-                        <p class="text-light mb-0">Personal & Company Information</p>
-                    </div>
-                    
+
+<div class="content-page">
+    <div class="container-fluid py-4">
+        <!-- Header Section -->
+        <div class="profile-header mb-3">
+            <div class="d-flex align-items-center">
+
+                <div class="profile-title-section">
+                    <h2 class="page-title mb-0">
+                        <i class="fas fa-user-shield me-2"></i>
+                        Admin Profile
+                    </h2>
+
+                    <p class="text-light mb-0 mt-1">
+                        Personal & Company Information
+                    </p>
                 </div>
+
+            </div>
+        </div>
+        <!--<div class="profile-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">-->
+        <!-- Left: Profile Title -->
+        <!--<div class="profile-title-section">
+                <h2 class="page-title mb-1">
+                    <i class="fas fa-user-shield me-2"></i>
+                    Admin Profile
+                </h2>
+
+                <p class="text-light mb-0">
+                    Personal & Company Information
+                </p>
             </div>
 
-            <!-- Main Profile Card -->
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="main-profile-card">
-                        <!-- Admin Overview Section -->
-                        <div class="admin-overview">
-                            <div class="row align-items-center">
-                                <div class="col-md-3 text-center">
-                                    <div class="profile-image-container">
-                                        <img src="@Model.Images"
-                                             class="profile-image"
-                                             alt="Admin Photo"
-                                             onerror="handleImageError(this)" />
-                                        <div class="profile-badge">
-                                            <i class="fas fa-crown"></i>
-                                        </div>
 
+
+        </div>
+    </div>-->
+        <!-- Main Profile Card -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="main-profile-card">
+                    <!-- Admin Overview Section -->
+                    <div class="admin-overview">
+                        <div class="row align-items-center">
+                            <div class="col-md-3 text-center">
+                                <div class="profile-image-container">
+                                    <img src="@Model.Images"
+                                         class="profile-image"
+                                         alt="Admin Photo"
+                                         onerror="handleImageError(this)" />
+                                    <div class="profile-badge">
+                                        <i class="fas fa-crown"></i>
                                     </div>
-                                   
+
+
                                 </div>
 
-                                <div class="col-md-9">
-                                    <div class="quick-stats">
-                                        <div class="row ms-2">
-                                            <div class="admin-basic-info">
-                                                <h4 class="admin-name">@Model.Name</h4>
-                                                <p class="admin-role">System Administrator</p>
-                                               
-                                            </div>
+                            </div>
+
+                            <div class="col-md-9">
+                                <div class="quick-stats">
+                                    <div class="row ms-2">
+                                        <div class="admin-basic-info">
+                                            <h4 class="admin-name">@Model.Name</h4>
+                                            <p class="admin-role">System Administrator</p>
+
                                         </div>
-                                        <div class="row g-3">
-                                           
-                                            <div class="col-md-6">
-                                                <div class="stat-card">
-                                                    <div class="stat-icon">
-                                                        <i class="fas fa-phone"></i>
-                                                    </div>
-                                                    <div class="stat-info">
-                                                        <h6>Mobile</h6>
-                                                        <p>@Model.MobileNo</p>
-                                                    </div>
+                                    </div>
+                                    <div class="row g-3">
+
+                                        <div class="col-md-6">
+                                            <div class="stat-card">
+                                                <div class="stat-icon">
+                                                    <i class="fas fa-phone"></i>
+                                                </div>
+                                                <div class="stat-info">
+                                                    <h6>Mobile</h6>
+                                                    <p>@Model.MobileNo</p>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="stat-card">
-                                                    <div class="stat-icon">
-                                                        <i class="fas fa-map-marker-alt"></i>
-                                                    </div>
-                                                    <div class="stat-info">
-                                                        <h6>Location</h6>
-                                                        <p>@Model.schoolAddress</p>
-                                                    </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="stat-card">
+                                                <div class="stat-icon">
+                                                    <i class="fas fa-map-marker-alt"></i>
+                                                </div>
+                                                <div class="stat-info">
+                                                    <h6>Location</h6>
+                                                    <p>@Model.schoolAddress</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -632,136 +793,148 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Detailed Information Sections -->
-                        <div class="profile-sections">
-                            <!-- Personal Information -->
-                            <div class="info-section">
-                                <div class="section-header">
-                                    <h4><i class="fas fa-user me-2"></i>Personal Information</h4>
-                                </div>
-                                <div class="section-content">
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <div class="info-item">
-                                                <label><i class="fas fa-user me-2"></i>Full Name</label>
-                                                <span>@Model.Name</span>
-                                            </div>
+                    <!-- Detailed Information Sections -->
+                    <div class="profile-sections">
+                        <!-- Personal Information -->
+                        <div class="info-section">
+                            <div class="section-header">
+                                <h4><i class="fas fa-user me-2"></i>Personal Information</h4>
+                            </div>
+                            <div class="section-content">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-user me-2"></i>Full Name</label>
+                                            <span>@Model.Name</span>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="info-item">
-                                                <label><i class="fas fa-envelope me-2"></i>Email Address</label>
-                                                <span>@Model.EmailId</span>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-envelope me-2"></i>Email Address</label>
+                                            <span>@Model.EmailId</span>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="info-item">
-                                                <label><i class="fas fa-phone me-2"></i>Mobile Number</label>
-                                                <span>@Model.MobileNo</span>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-phone me-2"></i>Mobile Number</label>
+                                            <span>@Model.MobileNo</span>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="info-item">
-                                                <label><i class="fas fa-image me-2"></i>Profile Image</label>
-                                                <span>
-                                                    <a href="@Model.Images" class="document-link" target="_blank" title="View Image">
-                                                        <i class="fas fa-eye me-1"></i>View Image
-                                                    </a>
-                                                </span>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-image me-2"></i>Profile Image</label>
+                                            <span>
+                                                <a href="@Model.Images" class="document-link" target="_blank" title="View Image">
+                                                    <i class="fas fa-eye me-1"></i>View Image
+                                                </a>
+                                            </span>
                                         </div>
-                                        <div class="col-md-12">
-                                            <div class="info-item">
-                                                <label><i class="fas fa-home me-2"></i>School Address</label>
-                                                <span>@Model.schoolAddress</span>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="info-item">
+                                            <label><i class="fas fa-home me-2"></i>School Address</label>
+                                            <span>@Model.schoolAddress</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Company Information -->
-                            <div class="info-section">
-                                <div class="section-header">
-                                    <h4><i class="fas fa-building me-2"></i>Company Information</h4>
-                                </div>
-                                <div class="section-content">
-                                    <div class="row g-4">
-                                        <div class="col-md-12">
-                                            <div class="company-card">
-                                                <div class="card-header">
-                                                    <div class="company-logo-container">
-                                                        <img src="@Model.SchoolLogo"
-                                                             class="company-logo"
-                                                             alt="Company Logo"
-                                                             onerror="handleLogoError(this)" />
-                                                    </div>
-                                                    <div class="company-info">
-                                                        <h5>@Model.CompanyName</h5>
-                                                    </div>
+                        <!-- Company Information -->
+                        <div class="info-section">
+                            <div class="section-header">
+                                <h4><i class="fas fa-building me-2"></i>Company Information</h4>
+                            </div>
+                            <div class="section-content">
+                                <div class="row g-4">
+                                    <div class="col-md-12">
+                                        <div class="company-card">
+                                            <div class="card-header company-card-header">
+                                                <div class="company-logo-container">
+                                                    <img src="@Model.SchoolLogo"
+                                                         class="company-logo"
+                                                         alt="Company Logo"
+                                                         onerror="handleLogoError(this)" />
                                                 </div>
-                                                <div class="card-content">
-                                                    <div class="row">
-                                                        <div class="info-item col-md-6">
-                                                            <label>Company Name</label>
-                                                            <span>@Model.CompanyName</span>
-                                                        </div>
 
-                                                        <div class="info-item col-md-6">
-                                                            <label>Company Logo</label>
-                                                            <span>
-                                                                <a href="@Model.SchoolLogo" class="document-link" target="_blank" title="View Logo">
-                                                                    <i class="fas fa-eye me-1"></i>View Logo
-                                                                </a>
-                                                            </span>
-                                                        </div>
+                                                <div class="company-info">
+                                                    <h5 class="mb-0">@Model.CompanyName</h5>
+                                                </div>
+                                            </div>
+                                            @*<div class="card-header">
+            <div class="company-logo-container">
+                <img src="@Model.SchoolLogo"
+                     class="company-logo"
+                     alt="Company Logo"
+                     onerror="handleLogoError(this)" />
+            </div>
+            <div class="company-info">
+                <h5>@Model.CompanyName</h5>
+            </div>
+        </div>*@
+                                            <div class="card-content">
+                                                <div class="row">
+                                                    <div class="info-item col-md-6">
+                                                        <label>Company Name</label>
+                                                        <span>@Model.CompanyName</span>
+                                                    </div>
+
+                                                    <div class="info-item col-md-6">
+                                                        <label>Company Logo</label>
+                                                        <span>
+                                                            <a href="@Model.SchoolLogo" class="document-link" target="_blank" title="View Logo">
+                                                                <i class="fas fa-eye me-1"></i>View Logo
+                                                            </a>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
-                                            <div class="authorized-card">
-                                                <div class="card-header">
-                                                    <i class="fas fa-user-check"></i>
-                                                    <h5>Authorized Person</h5>
-                                                </div>
-                                                <div class="card-content">
-                                                    <div class="row">
-                                                        <div class="info-item col-md-6">
-                                                            <label>Name</label>
-                                                            <span>@Model.AuthorizedPersonName</span>
-                                                        </div>
-                                                        <div class="info-item col-md-6">
-                                                            <label>Email</label>
-                                                            <span>@Model.AuthorizedPersonEmail</span>
-                                                        </div>
-                                                        <div class="info-item col-md-6">
-                                                            <label>Mobile</label>
-                                                            <span>@Model.AuthorizedPersonMobileNo</span>
-                                                        </div>
-                                                        <div class="info-item col-md-6">
-                                                            <label>Landline</label>
-                                                            <span>@Model.AuthorizedPersonLandlineNo</span>
-                                                        </div>
-                                                        <div class="info-item col-md-6">
-                                                            <label>State</label>
-                                                            <span>@Model.AuthorizedPersonState</span>
-                                                        </div>
-                                                        <div class="info-item col-md-6">
-                                                            <label>City</label>
-                                                            <span>@Model.AuthorizedPersonCity</span>
-                                                        </div>
-                                                        <div class="info-item col-md-6">
-                                                            <label>Authorized Signature</label>
-                                                            <span>
-                                                                <a href="@Model.AuthorizedSign" class="document-link" target="_blank" title="View Signature">
-                                                                    <i class="fas fa-eye me-1"></i>View Signature
-                                                                </a>
-                                                            </span>
-                                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="authorized-card">
+                                            <div class="card-header authorized-header">
+                                                <i class="fas fa-user-check"></i>
+                                                <h5>Authorized Person</h5>
+                                            </div>
+                                            <div class="card-content">
+                                                <div class="row">
+                                                    <div class="info-item col-md-6">
+                                                        <label>Name</label>
+                                                        <span>@Model.AuthorizedPersonName</span>
+                                                    </div>
+                                                    <div class="info-item col-md-6">
+                                                        <label>Email</label>
+                                                        <span>@Model.AuthorizedPersonEmail</span>
+                                                    </div>
+                                                    <div class="info-item col-md-6">
+                                                        <label>Mobile</label>
+                                                        <span>@Model.AuthorizedPersonMobileNo</span>
+                                                    </div>
+                                                    <div class="info-item col-md-6">
+                                                        <label>Landline</label>
+                                                        <span>@Model.AuthorizedPersonLandlineNo</span>
+                                                    </div>
+                                                    <div class="info-item col-md-6">
+                                                        <label>State</label>
+                                                        <span>@Model.AuthorizedPersonState</span>
+                                                    </div>
+                                                    <div class="info-item col-md-6">
+                                                        <label>City</label>
+                                                        <span>@Model.AuthorizedPersonCity</span>
+                                                    </div>
+                                                    <div class="info-item col-md-6">
+                                                        <label>Authorized Signature</label>
+                                                        <span>
+                                                            <a href="@Model.AuthorizedSign" class="document-link" target="_blank" title="View Signature">
+                                                                <i class="fas fa-eye me-1"></i>View Signature
+                                                            </a>
+                                                        </span>
                                                     </div>
                                                 </div>
-                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -772,137 +945,138 @@
             </div>
         </div>
     </div>
+</div>
 
 
 
-    <script>
+<script>
     // Handle image error
-function handleImageError(img) {
-  img.style.display = "none"
+    function handleImageError(img) {
+        img.style.display = "none"
 
-  const placeholder = document.createElement("div")
-  placeholder.className = "profile-image image-error"
-  placeholder.innerHTML = '<i class="fas fa-user-shield"></i>'
+        const placeholder = document.createElement("div")
+        placeholder.className = "profile-image image-error"
+        placeholder.innerHTML = '<i class="fas fa-user-shield"></i>'
 
-  img.parentNode.insertBefore(placeholder, img.nextSibling)
-}
-
-// Handle logo error
-function handleLogoError(img) {
-  img.style.display = "none"
-
-  const placeholder = document.createElement("div")
-  placeholder.className = "company-logo logo-error"
-  placeholder.innerHTML = '<i class="fas fa-building"></i>'
-
-  img.parentNode.insertBefore(placeholder, img.nextSibling)
-}
-
-function handleSignatureError(img) {
-  img.style.display = "none"
-
-  const placeholder = document.createElement("div")
-  placeholder.className = "auth-signature signature-error"
-  placeholder.innerHTML = '<i class="fas fa-signature"></i>'
-
-  img.parentNode.insertBefore(placeholder, img.nextSibling)
-}
-
-// Add interactive effects
-document.addEventListener("DOMContentLoaded", () => {
-  // Add hover effects to cards
-  const cards = document.querySelectorAll(".stat-card, .company-card, .authorized-card")
-  cards.forEach((card) => {
-    card.addEventListener("mouseenter", function () {
-      this.style.transform = "translateY(-8px)"
-    })
-
-    card.addEventListener("mouseleave", function () {
-      this.style.transform = "translateY(0)"
-    })
-  })
-
-  // Add click effects to buttons
-  const buttons = document.querySelectorAll(".btn")
-  buttons.forEach((button) => {
-    button.addEventListener("click", function (e) {
-      // Create ripple effect
-      const ripple = document.createElement("span")
-      const rect = this.getBoundingClientRect()
-      const size = Math.max(rect.width, rect.height)
-      const x = e.clientX - rect.left - size / 2
-      const y = e.clientY - rect.top - size / 2
-
-      ripple.style.width = ripple.style.height = size + "px"
-      ripple.style.left = x + "px"
-      ripple.style.top = y + "px"
-      ripple.style.position = "absolute"
-      ripple.style.borderRadius = "50%"
-      ripple.style.background = "rgba(255, 255, 255, 0.3)"
-      ripple.style.transform = "scale(0)"
-      ripple.style.animation = "ripple 0.6s linear"
-      ripple.style.pointerEvents = "none"
-
-      this.style.position = "relative"
-      this.style.overflow = "hidden"
-      this.appendChild(ripple)
-
-      setTimeout(() => {
-        ripple.remove()
-      }, 600)
-    })
-  })
-
-  // Add loading animation to main card
-  const mainCard = document.querySelector(".main-profile-card")
-  mainCard.style.opacity = "0"
-  mainCard.style.transform = "translateY(50px)"
-
-  setTimeout(() => {
-    mainCard.style.transition = "all 0.8s ease"
-    mainCard.style.opacity = "1"
-    mainCard.style.transform = "translateY(0)"
-  }, 200)
-
-  // Admin status pulse animation
-  const adminStatus = document.querySelector(".admin-status")
-  if (adminStatus) {
-    setInterval(() => {
-      adminStatus.style.transform = "scale(1.05)"
-      setTimeout(() => {
-        adminStatus.style.transform = "scale(1)"
-      }, 200)
-    }, 3000)
-  }
-
-  // Info items hover effect
-  const infoItems = document.querySelectorAll(".info-item")
-  infoItems.forEach((item) => {
-    item.addEventListener("mouseenter", function () {
-      this.style.transform = "translateX(10px)"
-      this.style.background = "var(--teal-100)"
-    })
-
-    item.addEventListener("mouseleave", function () {
-      this.style.transform = "translateX(0)"
-      this.style.background = "var(--teal-50)"
-    })
-  })
-
-  // Edit functionality placeholder
-  const editButtons = document.querySelectorAll(".btn")
-  editButtons.forEach((button) => {
-    if (button.textContent.includes("Edit")) {
-      button.addEventListener("click", () => {
-        alert("Edit functionality would be implemented here")
-      })
+        img.parentNode.insertBefore(placeholder, img.nextSibling)
     }
-  })
-})
 
-// Add CSS for ripple animation
-const style = document.createElement("style")
-style.textContent = `
+    // Handle logo error
+    function handleLogoError(img) {
+        img.style.display = "none"
+
+        const placeholder = document.createElement("div")
+        placeholder.className = "company-logo logo-error"
+        placeholder.innerHTML = '<i class="fas fa-building"></i>'
+
+        img.parentNode.insertBefore(placeholder, img.nextSibling)
+    }
+
+    function handleSignatureError(img) {
+        img.style.display = "none"
+
+        const placeholder = document.createElement("div")
+        placeholder.className = "auth-signature signature-error"
+        placeholder.innerHTML = '<i class="fas fa-signature"></i>'
+
+        img.parentNode.insertBefore(placeholder, img.nextSibling)
+    }
+
+    // Add interactive effects
+    document.addEventListener("DOMContentLoaded", () => {
+        // Add hover effects to cards
+        const cards = document.querySelectorAll(".stat-card, .company-card, .authorized-card")
+        cards.forEach((card) => {
+            card.addEventListener("mouseenter", function () {
+                this.style.transform = "translateY(-8px)"
+            })
+
+            card.addEventListener("mouseleave", function () {
+                this.style.transform = "translateY(0)"
+            })
+        })
+
+        // Add click effects to buttons
+        const buttons = document.querySelectorAll(".btn")
+        buttons.forEach((button) => {
+            button.addEventListener("click", function (e) {
+                // Create ripple effect
+                const ripple = document.createElement("span")
+                const rect = this.getBoundingClientRect()
+                const size = Math.max(rect.width, rect.height)
+                const x = e.clientX - rect.left - size / 2
+                const y = e.clientY - rect.top - size / 2
+
+                ripple.style.width = ripple.style.height = size + "px"
+                ripple.style.left = x + "px"
+                ripple.style.top = y + "px"
+                ripple.style.position = "absolute"
+                ripple.style.borderRadius = "50%"
+                ripple.style.background = "rgba(255, 255, 255, 0.3)"
+                ripple.style.transform = "scale(0)"
+                ripple.style.animation = "ripple 0.6s linear"
+                ripple.style.pointerEvents = "none"
+
+                this.style.position = "relative"
+                this.style.overflow = "hidden"
+                this.appendChild(ripple)
+
+                setTimeout(() => {
+                    ripple.remove()
+                }, 600)
+            })
+        })
+
+        // Add loading animation to main card
+        const mainCard = document.querySelector(".main-profile-card")
+        mainCard.style.opacity = "0"
+        mainCard.style.transform = "translateY(50px)"
+
+        setTimeout(() => {
+            mainCard.style.transition = "all 0.8s ease"
+            mainCard.style.opacity = "1"
+            mainCard.style.transform = "translateY(0)"
+        }, 200)
+
+        // Admin status pulse animation
+        const adminStatus = document.querySelector(".admin-status")
+        if (adminStatus) {
+            setInterval(() => {
+                adminStatus.style.transform = "scale(1.05)"
+                setTimeout(() => {
+                    adminStatus.style.transform = "scale(1)"
+                }, 200)
+            }, 3000)
+        }
+
+        // Info items hover effect
+        const infoItems = document.querySelectorAll(".info-item")
+        infoItems.forEach((item) => {
+            item.addEventListener("mouseenter", function () {
+                this.style.transform = "translateX(10px)"
+                this.style.background = "var(--teal-100)"
+            })
+
+            item.addEventListener("mouseleave", function () {
+                this.style.transform = "translateX(0)"
+                this.style.background = "var(--teal-50)"
+            })
+        })
+
+        // Edit functionality placeholder
+        const editButtons = document.querySelectorAll(".btn")
+        editButtons.forEach((button) => {
+            if (button.textContent.includes("Edit")) {
+                button.addEventListener("click", () => {
+                    alert("Edit functionality would be implemented here")
+                })
+            }
+        })
+    })
+
+    // Add CSS for ripple animation
+    const style = document.createElement("style")
+    style.textContent = `
   @@keyframes ripple {
     to {
       transform: scale(4);
@@ -910,22 +1084,22 @@ style.textContent = `
     }
   }
 `
-document.head.appendChild(style)
+    document.head.appendChild(style)
 
-// Print functionality
-function printProfile() {
-  window.print()
-}
+    // Print functionality
+    function printProfile() {
+        window.print()
+    }
 
-// Edit functionality placeholder
-function editProfile() {
-  alert("Edit functionality would be implemented here")
-}
+    // Edit functionality placeholder
+    function editProfile() {
+        alert("Edit functionality would be implemented here")
+    }
 
-// Verify functionality placeholder
-function verifyProfile() {
-  alert("Profile verification would be implemented here")
-}
+    // Verify functionality placeholder
+    function verifyProfile() {
+        alert("Profile verification would be implemented here")
+    }
 
-    </script>
+</script>
 

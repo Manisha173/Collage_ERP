@@ -1,8 +1,8 @@
 ﻿
-@{
+@*@{
     ViewBag.Title = "SecurityProfile";
     Layout = "~/Views/Shared/_securityLayout.cshtml";
-}
+}*@
 
 @model List<College_ERP.Models.Admin.Security>
 @{
@@ -727,11 +727,89 @@
         .info-section:nth-child(4) {
             animation-delay: 0.4s;
         }
+    /* Compact Profile Header */
+    .compact-profile-header {
+        padding: 7px 12px !important;
+        margin-bottom: 8px !important;
+        min-height: 55px !important;
+        height: 55px !important;
+        border-radius: 7px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+        .compact-profile-header > .d-flex {
+            width: 100% !important;
+            height: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .compact-profile-header .page-title {
+            font-size: 18px !important;
+            line-height: 1.1 !important;
+            margin: 0 0 3px 0 !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+            .compact-profile-header .page-title i {
+                font-size: 15px !important;
+                margin-right: 5px !important;
+            }
+
+        .compact-profile-header p {
+            font-size: 11px !important;
+            line-height: 1.1 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+
+    /* Compact Section Header */
+    .compact-section-header {
+        padding: 6px 12px !important;
+        height: 36px !important;
+        min-height: 36px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+        .compact-section-header h4 {
+            font-size: 14px !important;
+            line-height: 1 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+            .compact-section-header h4 i {
+                font-size: 12px !important;
+                margin-right: 5px !important;
+            }
 </style>
 <div class="content-page">
     <div class="container-fluid py-4">
         <!-- Header Section -->
-        <div class="profile-header mb-4">
+        <div class="profile-header compact-profile-header mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+                    <h2 class="page-title">
+                        <i class="fas fa-shield-alt"></i>
+                        Security Profile
+                    </h2>
+
+                    <p class="text-light">
+                        Personal, Professional & Security Details
+                    </p>
+                </div>
+
+            </div>
+        </div>
+        @*<div class="profile-header mb-4">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h2 class="page-title mb-1">
@@ -740,9 +818,9 @@
                     </h2>
                     <p class="text-light mb-0">Personal, Professional & Security Details</p>
                 </div>
-               
+
             </div>
-        </div>
+        </div>*@
 
         <!-- Main Profile Card -->
         <div class="row">
@@ -822,8 +900,11 @@
                     <div class="profile-sections">
                         <!-- Personal Information -->
                         <div class="info-section">
-                            <div class="section-header">
-                                <h4><i class="fas fa-user me-2"></i>Personal Information</h4>
+                            <div class="section-header compact-section-header">
+                                <h4>
+                                    <i class="fas fa-user"></i>
+                                    Personal Information
+                                </h4>
                             </div>
                             <div class="section-content">
                                 <div class="row g-3">

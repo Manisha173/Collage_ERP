@@ -617,32 +617,118 @@
 .info-section:nth-child(4) {
   animation-delay: 0.4s;
 }
+    .compact-driver-header {
+        padding: 9px 14px !important;
+        border-radius: 8px !important;
+    }
 
+        .compact-driver-header .page-title {
+            font-size: 20px !important;
+            line-height: 1.2 !important;
+            margin-bottom: 2px !important;
+        }
+
+            .compact-driver-header .page-title i {
+                font-size: 16px !important;
+            }
+
+        .compact-driver-header p {
+            font-size: 12px !important;
+            line-height: 1.2 !important;
+        }
+
+        .compact-driver-header .action-buttons .btn {
+            padding: 5px 12px !important;
+            font-size: 12px !important;
+            border-radius: 6px !important;
+        }
+
+        .compact-driver-header .action-buttons i {
+            font-size: 12px !important;
+        }
+    .compact-section-header {
+        padding: 7px 14px !important;
+        min-height: 38px !important;
+    }
+
+        .compact-section-header h4 {
+            font-size: 15px !important;
+            line-height: 1.2 !important;
+            margin: 0 !important;
+        }
+
+            .compact-section-header h4 i {
+                font-size: 13px !important;
+                margin-right: 4px !important;
+            }
+    .section-header {
+        padding: 7px 14px !important;
+        min-height: 38px !important;
+    }
+
+        .section-header h4 {
+            font-size: 15px !important;
+            line-height: 1.2 !important;
+            margin: 0 !important;
+        }
+
+            .section-header h4 i {
+                font-size: 13px !important;
+                margin-right: 4px !important;
+            }
 </style>
     <div class="content-page">
         <div class="container-fluid py-4">
             @if (Model.Count > 0)
             {
                 <!-- Header Section -->
-                <div class="profile-header mb-4">
+                <div class="profile-header mb-3 compact-driver-header">
                     <div class="d-flex justify-content-between align-items-center">
+
                         <div>
                             <h2 class="page-title mb-1">
-                                <i class="fas fa-id-card me-2"></i>
+                                <i class="fas fa-id-card me-1"></i>
                                 Driver Profile
                             </h2>
-                            <p class="text-light mb-0">Personal, Professional & Transportation Details</p>
+
+                            <p class="text-light mb-0">
+                                Personal, Professional & Transportation Details
+                            </p>
                         </div>
+
                         <div class="action-buttons">
-                            <a href="/admin/AddDriver" class="btn btn-primary me-2">
-                                <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                            <a href="/admin/AddDriver" class="btn btn-primary me-1">
+                                <i class="bi bi-pencil-square me-1"></i>
+                                Edit Profile
                             </a>
+
                             <a href="/admin/AddDriver" class="btn btn-outline-primary">
-                                <i class="bi bi-printer me-1"></i> Back
+                                <i class="bi bi-printer me-1"></i>
+                                Back
                             </a>
                         </div>
+
                     </div>
                 </div>
+                @*<div class="profile-header mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="page-title mb-1">
+                            <i class="fas fa-id-card me-2"></i>
+                            Driver Profile
+                        </h2>
+                        <p class="text-light mb-0">Personal, Professional & Transportation Details</p>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="/admin/AddDriver" class="btn btn-primary me-2">
+                            <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                        </a>
+                        <a href="/admin/AddDriver" class="btn btn-outline-primary">
+                            <i class="bi bi-printer me-1"></i> Back
+                        </a>
+                    </div>
+                </div>
+            </div>*@
 
                 <!-- Main Profile Card -->
                 <div class="row">
@@ -660,7 +746,7 @@
                                             <div class="profile-badge">
                                                 <i class="fas fa-bus"></i>
                                             </div>
-                                           
+
                                         </div>
                                         <div class="driver-basic-info mt-0">
                                             <div class="driver-badges">
@@ -679,7 +765,7 @@
                                             <div class="row ms-2">
                                                 <div class="driver-basic-info">
                                                     <h4 class="driver-name">@Model[0].Name</h4>
-                                                    <p class="employee-id">Employee ID: @Model[0].EmployeeId</p>                                                   
+                                                    <p class="employee-id">Employee ID: @Model[0].EmployeeId</p>
                                                 </div>
                                             </div>
                                             <div class="row g-3">
@@ -727,8 +813,11 @@
                             <div class="profile-sections">
                                 <!-- Personal Information -->
                                 <div class="info-section">
-                                    <div class="section-header">
-                                        <h4><i class="fas fa-user me-2"></i>Personal Information</h4>
+                                    <div class="section-header compact-section-header">
+                                        <h4>
+                                            <i class="fas fa-user me-1"></i>
+                                            Personal Information
+                                        </h4>
                                     </div>
                                     <div class="section-content">
                                         <div class="row g-3">
@@ -816,10 +905,10 @@
                                                                 </p>
                                                             </a>
                                                         }
-else
-                {
-                    <span>N/A</span>
-                }
+                                                        else
+                                                        {
+                                                            <span>N/A</span>
+                                                        }
 
                                                     </div>
                                                 </div>
@@ -873,12 +962,12 @@ else
                                                                     View Document
                                                                 </a>
                                                             }
-else
-                {
-                    <span>N/A</span>
-                }
+                                                            else
+                                                            {
+                                                                <span>N/A</span>
+                                                            }
                                                         </p>
-                                                        
+
 
                                                     </div>
                                                 </div>
@@ -897,10 +986,10 @@ else
                                                                     View Document
                                                                 </a>
                                                             }
-else
-                {
-                    <span>N/A</span>
-                }
+                                                            else
+                                                            {
+                                                                <span>N/A</span>
+                                                            }
                                                         </p>
 
                                                     </div>

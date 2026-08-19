@@ -1,4 +1,16 @@
-﻿<!DOCTYPE html>
+﻿
+@{
+    College_ERP.Models.HomeServices.HomeService homeService = new College_ERP.Models.HomeServices.HomeService();
+    College_ERP.Models.SuperAdmin.SuperAdminDataService superAdminDataService = new College_ERP.Models.SuperAdmin.SuperAdminDataService();
+    int userId = Convert.ToInt32(homeService.GetUserId(User.Identity.Name));
+
+    var companyInfo = superAdminDataService.GetParentById(userId);
+
+    string Companyname = companyInfo.CompanyName;
+    string Companylogo = companyInfo.SchoolLogo;
+}
+
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -163,6 +175,35 @@
             .stu-switch-item.active .stu-check {
                 display: block;
             }
+
+
+        .company-name-wrapper {
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+            padding-left: 15px;
+            /*            border-left: 1px solid #e5e7eb;*/
+        }
+
+        .company-name-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .company-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 50px;
+        }
+
+        .company-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            white-space: nowrap;
+        }
     </style>
 
 
@@ -182,8 +223,17 @@
                                 <i data-feather="menu" class="noti-icon"></i>
                             </button>
                         </li>
-                        <li class="d-none d-lg-block">
-                            <h5 class="mb-0"></h5>
+                        @*<li class="d-none d-lg-block">
+            <h5 class="mb-0"></h5>
+        </li>*@
+                        <li class="company-name-wrapper">
+                            <div class="company-name-box">
+                                <img src="@Url.Content(Companylogo)"
+                                     class="company-logo"
+                                     alt="Company Logo" />
+
+                                <span class="company-name">@Companyname</span>
+                            </div>
                         </li>
                     </ul>
 

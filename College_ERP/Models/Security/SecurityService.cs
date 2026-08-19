@@ -291,6 +291,8 @@ namespace College_ERP.Models.Security
                             mobile = Convert.ToInt64(res["mobile"]),
                             imageName = res["image"].ToString(),
                             address = res["address"].ToString(),
+                            loginTime = res["loginTime"].ToString(),
+                            logOutTime = res["logoutTime"].ToString()
                         });
                     }
                 }

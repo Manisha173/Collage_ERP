@@ -595,7 +595,56 @@ namespace College_ERP.Models.SuperAdmin
                    list.MobileNo = rdr["MobileNo"] != DBNull.Value ? Convert.ToInt64(rdr["MobileNo"]) : 0;
                     list.EmailId = rdr["EmailId"]?.ToString();
                     list.Images = rdr["Image"]?.ToString();
-					list.schoolAddress = rdr["school_address"]?.ToString()
+                    list.schoolAddress = rdr["school_address"]?.ToString();
+                    list.SchoolLogo = rdr["School_Logo"] != DBNull.Value ? rdr["School_Logo"].ToString() : "";
+;
+               
+                }
+				return list;
+            }
+            catch (Exception ex)
+            {
+
+                return list;
+            }
+            finally
+            {
+                if (rdr != null) rdr.Close();
+                if (connection.State == ConnectionState.Open)
+                {
+                    connection.Close();
+                }
+            }
+
+        }
+		public CreateAdmin GetTeacherById(int id)
+		{
+            CreateAdmin list = new CreateAdmin();
+            SqlDataReader rdr = null;
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand("sp_CreateAdmin", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@action", "selectTeacherById");
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                connection.Open();
+                rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    list = new CreateAdmin();
+
+                   list.Id = rdr["Id"] != DBNull.Value ? Convert.ToInt32(rdr["Id"]) : 0;
+                   list.CompanyId = Convert.ToInt32(rdr["companyId"] ?? "0");
+                   list.CompanyName = rdr["schoolName"]?.ToString();
+                   list.Name = rdr["Name"]?.ToString();
+                   list.MobileNo = rdr["MobileNo"] != DBNull.Value ? Convert.ToInt64(rdr["MobileNo"]) : 0;
+                    list.EmailId = rdr["EmailId"]?.ToString();
+                    list.Images = rdr["Image"]?.ToString();
+                    list.schoolAddress = rdr["school_address"]?.ToString();
+                    list.SchoolLogo = rdr["School_Logo"] != DBNull.Value ? rdr["School_Logo"].ToString() : "";
 ;
                
                 }
@@ -617,6 +666,205 @@ namespace College_ERP.Models.SuperAdmin
 
         }
 
+
+        public CreateAdmin GetSecurityById(int id)
+        {
+            CreateAdmin list = new CreateAdmin();
+            SqlDataReader rdr = null;
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand("sp_CreateAdmin", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@action", "selectSecurityById");
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                connection.Open();
+                rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    list = new CreateAdmin();
+
+                    list.Id = rdr["Id"] != DBNull.Value ? Convert.ToInt32(rdr["Id"]) : 0;
+                    list.CompanyId = Convert.ToInt32(rdr["companyId"] ?? "0");
+                    list.CompanyName = rdr["schoolName"]?.ToString();
+                    list.Name = rdr["Name"]?.ToString();
+                    list.MobileNo = rdr["MobileNo"] != DBNull.Value ? Convert.ToInt64(rdr["MobileNo"]) : 0;
+                    list.EmailId = rdr["EmailId"]?.ToString();
+                    list.Images = rdr["Image"]?.ToString();
+                    list.schoolAddress = rdr["school_address"]?.ToString();
+                    list.SchoolLogo = rdr["School_Logo"] != DBNull.Value ? rdr["School_Logo"].ToString() : "";
+                    ;
+
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+
+                return list;
+            }
+            finally
+            {
+                if (rdr != null) rdr.Close();
+                if (connection.State == ConnectionState.Open)
+                {
+                    connection.Close();
+                }
+            }
+
+        }
+
+
+        public CreateAdmin GetWardenById(int id)
+        {
+            CreateAdmin list = new CreateAdmin();
+            SqlDataReader rdr = null;
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand("sp_CreateAdmin", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@action", "selectwardenById");
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                connection.Open();
+                rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    list = new CreateAdmin();
+
+                    list.Id = rdr["Id"] != DBNull.Value ? Convert.ToInt32(rdr["Id"]) : 0;
+                    list.CompanyId = Convert.ToInt32(rdr["companyId"] ?? "0");
+                    list.CompanyName = rdr["schoolName"]?.ToString();
+                    list.Name = rdr["Name"]?.ToString();
+                    list.MobileNo = rdr["MobileNo"] != DBNull.Value ? Convert.ToInt64(rdr["MobileNo"]) : 0;
+                    list.EmailId = rdr["EmailId"]?.ToString();
+                    list.Images = rdr["Image"]?.ToString();
+                    list.schoolAddress = rdr["school_address"]?.ToString();
+                    list.SchoolLogo = rdr["School_Logo"] != DBNull.Value ? rdr["School_Logo"].ToString() : "";
+                    ;
+
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+
+                return list;
+            }
+            finally
+            {
+                if (rdr != null) rdr.Close();
+                if (connection.State == ConnectionState.Open)
+                {
+                    connection.Close();
+                }
+            }
+
+        }
+
+
+        public CreateAdmin GetLibrarianById(int id)
+        {
+            CreateAdmin list = new CreateAdmin();
+            SqlDataReader rdr = null;
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand("sp_CreateAdmin", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@action", "LibrarianById");
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                connection.Open();
+                rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    list = new CreateAdmin();
+
+                    list.Id = rdr["Id"] != DBNull.Value ? Convert.ToInt32(rdr["Id"]) : 0;
+                    list.CompanyId = Convert.ToInt32(rdr["companyId"] ?? "0");
+                    list.CompanyName = rdr["schoolName"]?.ToString();
+                    list.Name = rdr["Name"]?.ToString();
+                    list.MobileNo = rdr["MobileNo"] != DBNull.Value ? Convert.ToInt64(rdr["MobileNo"]) : 0;
+                    list.EmailId = rdr["EmailId"]?.ToString();
+                    list.Images = rdr["Image"]?.ToString();
+                    list.schoolAddress = rdr["school_address"]?.ToString();
+                    list.SchoolLogo = rdr["School_Logo"] != DBNull.Value ? rdr["School_Logo"].ToString() : "";
+                    ;
+
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+
+                return list;
+            }
+            finally
+            {
+                if (rdr != null) rdr.Close();
+                if (connection.State == ConnectionState.Open)
+                {
+                    connection.Close();
+                }
+            }
+
+        }
+
+
+        public CreateAdmin GetParentById(int id)
+        {
+            CreateAdmin list = new CreateAdmin();
+            SqlDataReader rdr = null;
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand("sp_CreateAdmin", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@action", "selectParentById");
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                connection.Open();
+                rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    list = new CreateAdmin();
+
+                    list.Id = rdr["Id"] != DBNull.Value ? Convert.ToInt32(rdr["Id"]) : 0;
+                    list.CompanyId = Convert.ToInt32(rdr["companyId"] ?? "0");
+                    list.CompanyName = rdr["schoolName"]?.ToString();
+                    list.Name = rdr["Name"]?.ToString();
+                    list.MobileNo = rdr["MobileNo"] != DBNull.Value ? Convert.ToInt64(rdr["MobileNo"]) : 0;
+                    list.EmailId = rdr["EmailId"]?.ToString();
+                    list.Images = rdr["Image"]?.ToString();
+                    list.schoolAddress = rdr["school_address"]?.ToString();
+                    list.SchoolLogo = rdr["School_Logo"] != DBNull.Value ? rdr["School_Logo"].ToString() : "";
+                    ;
+
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+
+                return list;
+            }
+            finally
+            {
+                if (rdr != null) rdr.Close();
+                if (connection.State == ConnectionState.Open)
+                {
+                    connection.Close();
+                }
+            }
+
+        }
         //public List<masterState> GetAllState()
         //{
         //	List<masterState> list = new List<masterState>();
